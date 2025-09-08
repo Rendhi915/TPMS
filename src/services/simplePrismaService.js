@@ -55,7 +55,6 @@ class SimplePrismaService {
     // Search filter
     if (search) {
       where.OR = [
-        { plateNumber: { contains: search, mode: 'insensitive' } },
         { name: { contains: search, mode: 'insensitive' } },
         { model: { contains: search, mode: 'insensitive' } }
       ];
@@ -112,13 +111,13 @@ class SimplePrismaService {
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
         include: {
-          fleetGroup: true,
-          alertEvents: {
-            orderBy: { occurredAt: 'desc' },
+          fleet_group: true,
+          alert_event: {
+            orderBy: { occurred_at: 'desc' },
             take: 10
           },
-          tirePressureEvents: {
-            orderBy: { changedAt: 'desc' },
+          tire_pressure_event: {
+            orderBy: { changed_at: 'desc' },
             take: 10
           }
         }
@@ -137,15 +136,15 @@ class SimplePrismaService {
 
   async getTruckTires(truckId) {
     try {
-      const tirePressures = await this.prisma.tirePressureEvent.findMany({
-        where: { truckId: truckId },
-        orderBy: { changedAt: 'desc' },
+      const tirePressures = await this.prisma.tire_pressure_event.findMany({
+        where: { truck_id: truckId },
+        orderBy: { changed_at: 'desc' },
         take: 10
       });
 
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
-        select: { id: true, plateNumber: true, name: true }
+        select: { id: true, name: true }
       });
 
       if (!truck) {
@@ -154,14 +153,14 @@ class SimplePrismaService {
 
       return {
         truckId: truck.id,
-        truckNumber: truck.plateNumber,
+        truckNumber: truck.name,
         tirePressures: tirePressures.map(tire => ({
-          position: `Tire ${tire.tireNo}`,
-          tireNumber: tire.tireNo,
-          pressure: tire.pressureKpa ? parseFloat(tire.pressureKpa) : null,
-          status: tire.pressureKpa > 1000 ? 'normal' : 'low',
-          temperature: tire.tempCelsius ? parseFloat(tire.tempCelsius) : null,
-          lastUpdated: tire.changedAt
+          position: `Tire ${tire.tire_no}`,
+          tireNumber: tire.tire_no,
+          pressure: tire.pressure_kpa ? parseFloat(tire.pressure_kpa) : null,
+          status: tire.pressure_kpa > 1000 ? 'normal' : 'low',
+          temperature: tire.temp_celsius ? parseFloat(tire.temp_celsius) : null,
+          lastUpdated: tire.changed_at
         })),
         lastUpdated: new Date()
       };
@@ -179,34 +178,34 @@ class SimplePrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleetGroup: true,
-          gpsPositions: {
+          fleet_group: true,
+          gps_position: {
             orderBy: { ts: 'desc' },
             take: 1
           },
           _count: {
             select: {
-              alertEvents: {
+              alert_event: {
                 where: { acknowledged: false }
               }
             }
           }
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { created_at: 'desc' }
       });
 
       // Format as GeoJSON
       const geoJsonData = {
         type: "FeatureCollection",
         features: trucks
-          .filter(truck => truck.gpsPositions.length > 0)
+          .filter(truck => truck.gps_position.length > 0)
           .map(truck => {
-            const latestGps = truck.gpsPositions[0];
+            const latestGps = truck.gps_position[0];
             return {
               type: "Feature",
               properties: {
                 id: truck.id,
-                truckNumber: truck.plateNumber,
+                truckNumber: truck.name,
                 name: truck.name,
                 model: truck.model,
                 status: 'active', // Default status
@@ -216,7 +215,7 @@ class SimplePrismaService {
                 payload: 0, // Default payload
                 driver: null,
                 lastUpdate: latestGps.ts,
-                alertCount: truck._count.alertEvents
+                alertCount: truck._count.alert_event
               },
               geometry: {
                 type: "Point",
@@ -247,12 +246,12 @@ class SimplePrismaService {
 
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
-        select: { id: true, plateNumber: true, name: true }
+        select: { id: true, name: true }
       });
 
       return {
         id: truck.id,
-        truckNumber: truck.plateNumber,
+        truckNumber: truck.name,
         status: status,
         lastUpdate: statusEvent.changedAt
       };
@@ -283,9 +282,9 @@ class SimplePrismaService {
       
       // Count trucks by status instead of maintenance orders
       const trucksByStatus = await this.prisma.truck.groupBy({
-        by: ['plate_number'],
+        by: ['name'],
         _count: {
-          plate_number: true
+          name: true
         }
       });
       console.log('✅ Trucks by status calculated');
@@ -368,10 +367,10 @@ class SimplePrismaService {
   formatTruckResponse(truck) {
     return {
       id: truck.id,
-      truckNumber: truck.plateNumber,
+      truckNumber: truck.name,
       name: truck.name,
       model: truck.model,
-      manufacturer: truck.fleetGroup?.name || 'Unknown',
+      manufacturer: truck.fleet_group?.name || 'Unknown',
       status: 'active', // Default status
       location: {
         type: 'Point',
@@ -385,19 +384,19 @@ class SimplePrismaService {
       engineHours: 0,
       odometer: 0,
       lastMaintenance: null,
-      lastUpdate: truck.createdAt,
-      alerts: truck.alertEvents || [],
-      alertCount: truck._count?.alertEvents || 0
+      lastUpdate: truck.created_at,
+      alerts: truck.alert_event || [],
+      alertCount: truck._count?.alert_event || 0
     };
   }
 
   formatTruckDetailResponse(truck) {
     return {
       id: truck.id,
-      truckNumber: truck.plateNumber,
+      truckNumber: truck.name,
       name: truck.name,
       model: truck.model,
-      manufacturer: truck.fleetGroup?.name || 'Unknown',
+      manufacturer: truck.fleet_group?.name || 'Unknown',
       capacity: null,
       fuelTank: null,
       status: 'active',
@@ -413,21 +412,21 @@ class SimplePrismaService {
       engineHours: 0,
       odometer: 0,
       lastMaintenance: null,
-      lastUpdate: truck.createdAt,
-      tirePressures: (truck.tirePressureEvents || []).slice(0, 6).map((tire, index) => ({
-        position: `Tire ${index + 1}`,
-        tireNumber: index + 1,
-        pressure: tire.pressureKpa || 900,
-        status: (tire.pressureKpa || 900) > 800 ? 'normal' : 'low',
-        temperature: tire.tempCelsius || 45,
-        lastUpdated: tire.changedAt
+      lastUpdate: truck.created_at,
+      tires: (truck.tire_pressure_event || []).map(tire => ({
+        position: `Tire ${tire.tire_no}`,
+        tireNumber: tire.tire_no,
+        pressure: tire.pressure_kpa,
+        status: tire.pressure_kpa > 1000 ? 'normal' : 'low',
+        temperature: tire.temp_celsius || 45,
+        lastUpdated: tire.changed_at
       })),
-      alerts: (truck.alertEvents || []).map(alert => ({
+      alerts: (truck.alert_event || []).map(alert => ({
         type: alert.type,
         severity: alert.severity || 'medium',
         message: `${alert.type} alert`,
         isResolved: alert.acknowledged,
-        createdAt: alert.occurredAt
+        createdAt: alert.occurred_at
       }))
     };
   }

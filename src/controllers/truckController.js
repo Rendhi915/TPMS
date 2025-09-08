@@ -439,13 +439,13 @@ const bulkUpdateTruckStatus = async (req, res) => {
   }
 };
 
-// New function for getting truck locations by plate number
-const getTruckLocationsByPlate = async (req, res) => {
+// New function for getting truck locations by truck name
+const getTruckLocationsByName = async (req, res) => {
   try {
-    const plateNumber = decodeURIComponent(req.params.plateNumber);
+    const truckName = decodeURIComponent(req.params.truckName);
     const { timeRange = '24h', limit = 200, minSpeed = 0 } = req.query;
     
-    console.log(`Getting location history for truck: ${plateNumber}`);
+    console.log(`Getting location history for truck: ${truckName}`);
     
     // Parse time range
     let hoursBack = 24;
@@ -459,17 +459,17 @@ const getTruckLocationsByPlate = async (req, res) => {
     const since = new Date();
     since.setHours(since.getHours() - hoursBack);
     
-    // First, find the truck by plate number
+    // First, find the truck by name
     const truck = await prismaService.prisma.$queryRaw`
-      SELECT id, plate_number, model FROM truck 
-      WHERE plate_number = ${plateNumber}
+      SELECT id, name, model FROM truck 
+      WHERE name = ${truckName}
       LIMIT 1
     `;
     
     if (truck.length === 0) {
       return res.status(404).json({
         success: false,
-        message: `Truck with plate number '${plateNumber}' not found`
+        message: `Truck with name '${truckName}' not found`
       });
     }
     
@@ -515,7 +515,7 @@ const getTruckLocationsByPlate = async (req, res) => {
     const geoJsonTrack = {
       type: "Feature",
       properties: {
-        plateNumber: plateNumber,
+        truckName: truckName,
         truckId: truckId,
         timeRange: timeRange,
         totalPoints: coordinates.length,
@@ -538,7 +538,7 @@ const getTruckLocationsByPlate = async (req, res) => {
       data: locations, // Frontend expects data to be the array directly
       truck: {
         id: truckId,
-        plateNumber: plateNumber,
+        truckName: truckName,
         model: truck[0].model
       },
       track: geoJsonTrack,
@@ -549,11 +549,11 @@ const getTruckLocationsByPlate = async (req, res) => {
         avgSpeed: locations.length > 0 ? 
           (locations.reduce((sum, loc) => sum + loc.speed, 0) / locations.length).toFixed(1) : 0
       },
-      message: `Retrieved ${locations.length} location points for truck ${plateNumber} over the last ${hoursBack} hours`
+      message: `Retrieved ${locations.length} location points for truck ${truckName} over the last ${hoursBack} hours`
     });
     
   } catch (error) {
-    console.error('Error in getTruckLocationsByPlate:', error);
+    console.error('Error in getTruckLocationsByName:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch truck location history',
@@ -572,5 +572,5 @@ module.exports = {
   getTruckAlerts,
   resolveAlert,
   bulkUpdateTruckStatus,
-  getTruckLocationsByPlate
+  getTruckLocationsByName
 };

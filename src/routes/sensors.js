@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sensorController = require('../controllers/sensorController');
 const { validateSensorData } = require('../middleware/validation');
+const authMiddleware = require('../middleware/auth');
 
 // POST /api/sensors/tpdata - Tire pressure data ingestion
 router.post('/tpdata', validateSensorData('tpdata'), sensorController.ingestTirePressureData);
@@ -19,9 +20,9 @@ router.post('/state', validateSensorData('state'), sensorController.ingestLockSt
 router.post('/raw', sensorController.ingestRawSensorData);
 
 // GET /api/sensors/queue/stats - Get sensor processing queue statistics
-router.get('/queue/stats', sensorController.getQueueStats);
+router.get('/queue/stats', authMiddleware, sensorController.getQueueStats);
 
 // POST /api/sensors/queue/process - Manually trigger queue processing (admin only)
-router.post('/queue/process', sensorController.processQueue);
+router.post('/queue/process', authMiddleware, sensorController.processQueue);
 
 module.exports = router;

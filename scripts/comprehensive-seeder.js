@@ -64,7 +64,6 @@ async function seedTrucks(fleetGroups) {
   for (let i = 0; i < 100; i++) {
     const truck = await prisma.truck.create({
       data: {
-        plateNumber: `B ${randomInt(1000, 9999)} ${randomChoice(['AA', 'AB', 'AC', 'AD', 'AE'])}`,
         vin: faker.vehicle.vin(),
         name: `Truck-${String(i + 1).padStart(3, '0')}`,
         model: randomChoice(truckModels),

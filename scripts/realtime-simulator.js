@@ -41,7 +41,7 @@ class RealtimeTrackingSimulator {
       
       // Get active trucks from database
       const trucks = await prisma.$queryRaw`
-        SELECT id, plate_number, model FROM truck 
+        SELECT id, name, model FROM truck 
         WHERE id IN (
           SELECT DISTINCT truck_id FROM gps_position 
           ORDER BY truck_id LIMIT 5
@@ -134,7 +134,7 @@ class RealtimeTrackingSimulator {
 
       return {
         truckId: truck.id,
-        plateNumber: truck.plate_number,
+        truckName: truck.name,
         position: [nextLat, nextLon],
         speed: speed.toFixed(1),
         heading: heading.toFixed(0),
@@ -142,7 +142,7 @@ class RealtimeTrackingSimulator {
       };
 
     } catch (error) {
-      console.error(`❌ Error updating position for ${truck.plate_number}:`, error.message);
+      console.error(`❌ Error updating position for ${truck.name}:`, error.message);
       return null;
     }
   }

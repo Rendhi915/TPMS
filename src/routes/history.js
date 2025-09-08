@@ -1,18 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const truckController = require('../controllers/truckController');
+const authMiddleware = require('../middleware/auth');
 
-// This router is intended to be mounted at multiple base paths for frontend compatibility:
-// - /api/location-history
-// - /api/tracking
-// - /api/vehicles
-// It provides endpoints to fetch truck location history by plate number without duplicating base segments.
+// This router provides compatibility endpoints for truck location history
+// All endpoints require authentication
 
-// GET /api/location-history/:plateNumber
-router.get('/:plateNumber', truckController.getTruckLocationsByPlate);
+// GET /api/location-history/:truckName
+router.get('/:truckName', authMiddleware, truckController.getTruckLocationsByName);
 
-// GET /api/tracking/:plateNumber/history
-// GET /api/vehicles/:plateNumber/history
-router.get('/:plateNumber/history', truckController.getTruckLocationsByPlate);
+// GET /api/tracking/:truckName/history
+// GET /api/vehicles/:truckName/history
+router.get('/:truckName/history', authMiddleware, truckController.getTruckLocationsByName);
 
 module.exports = router;

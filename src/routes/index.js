@@ -3,7 +3,7 @@ const authRoutes = require('./auth');
 const truckRoutes = require('./trucks');
 const dashboardRoutes = require('./dashboard');
 const sensorRoutes = require('./sensors');
-const miningAreaRoutes = require('./miningArea');
+const miningAreaRoutes = require('./miningarea');
 
 const router = express.Router();
 
