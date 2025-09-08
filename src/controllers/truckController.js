@@ -174,7 +174,7 @@ const updateTruckStatus = async (req, res) => {
     try {
       const { broadcastTruckStatusUpdate } = require('../services/websocketService');
       broadcastTruckStatusUpdate({
-        truckId: parseInt(truckId),
+        truckId: truckId,
         status: status,
         timestamp: new Date().toISOString()
       });
@@ -230,7 +230,7 @@ const getTruckLocationHistory = async (req, res) => {
 
     const locationHistory = await prismaService.prisma.locationHistory.findMany({
       where: {
-        truckId: parseInt(truckId),
+        truckId: truckId,
         recordedAt: {
           gte: since
         }
@@ -249,7 +249,7 @@ const getTruckLocationHistory = async (req, res) => {
     const geoJsonTrack = {
       type: "Feature",
       properties: {
-        truckId: parseInt(truckId),
+        truckId: truckId,
         timeRange: `${hours} hours`,
         totalPoints: coordinates.length
       },
@@ -290,17 +290,17 @@ const getTruckAlerts = async (req, res) => {
     const truckId = req.params.id;
     const { resolved = false, limit = 50 } = req.query;
     
-    // Validate truck ID
-    if (!truckId || isNaN(parseInt(truckId))) {
+    // Validate truck ID (should be 4-digit format like 0001)
+    if (!truckId || !/^\d{4}$/.test(truckId)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid truck ID provided'
+        message: 'Invalid truck ID provided. Expected 4-digit format (e.g., 0001)'
       });
     }
 
     const alerts = await prismaService.prisma.truckAlert.findMany({
       where: {
-        truckId: parseInt(truckId),
+        truckId: truckId,
         isResolved: resolved === 'true' ? true : false
       },
       orderBy: {
@@ -312,7 +312,7 @@ const getTruckAlerts = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        truckId: parseInt(truckId),
+        truckId: truckId,
         alerts: alerts.map(alert => ({
           id: alert.id,
           type: alert.alertType,
@@ -352,7 +352,7 @@ const resolveAlert = async (req, res) => {
     const resolvedAlert = await prismaService.prisma.truckAlert.updateMany({
       where: {
         id: parseInt(alertId),
-        truckId: parseInt(truckId),
+        truckId: truckId,
         isResolved: false
       },
       data: {
@@ -411,7 +411,7 @@ const bulkUpdateTruckStatus = async (req, res) => {
     const updateResult = await prismaService.prisma.truck.updateMany({
       where: {
         id: {
-          in: truckIds.map(id => parseInt(id))
+          in: truckIds.filter(id => /^\d{4}$/.test(id))
         }
       },
       data: {
@@ -488,7 +488,7 @@ const getTruckLocationsByName = async (req, res) => {
         hdop,
         source
       FROM gps_position 
-      WHERE truck_id = ${truckId}::uuid
+      WHERE truck_id = ${truckId}
         AND ts >= ${since}::timestamptz
         AND speed_kph >= ${parseFloat(minSpeed)}
       ORDER BY ts DESC

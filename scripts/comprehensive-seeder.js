@@ -40,7 +40,7 @@ async function seedFleetGroups() {
   const sites = ['Kalimantan Mine', 'Java Quarry', 'Sumatra Coal', 'Lombok Copper', 'Sulawesi Gold'];
   
   for (let i = 0; i < 5; i++) {
-    const fleetGroup = await prisma.fleetGroup.create({
+    const fleetGroup = await prisma.fleet_group.create({
       data: {
         name: `Fleet ${String.fromCharCode(65 + i)}`, // Fleet A, B, C, etc.
         site: sites[i],
@@ -62,14 +62,16 @@ async function seedTrucks(fleetGroups) {
   const tireConfigs = ['18.00R33', '40.00R57', '59/80R63', '53/80R63'];
   
   for (let i = 0; i < 100; i++) {
+    const truckId = String(i + 1).padStart(4, '0'); // Generate 0001, 0002, etc.
     const truck = await prisma.truck.create({
       data: {
+        id: truckId,
         vin: faker.vehicle.vin(),
         name: `Truck-${String(i + 1).padStart(3, '0')}`,
         model: randomChoice(truckModels),
         year: randomInt(2015, 2023),
-        tireConfig: randomChoice(tireConfigs),
-        fleetGroupId: randomChoice(fleetGroups).id,
+        tire_config: randomChoice(tireConfigs),
+        fleet_group_id: randomChoice(fleetGroups).id,
       }
     });
     trucks.push(truck);
@@ -87,10 +89,10 @@ async function seedDevices(trucks) {
   for (const truck of trucks) {
     const device = await prisma.device.create({
       data: {
-        truckId: truck.id,
+        truck_id: truck.id,
         sn: `DEV${faker.string.alphanumeric(8).toUpperCase()}`,
-        simNumber: faker.phone.number('62###########'),
-        installedAt: faker.date.between({ from: '2023-01-01', to: '2024-01-01' }),
+        sim_number: faker.phone.number('62###########'),
+        installed_at: faker.date.between({ from: '2023-01-01', to: '2024-01-01' }),
       }
     });
     devices.push(device);
@@ -111,9 +113,9 @@ async function seedSensors(devices) {
     for (let i = 1; i <= tireCount; i++) {
       const sensor = await prisma.sensor.create({
         data: {
-          deviceId: device.id,
+          device_id: device.id,
           type: 'tire',
-          positionNo: i,
+          position_no: i,
           sn: `TIRE${faker.string.alphanumeric(6).toUpperCase()}`,
         }
       });
@@ -125,9 +127,9 @@ async function seedSensors(devices) {
     for (let i = 1; i <= hubCount; i++) {
       const sensor = await prisma.sensor.create({
         data: {
-          deviceId: device.id,
+          device_id: device.id,
           type: 'hub',
-          positionNo: i,
+          position_no: i,
           sn: `HUB${faker.string.alphanumeric(6).toUpperCase()}`,
         }
       });
@@ -154,10 +156,10 @@ async function seedTruckStatusEvents(trucks) {
     for (let i = 0; i < eventCount; i++) {
       const event = await prisma.truckStatusEvent.create({
         data: {
-          truckId: truck.id,
+          truck_id: truck.id,
           status: randomChoice(statuses),
           note: Math.random() > 0.5 ? faker.lorem.sentence() : null,
-          changedAt: lastDate,
+          changed_at: lastDate,
         }
       });
       statusEvents.push(event);
@@ -201,11 +203,11 @@ async function seedGpsPositions(devices, trucks) {
       // Create GPS position without PostGIS geography for now
       const position = await prisma.gpsPosition.create({
         data: {
-          deviceId: device.id,
-          truckId: truck.id,
+          device_id: device.id,
+          truck_id: truck.id,
           ts: timestamp,
-          speedKph: randomFloat(0, 80),
-          headingDeg: randomInt(0, 359),
+          speed_kph: randomFloat(0, 80),
+          heading_deg: randomInt(0, 359),
           hdop: randomFloat(0.5, 2.0),
           source: 'GPS'
         }
@@ -241,11 +243,11 @@ async function seedTirePressureEvents(devices, trucks) {
         
         const event = await prisma.tirePressureEvent.create({
           data: {
-            deviceId: device.id,
-            truckId: truck.id,
-            tireNo: tireNo,
-            pressureKpa: randomFloat(800, 1200), // Normal range 800-1200 kPa
-            tempCelsius: randomFloat(40, 80), // Normal range 40-80°C
+            device_id: device.id,
+            truck_id: truck.id,
+            tire_no: tireNo,
+            pressure_kpa: randomFloat(800, 1200), // Normal range 800-1200 kPa
+            temp_celsius: randomFloat(40, 80), // Normal range 40-80°C
             exType: randomChoice(['normal', 'warning', 'critical']),
             batteryLevel: randomInt(20, 100),
             changedAt: timestamp,
@@ -282,10 +284,10 @@ async function seedHubTemperatureEvents(devices, trucks) {
         
         const event = await prisma.hubTemperatureEvent.create({
           data: {
-            deviceId: device.id,
-            truckId: truck.id,
-            hubNo: hubNo,
-            tempCelsius: randomFloat(60, 120), // Normal range 60-120°C
+            device_id: device.id,
+            truck_id: truck.id,
+            hub_no: hubNo,
+            temp_celsius: randomFloat(60, 120), // Normal range 60-120°C
             exType: randomChoice(['normal', 'warning', 'critical']),
             batteryLevel: randomInt(20, 100),
             changedAt: timestamp,
@@ -326,8 +328,8 @@ async function seedFuelLevelEvents(trucks) {
       
       const event = await prisma.fuelLevelEvent.create({
         data: {
-          truckId: truck.id,
-          fuelPercent: currentFuel,
+          truck_id: truck.id,
+          fuel_percent: currentFuel,
           changedAt: timestamp,
           source: 'fuel_sensor',
         }
@@ -356,8 +358,8 @@ async function seedSpeedEvents(trucks) {
       
       const event = await prisma.speedEvent.create({
         data: {
-          truckId: truck.id,
-          speedKph: randomFloat(0, 80), // 0-80 km/h
+          truck_id: truck.id,
+          speed_kph: randomFloat(0, 80), // 0-80 km/h
           changedAt: timestamp,
           source: 'gps',
         }
@@ -404,11 +406,11 @@ async function seedAlertEvents(trucks) {
       
       const event = await prisma.alertEvent.create({
         data: {
-          truckId: truck.id,
+          truck_id: truck.id,
           type: alertType,
           severity: randomInt(1, 5),
           detail: detail,
-          occurredAt: timestamp,
+          occurred_at: timestamp,
           acknowledged: Math.random() > 0.3, // 70% acknowledged
         }
       });
@@ -436,7 +438,7 @@ async function seedTireErrorCodes() {
   ];
   
   for (const errorCode of errorCodes) {
-    await prisma.tireErrorCode.create({
+    await prisma.tire_error_code.create({
       data: errorCode
     });
   }

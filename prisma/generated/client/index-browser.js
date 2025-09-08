@@ -323,6 +323,7 @@ exports.Prisma.TripScalarFieldEnum = {
 
 exports.Prisma.TruckScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   vin: 'vin',
   name: 'name',
   model: 'model',

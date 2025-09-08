@@ -4238,7 +4238,7 @@ export namespace Prisma {
 
   export type Daily_routeGroupByOutputType = {
     id: string
-    truck_id: string
+    truck_id: string | null
     route_date: Date
     point_count: number
     generated_at: Date
@@ -4271,7 +4271,7 @@ export namespace Prisma {
     point_count?: boolean
     generated_at?: boolean
     created_by?: boolean
-    truck?: boolean | truckDefaultArgs<ExtArgs>
+    truck?: boolean | daily_route$truckArgs<ExtArgs>
   }, ExtArgs["result"]["daily_route"]>
 
 
@@ -4285,17 +4285,17 @@ export namespace Prisma {
   }
 
   export type daily_routeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    truck?: boolean | truckDefaultArgs<ExtArgs>
+    truck?: boolean | daily_route$truckArgs<ExtArgs>
   }
 
   export type $daily_routePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "daily_route"
     objects: {
-      truck: Prisma.$truckPayload<ExtArgs>
+      truck: Prisma.$truckPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      truck_id: string
+      truck_id: string | null
       route_date: Date
       point_count: number
       generated_at: Date
@@ -4593,7 +4593,7 @@ export namespace Prisma {
    */
   export interface Prisma__daily_routeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    truck<T extends truckDefaultArgs<ExtArgs> = {}>(args?: Subset<T, truckDefaultArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    truck<T extends daily_route$truckArgs<ExtArgs> = {}>(args?: Subset<T, daily_route$truckArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4870,6 +4870,21 @@ export namespace Prisma {
      * Filter which daily_routes to delete
      */
     where?: daily_routeWhereInput
+  }
+
+  /**
+   * daily_route.truck
+   */
+  export type daily_route$truckArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the truck
+     */
+    select?: truckSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: truckInclude<ExtArgs> | null
+    where?: truckWhereInput
   }
 
   /**
@@ -22531,6 +22546,7 @@ export namespace Prisma {
 
   export type TruckMinAggregateOutputType = {
     id: string | null
+    code: string | null
     vin: string | null
     name: string | null
     model: string | null
@@ -22544,6 +22560,7 @@ export namespace Prisma {
 
   export type TruckMaxAggregateOutputType = {
     id: string | null
+    code: string | null
     vin: string | null
     name: string | null
     model: string | null
@@ -22557,6 +22574,7 @@ export namespace Prisma {
 
   export type TruckCountAggregateOutputType = {
     id: number
+    code: number
     vin: number
     name: number
     model: number
@@ -22580,6 +22598,7 @@ export namespace Prisma {
 
   export type TruckMinAggregateInputType = {
     id?: true
+    code?: true
     vin?: true
     name?: true
     model?: true
@@ -22593,6 +22612,7 @@ export namespace Prisma {
 
   export type TruckMaxAggregateInputType = {
     id?: true
+    code?: true
     vin?: true
     name?: true
     model?: true
@@ -22606,6 +22626,7 @@ export namespace Prisma {
 
   export type TruckCountAggregateInputType = {
     id?: true
+    code?: true
     vin?: true
     name?: true
     model?: true
@@ -22706,6 +22727,7 @@ export namespace Prisma {
 
   export type TruckGroupByOutputType = {
     id: string
+    code: string | null
     vin: string | null
     name: string | null
     model: string | null
@@ -22738,6 +22760,7 @@ export namespace Prisma {
 
   export type truckSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    code?: boolean
     vin?: boolean
     name?: boolean
     model?: boolean
@@ -22768,6 +22791,7 @@ export namespace Prisma {
 
   export type truckSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    code?: boolean
     vin?: boolean
     name?: boolean
     model?: boolean
@@ -22782,6 +22806,7 @@ export namespace Prisma {
 
   export type truckSelectScalar = {
     id?: boolean
+    code?: boolean
     vin?: boolean
     name?: boolean
     model?: boolean
@@ -22838,6 +22863,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      code: string | null
       vin: string | null
       name: string | null
       model: string | null
@@ -23257,6 +23283,7 @@ export namespace Prisma {
    */ 
   interface truckFieldRefs {
     readonly id: FieldRef<"truck", 'String'>
+    readonly code: FieldRef<"truck", 'String'>
     readonly vin: FieldRef<"truck", 'String'>
     readonly name: FieldRef<"truck", 'String'>
     readonly model: FieldRef<"truck", 'String'>
@@ -26141,6 +26168,7 @@ export namespace Prisma {
 
   export const TruckScalarFieldEnum: {
     id: 'id',
+    code: 'code',
     vin: 'vin',
     name: 'name',
     model: 'model',
@@ -26426,17 +26454,17 @@ export namespace Prisma {
     OR?: daily_routeWhereInput[]
     NOT?: daily_routeWhereInput | daily_routeWhereInput[]
     id?: UuidFilter<"daily_route"> | string
-    truck_id?: UuidFilter<"daily_route"> | string
+    truck_id?: UuidNullableFilter<"daily_route"> | string | null
     route_date?: DateTimeFilter<"daily_route"> | Date | string
     point_count?: IntFilter<"daily_route"> | number
     generated_at?: DateTimeFilter<"daily_route"> | Date | string
     created_by?: UuidNullableFilter<"daily_route"> | string | null
-    truck?: XOR<TruckRelationFilter, truckWhereInput>
+    truck?: XOR<TruckNullableRelationFilter, truckWhereInput> | null
   }
 
   export type daily_routeOrderByWithRelationInput = {
     id?: SortOrder
-    truck_id?: SortOrder
+    truck_id?: SortOrderInput | SortOrder
     route_date?: SortOrder
     point_count?: SortOrder
     generated_at?: SortOrder
@@ -26450,17 +26478,17 @@ export namespace Prisma {
     AND?: daily_routeWhereInput | daily_routeWhereInput[]
     OR?: daily_routeWhereInput[]
     NOT?: daily_routeWhereInput | daily_routeWhereInput[]
-    truck_id?: UuidFilter<"daily_route"> | string
+    truck_id?: UuidNullableFilter<"daily_route"> | string | null
     route_date?: DateTimeFilter<"daily_route"> | Date | string
     point_count?: IntFilter<"daily_route"> | number
     generated_at?: DateTimeFilter<"daily_route"> | Date | string
     created_by?: UuidNullableFilter<"daily_route"> | string | null
-    truck?: XOR<TruckRelationFilter, truckWhereInput>
+    truck?: XOR<TruckNullableRelationFilter, truckWhereInput> | null
   }, "id" | "truck_id_route_date">
 
   export type daily_routeOrderByWithAggregationInput = {
     id?: SortOrder
-    truck_id?: SortOrder
+    truck_id?: SortOrderInput | SortOrder
     route_date?: SortOrder
     point_count?: SortOrder
     generated_at?: SortOrder
@@ -26477,7 +26505,7 @@ export namespace Prisma {
     OR?: daily_routeScalarWhereWithAggregatesInput[]
     NOT?: daily_routeScalarWhereWithAggregatesInput | daily_routeScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"daily_route"> | string
-    truck_id?: UuidWithAggregatesFilter<"daily_route"> | string
+    truck_id?: UuidNullableWithAggregatesFilter<"daily_route"> | string | null
     route_date?: DateTimeWithAggregatesFilter<"daily_route"> | Date | string
     point_count?: IntWithAggregatesFilter<"daily_route"> | number
     generated_at?: DateTimeWithAggregatesFilter<"daily_route"> | Date | string
@@ -27721,6 +27749,7 @@ export namespace Prisma {
     OR?: truckWhereInput[]
     NOT?: truckWhereInput | truckWhereInput[]
     id?: UuidFilter<"truck"> | string
+    code?: StringNullableFilter<"truck"> | string | null
     vin?: StringNullableFilter<"truck"> | string | null
     name?: StringNullableFilter<"truck"> | string | null
     model?: StringNullableFilter<"truck"> | string | null
@@ -27750,6 +27779,7 @@ export namespace Prisma {
 
   export type truckOrderByWithRelationInput = {
     id?: SortOrder
+    code?: SortOrderInput | SortOrder
     vin?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
     model?: SortOrderInput | SortOrder
@@ -27779,6 +27809,7 @@ export namespace Prisma {
 
   export type truckWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    code?: string
     vin?: string
     AND?: truckWhereInput | truckWhereInput[]
     OR?: truckWhereInput[]
@@ -27807,10 +27838,11 @@ export namespace Prisma {
     trip?: TripListRelationFilter
     fleet_group?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
     truck_status_event?: Truck_status_eventListRelationFilter
-  }, "id" | "vin">
+  }, "id" | "code" | "vin">
 
   export type truckOrderByWithAggregationInput = {
     id?: SortOrder
+    code?: SortOrderInput | SortOrder
     vin?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
     model?: SortOrderInput | SortOrder
@@ -27832,6 +27864,7 @@ export namespace Prisma {
     OR?: truckScalarWhereWithAggregatesInput[]
     NOT?: truckScalarWhereWithAggregatesInput | truckScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"truck"> | string
+    code?: StringNullableWithAggregatesFilter<"truck"> | string | null
     vin?: StringNullableWithAggregatesFilter<"truck"> | string | null
     name?: StringNullableWithAggregatesFilter<"truck"> | string | null
     model?: StringNullableWithAggregatesFilter<"truck"> | string | null
@@ -28058,12 +28091,12 @@ export namespace Prisma {
     point_count?: IntFieldUpdateOperationsInput | number
     generated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    truck?: truckUpdateOneRequiredWithoutDaily_routeNestedInput
+    truck?: truckUpdateOneWithoutDaily_routeNestedInput
   }
 
   export type daily_routeUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    truck_id?: StringFieldUpdateOperationsInput | string
+    truck_id?: NullableStringFieldUpdateOperationsInput | string | null
     route_date?: DateTimeFieldUpdateOperationsInput | Date | string
     point_count?: IntFieldUpdateOperationsInput | number
     generated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28080,7 +28113,7 @@ export namespace Prisma {
 
   export type daily_routeUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    truck_id?: StringFieldUpdateOperationsInput | string
+    truck_id?: NullableStringFieldUpdateOperationsInput | string | null
     route_date?: DateTimeFieldUpdateOperationsInput | Date | string
     point_count?: IntFieldUpdateOperationsInput | number
     generated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29302,6 +29335,7 @@ export namespace Prisma {
 
   export type truckCreateInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -29330,6 +29364,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -29358,6 +29393,7 @@ export namespace Prisma {
 
   export type truckUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29386,6 +29422,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29414,6 +29451,7 @@ export namespace Prisma {
 
   export type truckCreateManyInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -29427,6 +29465,7 @@ export namespace Prisma {
 
   export type truckUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29439,6 +29478,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29840,6 +29880,11 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type TruckNullableRelationFilter = {
+    is?: truckWhereInput | null
+    isNot?: truckWhereInput | null
+  }
+
   export type daily_routeTruck_idRoute_dateCompoundUniqueInput = {
     truck_id: string
     route_date: Date | string
@@ -30158,11 +30203,6 @@ export namespace Prisma {
   export type DeviceNullableRelationFilter = {
     is?: deviceWhereInput | null
     isNot?: deviceWhereInput | null
-  }
-
-  export type TruckNullableRelationFilter = {
-    is?: truckWhereInput | null
-    isNot?: truckWhereInput | null
   }
 
   export type device_truck_assignmentCountOrderByAggregateInput = {
@@ -30990,6 +31030,7 @@ export namespace Prisma {
 
   export type truckCountOrderByAggregateInput = {
     id?: SortOrder
+    code?: SortOrder
     vin?: SortOrder
     name?: SortOrder
     model?: SortOrder
@@ -31007,6 +31048,7 @@ export namespace Prisma {
 
   export type truckMaxOrderByAggregateInput = {
     id?: SortOrder
+    code?: SortOrder
     vin?: SortOrder
     name?: SortOrder
     model?: SortOrder
@@ -31020,6 +31062,7 @@ export namespace Prisma {
 
   export type truckMinOrderByAggregateInput = {
     id?: SortOrder
+    code?: SortOrder
     vin?: SortOrder
     name?: SortOrder
     model?: SortOrder
@@ -31162,10 +31205,12 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type truckUpdateOneRequiredWithoutDaily_routeNestedInput = {
+  export type truckUpdateOneWithoutDaily_routeNestedInput = {
     create?: XOR<truckCreateWithoutDaily_routeInput, truckUncheckedCreateWithoutDaily_routeInput>
     connectOrCreate?: truckCreateOrConnectWithoutDaily_routeInput
     upsert?: truckUpsertWithoutDaily_routeInput
+    disconnect?: truckWhereInput | boolean
+    delete?: truckWhereInput | boolean
     connect?: truckWhereUniqueInput
     update?: XOR<XOR<truckUpdateToOneWithWhereWithoutDaily_routeInput, truckUpdateWithoutDaily_routeInput>, truckUncheckedUpdateWithoutDaily_routeInput>
   }
@@ -32977,6 +33022,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutAlert_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33004,6 +33050,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutAlert_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33047,6 +33094,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutAlert_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33074,6 +33122,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutAlert_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33101,6 +33150,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutDaily_routeInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33128,6 +33178,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutDaily_routeInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33171,6 +33222,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutDaily_routeInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33198,6 +33250,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutDaily_routeInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33225,6 +33278,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutDeviceInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33252,6 +33306,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutDeviceInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33481,6 +33536,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33508,6 +33564,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33781,6 +33838,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutDevice_status_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33808,6 +33866,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutDevice_status_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -33896,6 +33955,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutDevice_status_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33923,6 +33983,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutDevice_status_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34047,6 +34108,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutDevice_truck_assignmentInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34074,6 +34136,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutDevice_truck_assignmentInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34232,6 +34295,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutDevice_truck_assignmentInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34259,6 +34323,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutDevice_truck_assignmentInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34286,6 +34351,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutFleet_groupInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34313,6 +34379,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutFleet_groupInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34369,6 +34436,7 @@ export namespace Prisma {
     OR?: truckScalarWhereInput[]
     NOT?: truckScalarWhereInput | truckScalarWhereInput[]
     id?: UuidFilter<"truck"> | string
+    code?: StringNullableFilter<"truck"> | string | null
     vin?: StringNullableFilter<"truck"> | string | null
     name?: StringNullableFilter<"truck"> | string | null
     model?: StringNullableFilter<"truck"> | string | null
@@ -34382,6 +34450,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutFuel_level_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34409,6 +34478,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutFuel_level_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34452,6 +34522,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutFuel_level_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34479,6 +34550,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutFuel_level_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34590,6 +34662,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutGps_positionInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34617,6 +34690,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutGps_positionInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34660,6 +34734,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutGps_positionInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34687,6 +34762,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutGps_positionInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34753,6 +34829,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutHub_temperature_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34780,6 +34857,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutHub_temperature_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34868,6 +34946,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutHub_temperature_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34895,6 +34974,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutHub_temperature_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34961,6 +35041,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutLock_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -34988,6 +35069,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutLock_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35076,6 +35158,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutLock_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35103,6 +35186,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutLock_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35214,6 +35298,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutSensor_data_rawInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35241,6 +35326,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutSensor_data_rawInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35314,6 +35400,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutSensor_data_rawInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35341,6 +35428,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutSensor_data_rawInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35462,6 +35550,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutSpeed_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35489,6 +35578,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutSpeed_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35532,6 +35622,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutSpeed_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35559,6 +35650,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutSpeed_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35586,6 +35678,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutTire_position_configInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35613,6 +35706,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutTire_position_configInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35656,6 +35750,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutTire_position_configInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35683,6 +35778,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutTire_position_configInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35749,6 +35845,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutTire_pressure_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35776,6 +35873,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutTire_pressure_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35864,6 +35962,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutTire_pressure_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35891,6 +35990,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutTire_pressure_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35918,6 +36018,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutTripInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35945,6 +36046,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutTripInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -35988,6 +36090,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutTripInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36015,6 +36118,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutTripInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36500,7 +36604,7 @@ export namespace Prisma {
     OR?: daily_routeScalarWhereInput[]
     NOT?: daily_routeScalarWhereInput | daily_routeScalarWhereInput[]
     id?: UuidFilter<"daily_route"> | string
-    truck_id?: UuidFilter<"daily_route"> | string
+    truck_id?: UuidNullableFilter<"daily_route"> | string | null
     route_date?: DateTimeFilter<"daily_route"> | Date | string
     point_count?: IntFilter<"daily_route"> | number
     generated_at?: DateTimeFilter<"daily_route"> | Date | string
@@ -36830,6 +36934,7 @@ export namespace Prisma {
 
   export type truckCreateWithoutTruck_status_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -36857,6 +36962,7 @@ export namespace Prisma {
 
   export type truckUncheckedCreateWithoutTruck_status_eventInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -36900,6 +37006,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutTruck_status_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36927,6 +37034,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutTruck_status_eventInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37328,6 +37436,7 @@ export namespace Prisma {
 
   export type truckCreateManyFleet_groupInput = {
     id?: string
+    code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
@@ -37340,6 +37449,7 @@ export namespace Prisma {
 
   export type truckUpdateWithoutFleet_groupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37367,6 +37477,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateWithoutFleet_groupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37394,6 +37505,7 @@ export namespace Prisma {
 
   export type truckUncheckedUpdateManyWithoutFleet_groupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null

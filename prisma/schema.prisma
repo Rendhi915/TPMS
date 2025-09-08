@@ -25,13 +25,13 @@ model alert_event {
 
 model daily_route {
   id           String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id     String                   @db.Uuid
+  truck_id     String?                  @db.Uuid
   route_date   DateTime                 @db.Date
   geom         Unsupported("geography")
   point_count  Int
   generated_at DateTime                 @default(now()) @db.Timestamptz(6)
   created_by   String?                  @db.Uuid
-  truck        truck                    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  truck        truck?                   @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([truck_id, route_date])
 }
@@ -292,6 +292,7 @@ model trip {
 
 model truck {
   id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code                    String?                   @unique @db.VarChar(4)
   vin                     String?                   @unique
   name                    String?
   model                   String?

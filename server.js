@@ -590,34 +590,31 @@ class WebSocketServer {
   async getDashboardData() {
     if (!this.isReady) throw new Error('Database not ready');
 
-    const [
-      totalTrucks,
-      activeTrucks,
-      unresolvedAlerts,
-      recentMaintenances
-    ] = await Promise.all([
-      prismaService.prisma.truck.count(),
-      prismaService.prisma.truck.count({
-        where: {
-          truckStatusEvents: {
-            some: {
-              status: 'active'
-            }
-          }
-        }
-      }),
-      prismaService.prisma.alertEvent.count({
-        where: { acknowledged: false }
-      }),
-      // Skip maintenance records if table doesn't exist
-      0
-    ]);
+    // Total trucks
+    const totalTrucks = await prismaService.prisma.truck.count();
+
+    // Determine active trucks from recent GPS positions (last 30 minutes)
+    const recentPositions = await prismaService.prisma.gps_position.findMany({
+      where: {
+        ts: { gte: new Date(Date.now() - 30 * 60 * 1000) }
+      },
+      select: { truck_id: true, speed_kph: true },
+      distinct: ['truck_id']
+    });
+    const activeTrucks = recentPositions.filter(p => (p.speed_kph || 0) > 5).length;
+
+    // Unresolved alerts (use correct model name alert_event)
+    const unresolvedAlerts = await prismaService.prisma.alert_event.count({
+      where: { acknowledged: false }
+    });
+
+    const recentMaintenances = 0; // No maintenance table in current schema
 
     return {
       fleet: {
         total: totalTrucks,
         active: activeTrucks,
-        inactive: totalTrucks - activeTrucks
+        inactive: Math.max(0, totalTrucks - activeTrucks)
       },
       alerts: {
         unresolved: unresolvedAlerts

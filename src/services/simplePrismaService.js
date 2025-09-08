@@ -316,7 +316,7 @@ class SimplePrismaService {
 
       const averageFuel = recentFuelEvents.length > 0 
         ? recentFuelEvents.reduce((sum, event) => sum + (event.fuel_percent || 0), 0) / recentFuelEvents.length
-        : 75.0;
+        : 0.0;
 
       // Count low tire pressure alerts
       const lowTirePressureCount = await this.prisma.tire_pressure_event.count({

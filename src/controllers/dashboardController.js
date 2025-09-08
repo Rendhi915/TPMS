@@ -94,55 +94,32 @@ const getAlertSummary = async (req, res) => {
 
     const [alertStats, severityBreakdown, topAlertTypes] = await Promise.all([
       // Total alerts in time range
-      prismaService.prisma.truckAlert.count({
+      prismaService.prisma.alert_event.count({
         where: {
-          createdAt: {
-            gte: since
-          }
+          occurred_at: { gte: since }
         }
       }),
-      
-      // Breakdown by severity
-      prismaService.prisma.truckAlert.groupBy({
+      // Breakdown by severity (numeric severity)
+      prismaService.prisma.alert_event.groupBy({
         by: ['severity'],
         where: {
-          createdAt: {
-            gte: since
-          }
+          occurred_at: { gte: since }
         },
-        _count: {
-          _all: true
-        }
+        _count: { _all: true }
       }),
-      
-      // Top alert types
-      prismaService.prisma.truckAlert.groupBy({
-        by: ['alertType'],
-        where: {
-          createdAt: {
-            gte: since
-          }
-        },
-        _count: true,
-        orderBy: {
-          _count: {
-            alertType: 'desc'
-          }
-        }
-      }).then(results => results.slice(0, 5))
+      // Top alert types (sort in JS due to Prisma groupBy orderBy limitations)
+      prismaService.prisma.alert_event.groupBy({
+        by: ['type'],
+        where: { occurred_at: { gte: since } },
+        _count: { _all: true }
+      }).then(results => results.sort((a, b) => (b._count._all || 0) - (a._count._all || 0)).slice(0, 5))
     ]);
 
-    // Format severity breakdown
-    const severityMap = {
-      low: 0,
-      medium: 0,
-      high: 0,
-      critical: 0
-    };
-
+    // Format severity breakdown (keep numeric keys if severities are numeric, or map to buckets if desired)
+    const severityMap = {};
     severityBreakdown.forEach(item => {
-      const severity = item.severity.toLowerCase();
-      severityMap[severity] = item._count._all;
+      const key = item.severity == null ? 'unknown' : String(item.severity);
+      severityMap[key] = item._count._all;
     });
 
     res.status(200).json({
@@ -152,8 +129,8 @@ const getAlertSummary = async (req, res) => {
         totalAlerts: alertStats,
         severityBreakdown: severityMap,
         topAlertTypes: topAlertTypes.map(item => ({
-          type: item.alertType,
-          count: item._count.alertType
+          type: item.type,
+          count: item._count._all
         })),
         generatedAt: new Date().toISOString()
       },
@@ -172,100 +149,71 @@ const getAlertSummary = async (req, res) => {
 
 const getFuelReport = async (req, res) => {
   try {
-    const [fuelStats, lowFuelTrucks, fuelTrends] = await Promise.all([
-      // Overall fuel statistics
-      prismaService.prisma.truck.aggregate({
-        where: {
-          status: 'active'
-        },
-        _avg: {
-          fuelPercentage: true
-        },
-        _min: {
-          fuelPercentage: true
-        },
-        _max: {
-          fuelPercentage: true
-        }
-      }),
-      
-      // Trucks with low fuel
-      prismaService.prisma.truck.findMany({
-        where: {
-          status: 'active',
-          fuelPercentage: {
-            lt: 25 // Less than 25%
-          }
-        },
-        select: {
-          id: true,
-          truckNumber: true,
-          fuelPercentage: true,
-          driverName: true,
-          updatedAt: true
-        },
-        orderBy: {
-          fuelPercentage: 'asc'
-        }
-      }),
-      
-      // Fuel consumption trends (last 7 days)
+    // Time window for fuel analytics
+    const now = new Date();
+    const since24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const [fuelAggRows, latestFuelRows, fuelTrends] = await Promise.all([
+      // Overall fuel statistics from recent events
+      prismaService.prisma.$queryRaw`
+        SELECT 
+          AVG(fuel_percent) AS avg_fuel,
+          MIN(fuel_percent) AS min_fuel,
+          MAX(fuel_percent) AS max_fuel
+        FROM fuel_level_event
+        WHERE changed_at >= ${since24h}
+      `,
+      // Latest fuel per truck in the last 24h using DISTINCT ON (Postgres)
+      prismaService.prisma.$queryRaw`
+        SELECT DISTINCT ON (fle.truck_id)
+          fle.truck_id,
+          fle.fuel_percent,
+          fle.changed_at,
+          t.name AS truck_name
+        FROM fuel_level_event fle
+        JOIN truck t ON t.id = fle.truck_id
+        WHERE fle.changed_at >= ${since24h}
+        ORDER BY fle.truck_id, fle.changed_at DESC
+      `,
+      // Fuel consumption trends (placeholder/mocked as before)
       getFuelConsumptionTrend()
     ]);
 
-    // Calculate fuel distribution
-    const fuelRanges = await prismaService.prisma.truck.groupBy({
-      by: [],
-      where: {
-        status: 'active'
-      },
-      _count: {
-        _all: true
-      }
-    });
-
-    // Get fuel distribution by ranges
-    const distributionQuery = await prismaService.prisma.$queryRaw`
-      SELECT 
-        CASE 
-          WHEN fuel_percentage >= 75 THEN 'high'
-          WHEN fuel_percentage >= 50 THEN 'medium'
-          WHEN fuel_percentage >= 25 THEN 'low'
-          ELSE 'critical'
-        END as fuel_range,
-        COUNT(*) as count
-      FROM trucks 
-      WHERE status = 'active'
-      GROUP BY fuel_range
-    `;
-
-    const distribution = {
-      high: 0,    // 75-100%
-      medium: 0,  // 50-74%
-      low: 0,     // 25-49%
-      critical: 0 // 0-24%
+    const agg = Array.isArray(fuelAggRows) && fuelAggRows.length ? fuelAggRows[0] : { avg_fuel: null, min_fuel: null, max_fuel: null };
+    const overview = {
+      averageFuel: agg.avg_fuel != null ? parseFloat(agg.avg_fuel) : 0,
+      minFuel: agg.min_fuel != null ? parseFloat(agg.min_fuel) : 0,
+      maxFuel: agg.max_fuel != null ? parseFloat(agg.max_fuel) : 0
     };
 
-    distributionQuery.forEach(row => {
-      distribution[row.fuel_range] = parseInt(row.count);
+    // Distribution by ranges from latest readings
+    const distribution = { high: 0, medium: 0, low: 0, critical: 0 };
+    latestFuelRows.forEach(row => {
+      const v = parseFloat(row.fuel_percent || 0);
+      if (v >= 75) distribution.high += 1;
+      else if (v >= 50) distribution.medium += 1;
+      else if (v >= 25) distribution.low += 1;
+      else distribution.critical += 1;
     });
+
+    // Low fuel trucks from latest readings (< 25%)
+    const lowFuelTrucks = latestFuelRows
+      .filter(row => (row.fuel_percent || 0) < 25)
+      .sort((a, b) => (a.fuel_percent || 0) - (b.fuel_percent || 0))
+      .map(row => ({
+        id: row.truck_id,
+        truckNumber: row.truck_name,
+        fuel: row.fuel_percent != null ? parseFloat(row.fuel_percent) : 0,
+        driver: null,
+        lastUpdate: row.changed_at
+      }));
 
     res.status(200).json({
       success: true,
       data: {
-        overview: {
-          averageFuel: parseFloat(fuelStats._avg.fuelPercentage) || 0,
-          minFuel: parseFloat(fuelStats._min.fuelPercentage) || 0,
-          maxFuel: parseFloat(fuelStats._max.fuelPercentage) || 0
-        },
+        overview,
         distribution,
-        lowFuelTrucks: lowFuelTrucks.map(truck => ({
-          id: truck.id,
-          truckNumber: truck.truckNumber,
-          fuel: parseFloat(truck.fuelPercentage),
-          driver: truck.driverName,
-          lastUpdate: truck.updatedAt
-        })),
+        lowFuelTrucks,
         trends: fuelTrends,
         generatedAt: new Date().toISOString()
       },
@@ -284,107 +232,37 @@ const getFuelReport = async (req, res) => {
 
 const getMaintenanceReport = async (req, res) => {
   try {
-    const today = new Date();
-    const nextWeek = new Date();
-    nextWeek.setDate(today.getDate() + 7);
-    
-    const nextMonth = new Date();
-    nextMonth.setDate(today.getDate() + 30);
+    // In current schema there is no maintenance table or fields on truck.
+    // We'll derive status breakdown from the latest truck_status_event per truck
+    // and return empty arrays for overdue/upcoming placeholders.
 
-    const [overdueMaintenance, upcomingMaintenance, maintenanceStats] = await Promise.all([
-      // Overdue maintenance
-      prismaService.prisma.truck.findMany({
-        where: {
-          lastMaintenance: {
-            lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago
-          }
-        },
-        select: {
-          id: true,
-          truckNumber: true,
-          lastMaintenance: true,
-          status: true,
-          model: {
-            select: {
-              name: true
-            }
-          }
-        },
-        orderBy: {
-          lastMaintenance: 'asc'
-        }
-      }),
-      
-      // Upcoming maintenance (based on engine hours)
-      prismaService.prisma.truck.findMany({
-        where: {
-          status: 'active',
-          engineHours: {
-            gte: 8000 // High engine hours
-          }
-        },
-        select: {
-          id: true,
-          truckNumber: true,
-          engineHours: true,
-          lastMaintenance: true,
-          model: {
-            select: {
-              name: true
-            }
-          }
-        },
-        orderBy: {
-          engineHours: 'desc'
-        },
-        take: 20
-      }),
-      
-      // Maintenance statistics
-      prismaService.prisma.truck.groupBy({
-        by: ['status'],
-        _count: {
-          _all: true
-        }
-      })
-    ]);
+    const latestStatusCounts = await prismaService.prisma.$queryRaw`
+      SELECT tse.status, COUNT(*) AS count
+      FROM (
+        SELECT DISTINCT ON (truck_id) truck_id, status, changed_at
+        FROM truck_status_event
+        ORDER BY truck_id, changed_at DESC
+      ) tse
+      GROUP BY tse.status
+    `;
 
-    const statusBreakdown = {
-      active: 0,
-      maintenance: 0,
-      inactive: 0
-    };
-
-    maintenanceStats.forEach(stat => {
-      statusBreakdown[stat.status] = stat._count._all;
+    const statusBreakdown = { active: 0, inactive: 0, maintenance: 0 };
+    (latestStatusCounts || []).forEach(row => {
+      const key = String(row.status);
+      const cnt = parseInt(row.count || 0);
+      if (key in statusBreakdown) statusBreakdown[key] = cnt;
     });
 
     res.status(200).json({
       success: true,
       data: {
         statusBreakdown,
-        overdueMaintenance: overdueMaintenance.map(truck => ({
-          id: truck.id,
-          truckNumber: truck.truckNumber,
-          model: truck.model?.name,
-          lastMaintenance: truck.lastMaintenance,
-          daysSinceLastMaintenance: truck.lastMaintenance ? 
-            Math.floor((today - new Date(truck.lastMaintenance)) / (1000 * 60 * 60 * 24)) : null,
-          status: truck.status
-        })),
-        upcomingMaintenance: upcomingMaintenance.map(truck => ({
-          id: truck.id,
-          truckNumber: truck.truckNumber,
-          model: truck.model?.name,
-          engineHours: truck.engineHours,
-          lastMaintenance: truck.lastMaintenance,
-          priority: truck.engineHours > 9000 ? 'high' : 'medium'
-        })),
+        overdueMaintenance: [],
+        upcomingMaintenance: [],
         generatedAt: new Date().toISOString()
       },
       message: 'Maintenance report generated successfully'
     });
-
   } catch (error) {
     console.error('Error in getMaintenanceReport:', error);
     res.status(500).json({
@@ -394,75 +272,71 @@ const getMaintenanceReport = async (req, res) => {
     });
   }
 };
-
-// ==========================================
 // HELPER FUNCTIONS
 // ==========================================
 
 async function getRecentAlerts() {
-  const alerts = await prismaService.prisma.truckAlert.findMany({
+  const alerts = await prismaService.prisma.alert_event.findMany({
     where: {
-      isResolved: false,
-      createdAt: {
-        gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
+      acknowledged: false,
+      occurred_at: {
+        gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
       }
     },
     include: {
       truck: {
-        select: {
-          truckNumber: true
-        }
+        select: { name: true }
       }
     },
-    orderBy: {
-      createdAt: 'desc'
-    },
+    orderBy: { occurred_at: 'desc' },
     take: 10
   });
 
   return alerts.map(alert => ({
     id: alert.id,
-    type: alert.alertType,
+    type: alert.type,
     severity: alert.severity,
-    message: alert.message,
-    truckNumber: alert.truck.truckNumber,
-    createdAt: alert.createdAt
+    message: alert.detail?.message || null,
+    truckName: alert.truck?.name || null,
+    createdAt: alert.occurred_at
   }));
 }
 
 async function getFuelAnalytics() {
-  const result = await prismaService.prisma.$queryRaw`
+  // Use recent fuel events (last 24h)
+  const rows = await prismaService.prisma.$queryRaw`
     SELECT 
-      AVG(fuel_percentage) as avg_fuel,
-      COUNT(CASE WHEN fuel_percentage < 25 THEN 1 END) as low_fuel_count,
-      COUNT(CASE WHEN fuel_percentage < 10 THEN 1 END) as critical_fuel_count
-    FROM trucks 
-    WHERE status = 'active'
+      AVG(fuel_percent) AS avg_fuel,
+      COUNT(CASE WHEN fuel_percent < 25 THEN 1 END) AS low_fuel_count,
+      COUNT(CASE WHEN fuel_percent < 10 THEN 1 END) AS critical_fuel_count
+    FROM fuel_level_event
+    WHERE changed_at >= NOW() - INTERVAL '24 hours'
   `;
 
+  const r = Array.isArray(rows) && rows.length ? rows[0] : { avg_fuel: null, low_fuel_count: 0, critical_fuel_count: 0 };
   return {
-    averageFuel: parseFloat(result[0].avg_fuel) || 0,
-    lowFuelCount: parseInt(result[0].low_fuel_count),
-    criticalFuelCount: parseInt(result[0].critical_fuel_count)
+    averageFuel: r.avg_fuel != null ? parseFloat(r.avg_fuel) : 0,
+    lowFuelCount: parseInt(r.low_fuel_count || 0),
+    criticalFuelCount: parseInt(r.critical_fuel_count || 0)
   };
 }
 
 async function getFleetPerformanceMetrics() {
-  const result = await prismaService.prisma.$queryRaw`
+  // Compute from recent GPS positions (last 1h). Payload not tracked in current schema.
+  const rows = await prismaService.prisma.$queryRaw`
     SELECT 
-      AVG(speed) as avg_speed,
-      MAX(speed) as max_speed,
-      AVG(payload_tons) as avg_payload,
-      SUM(payload_tons) as total_payload
-    FROM trucks 
-    WHERE status = 'active'
+      AVG(speed_kph) AS avg_speed,
+      MAX(speed_kph) AS max_speed
+    FROM gps_position
+    WHERE ts >= NOW() - INTERVAL '1 hour'
   `;
 
+  const r = Array.isArray(rows) && rows.length ? rows[0] : { avg_speed: null, max_speed: null };
   return {
-    averageSpeed: parseFloat(result[0].avg_speed) || 0,
-    maxSpeed: parseFloat(result[0].max_speed) || 0,
-    averagePayload: parseFloat(result[0].avg_payload) || 0,
-    totalPayload: parseFloat(result[0].total_payload) || 0
+    averageSpeed: r.avg_speed != null ? parseFloat(r.avg_speed) : 0,
+    maxSpeed: r.max_speed != null ? parseFloat(r.max_speed) : 0,
+    averagePayload: 0,
+    totalPayload: 0
   };
 }
 

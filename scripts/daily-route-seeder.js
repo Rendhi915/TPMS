@@ -152,7 +152,7 @@ async function seedDailyRoutes() {
               INSERT INTO daily_route (id, truck_id, route_date, geom, point_count, generated_at)
               VALUES (
                 gen_random_uuid(),
-                ${truck.id}::uuid,
+                ${truck.id},
                 ${date}::date,
                 ST_GeogFromText(${lineString}),
                 ${pointCount},
