@@ -4,10 +4,17 @@ Base URL: `http://localhost:3001`
 
 ## Authentication
 
-All endpoints (except login) require JWT authentication. Include the token in the Authorization header:
+Most endpoints require JWT authentication. Include the token in the Authorization header:
 ```
 Authorization: Bearer <your_jwt_token>
 ```
+
+Exceptions (no auth required):
+- `POST /api/sensors/tpdata`
+- `POST /api/sensors/hubdata`
+- `POST /api/sensors/device`
+- `POST /api/sensors/state`
+- `POST /api/sensors/raw`
 
 ### Get JWT Token
 ```http
@@ -45,10 +52,30 @@ Authorization: Bearer <token>
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 50)
 - `search` (optional): Search by truck name or model
+- `vendor` (optional): Filter by vendor name (e.g., `Vendor-03`)
+- `vendorId` (optional): Filter by vendor (fleet_group) UUID
+
+Notes:
+- If both `vendor` and `vendorId` are provided, `vendorId` takes precedence.
+- Each truck item includes latest sensor snapshots under `sensors`:
+  - `fuelPercent` (from `fuel_level_event`)
+  - `hubTemperature` (from `hub_temperature_event`)
+  - `tires` array with `pressure`, `temperature`, `battery`, `status`, `lastUpdated`
+  - `batteryAvg` (average battery across tires)
 
 **Example:**
 ```http
 GET /api/trucks?page=1&limit=10&search=Truck-001
+```
+
+**Filter by vendor name:**
+```http
+GET /api/trucks?vendor=Vendor-03&limit=20
+```
+
+**Filter by vendor UUID:**
+```http
+GET /api/trucks?vendorId=3f1c1c57-8c2e-4a9e-9d0b-3f7c5dd2a7b1&limit=20
 ```
 
 ### 2. Get Real-time Truck Locations (GeoJSON)
@@ -199,70 +226,116 @@ Authorization: Bearer <token>
 
 ## Sensor Data Endpoints
 
-### 1. Tire Pressure Data Ingestion
+These endpoints accept JSON payloads. No authentication required.
+
+### 1) Tire Pressure Data Ingestion (tpdata)
 ```http
 POST /api/sensors/tpdata
 Content-Type: application/json
+```
 
+You must provide EITHER a device serial number OR a truck identifier.
+
+- Option A: Using device serial number (recommended if known)
+```json
 {
-  "truckId": "truck-uuid",
-  "tireNo": 1,
-  "pressureKpa": 1200,
-  "tempCelsius": 45,
-  "timestamp": "2024-01-08T10:30:00Z"
+  "sn": "DEVAB123CD4E",
+  "data": {
+    "tireNo": 1,
+    "pressureKpa": 720,
+    "tempCelsius": 36,
+    "bat": 90
+  }
 }
 ```
 
-### 2. Hub Temperature Data Ingestion
+- Option B: Using truck identifier (controller will resolve device or create a virtual SN)
+```json
+{
+  "truckName": "Truck-001",
+  "data": {
+    "tireNo": 2,
+    "pressure": 700,
+    "tempValue": 35,
+    "bat": 88
+  }
+}
+```
+
+Accepted data fields (any): `tiprValue`, `pressureKpa`, or `pressure` for pressure; `tempValue` or `tempCelsius` for temperature; `bat` for battery.
+
+Notes:
+- `cmd` is optional; if provided, it must be `"tpdata"`.
+- If no device is linked to the truck, the backend queues data with a virtual SN like `virtual-Truck-001`.
+
+### 2) Hub Temperature Data Ingestion (hubdata)
 ```http
 POST /api/sensors/hubdata
 Content-Type: application/json
+```
 
+```json
 {
-  "truckId": "truck-uuid",
-  "hubId": "front-left",
-  "temperature": 85,
-  "timestamp": "2024-01-08T10:30:00Z"
+  "sn": "DEVAB123CD4E",
+  "cmd": "hubdata",
+  "data": {
+    "tireNo": 1,
+    "tempValue": 85,
+    "bat": 90
+  }
 }
 ```
 
-### 3. GPS & Device Status Data Ingestion
+### 3) GPS & Device Status Data Ingestion (device)
 ```http
 POST /api/sensors/device
 Content-Type: application/json
+```
 
+```json
 {
-  "truckId": "truck-uuid",
-  "latitude": -6.9175,
-  "longitude": 107.6191,
-  "speed": 45,
-  "heading": 180,
-  "timestamp": "2024-01-08T10:30:00Z"
+  "sn": "DEVAB123CD4E",
+  "cmd": "device",
+  "data": {
+    "lng": 107.6191,
+    "lat": -6.9175,
+    "bat1": 90,
+    "bat2": 80,
+    "bat3": 75,
+    "lock": 0
+  }
 }
 ```
 
-### 4. Lock State Data Ingestion
+### 4) Lock State Data Ingestion (state)
 ```http
 POST /api/sensors/state
 Content-Type: application/json
+```
 
+```json
 {
-  "truckId": "truck-uuid",
-  "lockState": "locked",
-  "timestamp": "2024-01-08T10:30:00Z"
+  "sn": "DEVAB123CD4E",
+  "cmd": "state",
+  "data": {
+    "is_lock": 1
+  }
 }
 ```
 
-### 5. Generic Raw Sensor Data
+### 5) Generic Raw Sensor Data (any type)
 ```http
 POST /api/sensors/raw
 Content-Type: application/json
+```
 
+```json
 {
-  "truckId": "truck-uuid",
-  "sensorType": "custom",
-  "data": {},
-  "timestamp": "2024-01-08T10:30:00Z"
+  "deviceSn": "DEVAB123CD4E",
+  "cmdType": "custom_type",
+  "data": {
+    "any": "payload"
+  }
 }
 ```
 
@@ -276,6 +349,79 @@ Authorization: Bearer <token>
 ```http
 POST /api/sensors/queue/process
 Authorization: Bearer <token>
+```
+
+---
+
+## Vendor/Fleet Group Endpoints
+
+### 1. Get All Vendors
+```http
+GET /api/vendors
+Authorization: Bearer <token>
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "vendor-uuid",
+      "name": "Vendor-01",
+      "description": "Fleet Group 1",
+      "created_at": "2024-01-08T10:30:00Z",
+      "updated_at": "2024-01-08T10:30:00Z",
+      "truck_count": 25
+    }
+  ]
+}
+```
+
+### 2. Get Specific Vendor Details
+```http
+GET /api/vendors/{vendorId}
+Authorization: Bearer <token>
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "vendor-uuid",
+    "name": "Vendor-01",
+    "description": "Fleet Group 1",
+    "created_at": "2024-01-08T10:30:00Z",
+    "updated_at": "2024-01-08T10:30:00Z",
+    "truck_count": 25,
+    "trucks": [
+      {
+        "id": "truck-uuid",
+        "name": "Truck-001",
+        "code": "TRK-001",
+        "model": "Liebherr T282C",
+        "status": "active",
+        "created_at": "2024-01-08T10:30:00Z"
+      }
+    ]
+  }
+}
+```
+
+### 3. Get Trucks for Specific Vendor
+```http
+GET /api/vendors/{vendorId}/trucks
+Authorization: Bearer <token>
+```
+
+**Query Parameters:**
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 50)
+
+**Example:**
+```http
+GET /api/vendors/3f1c1c57-8c2e-4a9e-9d0b-3f7c5dd2a7b1/trucks?page=1&limit=20
 ```
 
 ---

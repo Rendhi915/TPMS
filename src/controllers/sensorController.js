@@ -5,32 +5,102 @@ const { broadcastSensorUpdate } = require('../services/websocketService');
 // SENSOR DATA INGESTION CONTROLLER
 // ==========================================
 
+async function resolveDeviceSnByTruckId(truckId) {
+  if (!truckId) return null;
+  try {
+    const q = `
+      SELECT sn FROM device
+      WHERE truck_id = $1
+      AND (removed_at IS NULL OR removed_at > NOW())
+      ORDER BY installed_at DESC
+      LIMIT 1
+    `;
+    const r = await pool.query(q, [truckId]);
+    return r.rows[0]?.sn || null;
+  } catch (e) {
+    console.log('resolveDeviceSnByTruckId error:', e.message);
+    return null;
+  }
+}
+
+async function resolveTruckIdByAlternateKeys({ truckId, truck_id, truckCode, code, truckName, name }) {
+  // If we already have a UUID, return it
+  if (truckId) return truckId;
+  if (truck_id) return truck_id;
+  try {
+    // Try by code first
+    if (truckCode || code) {
+      const q = `SELECT id FROM truck WHERE code = $1 LIMIT 1`;
+      const r = await pool.query(q, [truckCode || code]);
+      if (r.rows[0]?.id) return r.rows[0].id;
+    }
+    // Then by name
+    if (truckName || name) {
+      const q2 = `SELECT id FROM truck WHERE name = $1 LIMIT 1`;
+      const r2 = await pool.query(q2, [truckName || name]);
+      if (r2.rows[0]?.id) return r2.rows[0].id;
+    }
+  } catch (e) {
+    console.log('resolveTruckIdByAlternateKeys error:', e.message);
+  }
+  return null;
+}
+
 const ingestTirePressureData = async (req, res) => {
   try {
     const sensorData = req.body;
-    
+    const payload = sensorData.data || sensorData; // support both shapes
+
+    // Accept multiple input shapes: { sn, data: {...} } or { deviceSn, ... } or { truckId, ... }
+    let deviceSn = sensorData.sn || sensorData.deviceSn || null;
+    const resolvedTruckId = await resolveTruckIdByAlternateKeys({
+      truckId: sensorData.truckId,
+      truck_id: sensorData.truck_id,
+      truckCode: sensorData.truckCode,
+      code: sensorData.code,
+      truckName: sensorData.truckName,
+      name: sensorData.name
+    });
+    if (!deviceSn && resolvedTruckId) {
+      deviceSn = await resolveDeviceSnByTruckId(resolvedTruckId);
+    }
+
+    if (!deviceSn) {
+      // As a fallback, create a virtual device SN tied to the truckId so data can still be queued
+      if (resolvedTruckId || sensorData.truckId || sensorData.truck_id || sensorData.truckCode || sensorData.code || sensorData.truckName || sensorData.name) {
+        const ident = resolvedTruckId || sensorData.truckId || sensorData.truck_id || sensorData.truckCode || sensorData.code || sensorData.truckName || sensorData.name;
+        deviceSn = `virtual-${ident}`;
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing device serial number (sn). Provide sn/deviceSn or a valid truckId with an assigned device.'
+        });
+      }
+    }
+
     // Insert raw sensor data first
     const rawDataQuery = `
-      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
-      VALUES ($1, 'tpdata', $2, NOW())
+      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at, truck_id)
+      VALUES ($1, 'tpdata', $2, NOW(), $3)
       RETURNING id
     `;
     
     const rawResult = await pool.query(rawDataQuery, [
-      sensorData.sn,
-      JSON.stringify(sensorData)
+      deviceSn,
+      JSON.stringify({ sn: deviceSn, truckId: resolvedTruckId || null, data: payload }),
+      resolvedTruckId || null
     ]);
 
     // Broadcast real-time update via WebSocket
     try {
       broadcastSensorUpdate({
         type: 'tire_pressure',
-        deviceSn: sensorData.sn,
+        deviceSn: deviceSn,
         data: {
-          tireNo: sensorData.data.tireNo,
-          pressure: sensorData.data.tiprValue,
-          temperature: sensorData.data.tempValue,
-          battery: sensorData.data.bat
+          tireNo: payload.tireNo,
+          pressure: payload.tiprValue ?? payload.pressureKpa ?? payload.pressure ?? null,
+          temperature: payload.tempValue ?? payload.tempCelsius ?? null,
+          battery: payload.bat ?? null
         },
         timestamp: new Date().toISOString()
       });
@@ -43,7 +113,7 @@ const ingestTirePressureData = async (req, res) => {
       message: 'Tire pressure data received successfully',
       data: {
         rawDataId: rawResult.rows[0].id,
-        deviceSn: sensorData.sn,
+        deviceSn: deviceSn,
         processingStatus: 'queued'
       }
     });

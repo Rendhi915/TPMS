@@ -65,36 +65,17 @@ const getTrucksInZone = async (req, res) => {
 
 const getZoneStatistics = async (req, res) => {
   try {
-    // Get all zones with truck counts
-    const zones = await prismaService.prisma.$queryRaw`
-      SELECT 
-        mz.id,
-        mz.name,
-        mz.zone_type,
-        mz.is_active,
-        COUNT(t.id) as truck_count,
-        COUNT(CASE WHEN t.status = 'active' THEN 1 END) as active_trucks,
-        AVG(CASE WHEN t.status = 'active' THEN t.fuel_percentage END) as avg_fuel,
-        AVG(CASE WHEN t.status = 'active' THEN t.payload_tons END) as avg_payload
-      FROM mining_zones mz
-      LEFT JOIN trucks t ON ST_Within(
-        ST_SetSRID(ST_MakePoint(t.longitude, t.latitude), 4326),
-        mz.boundary
-      ) AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL
-      WHERE mz.is_active = true
-      GROUP BY mz.id, mz.name, mz.zone_type, mz.is_active
-      ORDER BY mz.name
-    `;
-
-    const statistics = zones.map(zone => ({
-      id: zone.id,
-      name: zone.name,
-      zoneType: zone.zone_type,
-      isActive: zone.is_active,
-      truckCount: parseInt(zone.truck_count),
-      activeTrucks: parseInt(zone.active_trucks),
-      averageFuel: zone.avg_fuel ? parseFloat(zone.avg_fuel) : 0,
-      averagePayload: zone.avg_payload ? parseFloat(zone.avg_payload) : 0
+    // Fallback implementation using static GeoJSON zones
+    const geoJsonData = miningAreaService.getMiningAreaData();
+    const statistics = geoJsonData.features.map((feature, idx) => ({
+      id: idx + 1,
+      name: feature?.properties?.Name || `Zone-${idx + 1}`,
+      zoneType: feature?.properties?.zone_type || 'unknown',
+      isActive: true,
+      truckCount: 0,
+      activeTrucks: 0,
+      averageFuel: 0,
+      averagePayload: 0
     }));
 
     res.status(200).json({
@@ -120,60 +101,26 @@ const getZoneStatistics = async (req, res) => {
 const getZoneActivityReport = async (req, res) => {
   try {
     const { timeRange = '24h' } = req.query;
-    
-    // Calculate time range
-    const since = new Date();
-    switch (timeRange) {
-      case '1h':
-        since.setHours(since.getHours() - 1);
-        break;
-      case '24h':
-        since.setHours(since.getHours() - 24);
-        break;
-      case '7d':
-        since.setDate(since.getDate() - 7);
-        break;
-      default:
-        since.setHours(since.getHours() - 24);
-    }
 
-    // Get zone activity based on location history
-    const zoneActivity = await prismaService.prisma.$queryRaw`
-      SELECT 
-        mz.name as zone_name,
-        mz.zone_type,
-        COUNT(lh.id) as location_records,
-        COUNT(DISTINCT lh.truck_id) as unique_trucks,
-        AVG(lh.speed) as avg_speed,
-        MIN(lh.recorded_at) as first_activity,
-        MAX(lh.recorded_at) as last_activity
-      FROM mining_zones mz
-      LEFT JOIN location_history lh ON ST_Within(
-        ST_SetSRID(ST_MakePoint(lh.longitude, lh.latitude), 4326),
-        mz.boundary
-      ) AND lh.recorded_at >= ${since}
-      WHERE mz.is_active = true
-      GROUP BY mz.name, mz.zone_type
-      ORDER BY location_records DESC
-    `;
-
-    const activityReport = zoneActivity.map(zone => ({
-      zoneName: zone.zone_name,
-      zoneType: zone.zone_type,
-      locationRecords: parseInt(zone.location_records),
-      uniqueTrucks: parseInt(zone.unique_trucks),
-      averageSpeed: zone.avg_speed ? parseFloat(zone.avg_speed) : 0,
-      firstActivity: zone.first_activity,
-      lastActivity: zone.last_activity,
-      activityLevel: getActivityLevel(parseInt(zone.location_records))
+    // Fallback: use static zones and return zeroed activity metrics
+    const geoJsonData = miningAreaService.getMiningAreaData();
+    const zones = geoJsonData.features.map((feature) => ({
+      zoneName: feature?.properties?.Name || 'Unknown Zone',
+      zoneType: feature?.properties?.zone_type || 'unknown',
+      locationRecords: 0,
+      uniqueTrucks: 0,
+      averageSpeed: 0,
+      firstActivity: null,
+      lastActivity: null,
+      activityLevel: getActivityLevel(0)
     }));
 
     res.status(200).json({
       success: true,
       data: {
         timeRange,
-        zones: activityReport,
-        totalZones: activityReport.length,
+        zones,
+        totalZones: zones.length,
         generatedAt: new Date().toISOString()
       },
       message: `Zone activity report for ${timeRange} generated successfully`

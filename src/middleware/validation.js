@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, oneOf } = require('express-validator');
 
 // ==========================================
 // SENSOR DATA VALIDATION MIDDLEWARE
@@ -8,12 +8,25 @@ const validateSensorData = (sensorType) => {
   switch (sensorType) {
     case 'tpdata':
       return [
-        body('sn').notEmpty().withMessage('Device serial number is required'),
-        body('cmd').equals('tpdata').withMessage('Command must be tpdata'),
-        body('data.tireNo').isInt({ min: 1, max: 12 }).withMessage('Tire number must be between 1-12'),
-        body('data.tiprValue').isFloat({ min: 0, max: 1000 }).withMessage('Tire pressure must be between 0-1000 kPa'),
-        body('data.tempValue').isFloat({ min: -50, max: 150 }).withMessage('Temperature must be between -50 to 150°C'),
-        body('data.bat').isInt({ min: 0, max: 100 }).withMessage('Battery level must be between 0-100'),
+        oneOf([
+          body('sn').notEmpty(),
+          body('deviceSn').notEmpty(),
+          body('truckId').notEmpty(),
+          body('truck_id').notEmpty(),
+          body('truckCode').notEmpty(),
+          body('code').notEmpty(),
+          body('truckName').notEmpty(),
+          body('name').notEmpty()
+        ], 'Provide sn/deviceSn or a valid truck identifier (truckId/truck_id/truckCode/code/truckName/name)'),
+        body('cmd').optional().equals('tpdata').withMessage('When provided, cmd must be tpdata'),
+        body('data').isObject().withMessage('Data must be an object'),
+        body('data.tireNo').optional().isInt({ min: 1, max: 12 }).withMessage('Tire number must be between 1-12'),
+        body('data.tiprValue').optional().isFloat({ min: 0, max: 1000 }).withMessage('Tire pressure must be between 0-1000 kPa'),
+        body('data.pressure').optional().isFloat({ min: 0, max: 1000 }).withMessage('Tire pressure must be between 0-1000 kPa'),
+        body('data.pressureKpa').optional().isFloat({ min: 0, max: 1000 }).withMessage('Tire pressure must be between 0-1000 kPa'),
+        body('data.tempValue').optional().isFloat({ min: -50, max: 150 }).withMessage('Temperature must be between -50 to 150°C'),
+        body('data.tempCelsius').optional().isFloat({ min: -50, max: 150 }).withMessage('Temperature must be between -50 to 150°C'),
+        body('data.bat').optional().isInt({ min: 0, max: 100 }).withMessage('Battery level must be between 0-100'),
         body('data.simNumber').optional().isString(),
         body('data.exType').optional().isString()
       ];

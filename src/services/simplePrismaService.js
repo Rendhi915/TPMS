@@ -46,7 +46,9 @@ class SimplePrismaService {
       status,
       page = 1,
       limit = 50,
-      search
+      search,
+      vendor,
+      vendorId
     } = filters;
 
     const offset = (page - 1) * limit;
@@ -60,8 +62,15 @@ class SimplePrismaService {
       ];
     }
 
+    // Vendor filter by id or name
+    if (vendorId) {
+      where.fleet_group_id = vendorId;
+    } else if (vendor) {
+      where.fleet_group = { name: { equals: vendor } };
+    }
+
     try {
-      // Get trucks with basic relations
+      // Get trucks with basic relations and latest sensor data
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
@@ -70,6 +79,21 @@ class SimplePrismaService {
             where: { acknowledged: false },
             take: 5,
             orderBy: { occurred_at: 'desc' }
+          },
+          fuel_level_event: {
+            take: 1,
+            orderBy: { changed_at: 'desc' },
+            select: { fuel_percent: true, changed_at: true }
+          },
+          tire_pressure_event: {
+            take: 24, // enough to cover 8 tires * 3 readings
+            orderBy: { changed_at: 'desc' },
+            select: { tire_no: true, pressure_kpa: true, temp_celsius: true, battery_level: true, changed_at: true }
+          },
+          hub_temperature_event: {
+            take: 1,
+            orderBy: { changed_at: 'desc' },
+            select: { temp_celsius: true, changed_at: true }
           },
           _count: {
             select: {
@@ -91,7 +115,7 @@ class SimplePrismaService {
       const summary = await this.getTruckSummaryStats();
 
       return {
-        trucks: trucks.map(this.formatTruckResponse),
+        trucks: trucks.map(t => this.formatTruckResponse(t)),
         pagination: {
           current_page: parseInt(page),
           per_page: parseInt(limit),
@@ -365,20 +389,59 @@ class SimplePrismaService {
   }
 
   formatTruckResponse(truck) {
+    // Latest fuel
+    const latestFuel = Array.isArray(truck.fuel_level_event) && truck.fuel_level_event.length > 0
+      ? truck.fuel_level_event[0]
+      : null;
+
+    // Latest hub temperature
+    const latestHubTemp = Array.isArray(truck.hub_temperature_event) && truck.hub_temperature_event.length > 0
+      ? truck.hub_temperature_event[0]
+      : null;
+
+    // Build latest per-tire map (dedupe by tire_no)
+    const tireMap = new Map();
+    if (Array.isArray(truck.tire_pressure_event)) {
+      for (const e of truck.tire_pressure_event) {
+        if (!tireMap.has(e.tire_no)) {
+          tireMap.set(e.tire_no, e); // since sorted desc, first seen is latest
+        }
+      }
+    }
+    const tires = Array.from(tireMap.values()).sort((a,b) => a.tire_no - b.tire_no).map(t => ({
+      position: `Tire ${t.tire_no}`,
+      tireNumber: t.tire_no,
+      pressure: t.pressure_kpa != null ? parseFloat(t.pressure_kpa) : null,
+      temperature: t.temp_celsius != null ? parseFloat(t.temp_celsius) : null,
+      battery: t.battery_level != null ? parseInt(t.battery_level) : null,
+      status: t.pressure_kpa != null ? (t.pressure_kpa > 1000 ? 'normal' : 'low') : 'unknown',
+      lastUpdated: t.changed_at
+    }));
+
+    // Aggregate battery across tires
+    const batteryLevels = tires.map(t => t.battery).filter(v => typeof v === 'number');
+    const avgBattery = batteryLevels.length ? Math.round(batteryLevels.reduce((s,v)=>s+v,0) / batteryLevels.length) : null;
+
     return {
       id: truck.id,
       truckNumber: truck.name,
       name: truck.name,
       model: truck.model,
       manufacturer: truck.fleet_group?.name || 'Unknown',
-      status: 'active', // Default status
+      status: 'active',
       location: {
         type: 'Point',
-        coordinates: [0, 0] // Default coordinates
+        coordinates: [0, 0]
       },
       speed: 0,
       heading: 0,
-      fuel: 75,
+      fuel: latestFuel?.fuel_percent != null ? parseFloat(latestFuel.fuel_percent) : 0,
+      sensors: {
+        fuelPercent: latestFuel?.fuel_percent != null ? parseFloat(latestFuel.fuel_percent) : 0,
+        tires,
+        batteryAvg: avgBattery,
+        hubTemperature: latestHubTemp?.temp_celsius != null ? parseFloat(latestHubTemp.temp_celsius) : null,
+      },
       payload: 0,
       driver: null,
       engineHours: 0,

@@ -13,7 +13,9 @@ const getAllTrucks = async (req, res) => {
       search: req.query.search,
       minFuel: req.query.minFuel ? parseFloat(req.query.minFuel) : undefined,
       maxFuel: req.query.maxFuel ? parseFloat(req.query.maxFuel) : undefined,
-      hasAlerts: req.query.hasAlerts
+      hasAlerts: req.query.hasAlerts,
+      vendor: req.query.vendor,
+      vendorId: req.query.vendorId
     };
 
     // Validate limit (prevent excessive queries)
@@ -41,16 +43,8 @@ const getAllTrucks = async (req, res) => {
 
 const getTruckById = async (req, res) => {
   try {
-    const truckId = req.params.id;
+    const truckId = req.params.id; // UUID expected
     
-    // Validate truck ID
-    if (!truckId || isNaN(parseInt(truckId))) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid truck ID provided'
-      });
-    }
-
     const truck = await prismaService.getTruckById(truckId);
     
     res.status(200).json({
@@ -79,15 +73,7 @@ const getTruckById = async (req, res) => {
 
 const getTruckTires = async (req, res) => {
   try {
-    const truckId = req.params.id;
-    
-    // Validate truck ID
-    if (!truckId || isNaN(parseInt(truckId))) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid truck ID provided'
-      });
-    }
+    const truckId = req.params.id; // UUID string accepted
 
     const tireData = await prismaService.getTruckTires(truckId);
     
