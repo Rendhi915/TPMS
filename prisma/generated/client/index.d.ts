@@ -128,6 +128,16 @@ export type truck_status_event = $Result.DefaultSelection<Prisma.$truck_status_e
  * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
  */
 export type users = $Result.DefaultSelection<Prisma.$usersPayload>
+/**
+ * Model vendors
+ * 
+ */
+export type vendors = $Result.DefaultSelection<Prisma.$vendorsPayload>
+/**
+ * Model drivers
+ * 
+ */
+export type drivers = $Result.DefaultSelection<Prisma.$driversPayload>
 
 /**
  * Enums
@@ -517,6 +527,26 @@ export class PrismaClient<
     * ```
     */
   get users(): Prisma.usersDelegate<ExtArgs>;
+
+  /**
+   * `prisma.vendors`: Exposes CRUD operations for the **vendors** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Vendors
+    * const vendors = await prisma.vendors.findMany()
+    * ```
+    */
+  get vendors(): Prisma.vendorsDelegate<ExtArgs>;
+
+  /**
+   * `prisma.drivers`: Exposes CRUD operations for the **drivers** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Drivers
+    * const drivers = await prisma.drivers.findMany()
+    * ```
+    */
+  get drivers(): Prisma.driversDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -980,7 +1010,9 @@ export namespace Prisma {
     trip: 'trip',
     truck: 'truck',
     truck_status_event: 'truck_status_event',
-    users: 'users'
+    users: 'users',
+    vendors: 'vendors',
+    drivers: 'drivers'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -996,7 +1028,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "alert_event" | "daily_route" | "device" | "device_status_event" | "device_truck_assignment" | "fleet_group" | "fuel_level_event" | "geofence" | "gps_position" | "hub_temperature_event" | "lock_event" | "sensor" | "sensor_data_raw" | "sensor_processing_queue" | "spatial_ref_sys" | "speed_event" | "tire_error_code" | "tire_position_config" | "tire_pressure_event" | "trip" | "truck" | "truck_status_event" | "users"
+      modelProps: "alert_event" | "daily_route" | "device" | "device_status_event" | "device_truck_assignment" | "fleet_group" | "fuel_level_event" | "geofence" | "gps_position" | "hub_temperature_event" | "lock_event" | "sensor" | "sensor_data_raw" | "sensor_processing_queue" | "spatial_ref_sys" | "speed_event" | "tire_error_code" | "tire_position_config" | "tire_pressure_event" | "trip" | "truck" | "truck_status_event" | "users" | "vendors" | "drivers"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2562,6 +2594,146 @@ export namespace Prisma {
           }
         }
       }
+      vendors: {
+        payload: Prisma.$vendorsPayload<ExtArgs>
+        fields: Prisma.vendorsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.vendorsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.vendorsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>
+          }
+          findFirst: {
+            args: Prisma.vendorsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.vendorsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>
+          }
+          findMany: {
+            args: Prisma.vendorsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>[]
+          }
+          create: {
+            args: Prisma.vendorsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>
+          }
+          createMany: {
+            args: Prisma.vendorsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.vendorsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>[]
+          }
+          delete: {
+            args: Prisma.vendorsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>
+          }
+          update: {
+            args: Prisma.vendorsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>
+          }
+          deleteMany: {
+            args: Prisma.vendorsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.vendorsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.vendorsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$vendorsPayload>
+          }
+          aggregate: {
+            args: Prisma.VendorsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVendors>
+          }
+          groupBy: {
+            args: Prisma.vendorsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VendorsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.vendorsCountArgs<ExtArgs>
+            result: $Utils.Optional<VendorsCountAggregateOutputType> | number
+          }
+        }
+      }
+      drivers: {
+        payload: Prisma.$driversPayload<ExtArgs>
+        fields: Prisma.driversFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.driversFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.driversFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>
+          }
+          findFirst: {
+            args: Prisma.driversFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.driversFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>
+          }
+          findMany: {
+            args: Prisma.driversFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>[]
+          }
+          create: {
+            args: Prisma.driversCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>
+          }
+          createMany: {
+            args: Prisma.driversCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.driversCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>[]
+          }
+          delete: {
+            args: Prisma.driversDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>
+          }
+          update: {
+            args: Prisma.driversUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>
+          }
+          deleteMany: {
+            args: Prisma.driversDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.driversUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.driversUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$driversPayload>
+          }
+          aggregate: {
+            args: Prisma.DriversAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDrivers>
+          }
+          groupBy: {
+            args: Prisma.driversGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DriversGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.driversCountArgs<ExtArgs>
+            result: $Utils.Optional<DriversCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3059,6 +3231,46 @@ export namespace Prisma {
    */
   export type UsersCountOutputTypeCountDevice_truck_assignment_device_truck_assignment_removed_byTousersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: device_truck_assignmentWhereInput
+  }
+
+
+  /**
+   * Count Type VendorsCountOutputType
+   */
+
+  export type VendorsCountOutputType = {
+    drivers: number
+    trucks: number
+  }
+
+  export type VendorsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    drivers?: boolean | VendorsCountOutputTypeCountDriversArgs
+    trucks?: boolean | VendorsCountOutputTypeCountTrucksArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * VendorsCountOutputType without action
+   */
+  export type VendorsCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VendorsCountOutputType
+     */
+    select?: VendorsCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * VendorsCountOutputType without action
+   */
+  export type VendorsCountOutputTypeCountDriversArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: driversWhereInput
+  }
+
+  /**
+   * VendorsCountOutputType without action
+   */
+  export type VendorsCountOutputTypeCountTrucksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: truckWhereInput
   }
 
 
@@ -22538,10 +22750,12 @@ export namespace Prisma {
 
   export type TruckAvgAggregateOutputType = {
     year: number | null
+    vendor_id: number | null
   }
 
   export type TruckSumAggregateOutputType = {
     year: number | null
+    vendor_id: number | null
   }
 
   export type TruckMinAggregateOutputType = {
@@ -22553,6 +22767,7 @@ export namespace Prisma {
     year: number | null
     tire_config: string | null
     fleet_group_id: string | null
+    vendor_id: number | null
     created_at: Date | null
     created_by: string | null
     updated_by: string | null
@@ -22567,6 +22782,7 @@ export namespace Prisma {
     year: number | null
     tire_config: string | null
     fleet_group_id: string | null
+    vendor_id: number | null
     created_at: Date | null
     created_by: string | null
     updated_by: string | null
@@ -22581,6 +22797,7 @@ export namespace Prisma {
     year: number
     tire_config: number
     fleet_group_id: number
+    vendor_id: number
     created_at: number
     created_by: number
     updated_by: number
@@ -22590,10 +22807,12 @@ export namespace Prisma {
 
   export type TruckAvgAggregateInputType = {
     year?: true
+    vendor_id?: true
   }
 
   export type TruckSumAggregateInputType = {
     year?: true
+    vendor_id?: true
   }
 
   export type TruckMinAggregateInputType = {
@@ -22605,6 +22824,7 @@ export namespace Prisma {
     year?: true
     tire_config?: true
     fleet_group_id?: true
+    vendor_id?: true
     created_at?: true
     created_by?: true
     updated_by?: true
@@ -22619,6 +22839,7 @@ export namespace Prisma {
     year?: true
     tire_config?: true
     fleet_group_id?: true
+    vendor_id?: true
     created_at?: true
     created_by?: true
     updated_by?: true
@@ -22633,6 +22854,7 @@ export namespace Prisma {
     year?: true
     tire_config?: true
     fleet_group_id?: true
+    vendor_id?: true
     created_at?: true
     created_by?: true
     updated_by?: true
@@ -22734,6 +22956,7 @@ export namespace Prisma {
     year: number | null
     tire_config: string | null
     fleet_group_id: string | null
+    vendor_id: number | null
     created_at: Date
     created_by: string | null
     updated_by: string | null
@@ -22767,6 +22990,7 @@ export namespace Prisma {
     year?: boolean
     tire_config?: boolean
     fleet_group_id?: boolean
+    vendor_id?: boolean
     created_at?: boolean
     created_by?: boolean
     updated_by?: boolean
@@ -22785,6 +23009,7 @@ export namespace Prisma {
     tire_pressure_event?: boolean | truck$tire_pressure_eventArgs<ExtArgs>
     trip?: boolean | truck$tripArgs<ExtArgs>
     fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    vendor?: boolean | truck$vendorArgs<ExtArgs>
     truck_status_event?: boolean | truck$truck_status_eventArgs<ExtArgs>
     _count?: boolean | TruckCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["truck"]>
@@ -22798,10 +23023,12 @@ export namespace Prisma {
     year?: boolean
     tire_config?: boolean
     fleet_group_id?: boolean
+    vendor_id?: boolean
     created_at?: boolean
     created_by?: boolean
     updated_by?: boolean
     fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    vendor?: boolean | truck$vendorArgs<ExtArgs>
   }, ExtArgs["result"]["truck"]>
 
   export type truckSelectScalar = {
@@ -22813,6 +23040,7 @@ export namespace Prisma {
     year?: boolean
     tire_config?: boolean
     fleet_group_id?: boolean
+    vendor_id?: boolean
     created_at?: boolean
     created_by?: boolean
     updated_by?: boolean
@@ -22834,11 +23062,13 @@ export namespace Prisma {
     tire_pressure_event?: boolean | truck$tire_pressure_eventArgs<ExtArgs>
     trip?: boolean | truck$tripArgs<ExtArgs>
     fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    vendor?: boolean | truck$vendorArgs<ExtArgs>
     truck_status_event?: boolean | truck$truck_status_eventArgs<ExtArgs>
     _count?: boolean | TruckCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type truckIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    vendor?: boolean | truck$vendorArgs<ExtArgs>
   }
 
   export type $truckPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -22859,6 +23089,7 @@ export namespace Prisma {
       tire_pressure_event: Prisma.$tire_pressure_eventPayload<ExtArgs>[]
       trip: Prisma.$tripPayload<ExtArgs>[]
       fleet_group: Prisma.$fleet_groupPayload<ExtArgs> | null
+      vendor: Prisma.$vendorsPayload<ExtArgs> | null
       truck_status_event: Prisma.$truck_status_eventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -22870,6 +23101,7 @@ export namespace Prisma {
       year: number | null
       tire_config: string | null
       fleet_group_id: string | null
+      vendor_id: number | null
       created_at: Date
       created_by: string | null
       updated_by: string | null
@@ -23252,6 +23484,7 @@ export namespace Prisma {
     tire_pressure_event<T extends truck$tire_pressure_eventArgs<ExtArgs> = {}>(args?: Subset<T, truck$tire_pressure_eventArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$tire_pressure_eventPayload<ExtArgs>, T, "findMany"> | Null>
     trip<T extends truck$tripArgs<ExtArgs> = {}>(args?: Subset<T, truck$tripArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$tripPayload<ExtArgs>, T, "findMany"> | Null>
     fleet_group<T extends truck$fleet_groupArgs<ExtArgs> = {}>(args?: Subset<T, truck$fleet_groupArgs<ExtArgs>>): Prisma__fleet_groupClient<$Result.GetResult<Prisma.$fleet_groupPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    vendor<T extends truck$vendorArgs<ExtArgs> = {}>(args?: Subset<T, truck$vendorArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     truck_status_event<T extends truck$truck_status_eventArgs<ExtArgs> = {}>(args?: Subset<T, truck$truck_status_eventArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$truck_status_eventPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -23290,6 +23523,7 @@ export namespace Prisma {
     readonly year: FieldRef<"truck", 'Int'>
     readonly tire_config: FieldRef<"truck", 'String'>
     readonly fleet_group_id: FieldRef<"truck", 'String'>
+    readonly vendor_id: FieldRef<"truck", 'Int'>
     readonly created_at: FieldRef<"truck", 'DateTime'>
     readonly created_by: FieldRef<"truck", 'String'>
     readonly updated_by: FieldRef<"truck", 'String'>
@@ -23903,6 +24137,21 @@ export namespace Prisma {
      */
     include?: fleet_groupInclude<ExtArgs> | null
     where?: fleet_groupWhereInput
+  }
+
+  /**
+   * truck.vendor
+   */
+  export type truck$vendorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    where?: vendorsWhereInput
   }
 
   /**
@@ -25894,6 +26143,2130 @@ export namespace Prisma {
 
 
   /**
+   * Model vendors
+   */
+
+  export type AggregateVendors = {
+    _count: VendorsCountAggregateOutputType | null
+    _avg: VendorsAvgAggregateOutputType | null
+    _sum: VendorsSumAggregateOutputType | null
+    _min: VendorsMinAggregateOutputType | null
+    _max: VendorsMaxAggregateOutputType | null
+  }
+
+  export type VendorsAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type VendorsSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type VendorsMinAggregateOutputType = {
+    id: number | null
+    nama_vendor: string | null
+    address: string | null
+    nomor_telepon: string | null
+    email: string | null
+    kontak_person: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type VendorsMaxAggregateOutputType = {
+    id: number | null
+    nama_vendor: string | null
+    address: string | null
+    nomor_telepon: string | null
+    email: string | null
+    kontak_person: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type VendorsCountAggregateOutputType = {
+    id: number
+    nama_vendor: number
+    address: number
+    nomor_telepon: number
+    email: number
+    kontak_person: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type VendorsAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type VendorsSumAggregateInputType = {
+    id?: true
+  }
+
+  export type VendorsMinAggregateInputType = {
+    id?: true
+    nama_vendor?: true
+    address?: true
+    nomor_telepon?: true
+    email?: true
+    kontak_person?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type VendorsMaxAggregateInputType = {
+    id?: true
+    nama_vendor?: true
+    address?: true
+    nomor_telepon?: true
+    email?: true
+    kontak_person?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type VendorsCountAggregateInputType = {
+    id?: true
+    nama_vendor?: true
+    address?: true
+    nomor_telepon?: true
+    email?: true
+    kontak_person?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type VendorsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which vendors to aggregate.
+     */
+    where?: vendorsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of vendors to fetch.
+     */
+    orderBy?: vendorsOrderByWithRelationInput | vendorsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: vendorsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` vendors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned vendors
+    **/
+    _count?: true | VendorsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VendorsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VendorsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VendorsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VendorsMaxAggregateInputType
+  }
+
+  export type GetVendorsAggregateType<T extends VendorsAggregateArgs> = {
+        [P in keyof T & keyof AggregateVendors]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVendors[P]>
+      : GetScalarType<T[P], AggregateVendors[P]>
+  }
+
+
+
+
+  export type vendorsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: vendorsWhereInput
+    orderBy?: vendorsOrderByWithAggregationInput | vendorsOrderByWithAggregationInput[]
+    by: VendorsScalarFieldEnum[] | VendorsScalarFieldEnum
+    having?: vendorsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VendorsCountAggregateInputType | true
+    _avg?: VendorsAvgAggregateInputType
+    _sum?: VendorsSumAggregateInputType
+    _min?: VendorsMinAggregateInputType
+    _max?: VendorsMaxAggregateInputType
+  }
+
+  export type VendorsGroupByOutputType = {
+    id: number
+    nama_vendor: string
+    address: string | null
+    nomor_telepon: string | null
+    email: string | null
+    kontak_person: string | null
+    created_at: Date
+    updated_at: Date
+    _count: VendorsCountAggregateOutputType | null
+    _avg: VendorsAvgAggregateOutputType | null
+    _sum: VendorsSumAggregateOutputType | null
+    _min: VendorsMinAggregateOutputType | null
+    _max: VendorsMaxAggregateOutputType | null
+  }
+
+  type GetVendorsGroupByPayload<T extends vendorsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VendorsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VendorsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VendorsGroupByOutputType[P]>
+            : GetScalarType<T[P], VendorsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type vendorsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama_vendor?: boolean
+    address?: boolean
+    nomor_telepon?: boolean
+    email?: boolean
+    kontak_person?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    drivers?: boolean | vendors$driversArgs<ExtArgs>
+    trucks?: boolean | vendors$trucksArgs<ExtArgs>
+    _count?: boolean | VendorsCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["vendors"]>
+
+  export type vendorsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nama_vendor?: boolean
+    address?: boolean
+    nomor_telepon?: boolean
+    email?: boolean
+    kontak_person?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["vendors"]>
+
+  export type vendorsSelectScalar = {
+    id?: boolean
+    nama_vendor?: boolean
+    address?: boolean
+    nomor_telepon?: boolean
+    email?: boolean
+    kontak_person?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type vendorsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    drivers?: boolean | vendors$driversArgs<ExtArgs>
+    trucks?: boolean | vendors$trucksArgs<ExtArgs>
+    _count?: boolean | VendorsCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type vendorsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $vendorsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "vendors"
+    objects: {
+      drivers: Prisma.$driversPayload<ExtArgs>[]
+      trucks: Prisma.$truckPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      nama_vendor: string
+      address: string | null
+      nomor_telepon: string | null
+      email: string | null
+      kontak_person: string | null
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["vendors"]>
+    composites: {}
+  }
+
+  type vendorsGetPayload<S extends boolean | null | undefined | vendorsDefaultArgs> = $Result.GetResult<Prisma.$vendorsPayload, S>
+
+  type vendorsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<vendorsFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: VendorsCountAggregateInputType | true
+    }
+
+  export interface vendorsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['vendors'], meta: { name: 'vendors' } }
+    /**
+     * Find zero or one Vendors that matches the filter.
+     * @param {vendorsFindUniqueArgs} args - Arguments to find a Vendors
+     * @example
+     * // Get one Vendors
+     * const vendors = await prisma.vendors.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends vendorsFindUniqueArgs>(args: SelectSubset<T, vendorsFindUniqueArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Vendors that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {vendorsFindUniqueOrThrowArgs} args - Arguments to find a Vendors
+     * @example
+     * // Get one Vendors
+     * const vendors = await prisma.vendors.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends vendorsFindUniqueOrThrowArgs>(args: SelectSubset<T, vendorsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Vendors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {vendorsFindFirstArgs} args - Arguments to find a Vendors
+     * @example
+     * // Get one Vendors
+     * const vendors = await prisma.vendors.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends vendorsFindFirstArgs>(args?: SelectSubset<T, vendorsFindFirstArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Vendors that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {vendorsFindFirstOrThrowArgs} args - Arguments to find a Vendors
+     * @example
+     * // Get one Vendors
+     * const vendors = await prisma.vendors.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends vendorsFindFirstOrThrowArgs>(args?: SelectSubset<T, vendorsFindFirstOrThrowArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Vendors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {vendorsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Vendors
+     * const vendors = await prisma.vendors.findMany()
+     * 
+     * // Get first 10 Vendors
+     * const vendors = await prisma.vendors.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const vendorsWithIdOnly = await prisma.vendors.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends vendorsFindManyArgs>(args?: SelectSubset<T, vendorsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Vendors.
+     * @param {vendorsCreateArgs} args - Arguments to create a Vendors.
+     * @example
+     * // Create one Vendors
+     * const Vendors = await prisma.vendors.create({
+     *   data: {
+     *     // ... data to create a Vendors
+     *   }
+     * })
+     * 
+     */
+    create<T extends vendorsCreateArgs>(args: SelectSubset<T, vendorsCreateArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Vendors.
+     * @param {vendorsCreateManyArgs} args - Arguments to create many Vendors.
+     * @example
+     * // Create many Vendors
+     * const vendors = await prisma.vendors.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends vendorsCreateManyArgs>(args?: SelectSubset<T, vendorsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Vendors and returns the data saved in the database.
+     * @param {vendorsCreateManyAndReturnArgs} args - Arguments to create many Vendors.
+     * @example
+     * // Create many Vendors
+     * const vendors = await prisma.vendors.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Vendors and only return the `id`
+     * const vendorsWithIdOnly = await prisma.vendors.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends vendorsCreateManyAndReturnArgs>(args?: SelectSubset<T, vendorsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Vendors.
+     * @param {vendorsDeleteArgs} args - Arguments to delete one Vendors.
+     * @example
+     * // Delete one Vendors
+     * const Vendors = await prisma.vendors.delete({
+     *   where: {
+     *     // ... filter to delete one Vendors
+     *   }
+     * })
+     * 
+     */
+    delete<T extends vendorsDeleteArgs>(args: SelectSubset<T, vendorsDeleteArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Vendors.
+     * @param {vendorsUpdateArgs} args - Arguments to update one Vendors.
+     * @example
+     * // Update one Vendors
+     * const vendors = await prisma.vendors.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends vendorsUpdateArgs>(args: SelectSubset<T, vendorsUpdateArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Vendors.
+     * @param {vendorsDeleteManyArgs} args - Arguments to filter Vendors to delete.
+     * @example
+     * // Delete a few Vendors
+     * const { count } = await prisma.vendors.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends vendorsDeleteManyArgs>(args?: SelectSubset<T, vendorsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Vendors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {vendorsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Vendors
+     * const vendors = await prisma.vendors.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends vendorsUpdateManyArgs>(args: SelectSubset<T, vendorsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Vendors.
+     * @param {vendorsUpsertArgs} args - Arguments to update or create a Vendors.
+     * @example
+     * // Update or create a Vendors
+     * const vendors = await prisma.vendors.upsert({
+     *   create: {
+     *     // ... data to create a Vendors
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Vendors we want to update
+     *   }
+     * })
+     */
+    upsert<T extends vendorsUpsertArgs>(args: SelectSubset<T, vendorsUpsertArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Vendors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {vendorsCountArgs} args - Arguments to filter Vendors to count.
+     * @example
+     * // Count the number of Vendors
+     * const count = await prisma.vendors.count({
+     *   where: {
+     *     // ... the filter for the Vendors we want to count
+     *   }
+     * })
+    **/
+    count<T extends vendorsCountArgs>(
+      args?: Subset<T, vendorsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VendorsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Vendors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VendorsAggregateArgs>(args: Subset<T, VendorsAggregateArgs>): Prisma.PrismaPromise<GetVendorsAggregateType<T>>
+
+    /**
+     * Group by Vendors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {vendorsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends vendorsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: vendorsGroupByArgs['orderBy'] }
+        : { orderBy?: vendorsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, vendorsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVendorsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the vendors model
+   */
+  readonly fields: vendorsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for vendors.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__vendorsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    drivers<T extends vendors$driversArgs<ExtArgs> = {}>(args?: Subset<T, vendors$driversArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findMany"> | Null>
+    trucks<T extends vendors$trucksArgs<ExtArgs> = {}>(args?: Subset<T, vendors$trucksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the vendors model
+   */ 
+  interface vendorsFieldRefs {
+    readonly id: FieldRef<"vendors", 'Int'>
+    readonly nama_vendor: FieldRef<"vendors", 'String'>
+    readonly address: FieldRef<"vendors", 'String'>
+    readonly nomor_telepon: FieldRef<"vendors", 'String'>
+    readonly email: FieldRef<"vendors", 'String'>
+    readonly kontak_person: FieldRef<"vendors", 'String'>
+    readonly created_at: FieldRef<"vendors", 'DateTime'>
+    readonly updated_at: FieldRef<"vendors", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * vendors findUnique
+   */
+  export type vendorsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * Filter, which vendors to fetch.
+     */
+    where: vendorsWhereUniqueInput
+  }
+
+  /**
+   * vendors findUniqueOrThrow
+   */
+  export type vendorsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * Filter, which vendors to fetch.
+     */
+    where: vendorsWhereUniqueInput
+  }
+
+  /**
+   * vendors findFirst
+   */
+  export type vendorsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * Filter, which vendors to fetch.
+     */
+    where?: vendorsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of vendors to fetch.
+     */
+    orderBy?: vendorsOrderByWithRelationInput | vendorsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for vendors.
+     */
+    cursor?: vendorsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` vendors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of vendors.
+     */
+    distinct?: VendorsScalarFieldEnum | VendorsScalarFieldEnum[]
+  }
+
+  /**
+   * vendors findFirstOrThrow
+   */
+  export type vendorsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * Filter, which vendors to fetch.
+     */
+    where?: vendorsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of vendors to fetch.
+     */
+    orderBy?: vendorsOrderByWithRelationInput | vendorsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for vendors.
+     */
+    cursor?: vendorsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` vendors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of vendors.
+     */
+    distinct?: VendorsScalarFieldEnum | VendorsScalarFieldEnum[]
+  }
+
+  /**
+   * vendors findMany
+   */
+  export type vendorsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * Filter, which vendors to fetch.
+     */
+    where?: vendorsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of vendors to fetch.
+     */
+    orderBy?: vendorsOrderByWithRelationInput | vendorsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing vendors.
+     */
+    cursor?: vendorsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` vendors.
+     */
+    skip?: number
+    distinct?: VendorsScalarFieldEnum | VendorsScalarFieldEnum[]
+  }
+
+  /**
+   * vendors create
+   */
+  export type vendorsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a vendors.
+     */
+    data: XOR<vendorsCreateInput, vendorsUncheckedCreateInput>
+  }
+
+  /**
+   * vendors createMany
+   */
+  export type vendorsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many vendors.
+     */
+    data: vendorsCreateManyInput | vendorsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * vendors createManyAndReturn
+   */
+  export type vendorsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many vendors.
+     */
+    data: vendorsCreateManyInput | vendorsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * vendors update
+   */
+  export type vendorsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a vendors.
+     */
+    data: XOR<vendorsUpdateInput, vendorsUncheckedUpdateInput>
+    /**
+     * Choose, which vendors to update.
+     */
+    where: vendorsWhereUniqueInput
+  }
+
+  /**
+   * vendors updateMany
+   */
+  export type vendorsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update vendors.
+     */
+    data: XOR<vendorsUpdateManyMutationInput, vendorsUncheckedUpdateManyInput>
+    /**
+     * Filter which vendors to update
+     */
+    where?: vendorsWhereInput
+  }
+
+  /**
+   * vendors upsert
+   */
+  export type vendorsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the vendors to update in case it exists.
+     */
+    where: vendorsWhereUniqueInput
+    /**
+     * In case the vendors found by the `where` argument doesn't exist, create a new vendors with this data.
+     */
+    create: XOR<vendorsCreateInput, vendorsUncheckedCreateInput>
+    /**
+     * In case the vendors was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<vendorsUpdateInput, vendorsUncheckedUpdateInput>
+  }
+
+  /**
+   * vendors delete
+   */
+  export type vendorsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    /**
+     * Filter which vendors to delete.
+     */
+    where: vendorsWhereUniqueInput
+  }
+
+  /**
+   * vendors deleteMany
+   */
+  export type vendorsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which vendors to delete
+     */
+    where?: vendorsWhereInput
+  }
+
+  /**
+   * vendors.drivers
+   */
+  export type vendors$driversArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    where?: driversWhereInput
+    orderBy?: driversOrderByWithRelationInput | driversOrderByWithRelationInput[]
+    cursor?: driversWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DriversScalarFieldEnum | DriversScalarFieldEnum[]
+  }
+
+  /**
+   * vendors.trucks
+   */
+  export type vendors$trucksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the truck
+     */
+    select?: truckSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: truckInclude<ExtArgs> | null
+    where?: truckWhereInput
+    orderBy?: truckOrderByWithRelationInput | truckOrderByWithRelationInput[]
+    cursor?: truckWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TruckScalarFieldEnum | TruckScalarFieldEnum[]
+  }
+
+  /**
+   * vendors without action
+   */
+  export type vendorsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model drivers
+   */
+
+  export type AggregateDrivers = {
+    _count: DriversCountAggregateOutputType | null
+    _avg: DriversAvgAggregateOutputType | null
+    _sum: DriversSumAggregateOutputType | null
+    _min: DriversMinAggregateOutputType | null
+    _max: DriversMaxAggregateOutputType | null
+  }
+
+  export type DriversAvgAggregateOutputType = {
+    id: number | null
+    vendor_id: number | null
+  }
+
+  export type DriversSumAggregateOutputType = {
+    id: number | null
+    vendor_id: number | null
+  }
+
+  export type DriversMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    phone: string | null
+    email: string | null
+    address: string | null
+    license_number: string | null
+    license_type: string | null
+    license_expiry: Date | null
+    id_card_number: string | null
+    vendor_id: number | null
+    status: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type DriversMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    phone: string | null
+    email: string | null
+    address: string | null
+    license_number: string | null
+    license_type: string | null
+    license_expiry: Date | null
+    id_card_number: string | null
+    vendor_id: number | null
+    status: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type DriversCountAggregateOutputType = {
+    id: number
+    name: number
+    phone: number
+    email: number
+    address: number
+    license_number: number
+    license_type: number
+    license_expiry: number
+    id_card_number: number
+    vendor_id: number
+    status: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type DriversAvgAggregateInputType = {
+    id?: true
+    vendor_id?: true
+  }
+
+  export type DriversSumAggregateInputType = {
+    id?: true
+    vendor_id?: true
+  }
+
+  export type DriversMinAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    email?: true
+    address?: true
+    license_number?: true
+    license_type?: true
+    license_expiry?: true
+    id_card_number?: true
+    vendor_id?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type DriversMaxAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    email?: true
+    address?: true
+    license_number?: true
+    license_type?: true
+    license_expiry?: true
+    id_card_number?: true
+    vendor_id?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type DriversCountAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    email?: true
+    address?: true
+    license_number?: true
+    license_type?: true
+    license_expiry?: true
+    id_card_number?: true
+    vendor_id?: true
+    status?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type DriversAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which drivers to aggregate.
+     */
+    where?: driversWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of drivers to fetch.
+     */
+    orderBy?: driversOrderByWithRelationInput | driversOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: driversWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` drivers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` drivers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned drivers
+    **/
+    _count?: true | DriversCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DriversAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DriversSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DriversMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DriversMaxAggregateInputType
+  }
+
+  export type GetDriversAggregateType<T extends DriversAggregateArgs> = {
+        [P in keyof T & keyof AggregateDrivers]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDrivers[P]>
+      : GetScalarType<T[P], AggregateDrivers[P]>
+  }
+
+
+
+
+  export type driversGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: driversWhereInput
+    orderBy?: driversOrderByWithAggregationInput | driversOrderByWithAggregationInput[]
+    by: DriversScalarFieldEnum[] | DriversScalarFieldEnum
+    having?: driversScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DriversCountAggregateInputType | true
+    _avg?: DriversAvgAggregateInputType
+    _sum?: DriversSumAggregateInputType
+    _min?: DriversMinAggregateInputType
+    _max?: DriversMaxAggregateInputType
+  }
+
+  export type DriversGroupByOutputType = {
+    id: number
+    name: string
+    phone: string | null
+    email: string | null
+    address: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date
+    id_card_number: string
+    vendor_id: number | null
+    status: string
+    created_at: Date
+    updated_at: Date
+    _count: DriversCountAggregateOutputType | null
+    _avg: DriversAvgAggregateOutputType | null
+    _sum: DriversSumAggregateOutputType | null
+    _min: DriversMinAggregateOutputType | null
+    _max: DriversMaxAggregateOutputType | null
+  }
+
+  type GetDriversGroupByPayload<T extends driversGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DriversGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DriversGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DriversGroupByOutputType[P]>
+            : GetScalarType<T[P], DriversGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type driversSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    license_number?: boolean
+    license_type?: boolean
+    license_expiry?: boolean
+    id_card_number?: boolean
+    vendor_id?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    vendor?: boolean | drivers$vendorArgs<ExtArgs>
+  }, ExtArgs["result"]["drivers"]>
+
+  export type driversSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    license_number?: boolean
+    license_type?: boolean
+    license_expiry?: boolean
+    id_card_number?: boolean
+    vendor_id?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    vendor?: boolean | drivers$vendorArgs<ExtArgs>
+  }, ExtArgs["result"]["drivers"]>
+
+  export type driversSelectScalar = {
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    address?: boolean
+    license_number?: boolean
+    license_type?: boolean
+    license_expiry?: boolean
+    id_card_number?: boolean
+    vendor_id?: boolean
+    status?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type driversInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vendor?: boolean | drivers$vendorArgs<ExtArgs>
+  }
+  export type driversIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vendor?: boolean | drivers$vendorArgs<ExtArgs>
+  }
+
+  export type $driversPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "drivers"
+    objects: {
+      vendor: Prisma.$vendorsPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      phone: string | null
+      email: string | null
+      address: string | null
+      license_number: string
+      license_type: string
+      license_expiry: Date
+      id_card_number: string
+      vendor_id: number | null
+      status: string
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["drivers"]>
+    composites: {}
+  }
+
+  type driversGetPayload<S extends boolean | null | undefined | driversDefaultArgs> = $Result.GetResult<Prisma.$driversPayload, S>
+
+  type driversCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<driversFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: DriversCountAggregateInputType | true
+    }
+
+  export interface driversDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['drivers'], meta: { name: 'drivers' } }
+    /**
+     * Find zero or one Drivers that matches the filter.
+     * @param {driversFindUniqueArgs} args - Arguments to find a Drivers
+     * @example
+     * // Get one Drivers
+     * const drivers = await prisma.drivers.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends driversFindUniqueArgs>(args: SelectSubset<T, driversFindUniqueArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Drivers that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {driversFindUniqueOrThrowArgs} args - Arguments to find a Drivers
+     * @example
+     * // Get one Drivers
+     * const drivers = await prisma.drivers.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends driversFindUniqueOrThrowArgs>(args: SelectSubset<T, driversFindUniqueOrThrowArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Drivers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {driversFindFirstArgs} args - Arguments to find a Drivers
+     * @example
+     * // Get one Drivers
+     * const drivers = await prisma.drivers.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends driversFindFirstArgs>(args?: SelectSubset<T, driversFindFirstArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Drivers that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {driversFindFirstOrThrowArgs} args - Arguments to find a Drivers
+     * @example
+     * // Get one Drivers
+     * const drivers = await prisma.drivers.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends driversFindFirstOrThrowArgs>(args?: SelectSubset<T, driversFindFirstOrThrowArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Drivers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {driversFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Drivers
+     * const drivers = await prisma.drivers.findMany()
+     * 
+     * // Get first 10 Drivers
+     * const drivers = await prisma.drivers.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const driversWithIdOnly = await prisma.drivers.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends driversFindManyArgs>(args?: SelectSubset<T, driversFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Drivers.
+     * @param {driversCreateArgs} args - Arguments to create a Drivers.
+     * @example
+     * // Create one Drivers
+     * const Drivers = await prisma.drivers.create({
+     *   data: {
+     *     // ... data to create a Drivers
+     *   }
+     * })
+     * 
+     */
+    create<T extends driversCreateArgs>(args: SelectSubset<T, driversCreateArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Drivers.
+     * @param {driversCreateManyArgs} args - Arguments to create many Drivers.
+     * @example
+     * // Create many Drivers
+     * const drivers = await prisma.drivers.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends driversCreateManyArgs>(args?: SelectSubset<T, driversCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Drivers and returns the data saved in the database.
+     * @param {driversCreateManyAndReturnArgs} args - Arguments to create many Drivers.
+     * @example
+     * // Create many Drivers
+     * const drivers = await prisma.drivers.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Drivers and only return the `id`
+     * const driversWithIdOnly = await prisma.drivers.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends driversCreateManyAndReturnArgs>(args?: SelectSubset<T, driversCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Drivers.
+     * @param {driversDeleteArgs} args - Arguments to delete one Drivers.
+     * @example
+     * // Delete one Drivers
+     * const Drivers = await prisma.drivers.delete({
+     *   where: {
+     *     // ... filter to delete one Drivers
+     *   }
+     * })
+     * 
+     */
+    delete<T extends driversDeleteArgs>(args: SelectSubset<T, driversDeleteArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Drivers.
+     * @param {driversUpdateArgs} args - Arguments to update one Drivers.
+     * @example
+     * // Update one Drivers
+     * const drivers = await prisma.drivers.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends driversUpdateArgs>(args: SelectSubset<T, driversUpdateArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Drivers.
+     * @param {driversDeleteManyArgs} args - Arguments to filter Drivers to delete.
+     * @example
+     * // Delete a few Drivers
+     * const { count } = await prisma.drivers.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends driversDeleteManyArgs>(args?: SelectSubset<T, driversDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Drivers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {driversUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Drivers
+     * const drivers = await prisma.drivers.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends driversUpdateManyArgs>(args: SelectSubset<T, driversUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Drivers.
+     * @param {driversUpsertArgs} args - Arguments to update or create a Drivers.
+     * @example
+     * // Update or create a Drivers
+     * const drivers = await prisma.drivers.upsert({
+     *   create: {
+     *     // ... data to create a Drivers
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Drivers we want to update
+     *   }
+     * })
+     */
+    upsert<T extends driversUpsertArgs>(args: SelectSubset<T, driversUpsertArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Drivers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {driversCountArgs} args - Arguments to filter Drivers to count.
+     * @example
+     * // Count the number of Drivers
+     * const count = await prisma.drivers.count({
+     *   where: {
+     *     // ... the filter for the Drivers we want to count
+     *   }
+     * })
+    **/
+    count<T extends driversCountArgs>(
+      args?: Subset<T, driversCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DriversCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Drivers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DriversAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DriversAggregateArgs>(args: Subset<T, DriversAggregateArgs>): Prisma.PrismaPromise<GetDriversAggregateType<T>>
+
+    /**
+     * Group by Drivers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {driversGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends driversGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: driversGroupByArgs['orderBy'] }
+        : { orderBy?: driversGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, driversGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDriversGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the drivers model
+   */
+  readonly fields: driversFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for drivers.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__driversClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    vendor<T extends drivers$vendorArgs<ExtArgs> = {}>(args?: Subset<T, drivers$vendorArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the drivers model
+   */ 
+  interface driversFieldRefs {
+    readonly id: FieldRef<"drivers", 'Int'>
+    readonly name: FieldRef<"drivers", 'String'>
+    readonly phone: FieldRef<"drivers", 'String'>
+    readonly email: FieldRef<"drivers", 'String'>
+    readonly address: FieldRef<"drivers", 'String'>
+    readonly license_number: FieldRef<"drivers", 'String'>
+    readonly license_type: FieldRef<"drivers", 'String'>
+    readonly license_expiry: FieldRef<"drivers", 'DateTime'>
+    readonly id_card_number: FieldRef<"drivers", 'String'>
+    readonly vendor_id: FieldRef<"drivers", 'Int'>
+    readonly status: FieldRef<"drivers", 'String'>
+    readonly created_at: FieldRef<"drivers", 'DateTime'>
+    readonly updated_at: FieldRef<"drivers", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * drivers findUnique
+   */
+  export type driversFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * Filter, which drivers to fetch.
+     */
+    where: driversWhereUniqueInput
+  }
+
+  /**
+   * drivers findUniqueOrThrow
+   */
+  export type driversFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * Filter, which drivers to fetch.
+     */
+    where: driversWhereUniqueInput
+  }
+
+  /**
+   * drivers findFirst
+   */
+  export type driversFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * Filter, which drivers to fetch.
+     */
+    where?: driversWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of drivers to fetch.
+     */
+    orderBy?: driversOrderByWithRelationInput | driversOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for drivers.
+     */
+    cursor?: driversWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` drivers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` drivers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of drivers.
+     */
+    distinct?: DriversScalarFieldEnum | DriversScalarFieldEnum[]
+  }
+
+  /**
+   * drivers findFirstOrThrow
+   */
+  export type driversFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * Filter, which drivers to fetch.
+     */
+    where?: driversWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of drivers to fetch.
+     */
+    orderBy?: driversOrderByWithRelationInput | driversOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for drivers.
+     */
+    cursor?: driversWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` drivers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` drivers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of drivers.
+     */
+    distinct?: DriversScalarFieldEnum | DriversScalarFieldEnum[]
+  }
+
+  /**
+   * drivers findMany
+   */
+  export type driversFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * Filter, which drivers to fetch.
+     */
+    where?: driversWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of drivers to fetch.
+     */
+    orderBy?: driversOrderByWithRelationInput | driversOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing drivers.
+     */
+    cursor?: driversWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` drivers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` drivers.
+     */
+    skip?: number
+    distinct?: DriversScalarFieldEnum | DriversScalarFieldEnum[]
+  }
+
+  /**
+   * drivers create
+   */
+  export type driversCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * The data needed to create a drivers.
+     */
+    data: XOR<driversCreateInput, driversUncheckedCreateInput>
+  }
+
+  /**
+   * drivers createMany
+   */
+  export type driversCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many drivers.
+     */
+    data: driversCreateManyInput | driversCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * drivers createManyAndReturn
+   */
+  export type driversCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many drivers.
+     */
+    data: driversCreateManyInput | driversCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * drivers update
+   */
+  export type driversUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * The data needed to update a drivers.
+     */
+    data: XOR<driversUpdateInput, driversUncheckedUpdateInput>
+    /**
+     * Choose, which drivers to update.
+     */
+    where: driversWhereUniqueInput
+  }
+
+  /**
+   * drivers updateMany
+   */
+  export type driversUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update drivers.
+     */
+    data: XOR<driversUpdateManyMutationInput, driversUncheckedUpdateManyInput>
+    /**
+     * Filter which drivers to update
+     */
+    where?: driversWhereInput
+  }
+
+  /**
+   * drivers upsert
+   */
+  export type driversUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * The filter to search for the drivers to update in case it exists.
+     */
+    where: driversWhereUniqueInput
+    /**
+     * In case the drivers found by the `where` argument doesn't exist, create a new drivers with this data.
+     */
+    create: XOR<driversCreateInput, driversUncheckedCreateInput>
+    /**
+     * In case the drivers was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<driversUpdateInput, driversUncheckedUpdateInput>
+  }
+
+  /**
+   * drivers delete
+   */
+  export type driversDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+    /**
+     * Filter which drivers to delete.
+     */
+    where: driversWhereUniqueInput
+  }
+
+  /**
+   * drivers deleteMany
+   */
+  export type driversDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which drivers to delete
+     */
+    where?: driversWhereInput
+  }
+
+  /**
+   * drivers.vendor
+   */
+  export type drivers$vendorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the vendors
+     */
+    select?: vendorsSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: vendorsInclude<ExtArgs> | null
+    where?: vendorsWhereInput
+  }
+
+  /**
+   * drivers without action
+   */
+  export type driversDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the drivers
+     */
+    select?: driversSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: driversInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -26175,6 +28548,7 @@ export namespace Prisma {
     year: 'year',
     tire_config: 'tire_config',
     fleet_group_id: 'fleet_group_id',
+    vendor_id: 'vendor_id',
     created_at: 'created_at',
     created_by: 'created_by',
     updated_by: 'updated_by'
@@ -26207,6 +28581,39 @@ export namespace Prisma {
   };
 
   export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+
+
+  export const VendorsScalarFieldEnum: {
+    id: 'id',
+    nama_vendor: 'nama_vendor',
+    address: 'address',
+    nomor_telepon: 'nomor_telepon',
+    email: 'email',
+    kontak_person: 'kontak_person',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type VendorsScalarFieldEnum = (typeof VendorsScalarFieldEnum)[keyof typeof VendorsScalarFieldEnum]
+
+
+  export const DriversScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    phone: 'phone',
+    email: 'email',
+    address: 'address',
+    license_number: 'license_number',
+    license_type: 'license_type',
+    license_expiry: 'license_expiry',
+    id_card_number: 'id_card_number',
+    vendor_id: 'vendor_id',
+    status: 'status',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type DriversScalarFieldEnum = (typeof DriversScalarFieldEnum)[keyof typeof DriversScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -27756,6 +30163,7 @@ export namespace Prisma {
     year?: IntNullableFilter<"truck"> | number | null
     tire_config?: StringNullableFilter<"truck"> | string | null
     fleet_group_id?: UuidNullableFilter<"truck"> | string | null
+    vendor_id?: IntNullableFilter<"truck"> | number | null
     created_at?: DateTimeFilter<"truck"> | Date | string
     created_by?: UuidNullableFilter<"truck"> | string | null
     updated_by?: UuidNullableFilter<"truck"> | string | null
@@ -27774,6 +30182,7 @@ export namespace Prisma {
     tire_pressure_event?: Tire_pressure_eventListRelationFilter
     trip?: TripListRelationFilter
     fleet_group?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
+    vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
     truck_status_event?: Truck_status_eventListRelationFilter
   }
 
@@ -27786,6 +30195,7 @@ export namespace Prisma {
     year?: SortOrderInput | SortOrder
     tire_config?: SortOrderInput | SortOrder
     fleet_group_id?: SortOrderInput | SortOrder
+    vendor_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
@@ -27804,6 +30214,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventOrderByRelationAggregateInput
     trip?: tripOrderByRelationAggregateInput
     fleet_group?: fleet_groupOrderByWithRelationInput
+    vendor?: vendorsOrderByWithRelationInput
     truck_status_event?: truck_status_eventOrderByRelationAggregateInput
   }
 
@@ -27819,6 +30230,7 @@ export namespace Prisma {
     year?: IntNullableFilter<"truck"> | number | null
     tire_config?: StringNullableFilter<"truck"> | string | null
     fleet_group_id?: UuidNullableFilter<"truck"> | string | null
+    vendor_id?: IntNullableFilter<"truck"> | number | null
     created_at?: DateTimeFilter<"truck"> | Date | string
     created_by?: UuidNullableFilter<"truck"> | string | null
     updated_by?: UuidNullableFilter<"truck"> | string | null
@@ -27837,6 +30249,7 @@ export namespace Prisma {
     tire_pressure_event?: Tire_pressure_eventListRelationFilter
     trip?: TripListRelationFilter
     fleet_group?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
+    vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
     truck_status_event?: Truck_status_eventListRelationFilter
   }, "id" | "code" | "vin">
 
@@ -27849,6 +30262,7 @@ export namespace Prisma {
     year?: SortOrderInput | SortOrder
     tire_config?: SortOrderInput | SortOrder
     fleet_group_id?: SortOrderInput | SortOrder
+    vendor_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
     created_by?: SortOrderInput | SortOrder
     updated_by?: SortOrderInput | SortOrder
@@ -27871,6 +30285,7 @@ export namespace Prisma {
     year?: IntNullableWithAggregatesFilter<"truck"> | number | null
     tire_config?: StringNullableWithAggregatesFilter<"truck"> | string | null
     fleet_group_id?: UuidNullableWithAggregatesFilter<"truck"> | string | null
+    vendor_id?: IntNullableWithAggregatesFilter<"truck"> | number | null
     created_at?: DateTimeWithAggregatesFilter<"truck"> | Date | string
     created_by?: UuidNullableWithAggregatesFilter<"truck"> | string | null
     updated_by?: UuidNullableWithAggregatesFilter<"truck"> | string | null
@@ -28007,6 +30422,178 @@ export namespace Prisma {
     is_active?: BoolNullableWithAggregatesFilter<"users"> | boolean | null
     created_at?: DateTimeNullableWithAggregatesFilter<"users"> | Date | string | null
     updated_at?: DateTimeNullableWithAggregatesFilter<"users"> | Date | string | null
+  }
+
+  export type vendorsWhereInput = {
+    AND?: vendorsWhereInput | vendorsWhereInput[]
+    OR?: vendorsWhereInput[]
+    NOT?: vendorsWhereInput | vendorsWhereInput[]
+    id?: IntFilter<"vendors"> | number
+    nama_vendor?: StringFilter<"vendors"> | string
+    address?: StringNullableFilter<"vendors"> | string | null
+    nomor_telepon?: StringNullableFilter<"vendors"> | string | null
+    email?: StringNullableFilter<"vendors"> | string | null
+    kontak_person?: StringNullableFilter<"vendors"> | string | null
+    created_at?: DateTimeFilter<"vendors"> | Date | string
+    updated_at?: DateTimeFilter<"vendors"> | Date | string
+    drivers?: DriversListRelationFilter
+    trucks?: TruckListRelationFilter
+  }
+
+  export type vendorsOrderByWithRelationInput = {
+    id?: SortOrder
+    nama_vendor?: SortOrder
+    address?: SortOrderInput | SortOrder
+    nomor_telepon?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    kontak_person?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    drivers?: driversOrderByRelationAggregateInput
+    trucks?: truckOrderByRelationAggregateInput
+  }
+
+  export type vendorsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: vendorsWhereInput | vendorsWhereInput[]
+    OR?: vendorsWhereInput[]
+    NOT?: vendorsWhereInput | vendorsWhereInput[]
+    nama_vendor?: StringFilter<"vendors"> | string
+    address?: StringNullableFilter<"vendors"> | string | null
+    nomor_telepon?: StringNullableFilter<"vendors"> | string | null
+    email?: StringNullableFilter<"vendors"> | string | null
+    kontak_person?: StringNullableFilter<"vendors"> | string | null
+    created_at?: DateTimeFilter<"vendors"> | Date | string
+    updated_at?: DateTimeFilter<"vendors"> | Date | string
+    drivers?: DriversListRelationFilter
+    trucks?: TruckListRelationFilter
+  }, "id">
+
+  export type vendorsOrderByWithAggregationInput = {
+    id?: SortOrder
+    nama_vendor?: SortOrder
+    address?: SortOrderInput | SortOrder
+    nomor_telepon?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    kontak_person?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: vendorsCountOrderByAggregateInput
+    _avg?: vendorsAvgOrderByAggregateInput
+    _max?: vendorsMaxOrderByAggregateInput
+    _min?: vendorsMinOrderByAggregateInput
+    _sum?: vendorsSumOrderByAggregateInput
+  }
+
+  export type vendorsScalarWhereWithAggregatesInput = {
+    AND?: vendorsScalarWhereWithAggregatesInput | vendorsScalarWhereWithAggregatesInput[]
+    OR?: vendorsScalarWhereWithAggregatesInput[]
+    NOT?: vendorsScalarWhereWithAggregatesInput | vendorsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"vendors"> | number
+    nama_vendor?: StringWithAggregatesFilter<"vendors"> | string
+    address?: StringNullableWithAggregatesFilter<"vendors"> | string | null
+    nomor_telepon?: StringNullableWithAggregatesFilter<"vendors"> | string | null
+    email?: StringNullableWithAggregatesFilter<"vendors"> | string | null
+    kontak_person?: StringNullableWithAggregatesFilter<"vendors"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"vendors"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"vendors"> | Date | string
+  }
+
+  export type driversWhereInput = {
+    AND?: driversWhereInput | driversWhereInput[]
+    OR?: driversWhereInput[]
+    NOT?: driversWhereInput | driversWhereInput[]
+    id?: IntFilter<"drivers"> | number
+    name?: StringFilter<"drivers"> | string
+    phone?: StringNullableFilter<"drivers"> | string | null
+    email?: StringNullableFilter<"drivers"> | string | null
+    address?: StringNullableFilter<"drivers"> | string | null
+    license_number?: StringFilter<"drivers"> | string
+    license_type?: StringFilter<"drivers"> | string
+    license_expiry?: DateTimeFilter<"drivers"> | Date | string
+    id_card_number?: StringFilter<"drivers"> | string
+    vendor_id?: IntNullableFilter<"drivers"> | number | null
+    status?: StringFilter<"drivers"> | string
+    created_at?: DateTimeFilter<"drivers"> | Date | string
+    updated_at?: DateTimeFilter<"drivers"> | Date | string
+    vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
+  }
+
+  export type driversOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    license_number?: SortOrder
+    license_type?: SortOrder
+    license_expiry?: SortOrder
+    id_card_number?: SortOrder
+    vendor_id?: SortOrderInput | SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    vendor?: vendorsOrderByWithRelationInput
+  }
+
+  export type driversWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: driversWhereInput | driversWhereInput[]
+    OR?: driversWhereInput[]
+    NOT?: driversWhereInput | driversWhereInput[]
+    name?: StringFilter<"drivers"> | string
+    phone?: StringNullableFilter<"drivers"> | string | null
+    email?: StringNullableFilter<"drivers"> | string | null
+    address?: StringNullableFilter<"drivers"> | string | null
+    license_number?: StringFilter<"drivers"> | string
+    license_type?: StringFilter<"drivers"> | string
+    license_expiry?: DateTimeFilter<"drivers"> | Date | string
+    id_card_number?: StringFilter<"drivers"> | string
+    vendor_id?: IntNullableFilter<"drivers"> | number | null
+    status?: StringFilter<"drivers"> | string
+    created_at?: DateTimeFilter<"drivers"> | Date | string
+    updated_at?: DateTimeFilter<"drivers"> | Date | string
+    vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
+  }, "id">
+
+  export type driversOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    email?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    license_number?: SortOrder
+    license_type?: SortOrder
+    license_expiry?: SortOrder
+    id_card_number?: SortOrder
+    vendor_id?: SortOrderInput | SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: driversCountOrderByAggregateInput
+    _avg?: driversAvgOrderByAggregateInput
+    _max?: driversMaxOrderByAggregateInput
+    _min?: driversMinOrderByAggregateInput
+    _sum?: driversSumOrderByAggregateInput
+  }
+
+  export type driversScalarWhereWithAggregatesInput = {
+    AND?: driversScalarWhereWithAggregatesInput | driversScalarWhereWithAggregatesInput[]
+    OR?: driversScalarWhereWithAggregatesInput[]
+    NOT?: driversScalarWhereWithAggregatesInput | driversScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"drivers"> | number
+    name?: StringWithAggregatesFilter<"drivers"> | string
+    phone?: StringNullableWithAggregatesFilter<"drivers"> | string | null
+    email?: StringNullableWithAggregatesFilter<"drivers"> | string | null
+    address?: StringNullableWithAggregatesFilter<"drivers"> | string | null
+    license_number?: StringWithAggregatesFilter<"drivers"> | string
+    license_type?: StringWithAggregatesFilter<"drivers"> | string
+    license_expiry?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
+    id_card_number?: StringWithAggregatesFilter<"drivers"> | string
+    vendor_id?: IntNullableWithAggregatesFilter<"drivers"> | number | null
+    status?: StringWithAggregatesFilter<"drivers"> | string
+    created_at?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
   }
 
   export type alert_eventCreateInput = {
@@ -29359,6 +31946,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -29371,6 +31959,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -29417,6 +32006,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -29429,6 +32019,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29458,6 +32049,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -29485,6 +32077,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -29635,6 +32228,196 @@ export namespace Prisma {
     is_active?: NullableBoolFieldUpdateOperationsInput | boolean | null
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type vendorsCreateInput = {
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    drivers?: driversCreateNestedManyWithoutVendorInput
+    trucks?: truckCreateNestedManyWithoutVendorInput
+  }
+
+  export type vendorsUncheckedCreateInput = {
+    id?: number
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    drivers?: driversUncheckedCreateNestedManyWithoutVendorInput
+    trucks?: truckUncheckedCreateNestedManyWithoutVendorInput
+  }
+
+  export type vendorsUpdateInput = {
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    drivers?: driversUpdateManyWithoutVendorNestedInput
+    trucks?: truckUpdateManyWithoutVendorNestedInput
+  }
+
+  export type vendorsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    drivers?: driversUncheckedUpdateManyWithoutVendorNestedInput
+    trucks?: truckUncheckedUpdateManyWithoutVendorNestedInput
+  }
+
+  export type vendorsCreateManyInput = {
+    id?: number
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type vendorsUpdateManyMutationInput = {
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type vendorsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type driversCreateInput = {
+    name: string
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date | string
+    id_card_number: string
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    vendor?: vendorsCreateNestedOneWithoutDriversInput
+  }
+
+  export type driversUncheckedCreateInput = {
+    id?: number
+    name: string
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date | string
+    id_card_number: string
+    vendor_id?: number | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type driversUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendor?: vendorsUpdateOneWithoutDriversNestedInput
+  }
+
+  export type driversUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type driversCreateManyInput = {
+    id?: number
+    name: string
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date | string
+    id_card_number: string
+    vendor_id?: number | null
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type driversUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type driversUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -30986,6 +33769,11 @@ export namespace Prisma {
     isNot?: fleet_groupWhereInput | null
   }
 
+  export type VendorsNullableRelationFilter = {
+    is?: vendorsWhereInput | null
+    isNot?: vendorsWhereInput | null
+  }
+
   export type Truck_status_eventListRelationFilter = {
     every?: truck_status_eventWhereInput
     some?: truck_status_eventWhereInput
@@ -31037,6 +33825,7 @@ export namespace Prisma {
     year?: SortOrder
     tire_config?: SortOrder
     fleet_group_id?: SortOrder
+    vendor_id?: SortOrder
     created_at?: SortOrder
     created_by?: SortOrder
     updated_by?: SortOrder
@@ -31044,6 +33833,7 @@ export namespace Prisma {
 
   export type truckAvgOrderByAggregateInput = {
     year?: SortOrder
+    vendor_id?: SortOrder
   }
 
   export type truckMaxOrderByAggregateInput = {
@@ -31055,6 +33845,7 @@ export namespace Prisma {
     year?: SortOrder
     tire_config?: SortOrder
     fleet_group_id?: SortOrder
+    vendor_id?: SortOrder
     created_at?: SortOrder
     created_by?: SortOrder
     updated_by?: SortOrder
@@ -31069,6 +33860,7 @@ export namespace Prisma {
     year?: SortOrder
     tire_config?: SortOrder
     fleet_group_id?: SortOrder
+    vendor_id?: SortOrder
     created_at?: SortOrder
     created_by?: SortOrder
     updated_by?: SortOrder
@@ -31076,6 +33868,7 @@ export namespace Prisma {
 
   export type truckSumOrderByAggregateInput = {
     year?: SortOrder
+    vendor_id?: SortOrder
   }
 
   export type Enumtruck_statusFilter<$PrismaModel = never> = {
@@ -31153,6 +33946,115 @@ export namespace Prisma {
     is_active?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+  }
+
+  export type DriversListRelationFilter = {
+    every?: driversWhereInput
+    some?: driversWhereInput
+    none?: driversWhereInput
+  }
+
+  export type driversOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type vendorsCountOrderByAggregateInput = {
+    id?: SortOrder
+    nama_vendor?: SortOrder
+    address?: SortOrder
+    nomor_telepon?: SortOrder
+    email?: SortOrder
+    kontak_person?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type vendorsAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type vendorsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nama_vendor?: SortOrder
+    address?: SortOrder
+    nomor_telepon?: SortOrder
+    email?: SortOrder
+    kontak_person?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type vendorsMinOrderByAggregateInput = {
+    id?: SortOrder
+    nama_vendor?: SortOrder
+    address?: SortOrder
+    nomor_telepon?: SortOrder
+    email?: SortOrder
+    kontak_person?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type vendorsSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type driversCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    license_number?: SortOrder
+    license_type?: SortOrder
+    license_expiry?: SortOrder
+    id_card_number?: SortOrder
+    vendor_id?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type driversAvgOrderByAggregateInput = {
+    id?: SortOrder
+    vendor_id?: SortOrder
+  }
+
+  export type driversMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    license_number?: SortOrder
+    license_type?: SortOrder
+    license_expiry?: SortOrder
+    id_card_number?: SortOrder
+    vendor_id?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type driversMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    address?: SortOrder
+    license_number?: SortOrder
+    license_type?: SortOrder
+    license_expiry?: SortOrder
+    id_card_number?: SortOrder
+    vendor_id?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type driversSumOrderByAggregateInput = {
+    id?: SortOrder
+    vendor_id?: SortOrder
   }
 
   export type truckCreateNestedOneWithoutAlert_eventInput = {
@@ -32013,6 +34915,12 @@ export namespace Prisma {
     connect?: fleet_groupWhereUniqueInput
   }
 
+  export type vendorsCreateNestedOneWithoutTrucksInput = {
+    create?: XOR<vendorsCreateWithoutTrucksInput, vendorsUncheckedCreateWithoutTrucksInput>
+    connectOrCreate?: vendorsCreateOrConnectWithoutTrucksInput
+    connect?: vendorsWhereUniqueInput
+  }
+
   export type truck_status_eventCreateNestedManyWithoutTruckInput = {
     create?: XOR<truck_status_eventCreateWithoutTruckInput, truck_status_eventUncheckedCreateWithoutTruckInput> | truck_status_eventCreateWithoutTruckInput[] | truck_status_eventUncheckedCreateWithoutTruckInput[]
     connectOrCreate?: truck_status_eventCreateOrConnectWithoutTruckInput | truck_status_eventCreateOrConnectWithoutTruckInput[]
@@ -32315,6 +35223,16 @@ export namespace Prisma {
     delete?: fleet_groupWhereInput | boolean
     connect?: fleet_groupWhereUniqueInput
     update?: XOR<XOR<fleet_groupUpdateToOneWithWhereWithoutTruckInput, fleet_groupUpdateWithoutTruckInput>, fleet_groupUncheckedUpdateWithoutTruckInput>
+  }
+
+  export type vendorsUpdateOneWithoutTrucksNestedInput = {
+    create?: XOR<vendorsCreateWithoutTrucksInput, vendorsUncheckedCreateWithoutTrucksInput>
+    connectOrCreate?: vendorsCreateOrConnectWithoutTrucksInput
+    upsert?: vendorsUpsertWithoutTrucksInput
+    disconnect?: vendorsWhereInput | boolean
+    delete?: vendorsWhereInput | boolean
+    connect?: vendorsWhereUniqueInput
+    update?: XOR<XOR<vendorsUpdateToOneWithWhereWithoutTrucksInput, vendorsUpdateWithoutTrucksInput>, vendorsUncheckedUpdateWithoutTrucksInput>
   }
 
   export type truck_status_eventUpdateManyWithoutTruckNestedInput = {
@@ -32633,6 +35551,106 @@ export namespace Prisma {
     update?: device_truck_assignmentUpdateWithWhereUniqueWithoutUsers_device_truck_assignment_removed_byTousersInput | device_truck_assignmentUpdateWithWhereUniqueWithoutUsers_device_truck_assignment_removed_byTousersInput[]
     updateMany?: device_truck_assignmentUpdateManyWithWhereWithoutUsers_device_truck_assignment_removed_byTousersInput | device_truck_assignmentUpdateManyWithWhereWithoutUsers_device_truck_assignment_removed_byTousersInput[]
     deleteMany?: device_truck_assignmentScalarWhereInput | device_truck_assignmentScalarWhereInput[]
+  }
+
+  export type driversCreateNestedManyWithoutVendorInput = {
+    create?: XOR<driversCreateWithoutVendorInput, driversUncheckedCreateWithoutVendorInput> | driversCreateWithoutVendorInput[] | driversUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: driversCreateOrConnectWithoutVendorInput | driversCreateOrConnectWithoutVendorInput[]
+    createMany?: driversCreateManyVendorInputEnvelope
+    connect?: driversWhereUniqueInput | driversWhereUniqueInput[]
+  }
+
+  export type truckCreateNestedManyWithoutVendorInput = {
+    create?: XOR<truckCreateWithoutVendorInput, truckUncheckedCreateWithoutVendorInput> | truckCreateWithoutVendorInput[] | truckUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutVendorInput | truckCreateOrConnectWithoutVendorInput[]
+    createMany?: truckCreateManyVendorInputEnvelope
+    connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
+  }
+
+  export type driversUncheckedCreateNestedManyWithoutVendorInput = {
+    create?: XOR<driversCreateWithoutVendorInput, driversUncheckedCreateWithoutVendorInput> | driversCreateWithoutVendorInput[] | driversUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: driversCreateOrConnectWithoutVendorInput | driversCreateOrConnectWithoutVendorInput[]
+    createMany?: driversCreateManyVendorInputEnvelope
+    connect?: driversWhereUniqueInput | driversWhereUniqueInput[]
+  }
+
+  export type truckUncheckedCreateNestedManyWithoutVendorInput = {
+    create?: XOR<truckCreateWithoutVendorInput, truckUncheckedCreateWithoutVendorInput> | truckCreateWithoutVendorInput[] | truckUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutVendorInput | truckCreateOrConnectWithoutVendorInput[]
+    createMany?: truckCreateManyVendorInputEnvelope
+    connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
+  }
+
+  export type driversUpdateManyWithoutVendorNestedInput = {
+    create?: XOR<driversCreateWithoutVendorInput, driversUncheckedCreateWithoutVendorInput> | driversCreateWithoutVendorInput[] | driversUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: driversCreateOrConnectWithoutVendorInput | driversCreateOrConnectWithoutVendorInput[]
+    upsert?: driversUpsertWithWhereUniqueWithoutVendorInput | driversUpsertWithWhereUniqueWithoutVendorInput[]
+    createMany?: driversCreateManyVendorInputEnvelope
+    set?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    disconnect?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    delete?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    connect?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    update?: driversUpdateWithWhereUniqueWithoutVendorInput | driversUpdateWithWhereUniqueWithoutVendorInput[]
+    updateMany?: driversUpdateManyWithWhereWithoutVendorInput | driversUpdateManyWithWhereWithoutVendorInput[]
+    deleteMany?: driversScalarWhereInput | driversScalarWhereInput[]
+  }
+
+  export type truckUpdateManyWithoutVendorNestedInput = {
+    create?: XOR<truckCreateWithoutVendorInput, truckUncheckedCreateWithoutVendorInput> | truckCreateWithoutVendorInput[] | truckUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutVendorInput | truckCreateOrConnectWithoutVendorInput[]
+    upsert?: truckUpsertWithWhereUniqueWithoutVendorInput | truckUpsertWithWhereUniqueWithoutVendorInput[]
+    createMany?: truckCreateManyVendorInputEnvelope
+    set?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    disconnect?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    delete?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    update?: truckUpdateWithWhereUniqueWithoutVendorInput | truckUpdateWithWhereUniqueWithoutVendorInput[]
+    updateMany?: truckUpdateManyWithWhereWithoutVendorInput | truckUpdateManyWithWhereWithoutVendorInput[]
+    deleteMany?: truckScalarWhereInput | truckScalarWhereInput[]
+  }
+
+  export type driversUncheckedUpdateManyWithoutVendorNestedInput = {
+    create?: XOR<driversCreateWithoutVendorInput, driversUncheckedCreateWithoutVendorInput> | driversCreateWithoutVendorInput[] | driversUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: driversCreateOrConnectWithoutVendorInput | driversCreateOrConnectWithoutVendorInput[]
+    upsert?: driversUpsertWithWhereUniqueWithoutVendorInput | driversUpsertWithWhereUniqueWithoutVendorInput[]
+    createMany?: driversCreateManyVendorInputEnvelope
+    set?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    disconnect?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    delete?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    connect?: driversWhereUniqueInput | driversWhereUniqueInput[]
+    update?: driversUpdateWithWhereUniqueWithoutVendorInput | driversUpdateWithWhereUniqueWithoutVendorInput[]
+    updateMany?: driversUpdateManyWithWhereWithoutVendorInput | driversUpdateManyWithWhereWithoutVendorInput[]
+    deleteMany?: driversScalarWhereInput | driversScalarWhereInput[]
+  }
+
+  export type truckUncheckedUpdateManyWithoutVendorNestedInput = {
+    create?: XOR<truckCreateWithoutVendorInput, truckUncheckedCreateWithoutVendorInput> | truckCreateWithoutVendorInput[] | truckUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutVendorInput | truckCreateOrConnectWithoutVendorInput[]
+    upsert?: truckUpsertWithWhereUniqueWithoutVendorInput | truckUpsertWithWhereUniqueWithoutVendorInput[]
+    createMany?: truckCreateManyVendorInputEnvelope
+    set?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    disconnect?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    delete?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
+    update?: truckUpdateWithWhereUniqueWithoutVendorInput | truckUpdateWithWhereUniqueWithoutVendorInput[]
+    updateMany?: truckUpdateManyWithWhereWithoutVendorInput | truckUpdateManyWithWhereWithoutVendorInput[]
+    deleteMany?: truckScalarWhereInput | truckScalarWhereInput[]
+  }
+
+  export type vendorsCreateNestedOneWithoutDriversInput = {
+    create?: XOR<vendorsCreateWithoutDriversInput, vendorsUncheckedCreateWithoutDriversInput>
+    connectOrCreate?: vendorsCreateOrConnectWithoutDriversInput
+    connect?: vendorsWhereUniqueInput
+  }
+
+  export type vendorsUpdateOneWithoutDriversNestedInput = {
+    create?: XOR<vendorsCreateWithoutDriversInput, vendorsUncheckedCreateWithoutDriversInput>
+    connectOrCreate?: vendorsCreateOrConnectWithoutDriversInput
+    upsert?: vendorsUpsertWithoutDriversInput
+    disconnect?: vendorsWhereInput | boolean
+    delete?: vendorsWhereInput | boolean
+    connect?: vendorsWhereUniqueInput
+    update?: XOR<XOR<vendorsUpdateToOneWithWhereWithoutDriversInput, vendorsUpdateWithoutDriversInput>, vendorsUncheckedUpdateWithoutDriversInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -33045,6 +36063,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -33057,6 +36076,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -33117,6 +36137,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -33129,6 +36150,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33173,6 +36195,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -33185,6 +36208,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -33245,6 +36269,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -33257,6 +36282,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33301,6 +36327,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -33313,6 +36340,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -33559,6 +36587,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -33571,6 +36600,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33861,6 +36891,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -33873,6 +36904,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -33978,6 +37010,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -33990,6 +37023,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34131,6 +37165,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -34143,6 +37178,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -34318,6 +37354,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -34330,6 +37367,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34374,6 +37412,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -34385,6 +37424,7 @@ export namespace Prisma {
     model?: string | null
     year?: number | null
     tire_config?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -34443,6 +37483,7 @@ export namespace Prisma {
     year?: IntNullableFilter<"truck"> | number | null
     tire_config?: StringNullableFilter<"truck"> | string | null
     fleet_group_id?: UuidNullableFilter<"truck"> | string | null
+    vendor_id?: IntNullableFilter<"truck"> | number | null
     created_at?: DateTimeFilter<"truck"> | Date | string
     created_by?: UuidNullableFilter<"truck"> | string | null
     updated_by?: UuidNullableFilter<"truck"> | string | null
@@ -34473,6 +37514,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -34485,6 +37527,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -34545,6 +37588,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -34557,6 +37601,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34685,6 +37730,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -34697,6 +37743,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -34757,6 +37804,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -34769,6 +37817,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34852,6 +37901,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -34864,6 +37914,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -34969,6 +38020,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -34981,6 +38033,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35064,6 +38117,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -35076,6 +38130,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -35181,6 +38236,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -35193,6 +38249,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35321,6 +38378,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -35333,6 +38391,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -35423,6 +38482,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -35435,6 +38495,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35573,6 +38634,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -35585,6 +38647,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -35645,6 +38708,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -35657,6 +38721,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35701,6 +38766,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -35713,6 +38779,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -35773,6 +38840,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -35785,6 +38853,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35868,6 +38937,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -35880,6 +38950,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -35985,6 +39056,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -35997,6 +39069,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36041,6 +39114,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -36053,6 +39127,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -36113,6 +39188,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -36125,6 +39201,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36533,6 +39610,34 @@ export namespace Prisma {
     create: XOR<fleet_groupCreateWithoutTruckInput, fleet_groupUncheckedCreateWithoutTruckInput>
   }
 
+  export type vendorsCreateWithoutTrucksInput = {
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    drivers?: driversCreateNestedManyWithoutVendorInput
+  }
+
+  export type vendorsUncheckedCreateWithoutTrucksInput = {
+    id?: number
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    drivers?: driversUncheckedCreateNestedManyWithoutVendorInput
+  }
+
+  export type vendorsCreateOrConnectWithoutTrucksInput = {
+    where: vendorsWhereUniqueInput
+    create: XOR<vendorsCreateWithoutTrucksInput, vendorsUncheckedCreateWithoutTrucksInput>
+  }
+
   export type truck_status_eventCreateWithoutTruckInput = {
     id?: string
     status: $Enums.truck_status
@@ -36904,6 +40009,40 @@ export namespace Prisma {
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type vendorsUpsertWithoutTrucksInput = {
+    update: XOR<vendorsUpdateWithoutTrucksInput, vendorsUncheckedUpdateWithoutTrucksInput>
+    create: XOR<vendorsCreateWithoutTrucksInput, vendorsUncheckedCreateWithoutTrucksInput>
+    where?: vendorsWhereInput
+  }
+
+  export type vendorsUpdateToOneWithWhereWithoutTrucksInput = {
+    where?: vendorsWhereInput
+    data: XOR<vendorsUpdateWithoutTrucksInput, vendorsUncheckedUpdateWithoutTrucksInput>
+  }
+
+  export type vendorsUpdateWithoutTrucksInput = {
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    drivers?: driversUpdateManyWithoutVendorNestedInput
+  }
+
+  export type vendorsUncheckedUpdateWithoutTrucksInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    drivers?: driversUncheckedUpdateManyWithoutVendorNestedInput
+  }
+
   export type truck_status_eventUpsertWithWhereUniqueWithoutTruckInput = {
     where: truck_status_eventWhereUniqueInput
     update: XOR<truck_status_eventUpdateWithoutTruckInput, truck_status_eventUncheckedUpdateWithoutTruckInput>
@@ -36958,6 +40097,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
     fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    vendor?: vendorsCreateNestedOneWithoutTrucksInput
   }
 
   export type truckUncheckedCreateWithoutTruck_status_eventInput = {
@@ -36969,6 +40109,7 @@ export namespace Prisma {
     year?: number | null
     tire_config?: string | null
     fleet_group_id?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -37030,6 +40171,7 @@ export namespace Prisma {
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
     fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
   }
 
   export type truckUncheckedUpdateWithoutTruck_status_eventInput = {
@@ -37041,6 +40183,7 @@ export namespace Prisma {
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
     fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37150,6 +40293,226 @@ export namespace Prisma {
   export type device_truck_assignmentUpdateManyWithWhereWithoutUsers_device_truck_assignment_removed_byTousersInput = {
     where: device_truck_assignmentScalarWhereInput
     data: XOR<device_truck_assignmentUpdateManyMutationInput, device_truck_assignmentUncheckedUpdateManyWithoutUsers_device_truck_assignment_removed_byTousersInput>
+  }
+
+  export type driversCreateWithoutVendorInput = {
+    name: string
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date | string
+    id_card_number: string
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type driversUncheckedCreateWithoutVendorInput = {
+    id?: number
+    name: string
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date | string
+    id_card_number: string
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type driversCreateOrConnectWithoutVendorInput = {
+    where: driversWhereUniqueInput
+    create: XOR<driversCreateWithoutVendorInput, driversUncheckedCreateWithoutVendorInput>
+  }
+
+  export type driversCreateManyVendorInputEnvelope = {
+    data: driversCreateManyVendorInput | driversCreateManyVendorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type truckCreateWithoutVendorInput = {
+    id?: string
+    code?: string | null
+    vin?: string | null
+    name?: string | null
+    model?: string | null
+    year?: number | null
+    tire_config?: string | null
+    created_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    alert_event?: alert_eventCreateNestedManyWithoutTruckInput
+    daily_route?: daily_routeCreateNestedManyWithoutTruckInput
+    device?: deviceCreateNestedManyWithoutTruckInput
+    device_status_event?: device_status_eventCreateNestedManyWithoutTruckInput
+    device_truck_assignment?: device_truck_assignmentCreateNestedManyWithoutTruckInput
+    fuel_level_event?: fuel_level_eventCreateNestedManyWithoutTruckInput
+    gps_position?: gps_positionCreateNestedManyWithoutTruckInput
+    hub_temperature_event?: hub_temperature_eventCreateNestedManyWithoutTruckInput
+    lock_event?: lock_eventCreateNestedManyWithoutTruckInput
+    sensor_data_raw?: sensor_data_rawCreateNestedManyWithoutTruckInput
+    speed_event?: speed_eventCreateNestedManyWithoutTruckInput
+    tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
+    tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
+    trip?: tripCreateNestedManyWithoutTruckInput
+    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
+  }
+
+  export type truckUncheckedCreateWithoutVendorInput = {
+    id?: string
+    code?: string | null
+    vin?: string | null
+    name?: string | null
+    model?: string | null
+    year?: number | null
+    tire_config?: string | null
+    fleet_group_id?: string | null
+    created_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+    alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
+    daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
+    device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    device_status_event?: device_status_eventUncheckedCreateNestedManyWithoutTruckInput
+    device_truck_assignment?: device_truck_assignmentUncheckedCreateNestedManyWithoutTruckInput
+    fuel_level_event?: fuel_level_eventUncheckedCreateNestedManyWithoutTruckInput
+    gps_position?: gps_positionUncheckedCreateNestedManyWithoutTruckInput
+    hub_temperature_event?: hub_temperature_eventUncheckedCreateNestedManyWithoutTruckInput
+    lock_event?: lock_eventUncheckedCreateNestedManyWithoutTruckInput
+    sensor_data_raw?: sensor_data_rawUncheckedCreateNestedManyWithoutTruckInput
+    speed_event?: speed_eventUncheckedCreateNestedManyWithoutTruckInput
+    tire_position_config?: tire_position_configUncheckedCreateNestedManyWithoutTruckInput
+    tire_pressure_event?: tire_pressure_eventUncheckedCreateNestedManyWithoutTruckInput
+    trip?: tripUncheckedCreateNestedManyWithoutTruckInput
+    truck_status_event?: truck_status_eventUncheckedCreateNestedManyWithoutTruckInput
+  }
+
+  export type truckCreateOrConnectWithoutVendorInput = {
+    where: truckWhereUniqueInput
+    create: XOR<truckCreateWithoutVendorInput, truckUncheckedCreateWithoutVendorInput>
+  }
+
+  export type truckCreateManyVendorInputEnvelope = {
+    data: truckCreateManyVendorInput | truckCreateManyVendorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type driversUpsertWithWhereUniqueWithoutVendorInput = {
+    where: driversWhereUniqueInput
+    update: XOR<driversUpdateWithoutVendorInput, driversUncheckedUpdateWithoutVendorInput>
+    create: XOR<driversCreateWithoutVendorInput, driversUncheckedCreateWithoutVendorInput>
+  }
+
+  export type driversUpdateWithWhereUniqueWithoutVendorInput = {
+    where: driversWhereUniqueInput
+    data: XOR<driversUpdateWithoutVendorInput, driversUncheckedUpdateWithoutVendorInput>
+  }
+
+  export type driversUpdateManyWithWhereWithoutVendorInput = {
+    where: driversScalarWhereInput
+    data: XOR<driversUpdateManyMutationInput, driversUncheckedUpdateManyWithoutVendorInput>
+  }
+
+  export type driversScalarWhereInput = {
+    AND?: driversScalarWhereInput | driversScalarWhereInput[]
+    OR?: driversScalarWhereInput[]
+    NOT?: driversScalarWhereInput | driversScalarWhereInput[]
+    id?: IntFilter<"drivers"> | number
+    name?: StringFilter<"drivers"> | string
+    phone?: StringNullableFilter<"drivers"> | string | null
+    email?: StringNullableFilter<"drivers"> | string | null
+    address?: StringNullableFilter<"drivers"> | string | null
+    license_number?: StringFilter<"drivers"> | string
+    license_type?: StringFilter<"drivers"> | string
+    license_expiry?: DateTimeFilter<"drivers"> | Date | string
+    id_card_number?: StringFilter<"drivers"> | string
+    vendor_id?: IntNullableFilter<"drivers"> | number | null
+    status?: StringFilter<"drivers"> | string
+    created_at?: DateTimeFilter<"drivers"> | Date | string
+    updated_at?: DateTimeFilter<"drivers"> | Date | string
+  }
+
+  export type truckUpsertWithWhereUniqueWithoutVendorInput = {
+    where: truckWhereUniqueInput
+    update: XOR<truckUpdateWithoutVendorInput, truckUncheckedUpdateWithoutVendorInput>
+    create: XOR<truckCreateWithoutVendorInput, truckUncheckedCreateWithoutVendorInput>
+  }
+
+  export type truckUpdateWithWhereUniqueWithoutVendorInput = {
+    where: truckWhereUniqueInput
+    data: XOR<truckUpdateWithoutVendorInput, truckUncheckedUpdateWithoutVendorInput>
+  }
+
+  export type truckUpdateManyWithWhereWithoutVendorInput = {
+    where: truckScalarWhereInput
+    data: XOR<truckUpdateManyMutationInput, truckUncheckedUpdateManyWithoutVendorInput>
+  }
+
+  export type vendorsCreateWithoutDriversInput = {
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    trucks?: truckCreateNestedManyWithoutVendorInput
+  }
+
+  export type vendorsUncheckedCreateWithoutDriversInput = {
+    id?: number
+    nama_vendor: string
+    address?: string | null
+    nomor_telepon?: string | null
+    email?: string | null
+    kontak_person?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    trucks?: truckUncheckedCreateNestedManyWithoutVendorInput
+  }
+
+  export type vendorsCreateOrConnectWithoutDriversInput = {
+    where: vendorsWhereUniqueInput
+    create: XOR<vendorsCreateWithoutDriversInput, vendorsUncheckedCreateWithoutDriversInput>
+  }
+
+  export type vendorsUpsertWithoutDriversInput = {
+    update: XOR<vendorsUpdateWithoutDriversInput, vendorsUncheckedUpdateWithoutDriversInput>
+    create: XOR<vendorsCreateWithoutDriversInput, vendorsUncheckedCreateWithoutDriversInput>
+    where?: vendorsWhereInput
+  }
+
+  export type vendorsUpdateToOneWithWhereWithoutDriversInput = {
+    where?: vendorsWhereInput
+    data: XOR<vendorsUpdateWithoutDriversInput, vendorsUncheckedUpdateWithoutDriversInput>
+  }
+
+  export type vendorsUpdateWithoutDriversInput = {
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    trucks?: truckUpdateManyWithoutVendorNestedInput
+  }
+
+  export type vendorsUncheckedUpdateWithoutDriversInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nama_vendor?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    trucks?: truckUncheckedUpdateManyWithoutVendorNestedInput
   }
 
   export type device_status_eventCreateManyDeviceInput = {
@@ -37442,6 +40805,7 @@ export namespace Prisma {
     model?: string | null
     year?: number | null
     tire_config?: string | null
+    vendor_id?: number | null
     created_at?: Date | string
     created_by?: string | null
     updated_by?: string | null
@@ -37472,6 +40836,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
+    vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -37483,6 +40848,7 @@ export namespace Prisma {
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37511,6 +40877,7 @@ export namespace Prisma {
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
     tire_config?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38194,6 +41561,151 @@ export namespace Prisma {
     is_active?: NullableBoolFieldUpdateOperationsInput | boolean | null
   }
 
+  export type driversCreateManyVendorInput = {
+    id?: number
+    name: string
+    phone?: string | null
+    email?: string | null
+    address?: string | null
+    license_number: string
+    license_type: string
+    license_expiry: Date | string
+    id_card_number: string
+    status?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type truckCreateManyVendorInput = {
+    id?: string
+    code?: string | null
+    vin?: string | null
+    name?: string | null
+    model?: string | null
+    year?: number | null
+    tire_config?: string | null
+    fleet_group_id?: string | null
+    created_at?: Date | string
+    created_by?: string | null
+    updated_by?: string | null
+  }
+
+  export type driversUpdateWithoutVendorInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type driversUncheckedUpdateWithoutVendorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type driversUncheckedUpdateManyWithoutVendorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    license_number?: StringFieldUpdateOperationsInput | string
+    license_type?: StringFieldUpdateOperationsInput | string
+    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    id_card_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type truckUpdateWithoutVendorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
+    daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
+    device?: deviceUpdateManyWithoutTruckNestedInput
+    device_status_event?: device_status_eventUpdateManyWithoutTruckNestedInput
+    device_truck_assignment?: device_truck_assignmentUpdateManyWithoutTruckNestedInput
+    fuel_level_event?: fuel_level_eventUpdateManyWithoutTruckNestedInput
+    gps_position?: gps_positionUpdateManyWithoutTruckNestedInput
+    hub_temperature_event?: hub_temperature_eventUpdateManyWithoutTruckNestedInput
+    lock_event?: lock_eventUpdateManyWithoutTruckNestedInput
+    sensor_data_raw?: sensor_data_rawUpdateManyWithoutTruckNestedInput
+    speed_event?: speed_eventUpdateManyWithoutTruckNestedInput
+    tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
+    tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
+    trip?: tripUpdateManyWithoutTruckNestedInput
+    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
+  }
+
+  export type truckUncheckedUpdateWithoutVendorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
+    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
+    daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
+    device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    device_status_event?: device_status_eventUncheckedUpdateManyWithoutTruckNestedInput
+    device_truck_assignment?: device_truck_assignmentUncheckedUpdateManyWithoutTruckNestedInput
+    fuel_level_event?: fuel_level_eventUncheckedUpdateManyWithoutTruckNestedInput
+    gps_position?: gps_positionUncheckedUpdateManyWithoutTruckNestedInput
+    hub_temperature_event?: hub_temperature_eventUncheckedUpdateManyWithoutTruckNestedInput
+    lock_event?: lock_eventUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_data_raw?: sensor_data_rawUncheckedUpdateManyWithoutTruckNestedInput
+    speed_event?: speed_eventUncheckedUpdateManyWithoutTruckNestedInput
+    tire_position_config?: tire_position_configUncheckedUpdateManyWithoutTruckNestedInput
+    tire_pressure_event?: tire_pressure_eventUncheckedUpdateManyWithoutTruckNestedInput
+    trip?: tripUncheckedUpdateManyWithoutTruckNestedInput
+    truck_status_event?: truck_status_eventUncheckedUpdateManyWithoutTruckNestedInput
+  }
+
+  export type truckUncheckedUpdateManyWithoutVendorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: NullableStringFieldUpdateOperationsInput | string | null
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
+    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
 
 
   /**
@@ -38219,6 +41731,10 @@ export namespace Prisma {
      * @deprecated Use UsersCountOutputTypeDefaultArgs instead
      */
     export type UsersCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UsersCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use VendorsCountOutputTypeDefaultArgs instead
+     */
+    export type VendorsCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VendorsCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use alert_eventDefaultArgs instead
      */
@@ -38311,6 +41827,14 @@ export namespace Prisma {
      * @deprecated Use usersDefaultArgs instead
      */
     export type usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = usersDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use vendorsDefaultArgs instead
+     */
+    export type vendorsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = vendorsDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use driversDefaultArgs instead
+     */
+    export type driversArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = driversDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

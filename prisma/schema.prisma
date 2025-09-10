@@ -299,6 +299,7 @@ model truck {
   year                    Int?
   tire_config             String?
   fleet_group_id          String?                   @db.Uuid
+  vendor_id               Int?
   created_at              DateTime                  @default(now()) @db.Timestamptz(6)
   created_by              String?                   @db.Uuid
   updated_by              String?                   @db.Uuid
@@ -317,6 +318,7 @@ model truck {
   tire_pressure_event     tire_pressure_event[]
   trip                    trip[]
   fleet_group             fleet_group?              @relation(fields: [fleet_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vendor                  vendors?                  @relation(fields: [vendor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
   truck_status_event      truck_status_event[]
 }
 
@@ -353,6 +355,42 @@ enum alert_type {
   FUEL_DROP
   HIGH_TEMP
   DEVICE_LOST
+}
+
+model vendors {
+  id             Int       @id @default(autoincrement())
+  nama_vendor    String    @db.VarChar(255)
+  address        String?
+  nomor_telepon  String?   @db.VarChar(50)
+  email          String?   @db.VarChar(255)
+  kontak_person  String?   @db.VarChar(255)
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
+  drivers        drivers[]
+  trucks         truck[]
+
+  @@index([nama_vendor], map: "idx_vendors_nama")
+}
+
+model drivers {
+  id              Int       @id @default(autoincrement())
+  name            String    @db.VarChar(255)
+  phone           String?   @db.VarChar(50)
+  email           String?   @db.VarChar(255)
+  address         String?
+  license_number  String    @db.VarChar(50)
+  license_type    String    @db.VarChar(20)
+  license_expiry  DateTime  @db.Date
+  id_card_number  String    @db.VarChar(50)
+  vendor_id       Int?
+  status          String    @default("aktif") @db.VarChar(20)
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime  @default(now()) @db.Timestamptz(6)
+  vendor          vendors?  @relation(fields: [vendor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([vendor_id], map: "idx_drivers_vendor_id")
+  @@index([status], map: "idx_drivers_status")
+  @@index([license_expiry], map: "idx_drivers_license_expiry")
 }
 
 enum truck_status {

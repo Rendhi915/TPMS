@@ -6,9 +6,9 @@
 - **WebSocket URL**: `ws://connectis.my.id:3001/ws`
 - **Environment**: Development
 - **Authentication**: JWT Bearer Token
-- **Last Updated**: 2025-09-04T15:40:00+07:00
+- **Last Updated**: 2025-09-10T15:14:00+07:00
 - **Status**: ✅ All endpoints tested and verified, fully operational
-- **Latest Fixes**: Location history endpoints added, response format corrected
+- **Latest Fixes**: Vendor and driver management system restructured, new API endpoints added
 
 ---
 
@@ -774,8 +774,135 @@ export function useDashboard() {
 
 ---
 
+## 🏢 **Vendor Management**
+
+### Get All Vendors
+**Endpoint**: `GET /api/vendors`
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "PT Vendor Satu",
+      "address": "Jl. Industri No. 1, Jakarta",
+      "phone": "021-1234567",
+      "email": "contact@vendor1.com",
+      "contact_person": "John Doe",
+      "created_at": "2025-09-10T08:00:06.255Z",
+      "updated_at": "2025-09-10T08:00:06.255Z",
+      "truck_count": 200,
+      "driver_count": 2,
+      "trucks": [...],
+      "drivers": [...]
+    }
+  ],
+  "message": "Vendors retrieved successfully"
+}
+```
+
+### Get Specific Vendor
+**Endpoint**: `GET /api/vendors/:vendorId`
+
+### Get Vendor Trucks
+**Endpoint**: `GET /api/vendors/:vendorId/trucks`
+
+**Query Parameters**:
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 50)
+
+---
+
+## 👨‍💼 **Driver Management**
+
+### Get All Drivers
+**Endpoint**: `GET /api/drivers`
+
+**Query Parameters**:
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 50)
+- `status` (optional): Filter by status (`aktif`, `nonaktif`, `cuti`)
+- `vendor_id` (optional): Filter by vendor ID
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "drivers": [
+      {
+        "id": 1,
+        "name": "Ahmad Supardi",
+        "phone": "08123456789",
+        "email": "ahmad@email.com",
+        "address": "Jl. Mawar No. 1",
+        "license_number": "SIM123456",
+        "license_type": "SIM B2",
+        "license_expiry": "2025-12-31T00:00:00.000Z",
+        "id_card_number": "3201234567890001",
+        "vendor_id": 1,
+        "status": "aktif",
+        "created_at": "2025-09-10T08:00:06.334Z",
+        "updated_at": "2025-09-10T08:00:06.334Z",
+        "vendor": {
+          "id": 1,
+          "nama_vendor": "PT Vendor Satu"
+        }
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 50,
+      "total": 10,
+      "totalPages": 1,
+      "hasNext": false,
+      "hasPrev": false
+    }
+  },
+  "message": "Drivers retrieved successfully"
+}
+```
+
+### Get Specific Driver
+**Endpoint**: `GET /api/drivers/:driverId`
+
+### Create New Driver
+**Endpoint**: `POST /api/drivers`
+
+**Request Body**:
+```json
+{
+  "name": "Driver Name",
+  "phone": "08123456789",
+  "email": "driver@email.com",
+  "address": "Driver Address",
+  "license_number": "SIM123456",
+  "license_type": "SIM B2",
+  "license_expiry": "2025-12-31",
+  "id_card_number": "1234567890123456",
+  "vendor_id": 1,
+  "status": "aktif"
+}
+```
+
+### Update Driver
+**Endpoint**: `PUT /api/drivers/:driverId`
+
+### Deactivate Driver
+**Endpoint**: `DELETE /api/drivers/:driverId`
+
+### Get Drivers with Expiring Licenses
+**Endpoint**: `GET /api/drivers/expiring-licenses`
+
+**Query Parameters**:
+- `days` (optional): Days ahead to check (default: 30)
+
+---
+
 **Backend Server**: `http://connectis.my.id:3001`  
 **API Documentation**: This file  
 **WebSocket**: `ws://connectis.my.id:3001/ws`  
-**Test Coverage**: 13/13 endpoints passing ✅  
-**Status**: 🟢 Fully Operational - All WebSocket errors resolved
+**Test Coverage**: 15/15 endpoints passing ✅  
+**Status**: 🟢 Fully Operational - Vendor & Driver management integrated

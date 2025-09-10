@@ -6,6 +6,7 @@ const sensorRoutes = require('./sensors');
 const miningAreaRoutes = require('./miningarea');
 const fleetRoutes = require('./fleet');
 const vendorRoutes = require('./vendors');
+const driverRoutes = require('./drivers');
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.use('/dashboard', dashboardRoutes);
 router.use('/mining-area', miningAreaRoutes);
 router.use('/sensors', sensorRoutes);
 router.use('/vendors', vendorRoutes);
+router.use('/drivers', driverRoutes);
 router.use('/fleet', fleetRoutes);
 
 // Additional routes for frontend compatibility

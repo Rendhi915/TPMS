@@ -330,6 +330,7 @@ exports.Prisma.TruckScalarFieldEnum = {
   year: 'year',
   tire_config: 'tire_config',
   fleet_group_id: 'fleet_group_id',
+  vendor_id: 'vendor_id',
   created_at: 'created_at',
   created_by: 'created_by',
   updated_by: 'updated_by'
@@ -351,6 +352,33 @@ exports.Prisma.UsersScalarFieldEnum = {
   password_hash: 'password_hash',
   role: 'role',
   is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.VendorsScalarFieldEnum = {
+  id: 'id',
+  nama_vendor: 'nama_vendor',
+  address: 'address',
+  nomor_telepon: 'nomor_telepon',
+  email: 'email',
+  kontak_person: 'kontak_person',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.DriversScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  address: 'address',
+  license_number: 'license_number',
+  license_type: 'license_type',
+  license_expiry: 'license_expiry',
+  id_card_number: 'id_card_number',
+  vendor_id: 'vendor_id',
+  status: 'status',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
@@ -424,7 +452,9 @@ exports.Prisma.ModelName = {
   trip: 'trip',
   truck: 'truck',
   truck_status_event: 'truck_status_event',
-  users: 'users'
+  users: 'users',
+  vendors: 'vendors',
+  drivers: 'drivers'
 };
 
 /**

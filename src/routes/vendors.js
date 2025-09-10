@@ -1,28 +1,54 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/database');
+const { PrismaClient } = require('../../prisma/generated/client');
 const authMiddleware = require('../middleware/auth');
 
-// GET /api/vendors - Get all vendors/fleet groups
+const prisma = new PrismaClient();
+
+// GET /api/vendors - Get all vendors
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const query = `
-      SELECT 
-        id,
-        name,
-        description,
-        created_at,
-        created_at as updated_at,
-        (SELECT COUNT(*) FROM truck WHERE fleet_group_id = fleet_group.id) as truck_count
-      FROM fleet_group 
-      ORDER BY name ASC
-    `;
+    const vendors = await prisma.vendors.findMany({
+      include: {
+        trucks: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            model: true
+          }
+        },
+        drivers: {
+          select: {
+            id: true,
+            name: true,
+            status: true
+          }
+        }
+      },
+      orderBy: {
+        nama_vendor: 'asc'
+      }
+    });
     
-    const result = await pool.query(query);
+    const vendorsWithCounts = vendors.map(vendor => ({
+      id: vendor.id,
+      name: vendor.nama_vendor,
+      address: vendor.address,
+      phone: vendor.nomor_telepon,
+      email: vendor.email,
+      contact_person: vendor.kontak_person,
+      created_at: vendor.created_at,
+      updated_at: vendor.updated_at,
+      truck_count: vendor.trucks.length,
+      driver_count: vendor.drivers.length,
+      trucks: vendor.trucks,
+      drivers: vendor.drivers
+    }));
     
     res.status(200).json({
       success: true,
-      data: result.rows,
+      data: vendorsWithCounts,
       message: 'Vendors retrieved successfully'
     });
 
@@ -41,55 +67,61 @@ router.get('/:vendorId', authMiddleware, async (req, res) => {
   try {
     const { vendorId } = req.params;
     
-    const vendorQuery = `
-      SELECT 
-        id,
-        name,
-        description,
-        created_at,
-        created_at as updated_at
-      FROM fleet_group 
-      WHERE id = $1
-    `;
+    const vendor = await prisma.vendors.findUnique({
+      where: {
+        id: parseInt(vendorId)
+      },
+      include: {
+        trucks: {
+          include: {
+            truck_status_event: {
+              orderBy: {
+                changed_at: 'desc'
+              },
+              take: 1
+            }
+          }
+        },
+        drivers: {
+          where: {
+            status: 'aktif'
+          }
+        }
+      }
+    });
     
-    const vendorResult = await pool.query(vendorQuery, [vendorId]);
-    
-    if (vendorResult.rows.length === 0) {
+    if (!vendor) {
       return res.status(404).json({
         success: false,
         message: 'Vendor not found'
       });
     }
 
-    // Get trucks for this vendor
-    const trucksQuery = `
-      SELECT 
-        t.id,
-        t.name,
-        t.code,
-        t.model,
-        (
-          SELECT tse.status
-          FROM truck_status_event tse
-          WHERE tse.truck_id = t.id
-          ORDER BY tse.changed_at DESC
-          LIMIT 1
-        ) as status,
-        t.created_at
-      FROM truck t
-      WHERE t.fleet_group_id = $1
-      ORDER BY t.name ASC
-    `;
-    
-    const trucksResult = await pool.query(trucksQuery, [vendorId]);
-    
-    const vendor = vendorResult.rows[0];
-    vendor.trucks = trucksResult.rows;
-    vendor.truck_count = trucksResult.rows.length;
+    const vendorData = {
+      id: vendor.id,
+      name: vendor.nama_vendor,
+      address: vendor.address,
+      phone: vendor.nomor_telepon,
+      email: vendor.email,
+      contact_person: vendor.kontak_person,
+      created_at: vendor.created_at,
+      updated_at: vendor.updated_at,
+      trucks: vendor.trucks.map(truck => ({
+        id: truck.id,
+        name: truck.name,
+        code: truck.code,
+        model: truck.model,
+        status: truck.truck_status_event[0]?.status || 'active',
+        created_at: truck.created_at
+      })),
+      drivers: vendor.drivers,
+      truck_count: vendor.trucks.length,
+      driver_count: vendor.drivers.length
+    };
     
     res.status(200).json({
       success: true,
-      data: vendor,
+      data: vendorData,
       message: 'Vendor details retrieved successfully'
     });
 
@@ -109,48 +141,55 @@ router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
     const { vendorId } = req.params;
     const { page = 1, limit = 50 } = req.query;
     
-    const offset = (page - 1) * limit;
+    const skip = (page - 1) * limit;
     
-    const trucksQuery = `
-      SELECT 
-        t.id,
-        t.name,
-        t.code,
-        t.model,
-        (
-          SELECT tse.status
-          FROM truck_status_event tse
-          WHERE tse.truck_id = t.id
-          ORDER BY tse.changed_at DESC
-          LIMIT 1
-        ) as status,
-        t.created_at,
-        fg.name as vendor_name
-      FROM truck t
-      JOIN fleet_group fg ON t.fleet_group_id = fg.id
-      WHERE t.fleet_group_id = $1
-      ORDER BY t.name ASC
-      LIMIT $2 OFFSET $3
-    `;
-    
-    const countQuery = `
-      SELECT COUNT(*) as total 
-      FROM truck 
-      WHERE fleet_group_id = $1
-    `;
-    
-    const [trucksResult, countResult] = await Promise.all([
-      pool.query(trucksQuery, [vendorId, limit, offset]),
-      pool.query(countQuery, [vendorId])
+    const [trucks, total] = await Promise.all([
+      prisma.truck.findMany({
+        where: {
+          vendor_id: parseInt(vendorId)
+        },
+        include: {
+          vendor: {
+            select: {
+              nama_vendor: true
+            }
+          },
+          truck_status_event: {
+            orderBy: {
+              changed_at: 'desc'
+            },
+            take: 1
+          }
+        },
+        orderBy: {
+          name: 'asc'
+        },
+        skip: skip,
+        take: parseInt(limit)
+      }),
+      prisma.truck.count({
+        where: {
+          vendor_id: parseInt(vendorId)
+        }
+      })
     ]);
     
-    const total = parseInt(countResult.rows[0].total);
     const totalPages = Math.ceil(total / limit);
+    
+    const trucksData = trucks.map(truck => ({
+      id: truck.id,
+      name: truck.name,
+      code: truck.code,
+      model: truck.model,
+      status: truck.truck_status_event[0]?.status || 'active',
+      created_at: truck.created_at,
+      vendor_name: truck.vendor?.nama_vendor
+    }));
     
     res.status(200).json({
       success: true,
       data: {
-        trucks: trucksResult.rows,
+        trucks: trucksData,
         pagination: {
           page: parseInt(page),
           limit: parseInt(limit),
