@@ -23,7 +23,14 @@ async function resolveDeviceSnByTruckId(truckId) {
   }
 }
 
-async function resolveTruckIdByAlternateKeys({ truckId, truck_id, truckCode, code, truckName, name }) {
+async function resolveTruckIdByAlternateKeys({
+  truckId,
+  truck_id,
+  truckCode,
+  code,
+  truckName,
+  name,
+}) {
   // If we already have a UUID, return it
   if (truckId) return truckId;
   if (truck_id) return truck_id;
@@ -59,7 +66,7 @@ const ingestTirePressureData = async (req, res) => {
       truckCode: sensorData.truckCode,
       code: sensorData.code,
       truckName: sensorData.truckName,
-      name: sensorData.name
+      name: sensorData.name,
     });
     if (!deviceSn && resolvedTruckId) {
       deviceSn = await resolveDeviceSnByTruckId(resolvedTruckId);
@@ -67,13 +74,29 @@ const ingestTirePressureData = async (req, res) => {
 
     if (!deviceSn) {
       // As a fallback, create a virtual device SN tied to the truckId so data can still be queued
-      if (resolvedTruckId || sensorData.truckId || sensorData.truck_id || sensorData.truckCode || sensorData.code || sensorData.truckName || sensorData.name) {
-        const ident = resolvedTruckId || sensorData.truckId || sensorData.truck_id || sensorData.truckCode || sensorData.code || sensorData.truckName || sensorData.name;
+      if (
+        resolvedTruckId ||
+        sensorData.truckId ||
+        sensorData.truck_id ||
+        sensorData.truckCode ||
+        sensorData.code ||
+        sensorData.truckName ||
+        sensorData.name
+      ) {
+        const ident =
+          resolvedTruckId ||
+          sensorData.truckId ||
+          sensorData.truck_id ||
+          sensorData.truckCode ||
+          sensorData.code ||
+          sensorData.truckName ||
+          sensorData.name;
         deviceSn = `virtual-${ident}`;
       } else {
         return res.status(400).json({
           success: false,
-          message: 'Missing device serial number (sn). Provide sn/deviceSn or a valid truckId with an assigned device.'
+          message:
+            'Missing device serial number (sn). Provide sn/deviceSn or a valid truckId with an assigned device.',
         });
       }
     }
@@ -84,11 +107,11 @@ const ingestTirePressureData = async (req, res) => {
       VALUES ($1, 'tpdata', $2, NOW(), $3)
       RETURNING id
     `;
-    
+
     const rawResult = await pool.query(rawDataQuery, [
       deviceSn,
       JSON.stringify({ sn: deviceSn, truckId: resolvedTruckId || null, data: payload }),
-      resolvedTruckId || null
+      resolvedTruckId || null,
     ]);
 
     // Broadcast real-time update via WebSocket
@@ -100,9 +123,9 @@ const ingestTirePressureData = async (req, res) => {
           tireNo: payload.tireNo,
           pressure: payload.tiprValue ?? payload.pressureKpa ?? payload.pressure ?? null,
           temperature: payload.tempValue ?? payload.tempCelsius ?? null,
-          battery: payload.bat ?? null
+          battery: payload.bat ?? null,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (wsError) {
       console.log('WebSocket broadcast failed:', wsError.message);
@@ -114,16 +137,15 @@ const ingestTirePressureData = async (req, res) => {
       data: {
         rawDataId: rawResult.rows[0].id,
         deviceSn: deviceSn,
-        processingStatus: 'queued'
-      }
+        processingStatus: 'queued',
+      },
     });
-
   } catch (error) {
     console.error('Error ingesting tire pressure data:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to ingest tire pressure data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -131,18 +153,15 @@ const ingestTirePressureData = async (req, res) => {
 const ingestHubTemperatureData = async (req, res) => {
   try {
     const sensorData = req.body;
-    
+
     // Insert raw sensor data
     const rawDataQuery = `
       INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
       VALUES ($1, 'hubdata', $2, NOW())
       RETURNING id
     `;
-    
-    const rawResult = await pool.query(rawDataQuery, [
-      sensorData.sn,
-      JSON.stringify(sensorData)
-    ]);
+
+    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(sensorData)]);
 
     // Broadcast real-time update
     try {
@@ -152,9 +171,9 @@ const ingestHubTemperatureData = async (req, res) => {
         data: {
           tireNo: sensorData.data.tireNo,
           temperature: sensorData.data.tempValue,
-          battery: sensorData.data.bat
+          battery: sensorData.data.bat,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (wsError) {
       console.log('WebSocket broadcast failed:', wsError.message);
@@ -166,16 +185,15 @@ const ingestHubTemperatureData = async (req, res) => {
       data: {
         rawDataId: rawResult.rows[0].id,
         deviceSn: sensorData.sn,
-        processingStatus: 'queued'
-      }
+        processingStatus: 'queued',
+      },
     });
-
   } catch (error) {
     console.error('Error ingesting hub temperature data:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to ingest hub temperature data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -183,18 +201,15 @@ const ingestHubTemperatureData = async (req, res) => {
 const ingestDeviceStatusData = async (req, res) => {
   try {
     const sensorData = req.body;
-    
+
     // Insert raw sensor data
     const rawDataQuery = `
       INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
       VALUES ($1, 'device', $2, NOW())
       RETURNING id
     `;
-    
-    const rawResult = await pool.query(rawDataQuery, [
-      sensorData.sn,
-      JSON.stringify(sensorData)
-    ]);
+
+    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(sensorData)]);
 
     // Broadcast GPS update immediately for real-time tracking
     try {
@@ -207,11 +222,11 @@ const ingestDeviceStatusData = async (req, res) => {
           batteryLevels: {
             host: sensorData.data.bat1,
             repeater1: sensorData.data.bat2,
-            repeater2: sensorData.data.bat3
+            repeater2: sensorData.data.bat3,
           },
-          lockState: sensorData.data.lock
+          lockState: sensorData.data.lock,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (wsError) {
       console.log('WebSocket broadcast failed:', wsError.message);
@@ -223,16 +238,15 @@ const ingestDeviceStatusData = async (req, res) => {
       data: {
         rawDataId: rawResult.rows[0].id,
         deviceSn: sensorData.sn,
-        processingStatus: 'queued'
-      }
+        processingStatus: 'queued',
+      },
     });
-
   } catch (error) {
     console.error('Error ingesting device status data:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to ingest device status data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -240,18 +254,15 @@ const ingestDeviceStatusData = async (req, res) => {
 const ingestLockStateData = async (req, res) => {
   try {
     const sensorData = req.body;
-    
+
     // Insert raw sensor data
     const rawDataQuery = `
       INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
       VALUES ($1, 'state', $2, NOW())
       RETURNING id
     `;
-    
-    const rawResult = await pool.query(rawDataQuery, [
-      sensorData.sn,
-      JSON.stringify(sensorData)
-    ]);
+
+    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(sensorData)]);
 
     // Broadcast lock state update
     try {
@@ -259,9 +270,9 @@ const ingestLockStateData = async (req, res) => {
         type: 'lock_state',
         deviceSn: sensorData.sn,
         data: {
-          isLocked: sensorData.data.is_lock
+          isLocked: sensorData.data.is_lock,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (wsError) {
       console.log('WebSocket broadcast failed:', wsError.message);
@@ -273,16 +284,15 @@ const ingestLockStateData = async (req, res) => {
       data: {
         rawDataId: rawResult.rows[0].id,
         deviceSn: sensorData.sn,
-        processingStatus: 'queued'
-      }
+        processingStatus: 'queued',
+      },
     });
-
   } catch (error) {
     console.error('Error ingesting lock state data:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to ingest lock state data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -290,12 +300,12 @@ const ingestLockStateData = async (req, res) => {
 const ingestRawSensorData = async (req, res) => {
   try {
     const { deviceSn, cmdType, data } = req.body;
-    
+
     // Validate required fields
     if (!deviceSn || !cmdType || !data) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: deviceSn, cmdType, data'
+        message: 'Missing required fields: deviceSn, cmdType, data',
       });
     }
 
@@ -305,11 +315,11 @@ const ingestRawSensorData = async (req, res) => {
       VALUES ($1, $2, $3, NOW())
       RETURNING id
     `;
-    
+
     const rawResult = await pool.query(rawDataQuery, [
       deviceSn,
       cmdType,
-      JSON.stringify({ sn: deviceSn, cmd: cmdType, data })
+      JSON.stringify({ sn: deviceSn, cmd: cmdType, data }),
     ]);
 
     res.status(201).json({
@@ -319,16 +329,15 @@ const ingestRawSensorData = async (req, res) => {
         rawDataId: rawResult.rows[0].id,
         deviceSn: deviceSn,
         cmdType: cmdType,
-        processingStatus: 'queued'
-      }
+        processingStatus: 'queued',
+      },
     });
-
   } catch (error) {
     console.error('Error ingesting raw sensor data:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to ingest raw sensor data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -353,7 +362,7 @@ const getQueueStats = async (req, res) => {
       FROM sensor_data_raw
       WHERE received_at >= NOW() - INTERVAL '24 hours'
     `;
-    
+
     const result = await pool.query(statsQuery);
     const stats = result.rows[0];
 
@@ -361,7 +370,7 @@ const getQueueStats = async (req, res) => {
     const performanceQuery = `
       SELECT * FROM get_queue_stats()
     `;
-    
+
     let performanceStats = {};
     try {
       const perfResult = await pool.query(performanceQuery);
@@ -378,25 +387,24 @@ const getQueueStats = async (req, res) => {
           pendingItems: parseInt(stats.pending_items),
           processedItems: parseInt(stats.processed_items),
           oldestItem: stats.oldest_item,
-          newestItem: stats.newest_item
+          newestItem: stats.newest_item,
         },
         breakdown: {
           gpsItems: parseInt(stats.gps_items),
           tirePressureItems: parseInt(stats.tire_pressure_items),
           hubTempItems: parseInt(stats.hub_temp_items),
-          lockStateItems: parseInt(stats.lock_state_items)
+          lockStateItems: parseInt(stats.lock_state_items),
         },
-        performance: performanceStats
+        performance: performanceStats,
       },
-      message: 'Queue statistics retrieved successfully'
+      message: 'Queue statistics retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error getting queue stats:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get queue statistics',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -404,19 +412,19 @@ const getQueueStats = async (req, res) => {
 const processQueue = async (req, res) => {
   try {
     const { batchSize = 100 } = req.body;
-    
+
     // Validate batch size
     if (batchSize > 1000) {
       return res.status(400).json({
         success: false,
-        message: 'Batch size cannot exceed 1000'
+        message: 'Batch size cannot exceed 1000',
       });
     }
 
     // Process queue batch
     const processQuery = `SELECT * FROM process_sensor_queue_batch($1)`;
     const result = await pool.query(processQuery, [batchSize]);
-    
+
     const processResult = result.rows[0];
 
     res.status(200).json({
@@ -424,17 +432,16 @@ const processQueue = async (req, res) => {
       data: {
         processedCount: processResult.processed_count,
         errorCount: processResult.error_count,
-        batchSize: batchSize
+        batchSize: batchSize,
       },
-      message: `Processed ${processResult.processed_count} sensor data items`
+      message: `Processed ${processResult.processed_count} sensor data items`,
     });
-
   } catch (error) {
     console.error('Error processing queue:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to process sensor queue',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -446,5 +453,5 @@ module.exports = {
   ingestLockStateData,
   ingestRawSensorData,
   getQueueStats,
-  processQueue
+  processQueue,
 };

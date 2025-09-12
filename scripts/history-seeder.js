@@ -11,45 +11,45 @@ const prisma = new PrismaClient({
 // PT INDOBARA mining area configuration
 const MINING_CONFIG = {
   bounds: {
-    minLat: -3.717200,
+    minLat: -3.7172,
     maxLat: -3.431898,
     minLng: 115.432199,
-    maxLng: 115.658300
+    maxLng: 115.6583,
   },
   workZones: {
-    mainPit: { lat: -3.545400, lng: 115.604400 },
-    processing: { lat: -3.650000, lng: 115.575000 },
-    maintenance: { lat: -3.520000, lng: 115.620000 },
-    wasteDump: { lat: -3.700000, lng: 115.500000 },
-    coalStockpile: { lat: -3.550000, lng: 115.580000 }
+    mainPit: { lat: -3.5454, lng: 115.6044 },
+    processing: { lat: -3.65, lng: 115.575 },
+    maintenance: { lat: -3.52, lng: 115.62 },
+    wasteDump: { lat: -3.7, lng: 115.5 },
+    coalStockpile: { lat: -3.55, lng: 115.58 },
   },
   routes: [
     {
-      name: "Main Production Route",
+      name: 'Main Production Route',
       waypoints: [
-        { lat: -3.545400, lng: 115.604400, zone: "Main Pit" },
-        { lat: -3.580000, lng: 115.590000, zone: "Transport" },
-        { lat: -3.650000, lng: 115.575000, zone: "Processing" }
-      ]
+        { lat: -3.5454, lng: 115.6044, zone: 'Main Pit' },
+        { lat: -3.58, lng: 115.59, zone: 'Transport' },
+        { lat: -3.65, lng: 115.575, zone: 'Processing' },
+      ],
     },
     {
-      name: "Waste Disposal Route", 
+      name: 'Waste Disposal Route',
       waypoints: [
-        { lat: -3.650000, lng: 115.575000, zone: "Processing" },
-        { lat: -3.675000, lng: 115.540000, zone: "Transport" },
-        { lat: -3.700000, lng: 115.500000, zone: "Waste Dump" }
-      ]
+        { lat: -3.65, lng: 115.575, zone: 'Processing' },
+        { lat: -3.675, lng: 115.54, zone: 'Transport' },
+        { lat: -3.7, lng: 115.5, zone: 'Waste Dump' },
+      ],
     },
     {
-      name: "Maintenance Circuit",
+      name: 'Maintenance Circuit',
       waypoints: [
-        { lat: -3.520000, lng: 115.620000, zone: "Maintenance" },
-        { lat: -3.530000, lng: 115.610000, zone: "Yard" },
-        { lat: -3.540000, lng: 115.600000, zone: "Inspection" },
-        { lat: -3.520000, lng: 115.620000, zone: "Maintenance" }
-      ]
-    }
-  ]
+        { lat: -3.52, lng: 115.62, zone: 'Maintenance' },
+        { lat: -3.53, lng: 115.61, zone: 'Yard' },
+        { lat: -3.54, lng: 115.6, zone: 'Inspection' },
+        { lat: -3.52, lng: 115.62, zone: 'Maintenance' },
+      ],
+    },
+  ],
 };
 
 class HistorySeeder {
@@ -61,28 +61,29 @@ class HistorySeeder {
       truckLimit: options.truckLimit || null,
       deleteExisting: options.deleteExisting || false,
       verbose: options.verbose || true,
-      ...options
+      ...options,
     };
   }
 
   log(message, level = 'info') {
     if (!this.options.verbose && level === 'info') return;
-    
+
     const timestamp = moment().format('HH:mm:ss');
-    const prefix = {
-      'info': '📊',
-      'success': '✅',
-      'error': '❌',
-      'warning': '⚠️'
-    }[level] || 'ℹ️';
-    
+    const prefix =
+      {
+        info: '📊',
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+      }[level] || 'ℹ️';
+
     console.log(`${prefix} [${timestamp}] ${message}`);
   }
 
   async getTrucks() {
     try {
       const where = {};
-      
+
       // Build the query options object
       const queryOptions = {
         where,
@@ -92,10 +93,10 @@ class HistorySeeder {
             select: {
               name: true,
               manufacturer: true,
-              capacityTons: true
-            }
-          }
-        }
+              capacityTons: true,
+            },
+          },
+        },
       };
 
       // Only add 'take' if truckLimit is a valid positive number
@@ -117,13 +118,13 @@ class HistorySeeder {
     const movements = [];
     const isActive = truck.status === 'ACTIVE' || truck.status === 'active'; // Handle both enum and string values
     const route = MINING_CONFIG.routes[Math.floor(Math.random() * MINING_CONFIG.routes.length)];
-    
+
     let currentTime = moment(startTime);
     let currentPosition = {
       lat: parseFloat(truck.latitude) || this.getRandomPositionInBounds().lat,
-      lng: parseFloat(truck.longitude) || this.getRandomPositionInBounds().lng
+      lng: parseFloat(truck.longitude) || this.getRandomPositionInBounds().lng,
     };
-    let currentFuel = parseFloat(truck.fuelPercentage) || (60 + Math.random() * 40);
+    let currentFuel = parseFloat(truck.fuelPercentage) || 60 + Math.random() * 40;
     let waypointIndex = 0;
     let heading = truck.heading || Math.floor(Math.random() * 360);
 
@@ -131,30 +132,31 @@ class HistorySeeder {
       const hour = currentTime.hour();
       const isWorkHours = hour >= 6 && hour <= 18;
       const shiftActivity = isWorkHours ? 0.8 : 0.3;
-      
+
       let speed = 0;
-      
+
       if (isActive && Math.random() < shiftActivity) {
         // Active movement
         const targetWaypoint = route.waypoints[waypointIndex];
         const distanceToTarget = this.calculateDistance(currentPosition, targetWaypoint);
-        
-        if (distanceToTarget < 0.005) { // ~500m threshold
+
+        if (distanceToTarget < 0.005) {
+          // ~500m threshold
           waypointIndex = (waypointIndex + 1) % route.waypoints.length;
         }
-        
+
         // Move towards target
         const moveDistance = 0.0008 + Math.random() * 0.0004;
         currentPosition = this.moveTowards(currentPosition, targetWaypoint, moveDistance);
         currentPosition = this.keepInBounds(currentPosition);
-        
+
         heading = this.calculateHeading(currentPosition, targetWaypoint);
         speed = this.generateSpeedForZone(targetWaypoint.zone, isWorkHours);
-        
+
         // Fuel consumption
-        const consumption = (speed * 0.02 + Math.random() * 0.1);
+        const consumption = speed * 0.02 + Math.random() * 0.1;
         currentFuel = Math.max(5, currentFuel - consumption);
-        
+
         // Random refueling
         if (currentFuel < 20 && Math.random() < 0.1) {
           currentFuel = 85 + Math.random() * 15;
@@ -169,11 +171,11 @@ class HistorySeeder {
         speed: parseFloat(speed.toFixed(2)),
         heading: Math.round(heading),
         fuelPercentage: parseFloat(currentFuel.toFixed(2)),
-        recordedAt: currentTime.toDate()
+        recordedAt: currentTime.toDate(),
       });
 
       // Next interval
-      const interval = isActive ? (2 + Math.random() * 6) : (10 + Math.random() * 15);
+      const interval = isActive ? 2 + Math.random() * 6 : 10 + Math.random() * 15;
       currentTime.add(interval, 'minutes');
     }
 
@@ -183,17 +185,18 @@ class HistorySeeder {
   generateSpeedForZone(zone, isWorkHours) {
     const baseSpeed = isWorkHours ? 20 : 12;
     const variation = isWorkHours ? 15 : 8;
-    
-    const zoneMultiplier = {
-      'Main Pit': 0.6,      // Slow in pit
-      'Processing': 0.7,    // Moderate in processing
-      'Transport': 1.2,     // Fast on transport routes
-      'Maintenance': 0.4,   // Very slow in maintenance
-      'Waste Dump': 0.8,    // Moderate in waste area
-      'Yard': 0.5,          // Slow in yard
-      'Inspection': 0.3     // Very slow during inspection
-    }[zone] || 1.0;
-    
+
+    const zoneMultiplier =
+      {
+        'Main Pit': 0.6, // Slow in pit
+        Processing: 0.7, // Moderate in processing
+        Transport: 1.2, // Fast on transport routes
+        Maintenance: 0.4, // Very slow in maintenance
+        'Waste Dump': 0.8, // Moderate in waste area
+        Yard: 0.5, // Slow in yard
+        Inspection: 0.3, // Very slow during inspection
+      }[zone] || 1.0;
+
     return Math.max(0, (baseSpeed + Math.random() * variation) * zoneMultiplier);
   }
 
@@ -211,30 +214,36 @@ class HistorySeeder {
   moveTowards(current, target, distance) {
     const totalDistance = this.calculateDistance(current, target);
     if (totalDistance === 0) return current;
-    
+
     const ratio = Math.min(distance / totalDistance, 1);
-    
+
     return {
       lat: current.lat + (target.lat - current.lat) * ratio + (Math.random() - 0.5) * 0.0002,
-      lng: current.lng + (target.lng - current.lng) * ratio + (Math.random() - 0.5) * 0.0002
+      lng: current.lng + (target.lng - current.lng) * ratio + (Math.random() - 0.5) * 0.0002,
     };
   }
 
   keepInBounds(position) {
     return {
-      lat: Math.max(MINING_CONFIG.bounds.minLat, 
-            Math.min(MINING_CONFIG.bounds.maxLat, position.lat)),
-      lng: Math.max(MINING_CONFIG.bounds.minLng, 
-            Math.min(MINING_CONFIG.bounds.maxLng, position.lng))
+      lat: Math.max(
+        MINING_CONFIG.bounds.minLat,
+        Math.min(MINING_CONFIG.bounds.maxLat, position.lat)
+      ),
+      lng: Math.max(
+        MINING_CONFIG.bounds.minLng,
+        Math.min(MINING_CONFIG.bounds.maxLng, position.lng)
+      ),
     };
   }
 
   getRandomPositionInBounds() {
     return {
-      lat: MINING_CONFIG.bounds.minLat + 
-           Math.random() * (MINING_CONFIG.bounds.maxLat - MINING_CONFIG.bounds.minLat),
-      lng: MINING_CONFIG.bounds.minLng + 
-           Math.random() * (MINING_CONFIG.bounds.maxLng - MINING_CONFIG.bounds.minLng)
+      lat:
+        MINING_CONFIG.bounds.minLat +
+        Math.random() * (MINING_CONFIG.bounds.maxLat - MINING_CONFIG.bounds.minLat),
+      lng:
+        MINING_CONFIG.bounds.minLng +
+        Math.random() * (MINING_CONFIG.bounds.maxLng - MINING_CONFIG.bounds.minLng),
     };
   }
 
@@ -242,7 +251,7 @@ class HistorySeeder {
     try {
       const result = await prisma.locationHistory.createMany({
         data: historyData,
-        skipDuplicates: true
+        skipDuplicates: true,
       });
       return result.count;
     } catch (error) {
@@ -253,17 +262,14 @@ class HistorySeeder {
 
   async generateSpecialScenarios() {
     this.log('Generating special scenarios...');
-    
+
     try {
       // 1. Breakdown incidents
       const breakdownTrucks = await prisma.truck.findMany({
-        where: { 
-          OR: [
-            { status: 'ACTIVE' },
-            { status: 'active' }
-          ]
+        where: {
+          OR: [{ status: 'ACTIVE' }, { status: 'active' }],
         },
-        take: 3
+        take: 3,
       });
 
       for (const truck of breakdownTrucks) {
@@ -280,7 +286,10 @@ class HistorySeeder {
             speed: 0,
             heading: Math.floor(Math.random() * 360),
             fuelPercentage: 25 + Math.random() * 30,
-            recordedAt: breakdownTime.clone().add(i * 5, 'minutes').toDate()
+            recordedAt: breakdownTime
+              .clone()
+              .add(i * 5, 'minutes')
+              .toDate(),
           });
         }
 
@@ -289,13 +298,10 @@ class HistorySeeder {
 
       // 2. High-activity periods (loading/unloading)
       const activeTrucks = await prisma.truck.findMany({
-        where: { 
-          OR: [
-            { status: 'ACTIVE' },
-            { status: 'active' }
-          ]
+        where: {
+          OR: [{ status: 'ACTIVE' }, { status: 'active' }],
         },
-        take: 5
+        take: 5,
       });
 
       for (const truck of activeTrucks) {
@@ -307,7 +313,7 @@ class HistorySeeder {
         for (let i = 0; i < 60; i++) {
           const position = {
             lat: loadingZone.lat + (Math.random() - 0.5) * 0.002,
-            lng: loadingZone.lng + (Math.random() - 0.5) * 0.002
+            lng: loadingZone.lng + (Math.random() - 0.5) * 0.002,
           };
 
           activityData.push({
@@ -317,7 +323,7 @@ class HistorySeeder {
             speed: Math.random() * 8, // Slow speeds during loading
             heading: Math.floor(Math.random() * 360),
             fuelPercentage: 70 + Math.random() * 20,
-            recordedAt: activityTime.clone().add(i, 'minutes').toDate()
+            recordedAt: activityTime.clone().add(i, 'minutes').toDate(),
           });
         }
 
@@ -333,9 +339,11 @@ class HistorySeeder {
   async run() {
     try {
       this.log('🚛 Starting Fleet History Data Generation');
-      this.log('=' .repeat(60));
-      this.log(`Configuration: ${this.options.daysBack} days, ${this.options.recordsPerDay} records/day`);
-      
+      this.log('='.repeat(60));
+      this.log(
+        `Configuration: ${this.options.daysBack} days, ${this.options.recordsPerDay} records/day`
+      );
+
       const startTime = Date.now();
 
       // Clear existing data if requested
@@ -360,9 +368,9 @@ class HistorySeeder {
         try {
           const startDate = moment().subtract(this.options.daysBack, 'days');
           const endDate = moment();
-          
+
           const historyData = this.generateRealisticMovement(truck, startDate, endDate);
-          
+
           // Insert in batches
           for (let i = 0; i < historyData.length; i += this.options.batchSize) {
             const batch = historyData.slice(i, i + this.options.batchSize);
@@ -371,11 +379,12 @@ class HistorySeeder {
           }
 
           processedTrucks++;
-          
-          if (processedTrucks % 25 === 0) {
-            this.log(`Progress: ${processedTrucks}/${trucks.length} trucks (${totalRecords} records)`);
-          }
 
+          if (processedTrucks % 25 === 0) {
+            this.log(
+              `Progress: ${processedTrucks}/${trucks.length} trucks (${totalRecords} records)`
+            );
+          }
         } catch (error) {
           this.log(`Error processing truck ${truck.truckNumber}: ${error.message}`, 'error');
         }
@@ -388,7 +397,7 @@ class HistorySeeder {
       const endTime = Date.now();
       const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-      this.log('=' .repeat(60));
+      this.log('='.repeat(60));
       this.log('✅ History Generation Complete!', 'success');
       this.log(`📊 Summary:`);
       this.log(`   • Trucks processed: ${processedTrucks}`);
@@ -401,7 +410,7 @@ class HistorySeeder {
       const finalCount = await prisma.locationHistory.count();
       const uniqueTrucks = await prisma.locationHistory.groupBy({
         by: ['truckId'],
-        _count: true
+        _count: true,
       });
 
       this.log(`📈 Verification:`);
@@ -412,12 +421,13 @@ class HistorySeeder {
         _avg: { speed: true },
         _max: { speed: true },
         _min: { recordedAt: true },
-        _max: { recordedAt: true }
+        _max: { recordedAt: true },
       });
 
-      this.log(`   • Date range: ${moment(speedStats._min.recordedAt).format('YYYY-MM-DD')} to ${moment(speedStats._max.recordedAt).format('YYYY-MM-DD')}`);
+      this.log(
+        `   • Date range: ${moment(speedStats._min.recordedAt).format('YYYY-MM-DD')} to ${moment(speedStats._max.recordedAt).format('YYYY-MM-DD')}`
+      );
       this.log(`   • Average speed: ${parseFloat(speedStats._avg.speed || 0).toFixed(2)} km/h`);
-
     } catch (error) {
       this.log(`Fatal error: ${error.message}`, 'error');
       console.error(error);
@@ -451,7 +461,7 @@ async function main() {
       case 'limit':
         // Ensure limit is a positive integer or null
         const limitValue = parseInt(value);
-        options.truckLimit = (limitValue && limitValue > 0) ? limitValue : null;
+        options.truckLimit = limitValue && limitValue > 0 ? limitValue : null;
         break;
       case 'delete':
         options.deleteExisting = value === 'true' || value === '1';
@@ -492,7 +502,7 @@ Examples:
 module.exports = {
   HistorySeeder,
   MINING_CONFIG,
-  main
+  main,
 };
 
 // Run if called directly

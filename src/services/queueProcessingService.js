@@ -27,7 +27,9 @@ class QueueProcessingService {
       }
     }, this.processingIntervalMs);
 
-    console.log(`⚡ Queue processing started - batch size: ${this.batchSize}, interval: ${this.processingIntervalMs}ms`);
+    console.log(
+      `⚡ Queue processing started - batch size: ${this.batchSize}, interval: ${this.processingIntervalMs}ms`
+    );
   }
 
   // Stop the background queue processing
@@ -48,13 +50,17 @@ class QueueProcessingService {
 
     try {
       // Call the database function to process queue batch
-      const result = await pool.query('SELECT * FROM process_sensor_queue_batch($1)', [this.batchSize]);
+      const result = await pool.query('SELECT * FROM process_sensor_queue_batch($1)', [
+        this.batchSize,
+      ]);
       const processResult = result.rows[0];
 
       if (processResult && processResult.processed_count > 0) {
         const processingTime = Date.now() - startTime;
-        console.log(`⚡ Processed ${processResult.processed_count} sensor items in ${processingTime}ms`);
-        
+        console.log(
+          `⚡ Processed ${processResult.processed_count} sensor items in ${processingTime}ms`
+        );
+
         // Log performance metrics
         if (processResult.error_count > 0) {
           console.warn(`⚠️ ${processResult.error_count} items failed processing`);
@@ -62,7 +68,6 @@ class QueueProcessingService {
       }
 
       return processResult;
-
     } catch (error) {
       console.error('❌ Error processing sensor queue batch:', error);
       return { processed_count: 0, error_count: 1 };
@@ -88,10 +93,9 @@ class QueueProcessingService {
         FROM sensor_data_raw
         WHERE received_at >= NOW() - INTERVAL '24 hours'
       `;
-      
+
       const result = await pool.query(statsQuery);
       return result.rows[0];
-
     } catch (error) {
       console.error('❌ Error getting queue stats:', error);
       return null;
@@ -101,15 +105,16 @@ class QueueProcessingService {
   // Manual queue processing trigger
   async processQueueManually(customBatchSize = null) {
     const batchSize = customBatchSize || this.batchSize;
-    
+
     try {
       console.log(`🔄 Manual queue processing triggered - batch size: ${batchSize}`);
       const result = await pool.query('SELECT * FROM process_sensor_queue_batch($1)', [batchSize]);
       const processResult = result.rows[0];
 
-      console.log(`✅ Manual processing completed: ${processResult.processed_count} items processed`);
+      console.log(
+        `✅ Manual processing completed: ${processResult.processed_count} items processed`
+      );
       return processResult;
-
     } catch (error) {
       console.error('❌ Error in manual queue processing:', error);
       throw error;
@@ -125,13 +130,13 @@ class QueueProcessingService {
 
     if (config.intervalMs && config.intervalMs >= 500) {
       this.processingIntervalMs = config.intervalMs;
-      
+
       // Restart with new interval if running
       if (this.processingInterval) {
         this.stop();
         this.start();
       }
-      
+
       console.log(`⚙️ Processing interval updated to: ${this.processingIntervalMs}ms`);
     }
   }
@@ -142,7 +147,7 @@ class QueueProcessingService {
       isRunning: !!this.processingInterval,
       isProcessing: this.isProcessing,
       batchSize: this.batchSize,
-      intervalMs: this.processingIntervalMs
+      intervalMs: this.processingIntervalMs,
     };
   }
 
@@ -151,15 +156,15 @@ class QueueProcessingService {
     try {
       const stats = await this.getQueueStats();
       const status = this.getStatus();
-      
+
       const health = {
         service: 'queue_processing',
         status: status.isRunning ? 'running' : 'stopped',
         isHealthy: true,
         details: {
           ...status,
-          queueStats: stats
-        }
+          queueStats: stats,
+        },
       };
 
       // Check if queue is backing up (more than 1000 pending items)
@@ -169,13 +174,12 @@ class QueueProcessingService {
       }
 
       return health;
-
     } catch (error) {
       return {
         service: 'queue_processing',
         status: 'error',
         isHealthy: false,
-        error: error.message
+        error: error.message,
       };
     }
   }

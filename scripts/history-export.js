@@ -20,7 +20,7 @@ class HistoryExporter {
       outputDir: options.outputDir || './exports',
       batchSize: options.batchSize || 5000,
       compress: options.compress || false,
-      ...options
+      ...options,
     };
   }
 
@@ -29,21 +29,21 @@ class HistoryExporter {
     console.log('='.repeat(50));
     console.log(`Format: ${this.options.format}`);
     console.log(`Output Directory: ${this.options.outputDir}`);
-    
+
     try {
       await this.ensureOutputDir();
-      
+
       const totalRecords = await this.getTotalRecords();
       console.log(`Total records to export: ${totalRecords.toLocaleString()}`);
-      
+
       if (totalRecords === 0) {
         console.log('⚠️  No records found to export');
         return;
       }
-      
+
       const startTime = Date.now();
       let exportedRecords = 0;
-      
+
       switch (this.options.format.toLowerCase()) {
         case 'json':
           exportedRecords = await this.exportToJSON();
@@ -60,14 +60,13 @@ class HistoryExporter {
         default:
           throw new Error(`Unsupported format: ${this.options.format}`);
       }
-      
+
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      
+
       console.log('\n✅ Export completed successfully!');
       console.log(`   • Records exported: ${exportedRecords.toLocaleString()}`);
       console.log(`   • Processing time: ${duration}s`);
       console.log(`   • Rate: ${Math.round(exportedRecords / parseFloat(duration))} records/sec`);
-      
     } catch (error) {
       console.error('❌ Export failed:', error);
       throw error;
@@ -83,11 +82,11 @@ class HistoryExporter {
 
   buildWhereClause() {
     const where = {};
-    
+
     if (this.options.truckIds && this.options.truckIds.length > 0) {
       where.truckId = { in: this.options.truckIds };
     }
-    
+
     if (this.options.dateRange) {
       where.recordedAt = {};
       if (this.options.dateRange.start) {
@@ -97,7 +96,7 @@ class HistoryExporter {
         where.recordedAt.lte = new Date(this.options.dateRange.end);
       }
     }
-    
+
     return where;
   }
 
@@ -113,17 +112,17 @@ class HistoryExporter {
     const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
     const filename = `fleet-history-${timestamp}.json`;
     const filepath = path.join(this.options.outputDir, filename);
-    
+
     console.log(`🔄 Exporting to JSON: ${filename}`);
-    
+
     const where = this.buildWhereClause();
     let skip = 0;
     let totalExported = 0;
     let isFirstBatch = true;
-    
+
     // Start JSON array
     await fs.writeFile(filepath, '[\n');
-    
+
     while (true) {
       const batch = await prisma.locationHistory.findMany({
         where,
@@ -137,18 +136,18 @@ class HistoryExporter {
               model: {
                 select: {
                   name: true,
-                  manufacturer: true
-                }
-              }
-            }
-          }
+                  manufacturer: true,
+                },
+              },
+            },
+          },
         },
-        orderBy: { recordedAt: 'asc' }
+        orderBy: { recordedAt: 'asc' },
       });
-      
+
       if (batch.length === 0) break;
-      
-      const jsonData = batch.map(record => ({
+
+      const jsonData = batch.map((record) => ({
         id: record.id,
         truckId: record.truckId,
         truckNumber: record.truck?.truckNumber,
@@ -160,29 +159,29 @@ class HistoryExporter {
         speed: parseFloat(record.speed),
         heading: record.heading,
         fuelPercentage: parseFloat(record.fuelPercentage),
-        recordedAt: record.recordedAt.toISOString()
+        recordedAt: record.recordedAt.toISOString(),
       }));
-      
-      const jsonString = jsonData.map(record => 
-        (isFirstBatch ? '' : ',\n') + '  ' + JSON.stringify(record)
-      ).join('');
-      
+
+      const jsonString = jsonData
+        .map((record) => (isFirstBatch ? '' : ',\n') + '  ' + JSON.stringify(record))
+        .join('');
+
       await fs.appendFile(filepath, jsonString);
-      
+
       totalExported += batch.length;
       skip += this.options.batchSize;
       isFirstBatch = false;
-      
+
       process.stdout.write(`\r⏳ Exported ${totalExported.toLocaleString()} records`);
     }
-    
+
     // Close JSON array
     await fs.appendFile(filepath, '\n]');
-    
+
     if (this.options.compress) {
       await this.compressFile(filepath);
     }
-    
+
     console.log(`\n📁 JSON export saved: ${filepath}`);
     return totalExported;
   }
@@ -191,20 +190,29 @@ class HistoryExporter {
     const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
     const filename = `fleet-history-${timestamp}.csv`;
     const filepath = path.join(this.options.outputDir, filename);
-    
+
     console.log(`🔄 Exporting to CSV: ${filename}`);
-    
+
     // Write CSV header
     const headers = [
-      'id', 'truck_id', 'truck_number', 'truck_status', 'truck_model',
-      'latitude', 'longitude', 'speed', 'heading', 'fuel_percentage', 'recorded_at'
+      'id',
+      'truck_id',
+      'truck_number',
+      'truck_status',
+      'truck_model',
+      'latitude',
+      'longitude',
+      'speed',
+      'heading',
+      'fuel_percentage',
+      'recorded_at',
     ];
     await fs.writeFile(filepath, headers.join(',') + '\n');
-    
+
     const where = this.buildWhereClause();
     let skip = 0;
     let totalExported = 0;
-    
+
     while (true) {
       const batch = await prisma.locationHistory.findMany({
         where,
@@ -215,41 +223,43 @@ class HistoryExporter {
             select: {
               truckNumber: true,
               status: true,
-              model: { select: { name: true } }
-            }
-          }
+              model: { select: { name: true } },
+            },
+          },
         },
-        orderBy: { recordedAt: 'asc' }
+        orderBy: { recordedAt: 'asc' },
       });
-      
+
       if (batch.length === 0) break;
-      
-      const csvRows = batch.map(record => [
-        record.id,
-        record.truckId,
-        `"${record.truck?.truckNumber || ''}"`,
-        `"${record.truck?.status || ''}"`,
-        `"${record.truck?.model?.name || ''}"`,
-        parseFloat(record.latitude).toFixed(8),
-        parseFloat(record.longitude).toFixed(8),
-        parseFloat(record.speed).toFixed(2),
-        record.heading,
-        parseFloat(record.fuelPercentage).toFixed(2),
-        record.recordedAt.toISOString()
-      ].join(','));
-      
+
+      const csvRows = batch.map((record) =>
+        [
+          record.id,
+          record.truckId,
+          `"${record.truck?.truckNumber || ''}"`,
+          `"${record.truck?.status || ''}"`,
+          `"${record.truck?.model?.name || ''}"`,
+          parseFloat(record.latitude).toFixed(8),
+          parseFloat(record.longitude).toFixed(8),
+          parseFloat(record.speed).toFixed(2),
+          record.heading,
+          parseFloat(record.fuelPercentage).toFixed(2),
+          record.recordedAt.toISOString(),
+        ].join(',')
+      );
+
       await fs.appendFile(filepath, csvRows.join('\n') + '\n');
-      
+
       totalExported += batch.length;
       skip += this.options.batchSize;
-      
+
       process.stdout.write(`\r⏳ Exported ${totalExported.toLocaleString()} records`);
     }
-    
+
     if (this.options.compress) {
       await this.compressFile(filepath);
     }
-    
+
     console.log(`\n📁 CSV export saved: ${filepath}`);
     return totalExported;
   }
@@ -258,9 +268,9 @@ class HistoryExporter {
     const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
     const filename = `fleet-history-${timestamp}.sql`;
     const filepath = path.join(this.options.outputDir, filename);
-    
+
     console.log(`🔄 Exporting to SQL: ${filename}`);
-    
+
     // Write SQL header
     const sqlHeader = `-- Fleet Management Location History Export
 -- Generated: ${moment().format('YYYY-MM-DD HH:mm:ss')}
@@ -275,39 +285,43 @@ SET foreign_key_checks = 0;
 -- Insert location history data
 `;
     await fs.writeFile(filepath, sqlHeader);
-    
+
     const where = this.buildWhereClause();
     let skip = 0;
     let totalExported = 0;
-    
+
     while (true) {
       const batch = await prisma.locationHistory.findMany({
         where,
         skip,
         take: this.options.batchSize,
-        orderBy: { recordedAt: 'asc' }
+        orderBy: { recordedAt: 'asc' },
       });
-      
+
       if (batch.length === 0) break;
-      
-      const sqlInserts = batch.map(record => 
-        `INSERT INTO location_history (truck_id, latitude, longitude, speed, heading, fuel_percentage, recorded_at) VALUES (${record.truckId}, ${parseFloat(record.latitude)}, ${parseFloat(record.longitude)}, ${parseFloat(record.speed)}, ${record.heading}, ${parseFloat(record.fuelPercentage)}, '${record.recordedAt.toISOString()}');`
+
+      const sqlInserts = batch.map(
+        (record) =>
+          `INSERT INTO location_history (truck_id, latitude, longitude, speed, heading, fuel_percentage, recorded_at) VALUES (${record.truckId}, ${parseFloat(record.latitude)}, ${parseFloat(record.longitude)}, ${parseFloat(record.speed)}, ${record.heading}, ${parseFloat(record.fuelPercentage)}, '${record.recordedAt.toISOString()}');`
       );
-      
+
       await fs.appendFile(filepath, sqlInserts.join('\n') + '\n');
-      
+
       totalExported += batch.length;
       skip += this.options.batchSize;
-      
+
       process.stdout.write(`\r⏳ Exported ${totalExported.toLocaleString()} records`);
     }
-    
-    await fs.appendFile(filepath, '\n-- Re-enable foreign key checks\nSET foreign_key_checks = 1;\n');
-    
+
+    await fs.appendFile(
+      filepath,
+      '\n-- Re-enable foreign key checks\nSET foreign_key_checks = 1;\n'
+    );
+
     if (this.options.compress) {
       await this.compressFile(filepath);
     }
-    
+
     console.log(`\n📁 SQL export saved: ${filepath}`);
     return totalExported;
   }
@@ -316,18 +330,18 @@ SET foreign_key_checks = 0;
     const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
     const filename = `fleet-history-${timestamp}.geojson`;
     const filepath = path.join(this.options.outputDir, filename);
-    
+
     console.log(`🔄 Exporting to GeoJSON: ${filename}`);
-    
+
     const geoJSON = {
-      type: "FeatureCollection",
-      features: []
+      type: 'FeatureCollection',
+      features: [],
     };
-    
+
     const where = this.buildWhereClause();
     let skip = 0;
     let totalExported = 0;
-    
+
     while (true) {
       const batch = await prisma.locationHistory.findMany({
         where,
@@ -338,20 +352,20 @@ SET foreign_key_checks = 0;
             select: {
               truckNumber: true,
               status: true,
-              model: { select: { name: true } }
-            }
-          }
+              model: { select: { name: true } },
+            },
+          },
         },
-        orderBy: { recordedAt: 'asc' }
+        orderBy: { recordedAt: 'asc' },
       });
-      
+
       if (batch.length === 0) break;
-      
-      const features = batch.map(record => ({
-        type: "Feature",
+
+      const features = batch.map((record) => ({
+        type: 'Feature',
         geometry: {
-          type: "Point",
-          coordinates: [parseFloat(record.longitude), parseFloat(record.latitude)]
+          type: 'Point',
+          coordinates: [parseFloat(record.longitude), parseFloat(record.latitude)],
         },
         properties: {
           id: record.id,
@@ -362,42 +376,42 @@ SET foreign_key_checks = 0;
           speed: parseFloat(record.speed),
           heading: record.heading,
           fuelPercentage: parseFloat(record.fuelPercentage),
-          recordedAt: record.recordedAt.toISOString()
-        }
+          recordedAt: record.recordedAt.toISOString(),
+        },
       }));
-      
+
       geoJSON.features.push(...features);
-      
+
       totalExported += batch.length;
       skip += this.options.batchSize;
-      
+
       process.stdout.write(`\r⏳ Exported ${totalExported.toLocaleString()} records`);
     }
-    
+
     await fs.writeFile(filepath, JSON.stringify(geoJSON, null, 2));
-    
+
     if (this.options.compress) {
       await this.compressFile(filepath);
     }
-    
+
     console.log(`\n📁 GeoJSON export saved: ${filepath}`);
     return totalExported;
   }
 
   async compressFile(filepath) {
     console.log('🗜️  Compressing file...');
-    
+
     const data = await fs.readFile(filepath);
     const compressed = await gzip(data);
     const compressedPath = filepath + '.gz';
-    
+
     await fs.writeFile(compressedPath, compressed);
     await fs.unlink(filepath); // Remove original file
-    
+
     const originalSize = data.length;
     const compressedSize = compressed.length;
-    const compressionRatio = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
-    
+    const compressionRatio = (((originalSize - compressedSize) / originalSize) * 100).toFixed(1);
+
     console.log(`✅ File compressed: ${compressionRatio}% smaller (${compressedPath})`);
   }
 }
@@ -411,7 +425,7 @@ class HistoryImporter {
       batchSize: options.batchSize || 1000,
       clearExisting: options.clearExisting || false,
       skipDuplicates: options.skipDuplicates || true,
-      ...options
+      ...options,
     };
   }
 
@@ -420,17 +434,17 @@ class HistoryImporter {
     console.log('='.repeat(50));
     console.log(`File: ${this.options.filepath}`);
     console.log(`Format: ${this.options.format}`);
-    
+
     try {
       if (this.options.clearExisting) {
         console.log('🗑️  Clearing existing data...');
         const deleted = await prisma.locationHistory.deleteMany();
         console.log(`✅ Deleted ${deleted.count} existing records`);
       }
-      
+
       const startTime = Date.now();
       let importedRecords = 0;
-      
+
       switch (this.options.format.toLowerCase()) {
         case 'json':
           importedRecords = await this.importFromJSON();
@@ -444,14 +458,13 @@ class HistoryImporter {
         default:
           throw new Error(`Unsupported import format: ${this.options.format}`);
       }
-      
+
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      
+
       console.log('\n✅ Import completed successfully!');
       console.log(`   • Records imported: ${importedRecords.toLocaleString()}`);
       console.log(`   • Processing time: ${duration}s`);
       console.log(`   • Rate: ${Math.round(importedRecords / parseFloat(duration))} records/sec`);
-      
     } catch (error) {
       console.error('❌ Import failed:', error);
       throw error;
@@ -462,80 +475,82 @@ class HistoryImporter {
 
   async importFromJSON() {
     console.log('🔄 Importing from JSON...');
-    
+
     const data = await fs.readFile(this.options.filepath, 'utf8');
     const records = JSON.parse(data);
-    
+
     console.log(`Found ${records.length.toLocaleString()} records to import`);
-    
+
     let imported = 0;
-    
+
     for (let i = 0; i < records.length; i += this.options.batchSize) {
       const batch = records.slice(i, i + this.options.batchSize);
-      
-      const insertData = batch.map(record => ({
+
+      const insertData = batch.map((record) => ({
         truckId: parseInt(record.truckId),
         latitude: parseFloat(record.latitude),
         longitude: parseFloat(record.longitude),
         speed: parseFloat(record.speed),
         heading: parseInt(record.heading),
         fuelPercentage: parseFloat(record.fuelPercentage),
-        recordedAt: new Date(record.recordedAt)
+        recordedAt: new Date(record.recordedAt),
       }));
-      
+
       const result = await prisma.locationHistory.createMany({
         data: insertData,
-        skipDuplicates: this.options.skipDuplicates
+        skipDuplicates: this.options.skipDuplicates,
       });
-      
+
       imported += result.count;
-      
+
       process.stdout.write(`\r⏳ Imported ${imported.toLocaleString()} records`);
     }
-    
+
     return imported;
   }
 
   async importFromCSV() {
     console.log('🔄 Importing from CSV...');
-    
+
     const data = await fs.readFile(this.options.filepath, 'utf8');
-    const lines = data.split('\n').filter(line => line.trim());
+    const lines = data.split('\n').filter((line) => line.trim());
     const headers = lines[0].split(',');
     const records = lines.slice(1);
-    
+
     console.log(`Found ${records.length.toLocaleString()} records to import`);
-    
+
     let imported = 0;
-    
+
     for (let i = 0; i < records.length; i += this.options.batchSize) {
       const batch = records.slice(i, i + this.options.batchSize);
-      
-      const insertData = batch.map(line => {
-        const values = line.split(',');
-        return {
-          truckId: parseInt(values[1]),
-          latitude: parseFloat(values[5]),
-          longitude: parseFloat(values[6]),
-          speed: parseFloat(values[7]),
-          heading: parseInt(values[8]),
-          fuelPercentage: parseFloat(values[9]),
-          recordedAt: new Date(values[10])
-        };
-      }).filter(record => !isNaN(record.truckId)); // Filter invalid records
-      
+
+      const insertData = batch
+        .map((line) => {
+          const values = line.split(',');
+          return {
+            truckId: parseInt(values[1]),
+            latitude: parseFloat(values[5]),
+            longitude: parseFloat(values[6]),
+            speed: parseFloat(values[7]),
+            heading: parseInt(values[8]),
+            fuelPercentage: parseFloat(values[9]),
+            recordedAt: new Date(values[10]),
+          };
+        })
+        .filter((record) => !isNaN(record.truckId)); // Filter invalid records
+
       if (insertData.length > 0) {
         const result = await prisma.locationHistory.createMany({
           data: insertData,
-          skipDuplicates: this.options.skipDuplicates
+          skipDuplicates: this.options.skipDuplicates,
         });
-        
+
         imported += result.count;
       }
-      
+
       process.stdout.write(`\r⏳ Imported ${imported.toLocaleString()} records`);
     }
-    
+
     return imported;
   }
 
@@ -544,7 +559,7 @@ class HistoryImporter {
     console.log('⚠️  SQL import requires direct database execution');
     console.log('Run the following command:');
     console.log(`psql -h localhost -U postgres -d fleet_management -f "${this.options.filepath}"`);
-    
+
     return 0;
   }
 }
@@ -553,7 +568,7 @@ class HistoryImporter {
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
-  
+
   if (!command || command === 'help') {
     console.log(`
 Fleet Management History Export/Import Tool
@@ -584,23 +599,23 @@ Examples:
   }
 
   const options = {};
-  
+
   // Parse arguments
   for (let i = 1; i < args.length; i += 2) {
     const key = args[i]?.replace(/^--/, '');
     const value = args[i + 1];
-    
+
     switch (key) {
       case 'format':
         options.format = value;
         break;
       case 'days':
         options.dateRange = {
-          start: moment().subtract(parseInt(value), 'days').toDate()
+          start: moment().subtract(parseInt(value), 'days').toDate(),
         };
         break;
       case 'trucks':
-        options.truckIds = value.split(',').map(id => parseInt(id.trim()));
+        options.truckIds = value.split(',').map((id) => parseInt(id.trim()));
         break;
       case 'output':
         options.outputDir = value;

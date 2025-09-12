@@ -14,7 +14,7 @@ const login = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Validation error',
-        errors: errors.array()
+        errors: errors.array(),
       });
     }
 
@@ -25,12 +25,9 @@ const login = async (req, res) => {
     try {
       user = await prismaService.prisma.users.findFirst({
         where: {
-          OR: [
-            { username: username },
-            { email: username }
-          ],
-          is_active: true
-        }
+          OR: [{ username: username }, { email: username }],
+          is_active: true,
+        },
       });
     } catch (error) {
       console.log('Users table not found, using demo authentication');
@@ -41,7 +38,7 @@ const login = async (req, res) => {
           username: 'admin',
           email: 'admin@fleet.com',
           role: 'admin',
-          is_active: true
+          is_active: true,
         };
       }
     }
@@ -52,17 +49,19 @@ const login = async (req, res) => {
         username,
         ip: req.ip || req.connection.remoteAddress,
         userAgent: req.get('User-Agent'),
-        reason: 'User not found'
+        reason: 'User not found',
       });
-      
+
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
     // Check password - for demo purposes, we'll accept 'admin123' for admin user
-    const isValidPassword = password === 'admin123' || (user.password_hash && await bcrypt.compare(password, user.password_hash));
+    const isValidPassword =
+      password === 'admin123' ||
+      (user.password_hash && (await bcrypt.compare(password, user.password_hash)));
 
     if (!isValidPassword) {
       // Log failed login attempt - wrong password
@@ -71,12 +70,12 @@ const login = async (req, res) => {
         userId: user.id,
         ip: req.ip || req.connection.remoteAddress,
         userAgent: req.get('User-Agent'),
-        reason: 'Invalid password'
+        reason: 'Invalid password',
       });
-      
+
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
@@ -85,7 +84,7 @@ const login = async (req, res) => {
       {
         userId: user.id,
         username: user.username,
-        role: user.role
+        role: user.role,
       },
       JWT_SECRET,
       { expiresIn: '24h' }
@@ -95,7 +94,7 @@ const login = async (req, res) => {
     try {
       await prismaService.prisma.users.update({
         where: { id: user.id },
-        data: { updated_at: new Date() }
+        data: { updated_at: new Date() },
       });
     } catch (error) {
       console.log('Skipping user update - users table may not exist');
@@ -108,7 +107,7 @@ const login = async (req, res) => {
       ip: req.ip || req.connection.remoteAddress,
       userAgent: req.get('User-Agent'),
       loginTime: new Date().toISOString(),
-      sessionDuration: '24h'
+      sessionDuration: '24h',
     });
 
     // Log admin activity for real-time monitoring
@@ -119,7 +118,7 @@ const login = async (req, res) => {
       clientIp: req.ip || req.connection.remoteAddress,
       userAgent: req.get('User-Agent'),
       loginMethod: 'web_frontend',
-      tokenExpiry: '24h'
+      tokenExpiry: '24h',
     };
 
     logAdminActivity('ADMIN_LOGIN_SUCCESS', adminActivityData);
@@ -131,14 +130,14 @@ const login = async (req, res) => {
       admin: {
         id: user.id,
         username: user.username,
-        role: user.role
+        role: user.role,
       },
       details: {
         ip: req.ip || req.connection.remoteAddress,
         userAgent: req.get('User-Agent'),
         loginTime: new Date().toISOString(),
-        method: 'web_frontend'
-      }
+        method: 'web_frontend',
+      },
     });
 
     res.json({
@@ -150,16 +149,15 @@ const login = async (req, res) => {
           id: user.id,
           username: user.username,
           email: user.email,
-          role: user.role
-        }
-      }
+          role: user.role,
+        },
+      },
     });
-
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 };
@@ -171,7 +169,7 @@ const verifyToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: 'Access token required'
+      message: 'Access token required',
     });
   }
 
@@ -179,10 +177,10 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({
         success: false,
-        message: 'Invalid or expired token'
+        message: 'Invalid or expired token',
       });
     }
-    
+
     req.user = user;
     next();
   });
@@ -195,8 +193,8 @@ const getCurrentUser = async (req, res) => {
       user = await prismaService.prisma.users.findFirst({
         where: {
           id: req.user.userId,
-          is_active: true
-        }
+          is_active: true,
+        },
       });
     } catch (error) {
       // Return demo user if users table doesn't exist
@@ -206,14 +204,14 @@ const getCurrentUser = async (req, res) => {
         email: 'admin@fleet.com',
         role: req.user.role,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       };
     }
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
@@ -225,15 +223,14 @@ const getCurrentUser = async (req, res) => {
         email: user.email,
         role: user.role,
         createdAt: user.created_at,
-        updatedAt: user.updated_at
-      }
+        updatedAt: user.updated_at,
+      },
     });
-
   } catch (error) {
     console.error('Get current user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 };
@@ -241,5 +238,5 @@ const getCurrentUser = async (req, res) => {
 module.exports = {
   login,
   verifyToken,
-  getCurrentUser
+  getCurrentUser,
 };

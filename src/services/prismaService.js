@@ -42,27 +42,19 @@ class PrismaService {
   // ==========================================
 
   async getAllTrucks(filters = {}) {
-    const {
-      status,
-      page = 1,
-      limit = 50,
-      search,
-      minFuel,
-      maxFuel,
-      hasAlerts
-    } = filters;
+    const { status, page = 1, limit = 50, search, minFuel, maxFuel, hasAlerts } = filters;
 
     const offset = (page - 1) * limit;
 
     // Build where clause
     const where = {};
-    
+
     // Filter by status - using truck status events
     if (status && status !== 'all') {
       where.truckStatusEvents = {
         some: {
-          status: status
-        }
+          status: status,
+        },
       };
     }
 
@@ -71,7 +63,7 @@ class PrismaService {
       where.OR = [
         { plateNumber: { contains: search, mode: 'insensitive' } },
         { name: { contains: search, mode: 'insensitive' } },
-        { model: { contains: search, mode: 'insensitive' } }
+        { model: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -80,18 +72,18 @@ class PrismaService {
       const fuelWhere = {};
       if (minFuel !== undefined) fuelWhere.gte = parseFloat(minFuel);
       if (maxFuel !== undefined) fuelWhere.lte = parseFloat(maxFuel);
-      
+
       where.fuelLevelEvents = {
         some: {
-          fuelPercent: fuelWhere
-        }
+          fuelPercent: fuelWhere,
+        },
       };
     }
 
     // Alerts filter
     if (hasAlerts === 'true') {
       where.alertEvents = {
-        some: { acknowledged: false }
+        some: { acknowledged: false },
       };
     }
 
@@ -108,21 +100,21 @@ class PrismaService {
               type: true,
               severity: true,
               detail: true,
-              occurredAt: true
+              occurredAt: true,
             },
-            take: 5
+            take: 5,
           },
           _count: {
             select: {
               alertEvents: {
-                where: { acknowledged: false }
-              }
-            }
-          }
+                where: { acknowledged: false },
+              },
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
         skip: offset,
-        take: parseInt(limit)
+        take: parseInt(limit),
       });
 
       // Get total count for pagination
@@ -137,9 +129,9 @@ class PrismaService {
           current_page: parseInt(page),
           per_page: parseInt(limit),
           total: totalCount,
-          total_pages: Math.ceil(totalCount / limit)
+          total_pages: Math.ceil(totalCount / limit),
         },
-        summary
+        summary,
       };
     } catch (error) {
       console.error('Error in getAllTrucks:', error);
@@ -154,12 +146,12 @@ class PrismaService {
         include: {
           model: true,
           tirePressures: {
-            orderBy: { tireNumber: 'asc' }
+            orderBy: { tireNumber: 'asc' },
           },
           alerts: {
-            orderBy: { createdAt: 'desc' }
-          }
-        }
+            orderBy: { createdAt: 'desc' },
+          },
+        },
       });
 
       if (!truck) {
@@ -181,9 +173,9 @@ class PrismaService {
           id: true,
           truckNumber: true,
           tirePressures: {
-            orderBy: { tireNumber: 'asc' }
-          }
-        }
+            orderBy: { tireNumber: 'asc' },
+          },
+        },
       });
 
       if (!truck) {
@@ -193,15 +185,15 @@ class PrismaService {
       return {
         truckId: truck.id,
         truckNumber: truck.truckNumber,
-        tirePressures: truck.tirePressures.map(tire => ({
+        tirePressures: truck.tirePressures.map((tire) => ({
           position: tire.tirePosition,
           tireNumber: tire.tireNumber,
           pressure: parseFloat(tire.pressurePsi),
           status: tire.status,
           temperature: tire.temperature ? parseFloat(tire.temperature) : null,
-          lastUpdated: tire.recordedAt
+          lastUpdated: tire.recordedAt,
         })),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
     } catch (error) {
       console.error('Error in getTruckTires:', error);
@@ -212,10 +204,7 @@ class PrismaService {
   async getRealtimeLocations(status) {
     try {
       const where = {
-        AND: [
-          { latitude: { not: null } },
-          { longitude: { not: null } }
-        ]
+        AND: [{ latitude: { not: null } }, { longitude: { not: null } }],
       };
 
       if (status && status !== 'all') {
@@ -229,19 +218,19 @@ class PrismaService {
           _count: {
             select: {
               alerts: {
-                where: { isResolved: false }
-              }
-            }
-          }
+                where: { isResolved: false },
+              },
+            },
+          },
         },
-        orderBy: { updatedAt: 'desc' }
+        orderBy: { updatedAt: 'desc' },
       });
 
       // Format as GeoJSON
       const geoJsonData = {
-        type: "FeatureCollection",
-        features: trucks.map(truck => ({
-          type: "Feature",
+        type: 'FeatureCollection',
+        features: trucks.map((truck) => ({
+          type: 'Feature',
           properties: {
             id: truck.id,
             truckNumber: truck.truckNumber,
@@ -253,13 +242,13 @@ class PrismaService {
             payload: parseFloat(truck.payloadTons),
             driver: truck.driverName,
             lastUpdate: truck.updatedAt,
-            alertCount: truck._count.alerts
+            alertCount: truck._count.alerts,
           },
           geometry: {
-            type: "Point",
-            coordinates: [parseFloat(truck.longitude), parseFloat(truck.latitude)]
-          }
-        }))
+            type: 'Point',
+            coordinates: [parseFloat(truck.longitude), parseFloat(truck.latitude)],
+          },
+        })),
       };
 
       return geoJsonData;
@@ -273,17 +262,17 @@ class PrismaService {
     try {
       const updatedTruck = await this.prisma.truck.update({
         where: { id: parseInt(truckId) },
-        data: { 
+        data: {
           status,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
 
       return {
         id: updatedTruck.id,
         truckNumber: updatedTruck.truckNumber,
         status: updatedTruck.status,
-        lastUpdate: updatedTruck.updatedAt
+        lastUpdate: updatedTruck.updatedAt,
       };
     } catch (error) {
       if (error.code === 'P2025') {
@@ -300,53 +289,49 @@ class PrismaService {
 
   async getDashboardStats() {
     try {
-      const [
-        truckStats,
-        alertsCount,
-        lowTireCount
-      ] = await Promise.all([
+      const [truckStats, alertsCount, lowTireCount] = await Promise.all([
         // Truck statistics
         this.prisma.truck.aggregate({
           _count: {
-            _all: true
+            _all: true,
           },
           _avg: {
-            fuelPercentage: true
+            fuelPercentage: true,
           },
           _sum: {
-            payloadTons: true
-          }
+            payloadTons: true,
+          },
         }),
         // Active alerts count
         this.prisma.truckAlert.count({
-          where: { isResolved: false }
+          where: { isResolved: false },
         }),
         // Low tire pressure count
         this.prisma.truck.count({
           where: {
             tirePressures: {
-              some: { status: 'low' }
-            }
-          }
-        })
+              some: { status: 'low' },
+            },
+          },
+        }),
       ]);
 
       // Get status breakdown
       const statusStats = await this.prisma.truck.groupBy({
         by: ['status'],
         _count: {
-          _all: true
-        }
+          _all: true,
+        },
       });
 
       // Format status counts
       const statusCounts = {
         active: 0,
         inactive: 0,
-        maintenance: 0
+        maintenance: 0,
       };
 
-      statusStats.forEach(stat => {
+      statusStats.forEach((stat) => {
         statusCounts[stat.status] = stat._count._all;
       });
 
@@ -358,7 +343,7 @@ class PrismaService {
         averageFuel: parseFloat(truckStats._avg.fuelPercentage) || 0,
         totalPayload: parseFloat(truckStats._sum.payloadTons) || 0,
         alertsCount,
-        lowTirePressureCount: lowTireCount
+        lowTirePressureCount: lowTireCount,
       };
     } catch (error) {
       console.error('Error in getDashboardStats:', error);
@@ -386,18 +371,18 @@ class PrismaService {
       `;
 
       return {
-        type: "FeatureCollection",
-        features: areas.map(area => ({
-          type: "Feature",
+        type: 'FeatureCollection',
+        features: areas.map((area) => ({
+          type: 'Feature',
           properties: {
             id: area.id,
             name: area.name,
             zoneType: area.zone_type,
             isActive: area.is_active,
-            createdAt: area.created_at
+            createdAt: area.created_at,
           },
-          geometry: JSON.parse(area.boundary_geojson)
-        }))
+          geometry: JSON.parse(area.boundary_geojson),
+        })),
       };
     } catch (error) {
       console.error('Error in getMiningAreasWithGeometry:', error);
@@ -429,11 +414,11 @@ class PrismaService {
         ORDER BY distance_from_center ASC
       `;
 
-      return trucksInZone.map(truck => ({
+      return trucksInZone.map((truck) => ({
         truckId: truck.id,
         truckNumber: truck.truck_number,
         status: truck.status,
-        distanceFromCenter: parseFloat(truck.distance_from_center)
+        distanceFromCenter: parseFloat(truck.distance_from_center),
       }));
     } catch (error) {
       console.error('Error in getTrucksInZone:', error);
@@ -450,18 +435,18 @@ class PrismaService {
       const statusStats = await this.prisma.truck.groupBy({
         by: ['status'],
         _count: {
-          _all: true
-        }
+          _all: true,
+        },
       });
 
       const summary = {
         total_trucks: 0,
         active: 0,
         inactive: 0,
-        maintenance: 0
+        maintenance: 0,
       };
 
-      statusStats.forEach(stat => {
+      statusStats.forEach((stat) => {
         summary.total_trucks += stat._count._all;
         summary[stat.status] = stat._count._all;
       });
@@ -482,7 +467,7 @@ class PrismaService {
       status: truck.status,
       location: {
         type: 'Point',
-        coordinates: [parseFloat(truck.longitude || 0), parseFloat(truck.latitude || 0)]
+        coordinates: [parseFloat(truck.longitude || 0), parseFloat(truck.latitude || 0)],
       },
       speed: parseFloat(truck.speed),
       heading: truck.heading,
@@ -494,7 +479,7 @@ class PrismaService {
       lastMaintenance: truck.lastMaintenance,
       lastUpdate: truck.updatedAt,
       alerts: truck.alerts || [],
-      alertCount: truck._count?.alerts || truck.alerts?.length || 0
+      alertCount: truck._count?.alerts || truck.alerts?.length || 0,
     };
   }
 
@@ -509,7 +494,7 @@ class PrismaService {
       status: truck.status,
       location: {
         type: 'Point',
-        coordinates: [parseFloat(truck.longitude || 0), parseFloat(truck.latitude || 0)]
+        coordinates: [parseFloat(truck.longitude || 0), parseFloat(truck.latitude || 0)],
       },
       speed: parseFloat(truck.speed),
       heading: truck.heading,
@@ -520,21 +505,21 @@ class PrismaService {
       odometer: truck.odometer,
       lastMaintenance: truck.lastMaintenance,
       lastUpdate: truck.updatedAt,
-      tirePressures: truck.tirePressures.map(tire => ({
+      tirePressures: truck.tirePressures.map((tire) => ({
         position: tire.tirePosition,
         tireNumber: tire.tireNumber,
         pressure: parseFloat(tire.pressurePsi),
         status: tire.status,
         temperature: tire.temperature ? parseFloat(tire.temperature) : null,
-        lastUpdated: tire.recordedAt
+        lastUpdated: tire.recordedAt,
       })),
-      alerts: truck.alerts.map(alert => ({
+      alerts: truck.alerts.map((alert) => ({
         type: alert.alertType,
         severity: alert.severity,
         message: alert.message,
         isResolved: alert.isResolved,
-        createdAt: alert.createdAt
-      }))
+        createdAt: alert.createdAt,
+      })),
     };
   }
 
@@ -552,7 +537,7 @@ class PrismaService {
         FROM pg_stat_activity 
         WHERE state = 'active'
       `;
-      
+
       return result[0];
     } catch (error) {
       console.error('Error getting connection info:', error);
@@ -564,7 +549,7 @@ class PrismaService {
     try {
       // Analyze tables for better query planning
       await this.prisma.$executeRaw`ANALYZE truck, tire_pressure_event, alert_event, gps_position`;
-      
+
       return { message: 'Database optimization completed' };
     } catch (error) {
       console.error('Error optimizing database:', error);

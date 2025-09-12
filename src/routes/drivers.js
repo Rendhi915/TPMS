@@ -10,11 +10,11 @@ router.get('/', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 50, status, vendor_id } = req.query;
     const skip = (page - 1) * limit;
-    
+
     const where = {};
     if (status) where.status = status;
     if (vendor_id) where.vendor_id = parseInt(vendor_id);
-    
+
     const [drivers, total] = await Promise.all([
       prisma.drivers.findMany({
         where,
@@ -22,21 +22,21 @@ router.get('/', authMiddleware, async (req, res) => {
           vendor: {
             select: {
               id: true,
-              nama_vendor: true
-            }
-          }
+              nama_vendor: true,
+            },
+          },
         },
         orderBy: {
-          name: 'asc'
+          name: 'asc',
         },
         skip: skip,
-        take: parseInt(limit)
+        take: parseInt(limit),
       }),
-      prisma.drivers.count({ where })
+      prisma.drivers.count({ where }),
     ]);
-    
+
     const totalPages = Math.ceil(total / limit);
-    
+
     res.status(200).json({
       success: true,
       data: {
@@ -47,18 +47,17 @@ router.get('/', authMiddleware, async (req, res) => {
           total: total,
           totalPages: totalPages,
           hasNext: page < totalPages,
-          hasPrev: page > 1
-        }
+          hasPrev: page > 1,
+        },
       },
-      message: 'Drivers retrieved successfully'
+      message: 'Drivers retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error getting drivers:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get drivers',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -67,10 +66,10 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/:driverId', authMiddleware, async (req, res) => {
   try {
     const { driverId } = req.params;
-    
+
     const driver = await prisma.drivers.findUnique({
       where: {
-        id: parseInt(driverId)
+        id: parseInt(driverId),
       },
       include: {
         vendor: {
@@ -78,31 +77,30 @@ router.get('/:driverId', authMiddleware, async (req, res) => {
             id: true,
             nama_vendor: true,
             address: true,
-            nomor_telepon: true
-          }
-        }
-      }
+            nomor_telepon: true,
+          },
+        },
+      },
     });
-    
+
     if (!driver) {
       return res.status(404).json({
         success: false,
-        message: 'Driver not found'
+        message: 'Driver not found',
       });
     }
-    
+
     res.status(200).json({
       success: true,
       data: driver,
-      message: 'Driver details retrieved successfully'
+      message: 'Driver details retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error getting driver details:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get driver details',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -120,14 +118,15 @@ router.post('/', authMiddleware, async (req, res) => {
       license_expiry,
       id_card_number,
       vendor_id,
-      status = 'aktif'
+      status = 'aktif',
     } = req.body;
 
     // Validate required fields
     if (!name || !license_number || !license_type || !license_expiry || !id_card_number) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: name, license_number, license_type, license_expiry, id_card_number'
+        message:
+          'Missing required fields: name, license_number, license_type, license_expiry, id_card_number',
       });
     }
 
@@ -142,30 +141,29 @@ router.post('/', authMiddleware, async (req, res) => {
         license_expiry: new Date(license_expiry),
         id_card_number,
         vendor_id: vendor_id ? parseInt(vendor_id) : null,
-        status
+        status,
       },
       include: {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true
-          }
-        }
-      }
+            nama_vendor: true,
+          },
+        },
+      },
     });
 
     res.status(201).json({
       success: true,
       data: driver,
-      message: 'Driver created successfully'
+      message: 'Driver created successfully',
     });
-
   } catch (error) {
     console.error('Error creating driver:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create driver',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -184,7 +182,7 @@ router.put('/:driverId', authMiddleware, async (req, res) => {
       license_expiry,
       id_card_number,
       vendor_id,
-      status
+      status,
     } = req.body;
 
     const updateData = {};
@@ -201,37 +199,36 @@ router.put('/:driverId', authMiddleware, async (req, res) => {
 
     const driver = await prisma.drivers.update({
       where: {
-        id: parseInt(driverId)
+        id: parseInt(driverId),
       },
       data: updateData,
       include: {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true
-          }
-        }
-      }
+            nama_vendor: true,
+          },
+        },
+      },
     });
 
     res.status(200).json({
       success: true,
       data: driver,
-      message: 'Driver updated successfully'
+      message: 'Driver updated successfully',
     });
-
   } catch (error) {
     console.error('Error updating driver:', error);
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
-        message: 'Driver not found'
+        message: 'Driver not found',
       });
     }
     res.status(500).json({
       success: false,
       message: 'Failed to update driver',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -243,31 +240,30 @@ router.delete('/:driverId', authMiddleware, async (req, res) => {
 
     const driver = await prisma.drivers.update({
       where: {
-        id: parseInt(driverId)
+        id: parseInt(driverId),
       },
       data: {
-        status: 'nonaktif'
-      }
+        status: 'nonaktif',
+      },
     });
 
     res.status(200).json({
       success: true,
       data: driver,
-      message: 'Driver deactivated successfully'
+      message: 'Driver deactivated successfully',
     });
-
   } catch (error) {
     console.error('Error deactivating driver:', error);
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
-        message: 'Driver not found'
+        message: 'Driver not found',
       });
     }
     res.status(500).json({
       success: false,
       message: 'Failed to deactivate driver',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -282,35 +278,34 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
     const drivers = await prisma.drivers.findMany({
       where: {
         license_expiry: {
-          lte: futureDate
+          lte: futureDate,
         },
-        status: 'aktif'
+        status: 'aktif',
       },
       include: {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true
-          }
-        }
+            nama_vendor: true,
+          },
+        },
       },
       orderBy: {
-        license_expiry: 'asc'
-      }
+        license_expiry: 'asc',
+      },
     });
 
     res.status(200).json({
       success: true,
       data: drivers,
-      message: `Drivers with licenses expiring in ${days} days retrieved successfully`
+      message: `Drivers with licenses expiring in ${days} days retrieved successfully`,
     });
-
   } catch (error) {
     console.error('Error getting drivers with expiring licenses:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get drivers with expiring licenses',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });

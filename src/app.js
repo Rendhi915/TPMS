@@ -13,12 +13,14 @@ app.use(helmet());
 app.use(compression());
 
 // CORS configuration
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
 
 // Body parsing middleware
 app.use(express.json());
@@ -34,7 +36,7 @@ app.get('/health', (req, res) => {
     message: 'Fleet Management Server is running',
     timestamp: new Date().toISOString(),
     server_ip: req.socket.localAddress,
-    client_ip: req.ip
+    client_ip: req.ip,
   });
 });
 
@@ -48,13 +50,13 @@ app.get('/', (req, res) => {
       health: '/health',
       auth: '/api/auth/login',
       trucks: '/api/trucks',
-      dashboard: '/api/dashboard/stats'
+      dashboard: '/api/dashboard/stats',
     },
     server_info: {
       server_ip: req.socket.localAddress,
       client_ip: req.ip,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 });
 
@@ -66,7 +68,7 @@ app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
     message: 'Endpoint not found',
-    path: req.originalUrl
+    path: req.originalUrl,
   });
 });
 

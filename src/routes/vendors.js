@@ -15,23 +15,23 @@ router.get('/', authMiddleware, async (req, res) => {
             id: true,
             name: true,
             code: true,
-            model: true
-          }
+            model: true,
+          },
         },
         drivers: {
           select: {
             id: true,
             name: true,
-            status: true
-          }
-        }
+            status: true,
+          },
+        },
       },
       orderBy: {
-        nama_vendor: 'asc'
-      }
+        nama_vendor: 'asc',
+      },
     });
-    
-    const vendorsWithCounts = vendors.map(vendor => ({
+
+    const vendorsWithCounts = vendors.map((vendor) => ({
       id: vendor.id,
       name: vendor.nama_vendor,
       address: vendor.address,
@@ -43,21 +43,20 @@ router.get('/', authMiddleware, async (req, res) => {
       truck_count: vendor.trucks.length,
       driver_count: vendor.drivers.length,
       trucks: vendor.trucks,
-      drivers: vendor.drivers
+      drivers: vendor.drivers,
     }));
-    
+
     res.status(200).json({
       success: true,
       data: vendorsWithCounts,
-      message: 'Vendors retrieved successfully'
+      message: 'Vendors retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error getting vendors:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get vendors',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -66,34 +65,34 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/:vendorId', authMiddleware, async (req, res) => {
   try {
     const { vendorId } = req.params;
-    
+
     const vendor = await prisma.vendors.findUnique({
       where: {
-        id: parseInt(vendorId)
+        id: parseInt(vendorId),
       },
       include: {
         trucks: {
           include: {
             truck_status_event: {
               orderBy: {
-                changed_at: 'desc'
+                changed_at: 'desc',
               },
-              take: 1
-            }
-          }
+              take: 1,
+            },
+          },
         },
         drivers: {
           where: {
-            status: 'aktif'
-          }
-        }
-      }
+            status: 'aktif',
+          },
+        },
+      },
     });
-    
+
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        message: 'Vendor not found'
+        message: 'Vendor not found',
       });
     }
 
@@ -106,31 +105,30 @@ router.get('/:vendorId', authMiddleware, async (req, res) => {
       contact_person: vendor.kontak_person,
       created_at: vendor.created_at,
       updated_at: vendor.updated_at,
-      trucks: vendor.trucks.map(truck => ({
+      trucks: vendor.trucks.map((truck) => ({
         id: truck.id,
         name: truck.name,
         code: truck.code,
         model: truck.model,
         status: truck.truck_status_event[0]?.status || 'active',
-        created_at: truck.created_at
+        created_at: truck.created_at,
       })),
       drivers: vendor.drivers,
       truck_count: vendor.trucks.length,
-      driver_count: vendor.drivers.length
+      driver_count: vendor.drivers.length,
     };
-    
+
     res.status(200).json({
       success: true,
       data: vendorData,
-      message: 'Vendor details retrieved successfully'
+      message: 'Vendor details retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error getting vendor details:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get vendor details',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
@@ -140,52 +138,52 @@ router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
   try {
     const { vendorId } = req.params;
     const { page = 1, limit = 50 } = req.query;
-    
+
     const skip = (page - 1) * limit;
-    
+
     const [trucks, total] = await Promise.all([
       prisma.truck.findMany({
         where: {
-          vendor_id: parseInt(vendorId)
+          vendor_id: parseInt(vendorId),
         },
         include: {
           vendor: {
             select: {
-              nama_vendor: true
-            }
+              nama_vendor: true,
+            },
           },
           truck_status_event: {
             orderBy: {
-              changed_at: 'desc'
+              changed_at: 'desc',
             },
-            take: 1
-          }
+            take: 1,
+          },
         },
         orderBy: {
-          name: 'asc'
+          name: 'asc',
         },
         skip: skip,
-        take: parseInt(limit)
+        take: parseInt(limit),
       }),
       prisma.truck.count({
         where: {
-          vendor_id: parseInt(vendorId)
-        }
-      })
+          vendor_id: parseInt(vendorId),
+        },
+      }),
     ]);
-    
+
     const totalPages = Math.ceil(total / limit);
-    
-    const trucksData = trucks.map(truck => ({
+
+    const trucksData = trucks.map((truck) => ({
       id: truck.id,
       name: truck.name,
       code: truck.code,
       model: truck.model,
       status: truck.truck_status_event[0]?.status || 'active',
       created_at: truck.created_at,
-      vendor_name: truck.vendor?.nama_vendor
+      vendor_name: truck.vendor?.nama_vendor,
     }));
-    
+
     res.status(200).json({
       success: true,
       data: {
@@ -196,18 +194,17 @@ router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
           total: total,
           totalPages: totalPages,
           hasNext: page < totalPages,
-          hasPrev: page > 1
-        }
+          hasPrev: page > 1,
+        },
       },
-      message: 'Vendor trucks retrieved successfully'
+      message: 'Vendor trucks retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error getting vendor trucks:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get vendor trucks',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });

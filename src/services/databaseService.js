@@ -3,9 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 
 // Create Prisma instance with proper configuration
 const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' 
-    ? ['query', 'info', 'warn', 'error'] 
-    : ['error'],
+  log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
   errorFormat: 'pretty',
 });
 
@@ -63,7 +61,7 @@ const DatabaseHelpers = {
       AND t.status = 'active'
       ORDER BY "distanceKm" ASC
     `;
-    
+
     return await this.executeSpatialQuery(query, [longitude, latitude, radiusKm / 111.139]);
   },
 
@@ -99,7 +97,7 @@ const DatabaseHelpers = {
         AND t.longitude IS NOT NULL
       ORDER BY "distanceFromCenterKm" ASC
     `;
-    
+
     return await this.executeSpatialQuery(query, [zoneName]);
   },
 
@@ -121,7 +119,7 @@ const DatabaseHelpers = {
       AND mz.is_active = true
       LIMIT 1
     `;
-    
+
     const result = await this.executeSpatialQuery(query, [longitude, latitude]);
     return result[0] || null;
   },
@@ -136,7 +134,7 @@ const DatabaseHelpers = {
 
       for (const update of updates) {
         const { id, latitude, longitude, speed, heading, fuelPercentage } = update;
-        
+
         // Update truck
         const truck = await tx.truck.update({
           where: { id: parseInt(id) },
@@ -146,9 +144,9 @@ const DatabaseHelpers = {
             speed: speed !== undefined ? parseFloat(speed) : undefined,
             heading: heading !== undefined ? parseInt(heading) : undefined,
             fuelPercentage: fuelPercentage !== undefined ? parseFloat(fuelPercentage) : undefined,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           },
-          select: { id: true, truckNumber: true }
+          select: { id: true, truckNumber: true },
         });
 
         results.push(truck);
@@ -162,7 +160,7 @@ const DatabaseHelpers = {
             speed: speed !== undefined ? parseFloat(speed) : 0,
             heading: heading !== undefined ? parseInt(heading) : 0,
             fuelPercentage: fuelPercentage !== undefined ? parseFloat(fuelPercentage) : null,
-            recordedAt: new Date()
+            recordedAt: new Date(),
           });
         }
       }
@@ -170,7 +168,7 @@ const DatabaseHelpers = {
       // Bulk create location histories
       if (locationHistories.length > 0) {
         await tx.locationHistory.createMany({
-          data: locationHistories
+          data: locationHistories,
         });
       }
 
@@ -185,8 +183,8 @@ const DatabaseHelpers = {
     return await prisma.truck.findMany({
       where: {
         alerts: {
-          some: { isResolved: false }
-        }
+          some: { isResolved: false },
+        },
       },
       select: {
         id: true,
@@ -198,9 +196,9 @@ const DatabaseHelpers = {
         _count: {
           select: {
             alerts: {
-              where: { isResolved: false }
-            }
-          }
+              where: { isResolved: false },
+            },
+          },
         },
         alerts: {
           where: { isResolved: false },
@@ -209,17 +207,17 @@ const DatabaseHelpers = {
             alertType: true,
             severity: true,
             message: true,
-            createdAt: true
+            createdAt: true,
           },
           orderBy: { createdAt: 'desc' },
-          take: 3
-        }
+          take: 3,
+        },
       },
       orderBy: {
         alerts: {
-          _count: 'desc'
-        }
-      }
+          _count: 'desc',
+        },
+      },
     });
   },
 
@@ -236,7 +234,7 @@ const DatabaseHelpers = {
       'Overload Warning': 'high',
       'Scheduled Maintenance': 'low',
       'Speed Limit Exceeded': 'medium',
-      'Geofence Violation': 'medium'
+      'Geofence Violation': 'medium',
     };
 
     const severity = customSeverity || severityMap[alertType] || 'medium';
@@ -247,13 +245,13 @@ const DatabaseHelpers = {
         alertType,
         severity,
         message,
-        isResolved: false
+        isResolved: false,
       },
       include: {
         truck: {
-          select: { truckNumber: true }
-        }
-      }
+          select: { truckNumber: true },
+        },
+      },
     });
   },
 
@@ -261,17 +259,12 @@ const DatabaseHelpers = {
    * Get performance metrics
    */
   async getPerformanceMetrics(timeRangeHours = 24) {
-    const timeAgo = new Date(Date.now() - (timeRangeHours * 60 * 60 * 1000));
+    const timeAgo = new Date(Date.now() - timeRangeHours * 60 * 60 * 1000);
 
-    const [
-      totalDistance,
-      avgSpeed,
-      fuelConsumption,
-      alertsCreated,
-      trucksActive
-    ] = await Promise.all([
-      // Calculate total distance from location history
-      prisma.$queryRaw`
+    const [totalDistance, avgSpeed, fuelConsumption, alertsCreated, trucksActive] =
+      await Promise.all([
+        // Calculate total distance from location history
+        prisma.$queryRaw`
         SELECT COALESCE(SUM(
           ST_Distance(
             ST_SetSRID(ST_MakePoint(lng1, lat1), 4326),
@@ -289,18 +282,18 @@ const DatabaseHelpers = {
         ) distances
         WHERE lat2 IS NOT NULL AND lng2 IS NOT NULL
       `,
-      
-      // Average speed
-      prisma.locationHistory.aggregate({
-        where: {
-          recordedAt: { gte: timeAgo },
-          speed: { gt: 0 }
-        },
-        _avg: { speed: true }
-      }),
-      
-      // Fuel consumption estimate (simplified)
-      prisma.$queryRaw`
+
+        // Average speed
+        prisma.locationHistory.aggregate({
+          where: {
+            recordedAt: { gte: timeAgo },
+            speed: { gt: 0 },
+          },
+          _avg: { speed: true },
+        }),
+
+        // Fuel consumption estimate (simplified)
+        prisma.$queryRaw`
         SELECT 
           AVG(fuel_start - fuel_end) as avg_fuel_consumption
         FROM (
@@ -318,19 +311,19 @@ const DatabaseHelpers = {
         ) fuel_data
         GROUP BY truck_id
       `,
-      
-      // Alerts created in time range
-      prisma.truckAlert.count({
-        where: {
-          createdAt: { gte: timeAgo }
-        }
-      }),
-      
-      // Active trucks count
-      prisma.truck.count({
-        where: { status: 'active' }
-      })
-    ]);
+
+        // Alerts created in time range
+        prisma.truckAlert.count({
+          where: {
+            createdAt: { gte: timeAgo },
+          },
+        }),
+
+        // Active trucks count
+        prisma.truck.count({
+          where: { status: 'active' },
+        }),
+      ]);
 
     return {
       timeRangeHours,
@@ -338,7 +331,7 @@ const DatabaseHelpers = {
       averageSpeed: avgSpeed._avg.speed || 0,
       estimatedFuelConsumption: fuelConsumption[0]?.avg_fuel_consumption || 0,
       alertsGenerated: alertsCreated,
-      activeTrucks: trucksActive
+      activeTrucks: trucksActive,
     };
   },
 
@@ -346,16 +339,16 @@ const DatabaseHelpers = {
    * Clean old location history data
    */
   async cleanOldLocationHistory(daysToKeep = 30) {
-    const cutoffDate = new Date(Date.now() - (daysToKeep * 24 * 60 * 60 * 1000));
-    
+    const cutoffDate = new Date(Date.now() - daysToKeep * 24 * 60 * 60 * 1000);
+
     const deleted = await prisma.locationHistory.deleteMany({
       where: {
-        recordedAt: { lt: cutoffDate }
-      }
+        recordedAt: { lt: cutoffDate },
+      },
     });
-    
+
     return deleted.count;
-  }
+  },
 };
 
 // Middleware for database connection
@@ -368,7 +361,7 @@ const databaseMiddleware = async (req, res, next) => {
     console.error('Database connection error:', error);
     res.status(503).json({
       success: false,
-      error: 'Database service unavailable'
+      error: 'Database service unavailable',
     });
   }
 };
@@ -388,5 +381,5 @@ module.exports = {
   healthCheck,
   DatabaseHelpers,
   databaseMiddleware,
-  gracefulShutdown
+  gracefulShutdown,
 };

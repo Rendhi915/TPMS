@@ -435,7 +435,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\LENOVO\\Desktop\\Projek_Fleeto\\prisma\\generated\\client",
+      "value": "D:\\www\\tpms-backend\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -451,12 +451,11 @@ const config = {
     "previewFeatures": [
       "postgresqlExtensions"
     ],
-    "sourceFilePath": "C:\\Users\\LENOVO\\Desktop\\Projek_Fleeto\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\www\\tpms-backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../..",
   "clientVersion": "5.22.0",
@@ -465,7 +464,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {

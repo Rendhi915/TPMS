@@ -5,16 +5,36 @@ const { validateSensorData, handleValidationErrors } = require('../middleware/va
 const authMiddleware = require('../middleware/auth');
 
 // POST /api/sensors/tpdata - Tire pressure data ingestion
-router.post('/tpdata', validateSensorData('tpdata'), handleValidationErrors, sensorController.ingestTirePressureData);
+router.post(
+  '/tpdata',
+  validateSensorData('tpdata'),
+  handleValidationErrors,
+  sensorController.ingestTirePressureData
+);
 
-// POST /api/sensors/hubdata - Hub temperature data ingestion  
-router.post('/hubdata', validateSensorData('hubdata'), handleValidationErrors, sensorController.ingestHubTemperatureData);
+// POST /api/sensors/hubdata - Hub temperature data ingestion
+router.post(
+  '/hubdata',
+  validateSensorData('hubdata'),
+  handleValidationErrors,
+  sensorController.ingestHubTemperatureData
+);
 
 // POST /api/sensors/device - GPS & device status data ingestion
-router.post('/device', validateSensorData('device'), handleValidationErrors, sensorController.ingestDeviceStatusData);
+router.post(
+  '/device',
+  validateSensorData('device'),
+  handleValidationErrors,
+  sensorController.ingestDeviceStatusData
+);
 
 // POST /api/sensors/state - Lock state data ingestion
-router.post('/state', validateSensorData('state'), handleValidationErrors, sensorController.ingestLockStateData);
+router.post(
+  '/state',
+  validateSensorData('state'),
+  handleValidationErrors,
+  sensorController.ingestLockStateData
+);
 
 // POST /api/sensors/raw - Generic raw sensor data ingestion (for any sensor type)
 router.post('/raw', sensorController.ingestRawSensorData);

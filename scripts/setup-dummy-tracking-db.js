@@ -17,7 +17,9 @@ require('dotenv').config();
   const DB_USER = process.env.DB_USER || 'postgre_tpms';
   const DB_PASSWORD = process.env.DB_PASSWORD || 'postgis:14-3.5-alpine';
   const DB_NAME = 'dummy_tracking';
-  const USE_SSL = (process.env.DB_SSL || '').toLowerCase() !== 'false' && !['localhost', '127.0.0.1'].includes(DB_HOST);
+  const USE_SSL =
+    (process.env.DB_SSL || '').toLowerCase() !== 'false' &&
+    !['localhost', '127.0.0.1'].includes(DB_HOST);
 
   const adminConnection = {
     host: DB_HOST,
@@ -57,7 +59,7 @@ require('dotenv').config();
       await client.connect();
       return client;
     } catch (e) {
-      if (String(e && e.message || '').includes('does not support SSL')) {
+      if (String((e && e.message) || '').includes('does not support SSL')) {
         log(`${label}: Server does not support SSL, retrying without SSL...`);
         return await tryNonSSL();
       }
@@ -158,11 +160,17 @@ require('dotenv').config();
     process.exit(0);
   } catch (err) {
     if (err && err.code === '28P01') {
-      console.error('Failed to setup dummy_tracking: authentication failed (check DB_USER/DB_PASSWORD).');
+      console.error(
+        'Failed to setup dummy_tracking: authentication failed (check DB_USER/DB_PASSWORD).'
+      );
     } else if (err && err.code === '42501') {
-      console.error('Failed to setup dummy_tracking: insufficient privileges to CREATE DATABASE. Use a superuser or a role with CREATEDB.');
+      console.error(
+        'Failed to setup dummy_tracking: insufficient privileges to CREATE DATABASE. Use a superuser or a role with CREATEDB.'
+      );
     } else if (err && err.code === '3D000') {
-      console.error("Failed to connect to target DB: database doesn't exist and couldn't be created. Ensure privileges or create it manually.");
+      console.error(
+        "Failed to connect to target DB: database doesn't exist and couldn't be created. Ensure privileges or create it manually."
+      );
     } else {
       console.error('Failed to setup dummy_tracking:', err);
     }

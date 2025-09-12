@@ -32,7 +32,7 @@ async function ensureDeviceForTruck(truck) {
       truck_id: truck.id,
       sn,
       sim_number: null,
-    }
+    },
   });
   return { id: device.id, sn };
 }
@@ -48,21 +48,26 @@ async function seedTireEventsForTruck(truck, deviceId, wheelCount, readingsPerTi
 
     for (let r = 0; r < readingsPerTire; r++) {
       const ts = new Date(now - (tire * 7 + r) * 60 * 1000); // stagger timestamps
-      const pressure = Math.max(700, Math.min(1300, Math.round(basePressure + randomFloat(-40, 40))));
+      const pressure = Math.max(
+        700,
+        Math.min(1300, Math.round(basePressure + randomFloat(-40, 40)))
+      );
       const temp = Math.max(20, Math.min(85, Math.round(baseTemp + randomFloat(-3, 3))));
       const battery = Math.max(10, Math.min(100, Math.round(baseBattery - r - randomFloat(0, 1))));
 
-      ops.push(prisma.tire_pressure_event.create({
-        data: {
-          device_id: deviceId,
-          truck_id: truck.id,
-          tire_no: tire,
-          pressure_kpa: pressure,
-          temp_celsius: temp,
-          battery_level: battery,
-          changed_at: ts,
-        }
-      }));
+      ops.push(
+        prisma.tire_pressure_event.create({
+          data: {
+            device_id: deviceId,
+            truck_id: truck.id,
+            tire_no: tire,
+            pressure_kpa: pressure,
+            temp_celsius: temp,
+            battery_level: battery,
+            changed_at: ts,
+          },
+        })
+      );
     }
   }
   // Run in small batches to avoid overwhelming DB
@@ -79,7 +84,7 @@ async function main() {
 
     const trucks = await prisma.truck.findMany({
       where: { code: { gte: '0001', lte: '1000' } },
-      select: { id: true, code: true, name: true }
+      select: { id: true, code: true, name: true },
     });
 
     if (trucks.length === 0) {
@@ -102,7 +107,9 @@ async function main() {
           const device = await ensureDeviceForTruck(truck);
           await seedTireEventsForTruck(truck, device.id, wheelCount, 2);
           if ((i + 1) % 50 === 0 || i === trucks.length - 1) {
-            console.log(`Worker ${workerId}: Seeded ${i + 1}/${trucks.length} (truck ${truck.code}, wheels=${wheelCount})`);
+            console.log(
+              `Worker ${workerId}: Seeded ${i + 1}/${trucks.length} (truck ${truck.code}, wheels=${wheelCount})`
+            );
           }
         } catch (e) {
           console.error(`Worker ${workerId}: Failed seeding for truck ${truck.code}:`, e.message);

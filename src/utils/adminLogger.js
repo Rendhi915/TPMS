@@ -13,14 +13,20 @@ const adminLogger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
     winston.format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
+      format: 'YYYY-MM-DD HH:mm:ss',
     }),
     winston.format.errors({ stack: true }),
     winston.format.json(),
     winston.format.printf(({ timestamp, level, message, ...meta }) => {
-      const metaStr = Object.keys(meta).length ? JSON.stringify(meta, (key, value) => {
-        return typeof value === 'bigint' ? value.toString() : value;
-      }, 2) : '';
+      const metaStr = Object.keys(meta).length
+        ? JSON.stringify(
+            meta,
+            (key, value) => {
+              return typeof value === 'bigint' ? value.toString() : value;
+            },
+            2
+          )
+        : '';
       return `[${timestamp}] [${level.toUpperCase()}] ${message} ${metaStr}`;
     })
   ),
@@ -31,7 +37,7 @@ const adminLogger = winston.createLogger({
       filename: path.join(logDir, 'admin-activity.log'),
       maxsize: 10485760, // 10MB
       maxFiles: 5,
-      tailable: true
+      tailable: true,
     }),
     // Error log file
     new winston.transports.File({
@@ -39,25 +45,33 @@ const adminLogger = winston.createLogger({
       level: 'error',
       maxsize: 10485760, // 10MB
       maxFiles: 3,
-      tailable: true
-    })
-  ]
+      tailable: true,
+    }),
+  ],
 });
 
 // Add console transport for development
 if (process.env.NODE_ENV !== 'production') {
-  adminLogger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.simple(),
-      winston.format.printf(({ timestamp, level, message, ...meta }) => {
-        const metaStr = Object.keys(meta).length ? JSON.stringify(meta, (key, value) => {
-          return typeof value === 'bigint' ? value.toString() : value;
-        }, 2) : '';
-        return `🔐 [ADMIN] [${timestamp}] ${level}: ${message} ${metaStr}`;
-      })
-    )
-  }));
+  adminLogger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple(),
+        winston.format.printf(({ timestamp, level, message, ...meta }) => {
+          const metaStr = Object.keys(meta).length
+            ? JSON.stringify(
+                meta,
+                (key, value) => {
+                  return typeof value === 'bigint' ? value.toString() : value;
+                },
+                2
+              )
+            : '';
+          return `🔐 [ADMIN] [${timestamp}] ${level}: ${message} ${metaStr}`;
+        })
+      ),
+    })
+  );
 }
 
 // Admin activity logging functions
@@ -66,7 +80,7 @@ const logAdminActivity = (action, details = {}) => {
     action,
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    ...details
+    ...details,
   });
 };
 
@@ -80,7 +94,7 @@ const logServerStartup = (serverInfo) => {
     startupTime: serverInfo.startupTime,
     processId: process.pid,
     nodeVersion: process.version,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -90,7 +104,7 @@ const logServerShutdown = (reason) => {
     reason,
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    processId: process.pid
+    processId: process.pid,
   });
 };
 
@@ -99,7 +113,7 @@ const logDatabaseConnection = (status, details = {}) => {
     action: 'DATABASE_CONNECTION',
     status,
     ...details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -109,7 +123,7 @@ const logWebSocketConnection = (clientInfo) => {
     clientId: clientInfo.clientId,
     clientIp: clientInfo.ip,
     userAgent: clientInfo.userAgent || 'Unknown',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -119,7 +133,7 @@ const logWebSocketDisconnection = (clientInfo) => {
     clientId: clientInfo.clientId,
     connectionDuration: clientInfo.connectionDuration,
     reason: clientInfo.reason || 'Unknown',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -129,7 +143,7 @@ const logAdminOperation = (operation, userId, details = {}) => {
     operation,
     userId,
     ...details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -137,7 +151,7 @@ const logSystemHealth = (healthData) => {
   adminLogger.info('System Health Check', {
     action: 'SYSTEM_HEALTH_CHECK',
     ...healthData,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -147,7 +161,7 @@ const logError = (error, context = {}) => {
     error: error.message,
     stack: error.stack,
     ...context,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -156,7 +170,7 @@ const logSecurityEvent = (event, details = {}) => {
     action: 'SECURITY_EVENT',
     event,
     ...details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -167,7 +181,7 @@ const logPerformanceMetric = (metric, value, unit = 'ms') => {
     metric,
     value,
     unit,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -177,7 +191,7 @@ const logDailySummary = (summaryData) => {
     action: 'DAILY_SUMMARY',
     date: new Date().toISOString().split('T')[0],
     ...summaryData,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -194,5 +208,5 @@ module.exports = {
   logError,
   logSecurityEvent,
   logPerformanceMetric,
-  logDailySummary
+  logDailySummary,
 };

@@ -13,7 +13,7 @@ const colors = {
   blue: '\x1b[34m',
   reset: '\x1b[0m',
   cyan: '\x1b[36m',
-  magenta: '\x1b[35m'
+  magenta: '\x1b[35m',
 };
 
 const log = (message, color = 'reset') => {
@@ -24,7 +24,7 @@ const log = (message, color = 'reset') => {
 const testResults = {
   passed: 0,
   failed: 0,
-  tests: []
+  tests: [],
 };
 
 // Helper function to run a test
@@ -32,7 +32,7 @@ const runTest = async (testName, testFunction) => {
   try {
     log(`🧪 Testing: ${testName}`, 'yellow');
     const result = await testFunction();
-    
+
     if (result.success) {
       log(`✅ PASSED: ${testName}`, 'green');
       testResults.passed++;
@@ -40,14 +40,13 @@ const runTest = async (testName, testFunction) => {
       log(`❌ FAILED: ${testName} - ${result.error}`, 'red');
       testResults.failed++;
     }
-    
+
     testResults.tests.push({
       name: testName,
       passed: result.success,
       error: result.error || null,
-      data: result.data || null
+      data: result.data || null,
     });
-    
   } catch (error) {
     log(`❌ ERROR: ${testName} - ${error.message}`, 'red');
     testResults.failed++;
@@ -55,7 +54,7 @@ const runTest = async (testName, testFunction) => {
       name: testName,
       passed: false,
       error: error.message,
-      data: null
+      data: null,
     });
   }
 };
@@ -67,9 +66,9 @@ const authenticate = async () => {
   try {
     const response = await axios.post(`${API_BASE}/auth/login`, {
       username: 'admin',
-      password: 'admin123'
+      password: 'admin123',
     });
-    
+
     if (response.data.success) {
       authToken = response.data.data.token;
       return { success: true, data: response.data };
@@ -87,17 +86,17 @@ const testAuthentication = async () => {
     // Test login
     const response = await axios.post(`${API_BASE}/auth/login`, {
       username: 'admin',
-      password: 'admin123'
+      password: 'admin123',
     });
-    
+
     if (response.status === 200 && response.data.success && response.data.data.token) {
       authToken = response.data.data.token;
-      return { 
-        success: true, 
-        data: { 
+      return {
+        success: true,
+        data: {
           token: authToken.substring(0, 20) + '...',
-          user: response.data.data.user 
-        }
+          user: response.data.data.user,
+        },
       };
     } else {
       return { success: false, error: 'Invalid response format' };
@@ -111,9 +110,9 @@ const testInvalidAuthentication = async () => {
   try {
     const response = await axios.post(`${API_BASE}/auth/login`, {
       username: 'invalid',
-      password: 'invalid'
+      password: 'invalid',
     });
-    
+
     // Should fail, so if we get here it's wrong
     return { success: false, error: 'Should have failed with invalid credentials' };
   } catch (error) {
@@ -128,18 +127,18 @@ const testInvalidAuthentication = async () => {
 const testGetAllTrucks = async () => {
   try {
     const response = await axios.get(`${API_BASE}/trucks`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const data = response.data.data;
-      return { 
-        success: true, 
+      return {
+        success: true,
         data: {
           totalTrucks: data.trucks.length,
           pagination: data.pagination,
-          summary: data.summary
-        }
+          summary: data.summary,
+        },
       };
     } else {
       return { success: false, error: 'Invalid response' };
@@ -152,24 +151,24 @@ const testGetAllTrucks = async () => {
 const testGetTrucksWithFilters = async () => {
   try {
     const response = await axios.get(`${API_BASE}/trucks?status=active&limit=10&minFuel=50`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const trucks = response.data.data.trucks;
-      const allActive = trucks.every(truck => truck.status === 'active');
-      const allHighFuel = trucks.every(truck => truck.fuel >= 50);
+      const allActive = trucks.every((truck) => truck.status === 'active');
+      const allHighFuel = trucks.every((truck) => truck.fuel >= 50);
       const correctLimit = trucks.length <= 10;
-      
+
       if (allActive && allHighFuel && correctLimit) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: {
             filteredTrucks: trucks.length,
             statusFilter: 'working',
             fuelFilter: 'working',
-            limitFilter: 'working'
-          }
+            limitFilter: 'working',
+          },
         };
       } else {
         return { success: false, error: 'Filters not working correctly' };
@@ -186,32 +185,32 @@ const testGetSpecificTruck = async () => {
   try {
     // First get a valid truck ID from the trucks list
     const trucksResponse = await axios.get(`${API_BASE}/trucks?limit=1`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (!trucksResponse.data.success || trucksResponse.data.data.trucks.length === 0) {
       return { success: false, error: 'No trucks available for testing' };
     }
-    
+
     const truckId = trucksResponse.data.data.trucks[0].id;
     const response = await axios.get(`${API_BASE}/trucks/${truckId}`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const truck = response.data.data;
       const hasRequiredFields = truck.id && truck.truckNumber && truck.status && truck.location;
-      
+
       if (hasRequiredFields) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: {
             truckId: truck.id,
             truckNumber: truck.truckNumber,
             status: truck.status,
             hasLocation: !!truck.location,
-            hasTirePressures: truck.tirePressures && truck.tirePressures.length > 0
-          }
+            hasTirePressures: truck.tirePressures && truck.tirePressures.length > 0,
+          },
         };
       } else {
         return { success: false, error: 'Missing required fields' };
@@ -228,31 +227,31 @@ const testGetTruckTires = async () => {
   try {
     // First get a valid truck ID
     const trucksResponse = await axios.get(`${API_BASE}/trucks?limit=1`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (!trucksResponse.data.success || trucksResponse.data.data.trucks.length === 0) {
       return { success: false, error: 'No trucks available for testing' };
     }
-    
+
     const truckId = trucksResponse.data.data.trucks[0].id;
     const response = await axios.get(`${API_BASE}/trucks/${truckId}/tires`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const data = response.data.data;
       const hasTires = data.tirePressures && data.tirePressures.length > 0;
-      
+
       if (hasTires) {
-        const tireStatuses = data.tirePressures.map(tire => tire.status);
-        return { 
-          success: true, 
+        const tireStatuses = data.tirePressures.map((tire) => tire.status);
+        return {
+          success: true,
           data: {
             truckNumber: data.truckNumber,
             tireCount: data.tirePressures.length,
-            tireStatuses: tireStatuses
-          }
+            tireStatuses: tireStatuses,
+          },
         };
       } else {
         return { success: false, error: 'Invalid tire data' };
@@ -268,41 +267,42 @@ const testGetTruckTires = async () => {
 const testGetRealtimeLocations = async () => {
   try {
     const response = await axios.get(`${API_BASE}/trucks/realtime/locations`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const geoJson = response.data.data;
-      const isValidGeoJson = geoJson.type === 'FeatureCollection' && Array.isArray(geoJson.features);
+      const isValidGeoJson =
+        geoJson.type === 'FeatureCollection' && Array.isArray(geoJson.features);
       // Allow empty features for real-time locations (no active GPS data)
-      
+
       if (isValidGeoJson) {
         // For empty features, just validate the structure
         if (geoJson.features.length === 0) {
-          return { 
-            success: true, 
+          return {
+            success: true,
             data: {
               featureCount: 0,
               validGeoJson: isValidGeoJson,
               hasGeometry: false,
               hasProperties: false,
-              note: 'No active GPS data available'
-            }
+              note: 'No active GPS data available',
+            },
           };
         }
-        
+
         const sampleFeature = geoJson.features[0];
         const hasGeometry = sampleFeature.geometry && sampleFeature.geometry.type === 'Point';
         const hasProperties = sampleFeature.properties && sampleFeature.properties.truckNumber;
-        
-        return { 
-          success: true, 
+
+        return {
+          success: true,
           data: {
             featureCount: geoJson.features.length,
             validGeoJson: isValidGeoJson,
             hasGeometry: hasGeometry,
-            hasProperties: hasProperties
-          }
+            hasProperties: hasProperties,
+          },
         };
       } else {
         return { success: false, error: 'Invalid GeoJSON format' };
@@ -318,23 +318,24 @@ const testGetRealtimeLocations = async () => {
 const testGetMiningArea = async () => {
   try {
     const response = await axios.get(`${API_BASE}/mining-area`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const geoJson = response.data.data;
-      const isValidGeoJson = geoJson.type === 'FeatureCollection' && Array.isArray(geoJson.features);
+      const isValidGeoJson =
+        geoJson.type === 'FeatureCollection' && Array.isArray(geoJson.features);
       const hasAreas = geoJson.features.length > 0;
-      
+
       if (isValidGeoJson && hasAreas) {
-        const polygonFeatures = geoJson.features.filter(f => f.geometry.type === 'Polygon');
-        return { 
-          success: true, 
+        const polygonFeatures = geoJson.features.filter((f) => f.geometry.type === 'Polygon');
+        return {
+          success: true,
           data: {
             totalAreas: geoJson.features.length,
             polygonAreas: polygonFeatures.length,
-            areaNames: geoJson.features.map(f => f.properties.name)
-          }
+            areaNames: geoJson.features.map((f) => f.properties.name),
+          },
         };
       } else {
         return { success: false, error: 'Invalid mining area data' };
@@ -350,24 +351,24 @@ const testGetMiningArea = async () => {
 const testGetDashboardStats = async () => {
   try {
     const response = await axios.get(`${API_BASE}/dashboard/stats`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (response.status === 200 && response.data.success) {
       const stats = response.data.data;
       const hasRequiredStats = stats.totalTrucks && stats.activeTrucks !== undefined;
-      
+
       if (hasRequiredStats) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: {
             totalTrucks: stats.totalTrucks,
             activeTrucks: stats.activeTrucks,
             inactiveTrucks: stats.inactiveTrucks,
             maintenanceTrucks: stats.maintenanceTrucks,
             averageFuel: stats.averageFuel,
-            alertsCount: stats.alertsCount
-          }
+            alertsCount: stats.alertsCount,
+          },
         };
       } else {
         return { success: false, error: 'Missing required statistics' };
@@ -384,46 +385,54 @@ const testUpdateTruckStatus = async () => {
   try {
     // First get a valid truck ID
     const trucksResponse = await axios.get(`${API_BASE}/trucks?limit=1`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (!trucksResponse.data.success || trucksResponse.data.data.trucks.length === 0) {
       return { success: false, error: 'No trucks available for testing' };
     }
-    
+
     const truckId = trucksResponse.data.data.trucks[0].id;
     const getTruckResponse = await axios.get(`${API_BASE}/trucks/${truckId}`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     const originalStatus = getTruckResponse.data.data.status;
     const newStatus = originalStatus === 'active' ? 'maintenance' : 'active';
-    
+
     // Update truck status
-    const response = await axios.put(`${API_BASE}/trucks/${truckId}/status`, {
-      status: newStatus
-    }, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
-    });
-    
+    const response = await axios.put(
+      `${API_BASE}/trucks/${truckId}/status`,
+      {
+        status: newStatus,
+      },
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
     if (response.status === 200 && response.data.success) {
       const updatedTruck = response.data.data;
-      
+
       if (updatedTruck.status === newStatus) {
         // Revert back to original status
-        await axios.put(`${API_BASE}/trucks/${truckId}/status`, {
-          status: originalStatus
-        }, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        
-        return { 
-          success: true, 
+        await axios.put(
+          `${API_BASE}/trucks/${truckId}/status`,
+          {
+            status: originalStatus,
+          },
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
+
+        return {
+          success: true,
           data: {
             originalStatus: originalStatus,
             updatedTo: newStatus,
-            revertedTo: originalStatus
-          }
+            revertedTo: originalStatus,
+          },
         };
       } else {
         return { success: false, error: 'Status not updated correctly' };
@@ -439,7 +448,7 @@ const testUpdateTruckStatus = async () => {
 const testUnauthorizedAccess = async () => {
   try {
     const response = await axios.get(`${API_BASE}/trucks`);
-    
+
     // Should fail, so if we get here it's wrong
     return { success: false, error: 'Should have failed without auth token' };
   } catch (error) {
@@ -455,50 +464,52 @@ const testWebSocketConnection = async () => {
   return new Promise((resolve) => {
     const wsUrl = 'ws://localhost:3001/ws';
     const socket = new WebSocket(wsUrl);
-    
+
     const timeout = setTimeout(() => {
       socket.close();
       resolve({ success: false, error: 'WebSocket connection timeout' });
     }, 5000);
-    
+
     socket.on('open', () => {
       clearTimeout(timeout);
-      
+
       // Send subscription message
-      socket.send(JSON.stringify({
-        type: 'subscribe',
-        data: { channel: 'truck_updates' },
-        requestId: 'test-subscription'
-      }));
-      
+      socket.send(
+        JSON.stringify({
+          type: 'subscribe',
+          data: { channel: 'truck_updates' },
+          requestId: 'test-subscription',
+        })
+      );
+
       // Test if we can receive updates
       const updateTimeout = setTimeout(() => {
         socket.close();
-        resolve({ 
-          success: true, 
+        resolve({
+          success: true,
           data: {
             connected: true,
             subscribed: true,
-            connectionTest: 'passed'
-          }
+            connectionTest: 'passed',
+          },
         });
       }, 2000);
-      
+
       socket.on('message', (data) => {
         try {
           const message = JSON.parse(data.toString());
-          
+
           if (message.type === 'subscription_ack' || message.type === 'truck_locations_update') {
             clearTimeout(updateTimeout);
             socket.close();
-            resolve({ 
-              success: true, 
+            resolve({
+              success: true,
               data: {
                 connected: true,
                 subscribed: true,
                 receivedMessage: true,
-                messageType: message.type
-              }
+                messageType: message.type,
+              },
             });
           }
         } catch (error) {
@@ -506,7 +517,7 @@ const testWebSocketConnection = async () => {
         }
       });
     });
-    
+
     socket.on('error', (error) => {
       clearTimeout(timeout);
       resolve({ success: false, error: `WebSocket connection failed: ${error.message}` });
@@ -518,31 +529,32 @@ const testPaginationAndLimits = async () => {
   try {
     // Test pagination
     const page1 = await axios.get(`${API_BASE}/trucks?page=1&limit=5`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     const page2 = await axios.get(`${API_BASE}/trucks?page=2&limit=5`, {
-      headers: { 'Authorization': `Bearer ${authToken}` }
+      headers: { Authorization: `Bearer ${authToken}` },
     });
-    
+
     if (page1.data.success && page2.data.success) {
       const page1Trucks = page1.data.data.trucks;
       const page2Trucks = page2.data.data.trucks;
-      
+
       const correctLimit = page1Trucks.length <= 5 && page2Trucks.length <= 5;
       const differentData = page1Trucks[0].id !== page2Trucks[0].id;
-      const correctPagination = page1.data.data.pagination.current_page === 1 && 
-                               page2.data.data.pagination.current_page === 2;
-      
+      const correctPagination =
+        page1.data.data.pagination.current_page === 1 &&
+        page2.data.data.pagination.current_page === 2;
+
       if (correctLimit && differentData && correctPagination) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: {
             page1Count: page1Trucks.length,
             page2Count: page2Trucks.length,
             differentData: differentData,
-            paginationWorking: correctPagination
-          }
+            paginationWorking: correctPagination,
+          },
         };
       } else {
         return { success: false, error: 'Pagination not working correctly' };
@@ -559,7 +571,7 @@ const testPaginationAndLimits = async () => {
 const runAllTests = async () => {
   log('🚛 FLEET MANAGEMENT API TESTING SUITE', 'blue');
   log('=' * 50, 'blue');
-  
+
   // Check if server is running
   try {
     await axios.get(`${BASE_URL}/health`);
@@ -571,20 +583,20 @@ const runAllTests = async () => {
       process.exit(1);
     }
   }
-  
+
   log('✅ Server is running, starting tests...', 'green');
   log('');
-  
+
   // Run authentication first
   await runTest('Authentication - Valid Login', testAuthentication);
   await runTest('Authentication - Invalid Credentials', testInvalidAuthentication);
   await runTest('Unauthorized Access Protection', testUnauthorizedAccess);
-  
+
   if (!authToken) {
     log('❌ Authentication failed, cannot continue with other tests', 'red');
     return;
   }
-  
+
   // Run API endpoint tests
   await runTest('Get All Trucks', testGetAllTrucks);
   await runTest('Get Trucks with Filters', testGetTrucksWithFilters);
@@ -596,7 +608,7 @@ const runAllTests = async () => {
   await runTest('Update Truck Status', testUpdateTruckStatus);
   await runTest('Pagination and Limits', testPaginationAndLimits);
   await runTest('WebSocket Connection', testWebSocketConnection);
-  
+
   // Print results
   log('');
   log('=' * 50, 'blue');
@@ -606,30 +618,34 @@ const runAllTests = async () => {
   log(`❌ Failed: ${testResults.failed}`, 'red');
   log(`📊 Total: ${testResults.passed + testResults.failed}`, 'cyan');
   log('');
-  
+
   if (testResults.failed > 0) {
     log('❌ FAILED TESTS:', 'red');
-    testResults.tests.filter(t => !t.passed).forEach(test => {
-      log(`  • ${test.name}: ${test.error}`, 'red');
-    });
+    testResults.tests
+      .filter((t) => !t.passed)
+      .forEach((test) => {
+        log(`  • ${test.name}: ${test.error}`, 'red');
+      });
     log('');
   }
-  
+
   if (testResults.passed > 0) {
     log('✅ PASSED TESTS:', 'green');
-    testResults.tests.filter(t => t.passed).forEach(test => {
-      log(`  • ${test.name}`, 'green');
-      if (test.data && typeof test.data === 'object') {
-        Object.entries(test.data).forEach(([key, value]) => {
-          log(`    ${key}: ${JSON.stringify(value)}`, 'cyan');
-        });
-      }
-    });
+    testResults.tests
+      .filter((t) => t.passed)
+      .forEach((test) => {
+        log(`  • ${test.name}`, 'green');
+        if (test.data && typeof test.data === 'object') {
+          Object.entries(test.data).forEach(([key, value]) => {
+            log(`    ${key}: ${JSON.stringify(value)}`, 'cyan');
+          });
+        }
+      });
   }
-  
+
   log('');
   log('=' * 50, 'blue');
-  
+
   if (testResults.failed === 0) {
     log('🎉 ALL TESTS PASSED! Your backend is ready for frontend integration!', 'green');
   } else {
@@ -640,38 +656,41 @@ const runAllTests = async () => {
 
 // Load test for performance
 const runLoadTest = async (concurrentUsers = 10, duration = 30) => {
-  log(`🚀 Running load test: ${concurrentUsers} concurrent users for ${duration} seconds`, 'yellow');
-  
+  log(
+    `🚀 Running load test: ${concurrentUsers} concurrent users for ${duration} seconds`,
+    'yellow'
+  );
+
   if (!authToken) {
     await authenticate();
   }
-  
+
   const startTime = Date.now();
-  const endTime = startTime + (duration * 1000);
+  const endTime = startTime + duration * 1000;
   let totalRequests = 0;
   let successfulRequests = 0;
   let failedRequests = 0;
-  
+
   const workers = Array.from({ length: concurrentUsers }, async (_, workerId) => {
     while (Date.now() < endTime) {
       try {
         totalRequests++;
-        
+
         // Random endpoint selection
         const endpoints = [
           `${API_BASE}/trucks?limit=10`,
           `${API_BASE}/trucks/realtime/locations`,
           `${API_BASE}/dashboard/stats`,
-          `${API_BASE}/dashboard/stats`
+          `${API_BASE}/dashboard/stats`,
         ];
-        
+
         const endpoint = endpoints[Math.floor(Math.random() * endpoints.length)];
-        
+
         const response = await axios.get(endpoint, {
-          headers: { 'Authorization': `Bearer ${authToken}` },
-          timeout: 5000
+          headers: { Authorization: `Bearer ${authToken}` },
+          timeout: 5000,
         });
-        
+
         if (response.status === 200) {
           successfulRequests++;
         } else {
@@ -680,18 +699,18 @@ const runLoadTest = async (concurrentUsers = 10, duration = 30) => {
       } catch (error) {
         failedRequests++;
       }
-      
+
       // Small delay to prevent overwhelming
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   });
-  
+
   await Promise.all(workers);
-  
+
   const actualDuration = (Date.now() - startTime) / 1000;
   const requestsPerSecond = totalRequests / actualDuration;
   const successRate = (successfulRequests / totalRequests) * 100;
-  
+
   log('');
   log('📊 LOAD TEST RESULTS:', 'cyan');
   log(`  Duration: ${actualDuration.toFixed(2)} seconds`, 'cyan');
@@ -700,7 +719,7 @@ const runLoadTest = async (concurrentUsers = 10, duration = 30) => {
   log(`  Failed: ${failedRequests}`, 'red');
   log(`  Success Rate: ${successRate.toFixed(2)}%`, 'cyan');
   log(`  Requests/Second: ${requestsPerSecond.toFixed(2)}`, 'cyan');
-  
+
   if (successRate >= 95 && requestsPerSecond >= 10) {
     log('✅ Load test passed! Backend can handle the load.', 'green');
   } else {
@@ -711,7 +730,7 @@ const runLoadTest = async (concurrentUsers = 10, duration = 30) => {
 // Command line options
 if (require.main === module) {
   const args = process.argv.slice(2);
-  
+
   if (args.includes('--load-test')) {
     const concurrentUsers = parseInt(args[args.indexOf('--users') + 1]) || 10;
     const duration = parseInt(args[args.indexOf('--duration') + 1]) || 30;
@@ -724,5 +743,5 @@ if (require.main === module) {
 module.exports = {
   runAllTests,
   runLoadTest,
-  testResults
+  testResults,
 };

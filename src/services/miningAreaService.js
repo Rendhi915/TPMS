@@ -1,24 +1,24 @@
 const getMiningAreaData = () => {
   return {
-    type: "FeatureCollection",
-    name: "PT BORNEO INDOBARA",
+    type: 'FeatureCollection',
+    name: 'PT BORNEO INDOBARA',
     crs: {
-      type: "name",
-      properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
+      type: 'name',
+      properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' },
     },
     features: [
       {
-        type: "Feature",
+        type: 'Feature',
         properties: {
-          Name: "PT INDOBARA Main Mining Area",
-          description: "Main extraction zone for PT Borneo Indobara",
-          zone_type: "extraction",
+          Name: 'PT INDOBARA Main Mining Area',
+          description: 'Main extraction zone for PT Borneo Indobara',
+          zone_type: 'extraction',
           tessellate: 1,
           extrude: 0,
-          visibility: -1
+          visibility: -1,
         },
         geometry: {
-          type: "Polygon",
+          type: 'Polygon',
           coordinates: [
             [
               [115.604399949931505, -3.545400075547209, 0.0],
@@ -91,87 +91,95 @@ const getMiningAreaData = () => {
               [115.604600094546797, -3.518300046458291, 0.0],
               [115.613499987067996, -3.518300064005411, 0.0],
               [115.613499543131596, -3.54540116002996, 0.0],
-              [115.604399949931505, -3.545400075547209, 0.0]
-            ]
-          ]
-        }
+              [115.604399949931505, -3.545400075547209, 0.0],
+            ],
+          ],
+        },
       },
       {
-        type: "Feature",
+        type: 'Feature',
         properties: {
-          Name: "PT INDOBARA Processing Area",
-          description: "Coal processing and preparation plant",
-          zone_type: "processing"
+          Name: 'PT INDOBARA Processing Area',
+          description: 'Coal processing and preparation plant',
+          zone_type: 'processing',
         },
         geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [115.55, -3.65, 0.0],
-            [115.60, -3.65, 0.0],
-            [115.60, -3.60, 0.0],
-            [115.55, -3.60, 0.0],
-            [115.55, -3.65, 0.0]
-          ]]
-        }
+          type: 'Polygon',
+          coordinates: [
+            [
+              [115.55, -3.65, 0.0],
+              [115.6, -3.65, 0.0],
+              [115.6, -3.6, 0.0],
+              [115.55, -3.6, 0.0],
+              [115.55, -3.65, 0.0],
+            ],
+          ],
+        },
       },
       {
-        type: "Feature",
+        type: 'Feature',
         properties: {
-          Name: "PT INDOBARA Maintenance Area",
-          description: "Equipment maintenance and repair facility",
-          zone_type: "maintenance"
+          Name: 'PT INDOBARA Maintenance Area',
+          description: 'Equipment maintenance and repair facility',
+          zone_type: 'maintenance',
         },
         geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [115.62, -3.52, 0.0],
-            [115.65, -3.52, 0.0],
-            [115.65, -3.50, 0.0],
-            [115.62, -3.50, 0.0],
-            [115.62, -3.52, 0.0]
-          ]]
-        }
+          type: 'Polygon',
+          coordinates: [
+            [
+              [115.62, -3.52, 0.0],
+              [115.65, -3.52, 0.0],
+              [115.65, -3.5, 0.0],
+              [115.62, -3.5, 0.0],
+              [115.62, -3.52, 0.0],
+            ],
+          ],
+        },
       },
       {
-        type: "Feature",
+        type: 'Feature',
         properties: {
-          Name: "PT INDOBARA Waste Dump",
-          description: "Overburden and waste material disposal area",
-          zone_type: "disposal"
+          Name: 'PT INDOBARA Waste Dump',
+          description: 'Overburden and waste material disposal area',
+          zone_type: 'disposal',
         },
         geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [115.48, -3.70, 0.0],
-            [115.52, -3.70, 0.0],
-            [115.52, -3.68, 0.0],
-            [115.48, -3.68, 0.0],
-            [115.48, -3.70, 0.0]
-          ]]
-        }
+          type: 'Polygon',
+          coordinates: [
+            [
+              [115.48, -3.7, 0.0],
+              [115.52, -3.7, 0.0],
+              [115.52, -3.68, 0.0],
+              [115.48, -3.68, 0.0],
+              [115.48, -3.7, 0.0],
+            ],
+          ],
+        },
       },
       {
-        type: "Feature",
+        type: 'Feature',
         properties: {
-          Name: "PT INDOBARA Coal Stockpile",
-          description: "Coal storage and loading area",
-          zone_type: "storage"
+          Name: 'PT INDOBARA Coal Stockpile',
+          description: 'Coal storage and loading area',
+          zone_type: 'storage',
         },
         geometry: {
-          type: "Polygon",
-          coordinates: [[
-            [115.58, -3.55, 0.0],
-            [115.62, -3.55, 0.0],
-            [115.62, -3.53, 0.0],
-            [115.58, -3.53, 0.0],
-            [115.58, -3.55, 0.0]
-          ]]
-        }
-      }
-    ]
+          type: 'Polygon',
+          coordinates: [
+            [
+              [115.58, -3.55, 0.0],
+              [115.62, -3.55, 0.0],
+              [115.62, -3.53, 0.0],
+              [115.58, -3.53, 0.0],
+              [115.58, -3.55, 0.0],
+            ],
+          ],
+        },
+      },
+    ],
   };
 };
 
 module.exports = {
-  getMiningAreaData
+  getMiningAreaData,
 };

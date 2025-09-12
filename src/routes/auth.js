@@ -9,7 +9,7 @@ router.post('/login', authController.login);
 router.post('/refresh', (req, res) => {
   res.status(501).json({
     success: false,
-    message: 'Token refresh not implemented yet'
+    message: 'Token refresh not implemented yet',
   });
 });
 
@@ -17,7 +17,7 @@ router.post('/refresh', (req, res) => {
 router.post('/logout', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Logout successful'
+    message: 'Logout successful',
   });
 });
 

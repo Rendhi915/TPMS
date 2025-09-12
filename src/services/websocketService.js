@@ -6,7 +6,7 @@ let subscriptions = {
   truckUpdates: new Set(),
   alerts: new Set(),
   dashboard: new Set(),
-  adminActivities: new Set()
+  adminActivities: new Set(),
 };
 
 const initialize = (webSocketServer) => {
@@ -23,7 +23,7 @@ const broadcastTruckLocationUpdate = (data) => {
   broadcastToSubscription(subscriptions.truckUpdates, {
     type: 'truck_locations_update',
     data: data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -36,7 +36,7 @@ const broadcastTruckStatusUpdate = (data) => {
   broadcastToSubscription(subscriptions.truckUpdates, {
     type: 'truck_status_update',
     data: data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -49,7 +49,7 @@ const broadcastNewAlert = (alert) => {
   broadcastToSubscription(subscriptions.alerts, {
     type: 'new_alert',
     data: alert,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -62,7 +62,7 @@ const broadcastAlertResolved = (alert) => {
   broadcastToSubscription(subscriptions.alerts, {
     type: 'alert_resolved',
     data: alert,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -99,7 +99,7 @@ const broadcastAdminActivity = (activity) => {
   broadcastToSubscription(subscriptions.adminActivities, {
     type: 'admin_activity',
     data: activity,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -112,7 +112,7 @@ const broadcastTruckUpdate = (data) => {
   broadcastToSubscription(subscriptions.truckUpdates, {
     type: 'truck_update',
     data: data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -125,7 +125,7 @@ const broadcastDashboardUpdate = (data) => {
   broadcastToSubscription(subscriptions.dashboard, {
     type: 'dashboard_update',
     data: data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -138,7 +138,7 @@ const broadcastSensorUpdate = (data) => {
   broadcastToSubscription(subscriptions.truckUpdates, {
     type: 'sensor_update',
     data: data,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 
@@ -147,7 +147,7 @@ const getSubscriptions = () => {
     truckUpdates: subscriptions.truckUpdates.size,
     alerts: subscriptions.alerts.size,
     dashboard: subscriptions.dashboard.size,
-    adminActivities: subscriptions.adminActivities.size
+    adminActivities: subscriptions.adminActivities.size,
   };
 };
 
@@ -162,7 +162,7 @@ const removeClient = (clientId) => {
   subscriptions.alerts.delete(clientId);
   subscriptions.dashboard.delete(clientId);
   subscriptions.adminActivities.delete(clientId);
-  
+
   // Remove client
   clients.delete(clientId);
 };
@@ -217,5 +217,5 @@ module.exports = {
   removeClient,
   addSubscription,
   removeSubscription,
-  sendMessage
+  sendMessage,
 };

@@ -12,13 +12,13 @@ class ShiftPatternGenerator {
     this.shifts = {
       day: { start: 6, end: 18, activityLevel: 0.85 },
       night: { start: 18, end: 6, activityLevel: 0.45 },
-      maintenance: { start: 22, end: 4, activityLevel: 0.20 }
+      maintenance: { start: 22, end: 4, activityLevel: 0.2 },
     };
   }
 
   getShiftInfo(dateTime) {
     const hour = moment(dateTime).hour();
-    
+
     if (hour >= 6 && hour < 18) {
       return { ...this.shifts.day, name: 'day' };
     } else if (hour >= 22 || hour < 4) {
@@ -30,35 +30,31 @@ class ShiftPatternGenerator {
 
   shouldTruckBeActive(dateTime, truckStatus) {
     if (truckStatus !== 'ACTIVE') return false;
-    
+
     const shift = this.getShiftInfo(dateTime);
     const dayOfWeek = moment(dateTime).day(); // 0 = Sunday, 6 = Saturday
-    
+
     // Reduce weekend activity
-    const weekendFactor = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.3 : 1.0;
-    
-    return Math.random() < (shift.activityLevel * weekendFactor);
+    const weekendFactor = dayOfWeek === 0 || dayOfWeek === 6 ? 0.3 : 1.0;
+
+    return Math.random() < shift.activityLevel * weekendFactor;
   }
 }
 
 // Generate maintenance-related history
 class MaintenanceHistoryGenerator {
   static async generateMaintenanceSession(truckId, startTime, durationHours = 4) {
-    const maintenanceArea = { lat: -3.520000, lng: 115.620000 };
+    const maintenanceArea = { lat: -3.52, lng: 115.62 };
     const records = [];
-    
+
     let currentTime = moment(startTime);
     const endTime = currentTime.clone().add(durationHours, 'hours');
-    
+
     // Approach to maintenance area
-    const approachRecords = this.generateApproachSequence(
-      truckId, 
-      currentTime, 
-      maintenanceArea
-    );
+    const approachRecords = this.generateApproachSequence(truckId, currentTime, maintenanceArea);
     records.push(...approachRecords);
     currentTime.add(15, 'minutes');
-    
+
     // Stationary during maintenance
     while (currentTime.isBefore(endTime)) {
       records.push({
@@ -68,42 +64,38 @@ class MaintenanceHistoryGenerator {
         speed: 0,
         heading: Math.floor(Math.random() * 360),
         fuelPercentage: 85 + Math.random() * 15, // Refueled during maintenance
-        recordedAt: currentTime.toDate()
+        recordedAt: currentTime.toDate(),
       });
-      
+
       currentTime.add(10, 'minutes');
     }
-    
+
     // Exit from maintenance area
-    const exitRecords = this.generateExitSequence(
-      truckId,
-      currentTime,
-      maintenanceArea
-    );
+    const exitRecords = this.generateExitSequence(truckId, currentTime, maintenanceArea);
     records.push(...exitRecords);
-    
+
     return records;
   }
 
   static generateApproachSequence(truckId, startTime, targetLocation) {
     const records = [];
     const steps = 5;
-    
+
     // Start from random position
     let currentPos = {
       lat: targetLocation.lat + (Math.random() - 0.5) * 0.01,
-      lng: targetLocation.lng + (Math.random() - 0.5) * 0.01
+      lng: targetLocation.lng + (Math.random() - 0.5) * 0.01,
     };
-    
+
     for (let i = 0; i < steps; i++) {
       const progress = (i + 1) / steps;
-      const speed = 15 - (progress * 12); // Slow down as approaching
-      
+      const speed = 15 - progress * 12; // Slow down as approaching
+
       currentPos = {
         lat: currentPos.lat + (targetLocation.lat - currentPos.lat) * 0.3,
-        lng: currentPos.lng + (targetLocation.lng - currentPos.lng) * 0.3
+        lng: currentPos.lng + (targetLocation.lng - currentPos.lng) * 0.3,
       };
-      
+
       records.push({
         truckId: truckId,
         latitude: parseFloat(currentPos.lat.toFixed(8)),
@@ -111,32 +103,35 @@ class MaintenanceHistoryGenerator {
         speed: parseFloat(speed.toFixed(2)),
         heading: this.calculateHeading(currentPos, targetLocation),
         fuelPercentage: 60 + Math.random() * 20,
-        recordedAt: startTime.clone().add(i * 3, 'minutes').toDate()
+        recordedAt: startTime
+          .clone()
+          .add(i * 3, 'minutes')
+          .toDate(),
       });
     }
-    
+
     return records;
   }
 
   static generateExitSequence(truckId, startTime, fromLocation) {
     const records = [];
     const steps = 3;
-    
+
     let currentPos = { ...fromLocation };
     const exitDirection = {
       lat: fromLocation.lat + (Math.random() - 0.5) * 0.008,
-      lng: fromLocation.lng + (Math.random() - 0.5) * 0.008
+      lng: fromLocation.lng + (Math.random() - 0.5) * 0.008,
     };
-    
+
     for (let i = 0; i < steps; i++) {
       const progress = (i + 1) / steps;
-      const speed = 5 + (progress * 20); // Speed up when leaving
-      
+      const speed = 5 + progress * 20; // Speed up when leaving
+
       currentPos = {
         lat: currentPos.lat + (exitDirection.lat - fromLocation.lat) * progress * 0.5,
-        lng: currentPos.lng + (exitDirection.lng - fromLocation.lng) * progress * 0.5
+        lng: currentPos.lng + (exitDirection.lng - fromLocation.lng) * progress * 0.5,
       };
-      
+
       records.push({
         truckId: truckId,
         latitude: parseFloat(currentPos.lat.toFixed(8)),
@@ -144,10 +139,13 @@ class MaintenanceHistoryGenerator {
         speed: parseFloat(speed.toFixed(2)),
         heading: this.calculateHeading(currentPos, exitDirection),
         fuelPercentage: 90 + Math.random() * 10, // Full tank after maintenance
-        recordedAt: startTime.clone().add(i * 2, 'minutes').toDate()
+        recordedAt: startTime
+          .clone()
+          .add(i * 2, 'minutes')
+          .toDate(),
       });
     }
-    
+
     return records;
   }
 
@@ -163,17 +161,17 @@ class MaintenanceHistoryGenerator {
 class IncidentHistoryGenerator {
   static async generateBreakdownIncident(truckId, startTime, severity = 'medium') {
     const incidents = {
-      low: { duration: 30, stationaryTime: 15 },      // 30min total, 15min stationary
-      medium: { duration: 120, stationaryTime: 90 },  // 2h total, 1.5h stationary  
-      high: { duration: 480, stationaryTime: 360 }    // 8h total, 6h stationary
+      low: { duration: 30, stationaryTime: 15 }, // 30min total, 15min stationary
+      medium: { duration: 120, stationaryTime: 90 }, // 2h total, 1.5h stationary
+      high: { duration: 480, stationaryTime: 360 }, // 8h total, 6h stationary
     };
-    
+
     const incident = incidents[severity];
     const breakdownLocation = this.getRandomBreakdownLocation();
     const records = [];
-    
+
     let currentTime = moment(startTime);
-    
+
     // Pre-breakdown: slow movement
     for (let i = 0; i < 3; i++) {
       records.push({
@@ -183,12 +181,12 @@ class IncidentHistoryGenerator {
         speed: Math.max(0, 8 - i * 2), // Gradually slowing down
         heading: Math.floor(Math.random() * 360),
         fuelPercentage: 40 + Math.random() * 30,
-        recordedAt: currentTime.toDate()
+        recordedAt: currentTime.toDate(),
       });
-      
+
       currentTime.add(3, 'minutes');
     }
-    
+
     // Breakdown: stationary period
     const stationaryEnd = currentTime.clone().add(incident.stationaryTime, 'minutes');
     while (currentTime.isBefore(stationaryEnd)) {
@@ -199,17 +197,17 @@ class IncidentHistoryGenerator {
         speed: 0,
         heading: Math.floor(Math.random() * 360),
         fuelPercentage: 35 + Math.random() * 25,
-        recordedAt: currentTime.toDate()
+        recordedAt: currentTime.toDate(),
       });
-      
+
       currentTime.add(8, 'minutes');
     }
-    
+
     // Recovery: gradual return to normal operation
     const recoveryEnd = moment(startTime).add(incident.duration, 'minutes');
     while (currentTime.isBefore(recoveryEnd)) {
       const speed = Math.random() * 15; // Slow recovery speed
-      
+
       records.push({
         truckId: truckId,
         latitude: breakdownLocation.lat + (Math.random() - 0.5) * 0.0005,
@@ -217,24 +215,24 @@ class IncidentHistoryGenerator {
         speed: parseFloat(speed.toFixed(2)),
         heading: Math.floor(Math.random() * 360),
         fuelPercentage: 45 + Math.random() * 25,
-        recordedAt: currentTime.toDate()
+        recordedAt: currentTime.toDate(),
       });
-      
+
       currentTime.add(5, 'minutes');
     }
-    
+
     return records;
   }
 
   static getRandomBreakdownLocation() {
     // Common breakdown locations (transport routes)
     const locations = [
-      { lat: -3.580000, lng: 115.590000 }, // Main transport route
-      { lat: -3.620000, lng: 115.560000 }, // Secondary route
-      { lat: -3.675000, lng: 115.540000 }, // Waste route
-      { lat: -3.535000, lng: 115.605000 }  // Maintenance route
+      { lat: -3.58, lng: 115.59 }, // Main transport route
+      { lat: -3.62, lng: 115.56 }, // Secondary route
+      { lat: -3.675, lng: 115.54 }, // Waste route
+      { lat: -3.535, lng: 115.605 }, // Maintenance route
     ];
-    
+
     return locations[Math.floor(Math.random() * locations.length)];
   }
 }
@@ -244,56 +242,44 @@ class LoadingActivityGenerator {
   static async generateLoadingSession(truckId, location, startTime, cycleCount = 3) {
     const records = [];
     let currentTime = moment(startTime);
-    
+
     for (let cycle = 0; cycle < cycleCount; cycle++) {
       // Approach loading point
-      const approachRecords = this.generateApproachToLoadingPoint(
-        truckId, 
-        location, 
-        currentTime
-      );
+      const approachRecords = this.generateApproachToLoadingPoint(truckId, location, currentTime);
       records.push(...approachRecords);
       currentTime.add(5, 'minutes');
-      
+
       // Loading process (stationary with minor movements)
-      const loadingRecords = this.generateLoadingProcess(
-        truckId, 
-        location, 
-        currentTime
-      );
+      const loadingRecords = this.generateLoadingProcess(truckId, location, currentTime);
       records.push(...loadingRecords);
       currentTime.add(8, 'minutes');
-      
+
       // Exit with load
-      const exitRecords = this.generateLoadedExit(
-        truckId, 
-        location, 
-        currentTime
-      );
+      const exitRecords = this.generateLoadedExit(truckId, location, currentTime);
       records.push(...exitRecords);
       currentTime.add(3, 'minutes');
     }
-    
+
     return records;
   }
 
   static generateApproachToLoadingPoint(truckId, location, startTime) {
     const records = [];
     const approachSteps = 4;
-    
+
     let currentPos = {
       lat: location.lat + (Math.random() - 0.5) * 0.003,
-      lng: location.lng + (Math.random() - 0.5) * 0.003
+      lng: location.lng + (Math.random() - 0.5) * 0.003,
     };
-    
+
     for (let i = 0; i < approachSteps; i++) {
-      const speed = 15 - (i * 3); // Slow down as approaching
-      
+      const speed = 15 - i * 3; // Slow down as approaching
+
       currentPos = {
         lat: currentPos.lat + (location.lat - currentPos.lat) * 0.4,
-        lng: currentPos.lng + (location.lng - currentPos.lng) * 0.4
+        lng: currentPos.lng + (location.lng - currentPos.lng) * 0.4,
       };
-      
+
       records.push({
         truckId: truckId,
         latitude: parseFloat(currentPos.lat.toFixed(8)),
@@ -301,26 +287,29 @@ class LoadingActivityGenerator {
         speed: Math.max(0, parseFloat(speed.toFixed(2))),
         heading: this.calculateHeading(currentPos, location),
         fuelPercentage: 50 + Math.random() * 30,
-        recordedAt: startTime.clone().add(i * 1.25, 'minutes').toDate()
+        recordedAt: startTime
+          .clone()
+          .add(i * 1.25, 'minutes')
+          .toDate(),
       });
     }
-    
+
     return records;
   }
 
   static generateLoadingProcess(truckId, location, startTime) {
     const records = [];
     const loadingSteps = 8; // 8 minutes of loading
-    
+
     for (let i = 0; i < loadingSteps; i++) {
       // Minor positioning movements during loading
       const microMovement = {
         lat: location.lat + (Math.random() - 0.5) * 0.00008,
-        lng: location.lng + (Math.random() - 0.5) * 0.00008
+        lng: location.lng + (Math.random() - 0.5) * 0.00008,
       };
-      
+
       const speed = i < 2 ? Math.random() * 3 : 0; // Small movements at start, then stationary
-      
+
       records.push({
         truckId: truckId,
         latitude: parseFloat(microMovement.lat.toFixed(8)),
@@ -328,32 +317,32 @@ class LoadingActivityGenerator {
         speed: parseFloat(speed.toFixed(2)),
         heading: Math.floor(Math.random() * 360),
         fuelPercentage: 45 + Math.random() * 25,
-        recordedAt: startTime.clone().add(i, 'minutes').toDate()
+        recordedAt: startTime.clone().add(i, 'minutes').toDate(),
       });
     }
-    
+
     return records;
   }
 
   static generateLoadedExit(truckId, location, startTime) {
     const records = [];
     const exitSteps = 3;
-    
+
     let currentPos = { ...location };
     const exitTarget = {
       lat: location.lat + (Math.random() - 0.5) * 0.005,
-      lng: location.lng + (Math.random() - 0.5) * 0.005
+      lng: location.lng + (Math.random() - 0.5) * 0.005,
     };
-    
+
     for (let i = 0; i < exitSteps; i++) {
       const progress = (i + 1) / exitSteps;
-      const speed = 3 + (progress * 12); // Gradually speed up when loaded
-      
+      const speed = 3 + progress * 12; // Gradually speed up when loaded
+
       currentPos = {
         lat: currentPos.lat + (exitTarget.lat - location.lat) * progress * 0.6,
-        lng: currentPos.lng + (exitTarget.lng - location.lng) * progress * 0.6
+        lng: currentPos.lng + (exitTarget.lng - location.lng) * progress * 0.6,
       };
-      
+
       records.push({
         truckId: truckId,
         latitude: parseFloat(currentPos.lat.toFixed(8)),
@@ -361,10 +350,10 @@ class LoadingActivityGenerator {
         speed: parseFloat(speed.toFixed(2)),
         heading: this.calculateHeading(currentPos, exitTarget),
         fuelPercentage: 40 + Math.random() * 25,
-        recordedAt: startTime.clone().add(i, 'minutes').toDate()
+        recordedAt: startTime.clone().add(i, 'minutes').toDate(),
       });
     }
-    
+
     return records;
   }
 
@@ -383,11 +372,7 @@ class HistoryUtilities {
   }
 
   async generateSpecialEvents(options = {}) {
-    const {
-      maintenanceSessions = 5,
-      breakdownIncidents = 10,
-      loadingActivities = 15
-    } = options;
+    const { maintenanceSessions = 5, breakdownIncidents = 10, loadingActivities = 15 } = options;
 
     console.log('🔧 Generating special events...');
 
@@ -395,7 +380,7 @@ class HistoryUtilities {
       // Get sample trucks for different events
       const activeTrucks = await prisma.truck.findMany({
         where: { status: 'ACTIVE' },
-        take: Math.max(maintenanceSessions, breakdownIncidents, loadingActivities)
+        take: Math.max(maintenanceSessions, breakdownIncidents, loadingActivities),
       });
 
       if (activeTrucks.length === 0) {
@@ -409,7 +394,7 @@ class HistoryUtilities {
       for (let i = 0; i < maintenanceSessions && i < activeTrucks.length; i++) {
         const truck = activeTrucks[i];
         const sessionStart = moment().subtract(Math.floor(Math.random() * 168), 'hours'); // Last week
-        
+
         const maintenanceRecords = await MaintenanceHistoryGenerator.generateMaintenanceSession(
           truck.id,
           sessionStart,
@@ -418,7 +403,7 @@ class HistoryUtilities {
 
         await prisma.locationHistory.createMany({
           data: maintenanceRecords,
-          skipDuplicates: true
+          skipDuplicates: true,
         });
 
         totalRecords += maintenanceRecords.length;
@@ -429,7 +414,7 @@ class HistoryUtilities {
         const truck = activeTrucks[i];
         const incidentStart = moment().subtract(Math.floor(Math.random() * 72), 'hours'); // Last 3 days
         const severity = ['low', 'medium', 'high'][Math.floor(Math.random() * 3)];
-        
+
         const incidentRecords = await IncidentHistoryGenerator.generateBreakdownIncident(
           truck.id,
           incidentStart,
@@ -438,7 +423,7 @@ class HistoryUtilities {
 
         await prisma.locationHistory.createMany({
           data: incidentRecords,
-          skipDuplicates: true
+          skipDuplicates: true,
         });
 
         totalRecords += incidentRecords.length;
@@ -448,15 +433,15 @@ class HistoryUtilities {
       for (let i = 0; i < loadingActivities && i < activeTrucks.length; i++) {
         const truck = activeTrucks[i];
         const activityStart = moment().subtract(Math.floor(Math.random() * 24), 'hours'); // Last day
-        
+
         // Random loading location
         const loadingLocations = [
-          { lat: -3.545400, lng: 115.604400 }, // Main pit
-          { lat: -3.550000, lng: 115.580000 }, // Coal stockpile
-          { lat: -3.650000, lng: 115.575000 }  // Processing area
+          { lat: -3.5454, lng: 115.6044 }, // Main pit
+          { lat: -3.55, lng: 115.58 }, // Coal stockpile
+          { lat: -3.65, lng: 115.575 }, // Processing area
         ];
         const location = loadingLocations[Math.floor(Math.random() * loadingLocations.length)];
-        
+
         const loadingRecords = await LoadingActivityGenerator.generateLoadingSession(
           truck.id,
           location,
@@ -466,7 +451,7 @@ class HistoryUtilities {
 
         await prisma.locationHistory.createMany({
           data: loadingRecords,
-          skipDuplicates: true
+          skipDuplicates: true,
         });
 
         totalRecords += loadingRecords.length;
@@ -476,7 +461,6 @@ class HistoryUtilities {
       console.log(`   • Maintenance sessions: ${maintenanceSessions}`);
       console.log(`   • Breakdown incidents: ${breakdownIncidents}`);
       console.log(`   • Loading activities: ${loadingActivities}`);
-
     } catch (error) {
       console.error('❌ Error generating special events:', error);
       throw error;
@@ -485,10 +469,10 @@ class HistoryUtilities {
 
   async generateRealtimeSimulation(durationMinutes = 60) {
     console.log(`🔄 Starting real-time simulation for ${durationMinutes} minutes...`);
-    
+
     const activeTrucks = await prisma.truck.findMany({
       where: { status: 'ACTIVE' },
-      take: 20 // Limit to 20 trucks for real-time simulation
+      take: 20, // Limit to 20 trucks for real-time simulation
     });
 
     if (activeTrucks.length === 0) {
@@ -500,7 +484,9 @@ class HistoryUtilities {
     const endTime = startTime.clone().add(durationMinutes, 'minutes');
     let currentTime = startTime.clone();
 
-    console.log(`Simulating ${activeTrucks.length} trucks from ${startTime.format('HH:mm')} to ${endTime.format('HH:mm')}`);
+    console.log(
+      `Simulating ${activeTrucks.length} trucks from ${startTime.format('HH:mm')} to ${endTime.format('HH:mm')}`
+    );
 
     while (currentTime.isBefore(endTime)) {
       const batchRecords = [];
@@ -510,11 +496,11 @@ class HistoryUtilities {
           // Get last known position
           const lastPosition = await prisma.locationHistory.findFirst({
             where: { truckId: truck.id },
-            orderBy: { recordedAt: 'desc' }
+            orderBy: { recordedAt: 'desc' },
           });
 
-          let currentLat = lastPosition?.latitude || truck.latitude || -3.580000;
-          let currentLng = lastPosition?.longitude || truck.longitude || 115.590000;
+          let currentLat = lastPosition?.latitude || truck.latitude || -3.58;
+          let currentLng = lastPosition?.longitude || truck.longitude || 115.59;
           let currentFuel = lastPosition?.fuelPercentage || truck.fuelPercentage || 75;
 
           // Small random movement
@@ -529,7 +515,7 @@ class HistoryUtilities {
             speed: parseFloat((Math.random() * 35).toFixed(2)),
             heading: Math.floor(Math.random() * 360),
             fuelPercentage: parseFloat(currentFuel.toFixed(2)),
-            recordedAt: currentTime.toDate()
+            recordedAt: currentTime.toDate(),
           });
         }
       }
@@ -537,13 +523,13 @@ class HistoryUtilities {
       if (batchRecords.length > 0) {
         await prisma.locationHistory.createMany({
           data: batchRecords,
-          skipDuplicates: true
+          skipDuplicates: true,
         });
       }
 
       // Progress indicator
       const elapsed = moment.duration(currentTime.diff(startTime)).asMinutes();
-      const progress = (elapsed / durationMinutes * 100).toFixed(1);
+      const progress = ((elapsed / durationMinutes) * 100).toFixed(1);
       process.stdout.write(`\r⏳ Progress: ${progress}% (${batchRecords.length} trucks active)`);
 
       currentTime.add(2, 'minutes'); // Update every 2 minutes
@@ -558,15 +544,15 @@ module.exports = {
   ShiftPatternGenerator,
   MaintenanceHistoryGenerator,
   IncidentHistoryGenerator,
-  LoadingActivityGenerator
+  LoadingActivityGenerator,
 };
 
 // CLI interface for utilities
 if (require.main === module) {
   const utilities = new HistoryUtilities();
-  
+
   const command = process.argv[2];
-  
+
   switch (command) {
     case 'events':
       utilities.generateSpecialEvents().catch(console.error);

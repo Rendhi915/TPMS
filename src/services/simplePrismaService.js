@@ -42,23 +42,16 @@ class SimplePrismaService {
   // ==========================================
 
   async getAllTrucks(filters = {}) {
-    const {
-      status,
-      page = 1,
-      limit = 50,
-      search,
-      vendor,
-      vendorId
-    } = filters;
+    const { status, page = 1, limit = 50, search, vendor, vendorId } = filters;
 
     const offset = (page - 1) * limit;
     const where = {};
-    
+
     // Search filter
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { model: { contains: search, mode: 'insensitive' } }
+        { model: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -78,34 +71,40 @@ class SimplePrismaService {
           alert_event: {
             where: { acknowledged: false },
             take: 5,
-            orderBy: { occurred_at: 'desc' }
+            orderBy: { occurred_at: 'desc' },
           },
           fuel_level_event: {
             take: 1,
             orderBy: { changed_at: 'desc' },
-            select: { fuel_percent: true, changed_at: true }
+            select: { fuel_percent: true, changed_at: true },
           },
           tire_pressure_event: {
             take: 24, // enough to cover 8 tires * 3 readings
             orderBy: { changed_at: 'desc' },
-            select: { tire_no: true, pressure_kpa: true, temp_celsius: true, battery_level: true, changed_at: true }
+            select: {
+              tire_no: true,
+              pressure_kpa: true,
+              temp_celsius: true,
+              battery_level: true,
+              changed_at: true,
+            },
           },
           hub_temperature_event: {
             take: 1,
             orderBy: { changed_at: 'desc' },
-            select: { temp_celsius: true, changed_at: true }
+            select: { temp_celsius: true, changed_at: true },
           },
           _count: {
             select: {
               alert_event: {
-                where: { acknowledged: false }
-              }
-            }
-          }
+                where: { acknowledged: false },
+              },
+            },
+          },
         },
         orderBy: { created_at: 'desc' },
         skip: offset,
-        take: parseInt(limit)
+        take: parseInt(limit),
       });
 
       // Get total count for pagination
@@ -115,14 +114,14 @@ class SimplePrismaService {
       const summary = await this.getTruckSummaryStats();
 
       return {
-        trucks: trucks.map(t => this.formatTruckResponse(t)),
+        trucks: trucks.map((t) => this.formatTruckResponse(t)),
         pagination: {
           current_page: parseInt(page),
           per_page: parseInt(limit),
           total: totalCount,
-          total_pages: Math.ceil(totalCount / limit)
+          total_pages: Math.ceil(totalCount / limit),
         },
-        summary
+        summary,
       };
     } catch (error) {
       console.error('Error in getAllTrucks:', error);
@@ -138,13 +137,13 @@ class SimplePrismaService {
           fleet_group: true,
           alert_event: {
             orderBy: { occurred_at: 'desc' },
-            take: 10
+            take: 10,
           },
           tire_pressure_event: {
             orderBy: { changed_at: 'desc' },
-            take: 10
-          }
-        }
+            take: 10,
+          },
+        },
       });
 
       if (!truck) {
@@ -163,12 +162,12 @@ class SimplePrismaService {
       const tirePressures = await this.prisma.tire_pressure_event.findMany({
         where: { truck_id: truckId },
         orderBy: { changed_at: 'desc' },
-        take: 10
+        take: 10,
       });
 
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
-        select: { id: true, name: true }
+        select: { id: true, name: true },
       });
 
       if (!truck) {
@@ -178,15 +177,15 @@ class SimplePrismaService {
       return {
         truckId: truck.id,
         truckNumber: truck.name,
-        tirePressures: tirePressures.map(tire => ({
+        tirePressures: tirePressures.map((tire) => ({
           position: `Tire ${tire.tire_no}`,
           tireNumber: tire.tire_no,
           pressure: tire.pressure_kpa ? parseFloat(tire.pressure_kpa) : null,
           status: tire.pressure_kpa > 1000 ? 'normal' : 'low',
           temperature: tire.temp_celsius ? parseFloat(tire.temp_celsius) : null,
-          lastUpdated: tire.changed_at
+          lastUpdated: tire.changed_at,
         })),
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
     } catch (error) {
       console.error('Error in getTruckTires:', error);
@@ -205,28 +204,28 @@ class SimplePrismaService {
           fleet_group: true,
           gps_position: {
             orderBy: { ts: 'desc' },
-            take: 1
+            take: 1,
           },
           _count: {
             select: {
               alert_event: {
-                where: { acknowledged: false }
-              }
-            }
-          }
+                where: { acknowledged: false },
+              },
+            },
+          },
         },
-        orderBy: { created_at: 'desc' }
+        orderBy: { created_at: 'desc' },
       });
 
       // Format as GeoJSON
       const geoJsonData = {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         features: trucks
-          .filter(truck => truck.gps_position.length > 0)
-          .map(truck => {
+          .filter((truck) => truck.gps_position.length > 0)
+          .map((truck) => {
             const latestGps = truck.gps_position[0];
             return {
-              type: "Feature",
+              type: 'Feature',
               properties: {
                 id: truck.id,
                 truckNumber: truck.name,
@@ -239,14 +238,14 @@ class SimplePrismaService {
                 payload: 0, // Default payload
                 driver: null,
                 lastUpdate: latestGps.ts,
-                alertCount: truck._count.alert_event
+                alertCount: truck._count.alert_event,
               },
               geometry: {
-                type: "Point",
-                coordinates: [0, 0] // Will be updated with actual coordinates from PostGIS
-              }
+                type: 'Point',
+                coordinates: [0, 0], // Will be updated with actual coordinates from PostGIS
+              },
             };
-          })
+          }),
       };
 
       return geoJsonData;
@@ -264,20 +263,20 @@ class SimplePrismaService {
           truckId: truckId,
           status: status,
           note: `Status updated to ${status}`,
-          changedAt: new Date()
-        }
+          changedAt: new Date(),
+        },
       });
 
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
-        select: { id: true, name: true }
+        select: { id: true, name: true },
       });
 
       return {
         id: truck.id,
         truckNumber: truck.name,
         status: status,
-        lastUpdate: statusEvent.changedAt
+        lastUpdate: statusEvent.changedAt,
       };
     } catch (error) {
       console.error('Error in updateTruckStatus:', error);
@@ -292,24 +291,24 @@ class SimplePrismaService {
   async getDashboardStats() {
     try {
       console.log('🔍 Starting getDashboardStats...');
-      
+
       // Get basic counts from actual tables
       const totalTrucks = await this.prisma.truck.count();
       console.log('✅ Total trucks:', totalTrucks);
-      
+
       const totalAlerts = await this.prisma.alert_event.count({
         where: {
-          acknowledged: false // Unacknowledged alerts only
-        }
+          acknowledged: false, // Unacknowledged alerts only
+        },
       });
       console.log('✅ Total alerts:', totalAlerts);
-      
+
       // Count trucks by status instead of maintenance orders
       const trucksByStatus = await this.prisma.truck.groupBy({
         by: ['name'],
         _count: {
-          name: true
-        }
+          name: true,
+        },
       });
       console.log('✅ Trucks by status calculated');
 
@@ -317,39 +316,41 @@ class SimplePrismaService {
       const recentPositions = await this.prisma.gps_position.findMany({
         where: {
           ts: {
-            gte: new Date(Date.now() - 30 * 60 * 1000) // Last 30 minutes
-          }
+            gte: new Date(Date.now() - 30 * 60 * 1000), // Last 30 minutes
+          },
         },
         select: {
           truck_id: true,
-          speed_kph: true
+          speed_kph: true,
         },
-        distinct: ['truck_id']
+        distinct: ['truck_id'],
       });
 
       // Calculate truck status distribution
-      const activeTrucks = recentPositions.filter(pos => pos.speed_kph > 5).length;
+      const activeTrucks = recentPositions.filter((pos) => pos.speed_kph > 5).length;
       const inactiveTrucks = totalTrucks - activeTrucks;
 
       // Get average fuel from recent fuel events
       const recentFuelEvents = await this.prisma.fuel_level_event.findMany({
         take: 50,
         orderBy: { changed_at: 'desc' },
-        select: { fuel_percent: true }
+        select: { fuel_percent: true },
       });
 
-      const averageFuel = recentFuelEvents.length > 0 
-        ? recentFuelEvents.reduce((sum, event) => sum + (event.fuel_percent || 0), 0) / recentFuelEvents.length
-        : 0.0;
+      const averageFuel =
+        recentFuelEvents.length > 0
+          ? recentFuelEvents.reduce((sum, event) => sum + (event.fuel_percent || 0), 0) /
+            recentFuelEvents.length
+          : 0.0;
 
       // Count low tire pressure alerts
       const lowTirePressureCount = await this.prisma.tire_pressure_event.count({
         where: {
           pressure_kpa: { lt: 200.0 }, // Below 200 kPa (approx 30 PSI)
           changed_at: {
-            gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
-          }
-        }
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+          },
+        },
       });
 
       return {
@@ -360,7 +361,7 @@ class SimplePrismaService {
         averageFuel: Math.round(averageFuel * 10) / 10,
         totalPayload: 0, // Will be calculated from truck capacity if needed
         alertsCount: totalAlerts,
-        lowTirePressureCount
+        lowTirePressureCount,
       };
     } catch (error) {
       console.error('Error in getDashboardStats:', error);
@@ -375,12 +376,12 @@ class SimplePrismaService {
   async getTruckSummaryStats() {
     try {
       const totalTrucks = await this.prisma.truck.count();
-      
+
       return {
         total_trucks: totalTrucks,
         active: Math.floor(totalTrucks * 0.8),
         inactive: Math.floor(totalTrucks * 0.1),
-        maintenance: Math.floor(totalTrucks * 0.1)
+        maintenance: Math.floor(totalTrucks * 0.1),
       };
     } catch (error) {
       console.error('Error in getTruckSummaryStats:', error);
@@ -390,14 +391,16 @@ class SimplePrismaService {
 
   formatTruckResponse(truck) {
     // Latest fuel
-    const latestFuel = Array.isArray(truck.fuel_level_event) && truck.fuel_level_event.length > 0
-      ? truck.fuel_level_event[0]
-      : null;
+    const latestFuel =
+      Array.isArray(truck.fuel_level_event) && truck.fuel_level_event.length > 0
+        ? truck.fuel_level_event[0]
+        : null;
 
     // Latest hub temperature
-    const latestHubTemp = Array.isArray(truck.hub_temperature_event) && truck.hub_temperature_event.length > 0
-      ? truck.hub_temperature_event[0]
-      : null;
+    const latestHubTemp =
+      Array.isArray(truck.hub_temperature_event) && truck.hub_temperature_event.length > 0
+        ? truck.hub_temperature_event[0]
+        : null;
 
     // Build latest per-tire map (dedupe by tire_no)
     const tireMap = new Map();
@@ -408,19 +411,23 @@ class SimplePrismaService {
         }
       }
     }
-    const tires = Array.from(tireMap.values()).sort((a,b) => a.tire_no - b.tire_no).map(t => ({
-      position: `Tire ${t.tire_no}`,
-      tireNumber: t.tire_no,
-      pressure: t.pressure_kpa != null ? parseFloat(t.pressure_kpa) : null,
-      temperature: t.temp_celsius != null ? parseFloat(t.temp_celsius) : null,
-      battery: t.battery_level != null ? parseInt(t.battery_level) : null,
-      status: t.pressure_kpa != null ? (t.pressure_kpa > 1000 ? 'normal' : 'low') : 'unknown',
-      lastUpdated: t.changed_at
-    }));
+    const tires = Array.from(tireMap.values())
+      .sort((a, b) => a.tire_no - b.tire_no)
+      .map((t) => ({
+        position: `Tire ${t.tire_no}`,
+        tireNumber: t.tire_no,
+        pressure: t.pressure_kpa != null ? parseFloat(t.pressure_kpa) : null,
+        temperature: t.temp_celsius != null ? parseFloat(t.temp_celsius) : null,
+        battery: t.battery_level != null ? parseInt(t.battery_level) : null,
+        status: t.pressure_kpa != null ? (t.pressure_kpa > 1000 ? 'normal' : 'low') : 'unknown',
+        lastUpdated: t.changed_at,
+      }));
 
     // Aggregate battery across tires
-    const batteryLevels = tires.map(t => t.battery).filter(v => typeof v === 'number');
-    const avgBattery = batteryLevels.length ? Math.round(batteryLevels.reduce((s,v)=>s+v,0) / batteryLevels.length) : null;
+    const batteryLevels = tires.map((t) => t.battery).filter((v) => typeof v === 'number');
+    const avgBattery = batteryLevels.length
+      ? Math.round(batteryLevels.reduce((s, v) => s + v, 0) / batteryLevels.length)
+      : null;
 
     return {
       id: truck.id,
@@ -431,7 +438,7 @@ class SimplePrismaService {
       status: 'active',
       location: {
         type: 'Point',
-        coordinates: [0, 0]
+        coordinates: [0, 0],
       },
       speed: 0,
       heading: 0,
@@ -440,7 +447,8 @@ class SimplePrismaService {
         fuelPercent: latestFuel?.fuel_percent != null ? parseFloat(latestFuel.fuel_percent) : 0,
         tires,
         batteryAvg: avgBattery,
-        hubTemperature: latestHubTemp?.temp_celsius != null ? parseFloat(latestHubTemp.temp_celsius) : null,
+        hubTemperature:
+          latestHubTemp?.temp_celsius != null ? parseFloat(latestHubTemp.temp_celsius) : null,
       },
       payload: 0,
       driver: null,
@@ -449,7 +457,7 @@ class SimplePrismaService {
       lastMaintenance: null,
       lastUpdate: truck.created_at,
       alerts: truck.alert_event || [],
-      alertCount: truck._count?.alert_event || 0
+      alertCount: truck._count?.alert_event || 0,
     };
   }
 
@@ -465,7 +473,7 @@ class SimplePrismaService {
       status: 'active',
       location: {
         type: 'Point',
-        coordinates: [0, 0]
+        coordinates: [0, 0],
       },
       speed: 0,
       heading: 0,
@@ -476,21 +484,21 @@ class SimplePrismaService {
       odometer: 0,
       lastMaintenance: null,
       lastUpdate: truck.created_at,
-      tires: (truck.tire_pressure_event || []).map(tire => ({
+      tires: (truck.tire_pressure_event || []).map((tire) => ({
         position: `Tire ${tire.tire_no}`,
         tireNumber: tire.tire_no,
         pressure: tire.pressure_kpa,
         status: tire.pressure_kpa > 1000 ? 'normal' : 'low',
         temperature: tire.temp_celsius || 45,
-        lastUpdated: tire.changed_at
+        lastUpdated: tire.changed_at,
       })),
-      alerts: (truck.alert_event || []).map(alert => ({
+      alerts: (truck.alert_event || []).map((alert) => ({
         type: alert.type,
         severity: alert.severity || 'medium',
         message: `${alert.type} alert`,
         isResolved: alert.acknowledged,
-        createdAt: alert.occurred_at
-      }))
+        createdAt: alert.occurred_at,
+      })),
     };
   }
 
@@ -508,7 +516,7 @@ class SimplePrismaService {
         FROM pg_stat_activity 
         WHERE state = 'active'
       `;
-      
+
       return result[0];
     } catch (error) {
       console.error('Error getting connection info:', error);
@@ -520,7 +528,7 @@ class SimplePrismaService {
     try {
       // Analyze tables for better query planning
       await this.prisma.$executeRaw`ANALYZE truck, tire_pressure_event, alert_event, gps_position`;
-      
+
       return { message: 'Database optimization completed' };
     } catch (error) {
       console.error('Error optimizing database:', error);

@@ -15,7 +15,7 @@ const getAllTrucks = async (req, res) => {
       maxFuel: req.query.maxFuel ? parseFloat(req.query.maxFuel) : undefined,
       hasAlerts: req.query.hasAlerts,
       vendor: req.query.vendor,
-      vendorId: req.query.vendorId
+      vendorId: req.query.vendorId,
     };
 
     // Validate limit (prevent excessive queries)
@@ -24,19 +24,18 @@ const getAllTrucks = async (req, res) => {
     }
 
     const result = await prismaService.getAllTrucks(filters);
-    
+
     res.status(200).json({
       success: true,
       data: result,
-      message: `Retrieved ${result.trucks.length} trucks successfully`
+      message: `Retrieved ${result.trucks.length} trucks successfully`,
     });
-
   } catch (error) {
     console.error('Error in getAllTrucks:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch trucks',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -44,29 +43,28 @@ const getAllTrucks = async (req, res) => {
 const getTruckById = async (req, res) => {
   try {
     const truckId = req.params.id; // UUID expected
-    
+
     const truck = await prismaService.getTruckById(truckId);
-    
+
     res.status(200).json({
       success: true,
       data: truck,
-      message: 'Truck details retrieved successfully'
+      message: 'Truck details retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error in getTruckById:', error);
-    
+
     if (error.message === 'Truck not found') {
       return res.status(404).json({
         success: false,
-        message: 'Truck not found'
+        message: 'Truck not found',
       });
     }
 
     res.status(500).json({
       success: false,
       message: 'Failed to fetch truck details',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -76,27 +74,26 @@ const getTruckTires = async (req, res) => {
     const truckId = req.params.id; // UUID string accepted
 
     const tireData = await prismaService.getTruckTires(truckId);
-    
+
     res.status(200).json({
       success: true,
       data: tireData,
-      message: 'Tire pressure data retrieved successfully'
+      message: 'Tire pressure data retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error in getTruckTires:', error);
-    
+
     if (error.message === 'Truck not found') {
       return res.status(404).json({
         success: false,
-        message: 'Truck not found'
+        message: 'Truck not found',
       });
     }
 
     res.status(500).json({
       success: false,
       message: 'Failed to fetch tire pressure data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -104,30 +101,29 @@ const getTruckTires = async (req, res) => {
 const getRealtimeLocations = async (req, res) => {
   try {
     const { status } = req.query;
-    
+
     const geoJsonData = await prismaService.getRealtimeLocations(status);
-    
+
     // Set cache headers for real-time data
     res.set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'Content-Type': 'application/json'
+      Pragma: 'no-cache',
+      Expires: '0',
+      'Content-Type': 'application/json',
     });
-    
+
     res.status(200).json({
       success: true,
       data: geoJsonData,
       message: `Retrieved ${geoJsonData.features.length} truck locations`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error('Error in getRealtimeLocations:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch real-time locations',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -136,59 +132,58 @@ const updateTruckStatus = async (req, res) => {
   try {
     const truckId = req.params.id;
     const { status } = req.body;
-    
+
     // Validate truck ID
     if (!truckId || isNaN(parseInt(truckId))) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid truck ID provided'
+        message: 'Invalid truck ID provided',
       });
     }
-    
+
     // Validate status
     const validStatuses = ['active', 'inactive', 'maintenance'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
       });
     }
 
     const updatedTruck = await prismaService.updateTruckStatus(truckId, status);
-    
+
     // Broadcast update via WebSocket if available
     try {
       const { broadcastTruckStatusUpdate } = require('../services/websocketService');
       broadcastTruckStatusUpdate({
         truckId: truckId,
         status: status,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (wsError) {
       console.log('WebSocket broadcast failed:', wsError.message);
       // Continue without WebSocket broadcast
     }
-    
+
     res.status(200).json({
       success: true,
       data: updatedTruck,
-      message: 'Truck status updated successfully'
+      message: 'Truck status updated successfully',
     });
-
   } catch (error) {
     console.error('Error in updateTruckStatus:', error);
-    
+
     if (error.message === 'Truck not found') {
       return res.status(404).json({
         success: false,
-        message: 'Truck not found'
+        message: 'Truck not found',
       });
     }
 
     res.status(500).json({
       success: false,
       message: 'Failed to update truck status',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -201,12 +196,12 @@ const getTruckLocationHistory = async (req, res) => {
   try {
     const truckId = req.params.id;
     const { hours = 24, limit = 100 } = req.query;
-    
+
     // Validate truck ID
     if (!truckId || isNaN(parseInt(truckId))) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid truck ID provided'
+        message: 'Invalid truck ID provided',
       });
     }
 
@@ -218,55 +213,54 @@ const getTruckLocationHistory = async (req, res) => {
       where: {
         truckId: truckId,
         recordedAt: {
-          gte: since
-        }
+          gte: since,
+        },
       },
       orderBy: {
-        recordedAt: 'desc'
+        recordedAt: 'desc',
       },
-      take: parseInt(limit)
+      take: parseInt(limit),
     });
 
     // Format as GeoJSON LineString for tracking
     const coordinates = locationHistory
       .reverse() // Oldest first for proper line drawing
-      .map(point => [parseFloat(point.longitude), parseFloat(point.latitude)]);
+      .map((point) => [parseFloat(point.longitude), parseFloat(point.latitude)]);
 
     const geoJsonTrack = {
-      type: "Feature",
+      type: 'Feature',
       properties: {
         truckId: truckId,
         timeRange: `${hours} hours`,
-        totalPoints: coordinates.length
+        totalPoints: coordinates.length,
       },
       geometry: {
-        type: "LineString",
-        coordinates: coordinates
-      }
+        type: 'LineString',
+        coordinates: coordinates,
+      },
     };
 
     res.status(200).json({
       success: true,
       data: {
         track: geoJsonTrack,
-        points: locationHistory.map(point => ({
+        points: locationHistory.map((point) => ({
           latitude: parseFloat(point.latitude),
           longitude: parseFloat(point.longitude),
           speed: parseFloat(point.speed),
           heading: point.heading,
           fuel: point.fuelPercentage ? parseFloat(point.fuelPercentage) : null,
-          timestamp: point.recordedAt
-        }))
+          timestamp: point.recordedAt,
+        })),
       },
-      message: `Retrieved ${locationHistory.length} location points for the last ${hours} hours`
+      message: `Retrieved ${locationHistory.length} location points for the last ${hours} hours`,
     });
-
   } catch (error) {
     console.error('Error in getTruckLocationHistory:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch location history',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -275,50 +269,49 @@ const getTruckAlerts = async (req, res) => {
   try {
     const truckId = req.params.id;
     const { resolved = false, limit = 50 } = req.query;
-    
+
     // Validate truck ID (should be 4-digit format like 0001)
     if (!truckId || !/^\d{4}$/.test(truckId)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid truck ID provided. Expected 4-digit format (e.g., 0001)'
+        message: 'Invalid truck ID provided. Expected 4-digit format (e.g., 0001)',
       });
     }
 
     const alerts = await prismaService.prisma.truckAlert.findMany({
       where: {
         truckId: truckId,
-        isResolved: resolved === 'true' ? true : false
+        isResolved: resolved === 'true' ? true : false,
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
-      take: parseInt(limit)
+      take: parseInt(limit),
     });
 
     res.status(200).json({
       success: true,
       data: {
         truckId: truckId,
-        alerts: alerts.map(alert => ({
+        alerts: alerts.map((alert) => ({
           id: alert.id,
           type: alert.alertType,
           severity: alert.severity,
           message: alert.message,
           isResolved: alert.isResolved,
           createdAt: alert.createdAt,
-          resolvedAt: alert.resolvedAt
+          resolvedAt: alert.resolvedAt,
         })),
-        totalCount: alerts.length
+        totalCount: alerts.length,
       },
-      message: `Retrieved ${alerts.length} alerts`
+      message: `Retrieved ${alerts.length} alerts`,
     });
-
   } catch (error) {
     console.error('Error in getTruckAlerts:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch truck alerts',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -326,12 +319,12 @@ const getTruckAlerts = async (req, res) => {
 const resolveAlert = async (req, res) => {
   try {
     const { truckId, alertId } = req.params;
-    
+
     // Validate IDs
     if (!truckId || isNaN(parseInt(truckId)) || !alertId || isNaN(parseInt(alertId))) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid truck ID or alert ID provided'
+        message: 'Invalid truck ID or alert ID provided',
       });
     }
 
@@ -339,32 +332,31 @@ const resolveAlert = async (req, res) => {
       where: {
         id: parseInt(alertId),
         truckId: truckId,
-        isResolved: false
+        isResolved: false,
       },
       data: {
         isResolved: true,
-        resolvedAt: new Date()
-      }
+        resolvedAt: new Date(),
+      },
     });
 
     if (resolvedAlert.count === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Alert not found or already resolved'
+        message: 'Alert not found or already resolved',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: 'Alert resolved successfully'
+      message: 'Alert resolved successfully',
     });
-
   } catch (error) {
     console.error('Error in resolveAlert:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to resolve alert',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -376,20 +368,20 @@ const resolveAlert = async (req, res) => {
 const bulkUpdateTruckStatus = async (req, res) => {
   try {
     const { truckIds, status } = req.body;
-    
+
     // Validate input
     if (!Array.isArray(truckIds) || truckIds.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'truckIds must be a non-empty array'
+        message: 'truckIds must be a non-empty array',
       });
     }
-    
+
     const validStatuses = ['active', 'inactive', 'maintenance'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
       });
     }
 
@@ -397,30 +389,29 @@ const bulkUpdateTruckStatus = async (req, res) => {
     const updateResult = await prismaService.prisma.truck.updateMany({
       where: {
         id: {
-          in: truckIds.filter(id => /^\d{4}$/.test(id))
-        }
+          in: truckIds.filter((id) => /^\d{4}$/.test(id)),
+        },
       },
       data: {
         status: status,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     });
 
     res.status(200).json({
       success: true,
       data: {
         updatedCount: updateResult.count,
-        status: status
+        status: status,
       },
-      message: `Updated status for ${updateResult.count} trucks`
+      message: `Updated status for ${updateResult.count} trucks`,
     });
-
   } catch (error) {
     console.error('Error in bulkUpdateTruckStatus:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to bulk update truck status',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -430,9 +421,9 @@ const getTruckLocationsByName = async (req, res) => {
   try {
     const truckName = decodeURIComponent(req.params.truckName);
     const { timeRange = '24h', limit = 200, minSpeed = 0 } = req.query;
-    
+
     console.log(`Getting location history for truck: ${truckName}`);
-    
+
     // Parse time range
     let hoursBack = 24;
     if (timeRange.endsWith('h')) {
@@ -440,27 +431,27 @@ const getTruckLocationsByName = async (req, res) => {
     } else if (timeRange.endsWith('d')) {
       hoursBack = (parseInt(timeRange.replace('d', '')) || 1) * 24;
     }
-    
+
     // Calculate time range
     const since = new Date();
     since.setHours(since.getHours() - hoursBack);
-    
+
     // First, find the truck by name
     const truck = await prismaService.prisma.$queryRaw`
       SELECT id, name, model FROM truck 
       WHERE name = ${truckName}
       LIMIT 1
     `;
-    
+
     if (truck.length === 0) {
       return res.status(404).json({
         success: false,
-        message: `Truck with name '${truckName}' not found`
+        message: `Truck with name '${truckName}' not found`,
       });
     }
-    
+
     const truckId = truck[0].id;
-    
+
     // Get GPS positions for this truck
     const gpsPositions = await prismaService.prisma.$queryRaw`
       SELECT 
@@ -480,9 +471,9 @@ const getTruckLocationsByName = async (req, res) => {
       ORDER BY ts DESC
       LIMIT ${parseInt(limit)}
     `;
-    
+
     // Format response (convert BigInt to string)
-    const locations = gpsPositions.map(pos => ({
+    const locations = gpsPositions.map((pos) => ({
       id: pos.id.toString(),
       latitude: parseFloat(pos.latitude),
       longitude: parseFloat(pos.longitude),
@@ -490,60 +481,61 @@ const getTruckLocationsByName = async (req, res) => {
       heading: parseFloat(pos.heading_deg) || 0,
       hdop: parseFloat(pos.hdop) || 0,
       timestamp: pos.ts,
-      source: pos.source
+      source: pos.source,
     }));
-    
+
     // Create GeoJSON track
     const coordinates = locations
       .reverse() // Oldest first for proper line drawing
-      .map(point => [point.longitude, point.latitude]);
-    
+      .map((point) => [point.longitude, point.latitude]);
+
     const geoJsonTrack = {
-      type: "Feature",
+      type: 'Feature',
       properties: {
         truckName: truckName,
         truckId: truckId,
         timeRange: timeRange,
         totalPoints: coordinates.length,
-        minSpeed: minSpeed
+        minSpeed: minSpeed,
       },
       geometry: {
-        type: "LineString",
-        coordinates: coordinates
-      }
+        type: 'LineString',
+        coordinates: coordinates,
+      },
     };
-    
+
     res.set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
+      Pragma: 'no-cache',
+      Expires: '0',
     });
-    
+
     res.status(200).json({
       success: true,
       data: locations, // Frontend expects data to be the array directly
       truck: {
         id: truckId,
         truckName: truckName,
-        model: truck[0].model
+        model: truck[0].model,
       },
       track: geoJsonTrack,
       summary: {
         totalPoints: locations.length,
         timeRange: `${hoursBack} hours`,
         minSpeed: minSpeed,
-        avgSpeed: locations.length > 0 ? 
-          (locations.reduce((sum, loc) => sum + loc.speed, 0) / locations.length).toFixed(1) : 0
+        avgSpeed:
+          locations.length > 0
+            ? (locations.reduce((sum, loc) => sum + loc.speed, 0) / locations.length).toFixed(1)
+            : 0,
       },
-      message: `Retrieved ${locations.length} location points for truck ${truckName} over the last ${hoursBack} hours`
+      message: `Retrieved ${locations.length} location points for truck ${truckName} over the last ${hoursBack} hours`,
     });
-    
   } catch (error) {
     console.error('Error in getTruckLocationsByName:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch truck location history',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -558,5 +550,5 @@ module.exports = {
   getTruckAlerts,
   resolveAlert,
   bulkUpdateTruckStatus,
-  getTruckLocationsByName
+  getTruckLocationsByName,
 };

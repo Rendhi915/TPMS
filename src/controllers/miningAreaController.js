@@ -9,19 +9,18 @@ const getMiningAreas = async (req, res) => {
   try {
     // Use static GeoJSON data since mining_zones table doesn't exist
     const geoJsonData = miningAreaService.getMiningAreaData();
-    
+
     res.status(200).json({
       success: true,
       data: geoJsonData,
-      message: `Retrieved ${geoJsonData.features.length} mining areas`
+      message: `Retrieved ${geoJsonData.features.length} mining areas`,
     });
-
   } catch (error) {
     console.error('Error in getMiningAreas:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch mining areas',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -33,32 +32,31 @@ const getMiningAreas = async (req, res) => {
 const getTrucksInZone = async (req, res) => {
   try {
     const { zoneName } = req.params;
-    
+
     if (!zoneName) {
       return res.status(400).json({
         success: false,
-        message: 'Zone name is required'
+        message: 'Zone name is required',
       });
     }
 
     const trucksInZone = await prismaService.getTrucksInZone(zoneName);
-    
+
     res.status(200).json({
       success: true,
       data: {
         zoneName,
         trucks: trucksInZone,
-        count: trucksInZone.length
+        count: trucksInZone.length,
       },
-      message: `Found ${trucksInZone.length} trucks in ${zoneName}`
+      message: `Found ${trucksInZone.length} trucks in ${zoneName}`,
     });
-
   } catch (error) {
     console.error('Error in getTrucksInZone:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get trucks in zone',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -75,7 +73,7 @@ const getZoneStatistics = async (req, res) => {
       truckCount: 0,
       activeTrucks: 0,
       averageFuel: 0,
-      averagePayload: 0
+      averagePayload: 0,
     }));
 
     res.status(200).json({
@@ -83,17 +81,16 @@ const getZoneStatistics = async (req, res) => {
       data: {
         zones: statistics,
         totalZones: statistics.length,
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       },
-      message: 'Zone statistics retrieved successfully'
+      message: 'Zone statistics retrieved successfully',
     });
-
   } catch (error) {
     console.error('Error in getZoneStatistics:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get zone statistics',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -112,7 +109,7 @@ const getZoneActivityReport = async (req, res) => {
       averageSpeed: 0,
       firstActivity: null,
       lastActivity: null,
-      activityLevel: getActivityLevel(0)
+      activityLevel: getActivityLevel(0),
     }));
 
     res.status(200).json({
@@ -121,17 +118,16 @@ const getZoneActivityReport = async (req, res) => {
         timeRange,
         zones,
         totalZones: zones.length,
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       },
-      message: `Zone activity report for ${timeRange} generated successfully`
+      message: `Zone activity report for ${timeRange} generated successfully`,
     });
-
   } catch (error) {
     console.error('Error in getZoneActivityReport:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to generate zone activity report',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -139,11 +135,11 @@ const getZoneActivityReport = async (req, res) => {
 const checkTruckInZones = async (req, res) => {
   try {
     const { truckId } = req.params;
-    
+
     if (!truckId || isNaN(parseInt(truckId))) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid truck ID provided'
+        message: 'Invalid truck ID provided',
       });
     }
 
@@ -155,21 +151,21 @@ const checkTruckInZones = async (req, res) => {
         truckNumber: true,
         latitude: true,
         longitude: true,
-        status: true
-      }
+        status: true,
+      },
     });
 
     if (!truck) {
       return res.status(404).json({
         success: false,
-        message: 'Truck not found'
+        message: 'Truck not found',
       });
     }
 
     if (!truck.latitude || !truck.longitude) {
       return res.status(400).json({
         success: false,
-        message: 'Truck location not available'
+        message: 'Truck location not available',
       });
     }
 
@@ -200,26 +196,25 @@ const checkTruckInZones = async (req, res) => {
           status: truck.status,
           location: {
             latitude: parseFloat(truck.latitude),
-            longitude: parseFloat(truck.longitude)
-          }
+            longitude: parseFloat(truck.longitude),
+          },
         },
-        zones: zonesContainingTruck.map(zone => ({
+        zones: zonesContainingTruck.map((zone) => ({
           id: zone.id,
           name: zone.name,
           zoneType: zone.zone_type,
-          distanceToCenter: parseFloat(zone.distance_to_center)
+          distanceToCenter: parseFloat(zone.distance_to_center),
         })),
-        inZoneCount: zonesContainingTruck.length
+        inZoneCount: zonesContainingTruck.length,
       },
-      message: `Truck ${truck.truckNumber} is in ${zonesContainingTruck.length} zone(s)`
+      message: `Truck ${truck.truckNumber} is in ${zonesContainingTruck.length} zone(s)`,
     });
-
   } catch (error) {
     console.error('Error in checkTruckInZones:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to check truck zones',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -227,11 +222,11 @@ const checkTruckInZones = async (req, res) => {
 const getNearbyTrucks = async (req, res) => {
   try {
     const { latitude, longitude, radius = 1000 } = req.query; // radius in meters
-    
+
     if (!latitude || !longitude) {
       return res.status(400).json({
         success: false,
-        message: 'Latitude and longitude are required'
+        message: 'Latitude and longitude are required',
       });
     }
 
@@ -267,19 +262,19 @@ const getNearbyTrucks = async (req, res) => {
       ORDER BY distance_meters ASC
     `;
 
-    const trucksFormatted = nearbyTrucks.map(truck => ({
+    const trucksFormatted = nearbyTrucks.map((truck) => ({
       id: truck.id,
       truckNumber: truck.truck_number,
       model: truck.model_name,
       status: truck.status,
       location: {
         latitude: parseFloat(truck.latitude),
-        longitude: parseFloat(truck.longitude)
+        longitude: parseFloat(truck.longitude),
       },
       fuel: parseFloat(truck.fuel_percentage),
       payload: parseFloat(truck.payload_tons),
       driver: truck.driver_name,
-      distance: Math.round(parseFloat(truck.distance_meters))
+      distance: Math.round(parseFloat(truck.distance_meters)),
     }));
 
     res.status(200).json({
@@ -287,21 +282,20 @@ const getNearbyTrucks = async (req, res) => {
       data: {
         searchCenter: {
           latitude: lat,
-          longitude: lng
+          longitude: lng,
         },
         radiusMeters,
         trucks: trucksFormatted,
-        count: trucksFormatted.length
+        count: trucksFormatted.length,
       },
-      message: `Found ${trucksFormatted.length} trucks within ${radiusMeters}m radius`
+      message: `Found ${trucksFormatted.length} trucks within ${radiusMeters}m radius`,
     });
-
   } catch (error) {
     console.error('Error in getNearbyTrucks:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to find nearby trucks',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -313,12 +307,12 @@ const getNearbyTrucks = async (req, res) => {
 const createMiningZone = async (req, res) => {
   try {
     const { name, zoneType, boundary } = req.body;
-    
+
     // Validate input
     if (!name || !zoneType || !boundary) {
       return res.status(400).json({
         success: false,
-        message: 'Name, zone type, and boundary are required'
+        message: 'Name, zone type, and boundary are required',
       });
     }
 
@@ -326,7 +320,7 @@ const createMiningZone = async (req, res) => {
     if (!boundary.type || boundary.type !== 'Polygon' || !boundary.coordinates) {
       return res.status(400).json({
         success: false,
-        message: 'Boundary must be a valid GeoJSON Polygon'
+        message: 'Boundary must be a valid GeoJSON Polygon',
       });
     }
 
@@ -352,25 +346,25 @@ const createMiningZone = async (req, res) => {
         name: newZone.name,
         zoneType: newZone.zone_type,
         isActive: newZone.is_active,
-        createdAt: newZone.created_at
+        createdAt: newZone.created_at,
       },
-      message: 'Mining zone created successfully'
+      message: 'Mining zone created successfully',
     });
-
   } catch (error) {
     console.error('Error in createMiningZone:', error);
-    
-    if (error.code === '23505') { // Unique constraint violation
+
+    if (error.code === '23505') {
+      // Unique constraint violation
       return res.status(400).json({
         success: false,
-        message: 'Zone with this name already exists'
+        message: 'Zone with this name already exists',
       });
     }
 
     res.status(500).json({
       success: false,
       message: 'Failed to create mining zone',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -379,11 +373,11 @@ const updateMiningZone = async (req, res) => {
   try {
     const { zoneId } = req.params;
     const { name, zoneType, boundary, isActive } = req.body;
-    
+
     if (!zoneId || isNaN(parseInt(zoneId))) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid zone ID provided'
+        message: 'Invalid zone ID provided',
       });
     }
 
@@ -419,7 +413,7 @@ const updateMiningZone = async (req, res) => {
     if (updates.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'No valid updates provided'
+        message: 'No valid updates provided',
       });
     }
 
@@ -438,7 +432,7 @@ const updateMiningZone = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Mining zone not found'
+        message: 'Mining zone not found',
       });
     }
 
@@ -450,17 +444,16 @@ const updateMiningZone = async (req, res) => {
         id: updatedZone.id,
         name: updatedZone.name,
         zoneType: updatedZone.zone_type,
-        isActive: updatedZone.is_active
+        isActive: updatedZone.is_active,
       },
-      message: 'Mining zone updated successfully'
+      message: 'Mining zone updated successfully',
     });
-
   } catch (error) {
     console.error('Error in updateMiningZone:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to update mining zone',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -468,11 +461,11 @@ const updateMiningZone = async (req, res) => {
 const deleteMiningZone = async (req, res) => {
   try {
     const { zoneId } = req.params;
-    
+
     if (!zoneId || isNaN(parseInt(zoneId))) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid zone ID provided'
+        message: 'Invalid zone ID provided',
       });
     }
 
@@ -487,7 +480,7 @@ const deleteMiningZone = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Mining zone not found or already inactive'
+        message: 'Mining zone not found or already inactive',
       });
     }
 
@@ -496,17 +489,16 @@ const deleteMiningZone = async (req, res) => {
       data: {
         id: result[0].id,
         name: result[0].name,
-        status: 'deactivated'
+        status: 'deactivated',
       },
-      message: 'Mining zone deactivated successfully'
+      message: 'Mining zone deactivated successfully',
     });
-
   } catch (error) {
     console.error('Error in deleteMiningZone:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to delete mining zone',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
@@ -535,5 +527,5 @@ module.exports = {
   getNearbyTrucks,
   createMiningZone,
   updateMiningZone,
-  deleteMiningZone
+  deleteMiningZone,
 };

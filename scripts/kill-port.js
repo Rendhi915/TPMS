@@ -12,8 +12,8 @@ function killPort(port = 3001) {
 
       const lines = stdout.split('\n');
       const pids = new Set();
-      
-      lines.forEach(line => {
+
+      lines.forEach((line) => {
         if (line.includes('LISTENING')) {
           const parts = line.trim().split(/\s+/);
           const pid = parts[parts.length - 1];
@@ -30,7 +30,7 @@ function killPort(port = 3001) {
       }
 
       // Kill all processes
-      const killPromises = Array.from(pids).map(pid => {
+      const killPromises = Array.from(pids).map((pid) => {
         return new Promise((resolvePid) => {
           console.log(`🔄 Killing process PID: ${pid}`);
           exec(`taskkill /F /PID ${pid}`, (killError, killStdout) => {

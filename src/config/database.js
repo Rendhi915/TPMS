@@ -16,15 +16,16 @@ const pool = new Pool({
 });
 
 // Test connection on startup
-pool.connect()
-  .then(client => {
+pool
+  .connect()
+  .then((client) => {
     console.log('✅ Database connected successfully');
     return client.query('SELECT NOW()');
   })
-  .then(result => {
+  .then((result) => {
     console.log('📊 Database time:', result.rows[0].now);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('❌ Database connection error:', err.message);
   });
 

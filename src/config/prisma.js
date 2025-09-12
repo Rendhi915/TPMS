@@ -2,15 +2,13 @@ const { PrismaClient } = require('@prisma/client');
 
 // Enhanced Prisma configuration with connection resilience
 const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' 
-    ? ['query', 'info', 'warn', 'error'] 
-    : ['error'],
+  log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
   errorFormat: 'pretty',
   datasources: {
     db: {
-      url: process.env.DATABASE_URL
-    }
-  }
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
 
 // Connection retry logic
@@ -19,22 +17,24 @@ async function connectWithRetry(maxRetries = 5, delay = 2000) {
     try {
       await prisma.$connect();
       console.log('✅ Prisma connected to database');
-      
+
       // Test the connection
       await prisma.$queryRaw`SELECT 1`;
       console.log('✅ Database connection healthy');
       return true;
-      
     } catch (error) {
-      console.error(`❌ Database connection attempt ${attempt}/${maxRetries} failed:`, error.message);
-      
+      console.error(
+        `❌ Database connection attempt ${attempt}/${maxRetries} failed:`,
+        error.message
+      );
+
       if (attempt === maxRetries) {
         console.error('💥 Max connection retries reached. Database unavailable.');
         throw error;
       }
-      
+
       console.log(`⏳ Retrying in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       delay *= 1.5; // Exponential backoff
     }
   }
@@ -47,7 +47,7 @@ async function healthCheck() {
     return { status: 'healthy', timestamp: new Date() };
   } catch (error) {
     console.error('Database health check failed:', error.message);
-    
+
     // Try to reconnect
     try {
       await connectWithRetry(3, 1000);
@@ -77,5 +77,5 @@ module.exports = {
   prisma,
   connectWithRetry,
   healthCheck,
-  disconnect
+  disconnect,
 };

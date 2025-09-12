@@ -20,22 +20,22 @@ const filesToRemove = [
   'remove-plate-number.sql',
   'recreate-with-numeric-ids.js',
   'ensure-truck-ids-0001-1000.js',
-  'seed-tire-pressure-dummy.js'
+  'seed-tire-pressure-dummy.js',
 ];
 
 // Backup and remove files
 console.log('🚀 Starting cleanup of obsolete scripts...');
 
-filesToRemove.forEach(file => {
+filesToRemove.forEach((file) => {
   const filePath = path.join(__dirname, file);
   const backupPath = path.join(backupDir, file);
-  
+
   try {
     if (fs.existsSync(filePath)) {
       // Create backup
       fs.mkdirSync(path.dirname(backupPath), { recursive: true });
       fs.copyFileSync(filePath, backupPath);
-      
+
       // Remove file
       fs.unlinkSync(filePath);
       console.log(`✅ Removed: ${file}`);
@@ -54,18 +54,18 @@ if (fs.existsSync(packageJsonPath)) {
   try {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     const scripts = packageJson.scripts || {};
-    
+
     // Remove any scripts that reference the deleted files
     const scriptsToRemove = Object.entries(scripts)
-      .filter(([_, cmd]) => filesToRemove.some(file => cmd.includes(file)))
+      .filter(([_, cmd]) => filesToRemove.some((file) => cmd.includes(file)))
       .map(([name]) => name);
-    
+
     if (scriptsToRemove.length > 0) {
-      scriptsToRemove.forEach(script => {
+      scriptsToRemove.forEach((script) => {
         delete scripts[script];
         console.log(`🗑️  Removed script: ${script}`);
       });
-      
+
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
       console.log('✅ Updated package.json');
     }
