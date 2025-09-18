@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-fleet-management-2024';
 
@@ -6,7 +7,6 @@ const authMiddleware = (req, res, next) => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
-    console.log('Auth Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
@@ -37,7 +37,6 @@ const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
@@ -52,7 +51,6 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
-    console.error('Auth middleware error:', error);
     res.status(500).json({
       success: false,
       message: 'Authentication error occurred.',

@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const prismaService = require('../services/simplePrismaService');
 const { logAdminActivity, logAdminOperation, logSecurityEvent } = require('../utils/adminLogger');
 const { broadcastAdminActivity } = require('../services/websocketService');
+require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fleet-management-secret-key-change-in-production';
 
