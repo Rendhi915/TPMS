@@ -18,8 +18,9 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/tpms-backend/
+            git reset --hard HEAD
             git pull origin main
-            npm install --production
+            npm install --omit=dev
             npx prisma migrate deploy
             pm2 restart tpms-backend || pm2 start server.js --name "tpms-backend"
             pm2 save
