@@ -1,9 +1,9 @@
 const { exec } = require('child_process');
 
 function killPort(port = 3001) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // Find process using the port
-    exec(`netstat -ano | findstr :${port}`, (error, stdout, stderr) => {
+    exec(`netstat -ano | findstr :${port}`, (error, stdout) => {
       if (error) {
         console.log(`No process found on port ${port}`);
         resolve();
@@ -33,7 +33,7 @@ function killPort(port = 3001) {
       const killPromises = Array.from(pids).map((pid) => {
         return new Promise((resolvePid) => {
           console.log(`🔄 Killing process PID: ${pid}`);
-          exec(`taskkill /F /PID ${pid}`, (killError, killStdout) => {
+          exec(`taskkill /PID ${pid} /F`, (killError) => {
             if (killError) {
               console.log(`❌ Failed to kill PID ${pid}: ${killError.message}`);
             } else {

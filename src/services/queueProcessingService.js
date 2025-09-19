@@ -1,5 +1,5 @@
 const pool = require('../config/database');
-const { broadcastSensorUpdate } = require('./websocketService');
+// const { broadcastSensorUpdate } = require('./websocketService'); // Unused import
 
 // ==========================================
 // ASYNC SENSOR QUEUE PROCESSING SERVICE

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+// const { execSync } = require('child_process'); // Unused import
 
 // Create backup directory
 const backupDir = path.join(__dirname, '..', 'backup', 'obsolete_scripts');
@@ -57,7 +57,7 @@ if (fs.existsSync(packageJsonPath)) {
 
     // Remove any scripts that reference the deleted files
     const scriptsToRemove = Object.entries(scripts)
-      .filter(([_, cmd]) => filesToRemove.some((file) => cmd.includes(file)))
+      .filter(([, cmd]) => filesToRemove.some((file) => cmd.includes(file)))
       .map(([name]) => name);
 
     if (scriptsToRemove.length > 0) {

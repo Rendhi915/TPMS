@@ -419,9 +419,8 @@ class HistorySeeder {
 
       const speedStats = await prisma.locationHistory.aggregate({
         _avg: { speed: true },
-        _max: { speed: true },
+        _max: { speed: true, recordedAt: true },
         _min: { recordedAt: true },
-        _max: { recordedAt: true },
       });
 
       this.log(
@@ -458,11 +457,12 @@ async function main() {
       case 'batch':
         options.batchSize = parseInt(value) || 200;
         break;
-      case 'limit':
+      case 'limit': {
         // Ensure limit is a positive integer or null
         const limitValue = parseInt(value);
         options.truckLimit = limitValue && limitValue > 0 ? limitValue : null;
         break;
+      }
       case 'delete':
         options.deleteExisting = value === 'true' || value === '1';
         break;

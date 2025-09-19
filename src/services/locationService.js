@@ -1,7 +1,7 @@
 const pool = require('../config/database');
-const { broadcastTruckUpdate } = require('./websocketService');
+const { broadcastTruckLocationUpdate } = require('./websocketService');
 
-const startRealTimeSimulation = (io) => {
+const startRealTimeSimulation = () => {
   setInterval(async () => {
     try {
       // Get random active trucks to update
@@ -29,7 +29,7 @@ const startRealTimeSimulation = (io) => {
         const currentLng = parseFloat(truck.longitude) || 115.545;
         const currentLat = parseFloat(truck.latitude) || -3.575;
         const currentFuel = parseFloat(truck.fuel_percentage) || 50;
-        const currentSpeed = parseFloat(truck.speed) || 0;
+        // const currentSpeed = parseFloat(data.speed_kph || 0); // Unused variable
         const currentHeading = parseInt(truck.heading) || 0;
 
         // Simulate movement (small random displacement within PT INDOBARA)
@@ -103,7 +103,7 @@ const startRealTimeSimulation = (io) => {
       }
 
       // Broadcast updates to subscribed clients
-      broadcastTruckUpdate({
+      broadcastTruckLocationUpdate({
         timestamp: new Date(),
         updatedCount: result.rows.length,
       });

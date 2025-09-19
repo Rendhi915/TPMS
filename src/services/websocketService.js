@@ -11,7 +11,7 @@ let subscriptions = {
 
 const initialize = (webSocketServer) => {
   wsServer = webSocketServer;
-  console.log('📡 WebSocket service initialized');
+  console.log(' WebSocket service initialized');
 };
 
 const broadcastTruckLocationUpdate = (data) => {

@@ -89,7 +89,7 @@ class RealtimeTrackingSimulator {
       this.trucks = trucks;
 
       // Initialize random starting positions for each truck
-      this.trucks.forEach((truck, index) => {
+      this.trucks.forEach((truck) => {
         const startIndex = Math.floor(Math.random() * routeCoordinates.length);
         this.truckPositions.set(truck.id, startIndex);
       });

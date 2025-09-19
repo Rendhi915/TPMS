@@ -207,9 +207,10 @@ async function seedGpsPositions(devices, trucks) {
 
       // Simulate truck movement with small coordinate changes
       const coords = {
-        lat: baseCoords.lat + randomFloat(-0.01, 0.01, 6),
         lng: baseCoords.lng + randomFloat(-0.01, 0.01, 6),
+        lat: baseCoords.lat + randomFloat(-0.01, 0.01, 6),
       };
+      // Using coords for GPS position creation below
 
       // Create GPS position without PostGIS geography for now
       const position = await prisma.gpsPosition.create({
@@ -217,6 +218,8 @@ async function seedGpsPositions(devices, trucks) {
           device_id: device.id,
           truck_id: truck.id,
           ts: timestamp,
+          latitude: coords.lat,
+          longitude: coords.lng,
           speed_kph: randomFloat(0, 80),
           heading_deg: randomInt(0, 359),
           hdop: randomFloat(0.5, 2.0),
