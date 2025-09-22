@@ -25,6 +25,11 @@ const {
 
 const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+// Public base URL used for logs and client references
+// In production, default to the deployed domain unless overridden
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://be-tpms.connectis.my.id';
+// Derive WebSocket base URL from PUBLIC_BASE_URL with correct scheme
+const WS_BASE_URL = `${PUBLIC_BASE_URL.startsWith('https') ? 'wss' : 'ws'}://${PUBLIC_BASE_URL.replace(/^https?:\/\//, '')}`;
 
 // ==========================================
 // WEBSOCKET MESSAGE HANDLERS
@@ -737,8 +742,8 @@ const startServer = async () => {
       console.log(`🌐 HTTP API server running on port ${PORT}`);
       console.log(`📡 WebSocket server running on port ${PORT}`);
       console.log(`🌍 Environment: ${NODE_ENV}`);
-      console.log(`🔗 API URL: http://0.0.0.0:${PORT}/api`);
-      console.log(`🔗 WebSocket URL: ws://0.0.0.0:${PORT}/ws`);
+      console.log(`🔗 API URL: ${PUBLIC_BASE_URL}/api`);
+      console.log(`🔗 WebSocket URL: ${WS_BASE_URL}/ws`);
       console.log(`🌐 Network Access: Server accessible from other networks`);
       console.log('🚀 ================================');
 
@@ -746,7 +751,7 @@ const startServer = async () => {
       logServerStartup({
         port: PORT,
         environment: NODE_ENV,
-        websocketUrl: `ws://0.0.0.0:${PORT}/ws`,
+        websocketUrl: `${WS_BASE_URL}/ws`,
         databaseStatus: wsServer.isReady ? 'connected' : 'disconnected',
         startupTime: bootTime,
         adminId: 'system',

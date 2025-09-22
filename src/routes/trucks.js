@@ -34,6 +34,15 @@ router.put('/:id/alerts/:alertId/resolve', authMiddleware, truckController.resol
 // PUT /api/trucks/bulk/status - Bulk update truck status (protected)
 router.put('/bulk/status', authMiddleware, truckController.bulkUpdateTruckStatus);
 
+// POST /api/trucks - Create new truck (protected)
+router.post('/', authMiddleware, truckController.createTruck);
+
+// PUT /api/trucks/:id - Update truck (protected)
+router.put('/:id', authMiddleware, truckController.updateTruck);
+
+// DELETE /api/trucks/:id - Delete truck (protected)
+router.delete('/:id', authMiddleware, truckController.deleteTruck);
+
 // Compatibility routes moved to src/routes/history.js and mounted in routes/index.js
 
 module.exports = router;

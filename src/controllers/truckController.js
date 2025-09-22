@@ -540,6 +540,295 @@ const getTruckLocationsByName = async (req, res) => {
   }
 };
 
+// ==========================================
+// TRUCK CRUD OPERATIONS
+// ==========================================
+
+const createTruck = async (req, res) => {
+  try {
+    const { code, vin, name, model, year, tire_config, fleet_group_id, vendor_id } = req.body;
+
+    // Validate required fields
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required field: name',
+      });
+    }
+
+    // Check if truck with same code or VIN already exists
+    const existingTruck = await prismaService.prisma.truck.findFirst({
+      where: {
+        OR: [code ? { code: code } : {}, vin ? { vin: vin } : {}, { name: name }].filter(
+          (condition) => Object.keys(condition).length > 0
+        ),
+      },
+    });
+
+    if (existingTruck) {
+      let conflictField = 'name';
+      if (existingTruck.code === code) conflictField = 'code';
+      if (existingTruck.vin === vin) conflictField = 'VIN';
+
+      return res.status(409).json({
+        success: false,
+        message: `Truck with this ${conflictField} already exists`,
+      });
+    }
+
+    // Validate vendor_id if provided
+    if (vendor_id) {
+      const vendor = await prismaService.prisma.vendors.findUnique({
+        where: { id: vendor_id },
+      });
+      if (!vendor) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid vendor_id: vendor not found',
+        });
+      }
+    }
+
+    // Validate fleet_group_id if provided
+    if (fleet_group_id) {
+      const fleetGroup = await prismaService.prisma.fleet_group.findUnique({
+        where: { id: fleet_group_id },
+      });
+      if (!fleetGroup) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid fleet_group_id: fleet group not found',
+        });
+      }
+    }
+
+    const truck = await prismaService.prisma.truck.create({
+      data: {
+        code,
+        vin,
+        name,
+        model,
+        year: year ? parseInt(year) : null,
+        tire_config,
+        fleet_group_id,
+        vendor_id,
+      },
+      include: {
+        vendor: {
+          select: {
+            id: true,
+            nama_vendor: true,
+          },
+        },
+        fleet_group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    // Create initial truck status event
+    await prismaService.prisma.truck_status_event.create({
+      data: {
+        truck_id: truck.id,
+        status: 'active',
+        note: 'Initial truck registration',
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      data: truck,
+      message: 'Truck created successfully',
+    });
+  } catch (error) {
+    console.error('Error creating truck:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create truck',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+const updateTruck = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { code, vin, name, model, year, tire_config, fleet_group_id, vendor_id } = req.body;
+
+    // Check if truck exists
+    const existingTruck = await prismaService.prisma.truck.findUnique({
+      where: { id: id },
+    });
+
+    if (!existingTruck) {
+      return res.status(404).json({
+        success: false,
+        message: 'Truck not found',
+      });
+    }
+
+    // Check for conflicts with other trucks
+    const conflictTruck = await prismaService.prisma.truck.findFirst({
+      where: {
+        AND: [
+          { id: { not: id } },
+          {
+            OR: [
+              code && code !== existingTruck.code ? { code: code } : {},
+              vin && vin !== existingTruck.vin ? { vin: vin } : {},
+              name && name !== existingTruck.name ? { name: name } : {},
+            ].filter((condition) => Object.keys(condition).length > 0),
+          },
+        ],
+      },
+    });
+
+    if (conflictTruck) {
+      let conflictField = 'name';
+      if (conflictTruck.code === code) conflictField = 'code';
+      if (conflictTruck.vin === vin) conflictField = 'VIN';
+
+      return res.status(409).json({
+        success: false,
+        message: `Another truck with this ${conflictField} already exists`,
+      });
+    }
+
+    // Validate vendor_id if provided
+    if (vendor_id && vendor_id !== existingTruck.vendor_id) {
+      const vendor = await prismaService.prisma.vendors.findUnique({
+        where: { id: vendor_id },
+      });
+      if (!vendor) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid vendor_id: vendor not found',
+        });
+      }
+    }
+
+    // Validate fleet_group_id if provided
+    if (fleet_group_id && fleet_group_id !== existingTruck.fleet_group_id) {
+      const fleetGroup = await prismaService.prisma.fleet_group.findUnique({
+        where: { id: fleet_group_id },
+      });
+      if (!fleetGroup) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid fleet_group_id: fleet group not found',
+        });
+      }
+    }
+
+    const updateData = {};
+    if (code !== undefined) updateData.code = code;
+    if (vin !== undefined) updateData.vin = vin;
+    if (name !== undefined) updateData.name = name;
+    if (model !== undefined) updateData.model = model;
+    if (year !== undefined) updateData.year = year ? parseInt(year) : null;
+    if (tire_config !== undefined) updateData.tire_config = tire_config;
+    if (fleet_group_id !== undefined) updateData.fleet_group_id = fleet_group_id;
+    if (vendor_id !== undefined) updateData.vendor_id = vendor_id;
+
+    const truck = await prismaService.prisma.truck.update({
+      where: { id: id },
+      data: updateData,
+      include: {
+        vendor: {
+          select: {
+            id: true,
+            nama_vendor: true,
+          },
+        },
+        fleet_group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: truck,
+      message: 'Truck updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating truck:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update truck',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+const deleteTruck = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if truck exists and get related data
+    const truck = await prismaService.prisma.truck.findUnique({
+      where: { id: id },
+      include: {
+        device: true,
+        gps_position: { take: 1 },
+        tire_pressure_event: { take: 1 },
+        alert_event: { take: 1 },
+      },
+    });
+
+    if (!truck) {
+      return res.status(404).json({
+        success: false,
+        message: 'Truck not found',
+      });
+    }
+
+    // Check if truck has associated data that would prevent deletion
+    const hasData =
+      truck.device.length > 0 ||
+      truck.gps_position.length > 0 ||
+      truck.tire_pressure_event.length > 0 ||
+      truck.alert_event.length > 0;
+
+    if (hasData) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'Cannot delete truck with associated sensor data, GPS positions, or alerts. Consider deactivating instead.',
+        data: {
+          device_count: truck.device.length,
+          has_gps_data: truck.gps_position.length > 0,
+          has_tire_data: truck.tire_pressure_event.length > 0,
+          has_alerts: truck.alert_event.length > 0,
+        },
+      });
+    }
+
+    // Delete truck (cascade will handle related records)
+    await prismaService.prisma.truck.delete({
+      where: { id: id },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Truck deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting truck:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete truck',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
   getAllTrucks,
   getTruckById,
@@ -551,4 +840,7 @@ module.exports = {
   resolveAlert,
   bulkUpdateTruckStatus,
   getTruckLocationsByName,
+  createTruck,
+  updateTruck,
+  deleteTruck,
 };

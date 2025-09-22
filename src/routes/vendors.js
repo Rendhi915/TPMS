@@ -209,4 +209,188 @@ router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
   }
 });
 
+// POST /api/vendors - Create new vendor
+router.post('/', authMiddleware, async (req, res) => {
+  try {
+    const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
+
+    // Validate required fields
+    if (!nama_vendor) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required field: nama_vendor',
+      });
+    }
+
+    // Check if vendor with same name already exists
+    const existingVendor = await prisma.vendors.findFirst({
+      where: {
+        nama_vendor: nama_vendor,
+      },
+    });
+
+    if (existingVendor) {
+      return res.status(409).json({
+        success: false,
+        message: 'Vendor with this name already exists',
+      });
+    }
+
+    const vendor = await prisma.vendors.create({
+      data: {
+        nama_vendor,
+        address,
+        nomor_telepon,
+        email,
+        kontak_person,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      data: vendor,
+      message: 'Vendor created successfully',
+    });
+  } catch (error) {
+    console.error('Error creating vendor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create vendor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+});
+
+// PUT /api/vendors/:vendorId - Update vendor
+router.put('/:vendorId', authMiddleware, async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+    const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
+
+    // Check if vendor exists
+    const existingVendor = await prisma.vendors.findUnique({
+      where: { id: parseInt(vendorId) },
+    });
+
+    if (!existingVendor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor not found',
+      });
+    }
+
+    // Check if nama_vendor is being changed and if new name already exists
+    if (nama_vendor && nama_vendor !== existingVendor.nama_vendor) {
+      const duplicateVendor = await prisma.vendors.findFirst({
+        where: {
+          nama_vendor: nama_vendor,
+          id: { not: parseInt(vendorId) },
+        },
+      });
+
+      if (duplicateVendor) {
+        return res.status(409).json({
+          success: false,
+          message: 'Vendor with this name already exists',
+        });
+      }
+    }
+
+    const updateData = {};
+    if (nama_vendor !== undefined) updateData.nama_vendor = nama_vendor;
+    if (address !== undefined) updateData.address = address;
+    if (nomor_telepon !== undefined) updateData.nomor_telepon = nomor_telepon;
+    if (email !== undefined) updateData.email = email;
+    if (kontak_person !== undefined) updateData.kontak_person = kontak_person;
+    updateData.updated_at = new Date();
+
+    const vendor = await prisma.vendors.update({
+      where: { id: parseInt(vendorId) },
+      data: updateData,
+      include: {
+        trucks: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            model: true,
+          },
+        },
+        drivers: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: vendor,
+      message: 'Vendor updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating vendor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update vendor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+});
+
+// DELETE /api/vendors/:vendorId - Delete vendor (with validation)
+router.delete('/:vendorId', authMiddleware, async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    // Check if vendor exists
+    const vendor = await prisma.vendors.findUnique({
+      where: { id: parseInt(vendorId) },
+      include: {
+        trucks: true,
+        drivers: true,
+      },
+    });
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor not found',
+      });
+    }
+
+    // Check if vendor has associated trucks or drivers
+    if (vendor.trucks.length > 0 || vendor.drivers.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'Cannot delete vendor with associated trucks or drivers. Please reassign or remove them first.',
+        data: {
+          truck_count: vendor.trucks.length,
+          driver_count: vendor.drivers.length,
+        },
+      });
+    }
+
+    await prisma.vendors.delete({
+      where: { id: parseInt(vendorId) },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Vendor deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting vendor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete vendor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+});
+
 module.exports = router;
