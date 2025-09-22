@@ -6,7 +6,7 @@ const {
   validateDriverCreate,
   validateDriverUpdate,
   validateIntParam,
-  validatePagination
+  validatePagination,
 } = require('../middleware/crudValidation');
 
 const prisma = new PrismaClient();

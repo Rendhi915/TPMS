@@ -8,7 +8,7 @@ const {
   validateSensorCreate,
   validateSensorUpdate,
   validateUUIDParam,
-  validatePagination
+  validatePagination,
 } = require('../middleware/crudValidation');
 
 // ==========================================
@@ -19,7 +19,12 @@ const {
 router.get('/', authMiddleware, validatePagination, deviceController.getAllDevices);
 
 // GET /api/devices/:deviceId - Get specific device details
-router.get('/:deviceId', authMiddleware, validateUUIDParam('deviceId'), deviceController.getDeviceById);
+router.get(
+  '/:deviceId',
+  authMiddleware,
+  validateUUIDParam('deviceId'),
+  deviceController.getDeviceById
+);
 
 // POST /api/devices - Create new device
 router.post('/', authMiddleware, validateDeviceCreate, deviceController.createDevice);
@@ -28,7 +33,12 @@ router.post('/', authMiddleware, validateDeviceCreate, deviceController.createDe
 router.put('/:deviceId', authMiddleware, validateDeviceUpdate, deviceController.updateDevice);
 
 // DELETE /api/devices/:deviceId - Delete/deactivate device
-router.delete('/:deviceId', authMiddleware, validateUUIDParam('deviceId'), deviceController.deleteDevice);
+router.delete(
+  '/:deviceId',
+  authMiddleware,
+  validateUUIDParam('deviceId'),
+  deviceController.deleteDevice
+);
 
 // ==========================================
 // SENSOR ROUTES (nested under devices)
@@ -38,15 +48,30 @@ router.delete('/:deviceId', authMiddleware, validateUUIDParam('deviceId'), devic
 router.get('/sensors/all', authMiddleware, validatePagination, deviceController.getAllSensors);
 
 // GET /api/devices/sensors/:sensorId - Get specific sensor details
-router.get('/sensors/:sensorId', authMiddleware, validateUUIDParam('sensorId'), deviceController.getSensorById);
+router.get(
+  '/sensors/:sensorId',
+  authMiddleware,
+  validateUUIDParam('sensorId'),
+  deviceController.getSensorById
+);
 
 // POST /api/devices/sensors - Create new sensor
 router.post('/sensors', authMiddleware, validateSensorCreate, deviceController.createSensor);
 
 // PUT /api/devices/sensors/:sensorId - Update sensor
-router.put('/sensors/:sensorId', authMiddleware, validateSensorUpdate, deviceController.updateSensor);
+router.put(
+  '/sensors/:sensorId',
+  authMiddleware,
+  validateSensorUpdate,
+  deviceController.updateSensor
+);
 
 // DELETE /api/devices/sensors/:sensorId - Delete/deactivate sensor
-router.delete('/sensors/:sensorId', authMiddleware, validateUUIDParam('sensorId'), deviceController.deleteSensor);
+router.delete(
+  '/sensors/:sensorId',
+  authMiddleware,
+  validateUUIDParam('sensorId'),
+  deviceController.deleteSensor
+);
 
 module.exports = router;

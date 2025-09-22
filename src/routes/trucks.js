@@ -6,7 +6,7 @@ const {
   validateTruckCreate,
   validateTruckUpdate,
   validateUUIDParam,
-  validatePagination
+  validatePagination,
 } = require('../middleware/crudValidation');
 
 // GET /api/trucks - Get all trucks with filters

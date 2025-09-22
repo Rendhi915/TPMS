@@ -10,11 +10,11 @@ const handleValidationErrors = (req, res, next) => {
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
-      errors: errors.array().map(error => ({
+      errors: errors.array().map((error) => ({
         field: error.path,
         message: error.msg,
-        value: error.value
-      }))
+        value: error.value,
+      })),
     });
   }
   next();
@@ -36,7 +36,7 @@ const validateVendorCreate = [
     .withMessage('Address must not exceed 500 characters'),
   body('nomor_telepon')
     .optional()
-    .matches(/^[\d\s\-\+\(\)]+$/)
+    .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
@@ -50,13 +50,11 @@ const validateVendorCreate = [
     .optional()
     .isLength({ max: 255 })
     .withMessage('Contact person must not exceed 255 characters'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 const validateVendorUpdate = [
-  param('vendorId')
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
+  param('vendorId').isInt({ min: 1 }).withMessage('Invalid vendor ID'),
   body('nama_vendor')
     .optional()
     .isLength({ min: 2, max: 255 })
@@ -67,7 +65,7 @@ const validateVendorUpdate = [
     .withMessage('Address must not exceed 500 characters'),
   body('nomor_telepon')
     .optional()
-    .matches(/^[\d\s\-\+\(\)]+$/)
+    .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
@@ -81,7 +79,7 @@ const validateVendorUpdate = [
     .optional()
     .isLength({ max: 255 })
     .withMessage('Contact person must not exceed 255 characters'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 // ==========================================
@@ -114,21 +112,13 @@ const validateTruckCreate = [
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() + 1 })
     .withMessage('Invalid year'),
-  body('vendor_id')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
-  body('fleet_group_id')
-    .optional()
-    .isUUID()
-    .withMessage('Invalid fleet group ID'),
-  handleValidationErrors
+  body('vendor_id').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  body('fleet_group_id').optional().isUUID().withMessage('Invalid fleet group ID'),
+  handleValidationErrors,
 ];
 
 const validateTruckUpdate = [
-  param('id')
-    .isUUID()
-    .withMessage('Invalid truck ID'),
+  param('id').isUUID().withMessage('Invalid truck ID'),
   body('name')
     .optional()
     .isLength({ min: 1, max: 255 })
@@ -153,15 +143,9 @@ const validateTruckUpdate = [
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() + 1 })
     .withMessage('Invalid year'),
-  body('vendor_id')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
-  body('fleet_group_id')
-    .optional()
-    .isUUID()
-    .withMessage('Invalid fleet group ID'),
-  handleValidationErrors
+  body('vendor_id').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  body('fleet_group_id').optional().isUUID().withMessage('Invalid fleet group ID'),
+  handleValidationErrors,
 ];
 
 // ==========================================
@@ -185,19 +169,14 @@ const validateDeviceCreate = [
     .optional()
     .isLength({ max: 50 })
     .withMessage('SIM number must not exceed 50 characters')
-    .matches(/^[\d\s\-\+]+$/)
+    .matches(/^[\d\s\-+]+$/)
     .withMessage('Invalid SIM number format'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 const validateDeviceUpdate = [
-  param('deviceId')
-    .isUUID()
-    .withMessage('Invalid device ID'),
-  body('truck_id')
-    .optional()
-    .isUUID()
-    .withMessage('Invalid truck ID format'),
+  param('deviceId').isUUID().withMessage('Invalid device ID'),
+  body('truck_id').optional().isUUID().withMessage('Invalid truck ID format'),
   body('sn')
     .optional()
     .isLength({ min: 1, max: 255 })
@@ -208,9 +187,9 @@ const validateDeviceUpdate = [
     .optional()
     .isLength({ max: 50 })
     .withMessage('SIM number must not exceed 50 characters')
-    .matches(/^[\d\s\-\+]+$/)
+    .matches(/^[\d\s\-+]+$/)
     .withMessage('Invalid SIM number format'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 // ==========================================
@@ -240,17 +219,12 @@ const validateSensorCreate = [
     .withMessage('Serial number must not exceed 255 characters')
     .matches(/^[A-Za-z0-9\-_]+$/)
     .withMessage('Serial number can only contain letters, numbers, hyphens, and underscores'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 const validateSensorUpdate = [
-  param('sensorId')
-    .isUUID()
-    .withMessage('Invalid sensor ID'),
-  body('device_id')
-    .optional()
-    .isUUID()
-    .withMessage('Invalid device ID format'),
+  param('sensorId').isUUID().withMessage('Invalid sensor ID'),
+  body('device_id').optional().isUUID().withMessage('Invalid device ID format'),
   body('position_no')
     .optional()
     .isInt({ min: 1, max: 50 })
@@ -267,7 +241,7 @@ const validateSensorUpdate = [
     .withMessage('Serial number must not exceed 255 characters')
     .matches(/^[A-Za-z0-9\-_]+$/)
     .withMessage('Serial number can only contain letters, numbers, hyphens, and underscores'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 // ==========================================
@@ -302,7 +276,7 @@ const validateDriverCreate = [
     .withMessage('ID card number must be between 1 and 50 characters'),
   body('phone')
     .optional()
-    .matches(/^[\d\s\-\+\(\)]+$/)
+    .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
@@ -312,21 +286,16 @@ const validateDriverCreate = [
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('vendor_id')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
+  body('vendor_id').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])
     .withMessage('Status must be either "aktif" or "nonaktif"'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 const validateDriverUpdate = [
-  param('driverId')
-    .isInt({ min: 1 })
-    .withMessage('Invalid driver ID'),
+  param('driverId').isInt({ min: 1 }).withMessage('Invalid driver ID'),
   body('name')
     .optional()
     .isLength({ min: 2, max: 255 })
@@ -339,17 +308,14 @@ const validateDriverUpdate = [
     .optional()
     .isLength({ min: 1, max: 20 })
     .withMessage('License type must be between 1 and 20 characters'),
-  body('license_expiry')
-    .optional()
-    .isISO8601()
-    .withMessage('Invalid license expiry date format'),
+  body('license_expiry').optional().isISO8601().withMessage('Invalid license expiry date format'),
   body('id_card_number')
     .optional()
     .isLength({ min: 1, max: 50 })
     .withMessage('ID card number must be between 1 and 50 characters'),
   body('phone')
     .optional()
-    .matches(/^[\d\s\-\+\(\)]+$/)
+    .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
@@ -359,15 +325,12 @@ const validateDriverUpdate = [
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('vendor_id')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
+  body('vendor_id').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])
     .withMessage('Status must be either "aktif" or "nonaktif"'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 // ==========================================
@@ -375,29 +338,22 @@ const validateDriverUpdate = [
 // ==========================================
 
 const validateUUIDParam = (paramName) => [
-  param(paramName)
-    .isUUID()
-    .withMessage(`Invalid ${paramName}`),
-  handleValidationErrors
+  param(paramName).isUUID().withMessage(`Invalid ${paramName}`),
+  handleValidationErrors,
 ];
 
 const validateIntParam = (paramName) => [
-  param(paramName)
-    .isInt({ min: 1 })
-    .withMessage(`Invalid ${paramName}`),
-  handleValidationErrors
+  param(paramName).isInt({ min: 1 }).withMessage(`Invalid ${paramName}`),
+  handleValidationErrors,
 ];
 
 const validatePagination = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('Page must be a positive integer'),
+  query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
   query('limit')
     .optional()
     .isInt({ min: 1, max: 200 })
     .withMessage('Limit must be between 1 and 200'),
-  handleValidationErrors
+  handleValidationErrors,
 ];
 
 module.exports = {
@@ -414,5 +370,5 @@ module.exports = {
   validateDriverUpdate,
   validateUUIDParam,
   validateIntParam,
-  validatePagination
+  validatePagination,
 };
