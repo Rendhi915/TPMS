@@ -1,29 +1,29 @@
-const errorHandler = (error, req, res, next) => {
-  console.error('Error occurred:', error);
+const errorHandler = (err, req, res) => {
+  console.error('Error occurred:', err);
 
   // Prisma errors
-  if (error.code && error.code.startsWith('P')) {
-    return handlePrismaError(error, res);
+  if (err.code && err.code.startsWith('P')) {
+    return handlePrismaError(err, res);
   }
 
   // Validation errors
-  if (error.name === 'ValidationError') {
+  if (err.name === 'ValidationError') {
     return res.status(400).json({
       success: false,
       message: 'Validation error',
-      errors: Object.values(error.errors).map((err) => err.message),
+      errors: Object.values(err.errors).map((error) => error.message),
     });
   }
 
   // JWT errors
-  if (error.name === 'JsonWebTokenError') {
+  if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       success: false,
       message: 'Invalid token',
     });
   }
 
-  if (error.name === 'TokenExpiredError') {
+  if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
       success: false,
       message: 'Token expired',
@@ -31,8 +31,8 @@ const errorHandler = (error, req, res, next) => {
   }
 
   // Default error
-  const statusCode = error.statusCode || error.status || 500;
-  const message = error.message || 'Internal server error';
+  const statusCode = err.statusCode || err.status || 500;
+  const message = err.message || 'Internal server error';
 
   res.status(statusCode).json({
     success: false,
@@ -40,8 +40,8 @@ const errorHandler = (error, req, res, next) => {
     error:
       process.env.NODE_ENV === 'development'
         ? {
-            stack: error.stack,
-            details: error,
+            stack: err.stack,
+            details: err,
           }
         : undefined,
   });

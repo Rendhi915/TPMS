@@ -1,5 +1,5 @@
 const { PrismaClient } = require('../prisma/generated/client');
-const { faker } = require('@faker-js/faker');
+// const { faker } = require('@faker-js/faker'); // Unused import
 
 const prisma = new PrismaClient();
 
@@ -63,8 +63,6 @@ function generateRoutePoints(area, pointCount) {
   points.push(startPoint);
 
   // Generate intermediate waypoints in a logical sequence
-  let currentPoint = { ...startPoint };
-
   for (let i = 1; i < pointCount - 1; i++) {
     // Create a path that moves generally in one direction with some variation
     const angle = (i / pointCount) * 2 * Math.PI + randomFloat(-0.5, 0.5);
@@ -76,7 +74,7 @@ function generateRoutePoints(area, pointCount) {
     };
 
     points.push(nextPoint);
-    currentPoint = nextPoint;
+    // currentPoint = nextPoint; // Unused assignment
   }
 
   // End point (return to depot or nearby location)

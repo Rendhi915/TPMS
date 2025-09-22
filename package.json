@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "fleet-management-backend",
   "version": "2.0.0",
   "description": "Fleet Management System Backend API with Prisma integration for 1000 mining trucks",

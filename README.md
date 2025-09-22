@@ -49,12 +49,3 @@ server.listen(PORT, HOST, () => {
 });
 
 module.exports = server; -->
-
-# Menjalankan dengan parameter default
-node scripts/history-seeder.js --days 7 --delete true
-
-# Menjalankan dengan limit truck tertentu
-node scripts/history-seeder.js --days 7 --limit 10 --delete true
-
-# Menjalankan tanpa limit (semua truck)
-node scripts/history-seeder.js --days 7 --delete true

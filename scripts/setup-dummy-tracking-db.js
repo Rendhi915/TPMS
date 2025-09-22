@@ -11,6 +11,50 @@ const path = require('path');
 const { Client } = require('pg');
 require('dotenv').config();
 
+// Split SQL into statements while respecting $$ ... $$ (plpgsql) and '...'
+function splitSql(sql) {
+  const stmts = [];
+  let buf = '';
+  let inDollar = false;
+  let inSingle = false;
+  for (let i = 0; i < sql.length; i++) {
+    const ch = sql[i];
+    const next2 = sql.slice(i, i + 2);
+
+    // toggle dollar-quote on $$
+    if (!inSingle && next2 === '$$') {
+      inDollar = !inDollar;
+      buf += next2;
+      i++;
+      continue;
+    }
+
+    // toggle single-quote (ignore escaped '')
+    if (!inDollar && ch === "'") {
+      if (inSingle && sql[i + 1] === "'") {
+        // escaped single quote inside string
+        buf += "''";
+        i++;
+        continue;
+      }
+      inSingle = !inSingle;
+      buf += ch;
+      continue;
+    }
+
+    if (!inDollar && !inSingle && ch === ';') {
+      const stmt = buf.trim();
+      if (stmt.length) stmts.push(stmt);
+      buf = '';
+    } else {
+      buf += ch;
+    }
+  }
+  const tail = buf.trim();
+  if (tail.length) stmts.push(tail);
+  return stmts;
+}
+
 (async () => {
   const DB_HOST = process.env.DB_HOST || 'connectis.my.id';
   const DB_PORT = parseInt(process.env.DB_PORT || '5432', 10);
@@ -97,50 +141,6 @@ require('dotenv').config();
       throw new Error(`Schema file not found: ${schemaFile}`);
     }
     const rawSql = fs.readFileSync(schemaFile, 'utf8');
-
-    // Split SQL into statements while respecting $$ ... $$ (plpgsql) and '...'
-    function splitSql(sql) {
-      const stmts = [];
-      let buf = '';
-      let inDollar = false;
-      let inSingle = false;
-      for (let i = 0; i < sql.length; i++) {
-        const ch = sql[i];
-        const next2 = sql.slice(i, i + 2);
-
-        // toggle dollar-quote on $$
-        if (!inSingle && next2 === '$$') {
-          inDollar = !inDollar;
-          buf += next2;
-          i++;
-          continue;
-        }
-
-        // toggle single-quote (ignore escaped '')
-        if (!inDollar && ch === "'") {
-          if (inSingle && sql[i + 1] === "'") {
-            // escaped single quote inside string
-            buf += "''";
-            i++;
-            continue;
-          }
-          inSingle = !inSingle;
-          buf += ch;
-          continue;
-        }
-
-        if (!inDollar && !inSingle && ch === ';') {
-          const stmt = buf.trim();
-          if (stmt.length) stmts.push(stmt);
-          buf = '';
-        } else {
-          buf += ch;
-        }
-      }
-      const tail = buf.trim();
-      if (tail.length) stmts.push(tail);
-      return stmts;
-    }
 
     const statements = splitSql(rawSql);
     log(`Applying SQL schema from truck_tracking.md ... (${statements.length} statements)`);

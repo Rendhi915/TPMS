@@ -108,7 +108,7 @@ const testAuthentication = async () => {
 
 const testInvalidAuthentication = async () => {
   try {
-    const response = await axios.post(`${API_BASE}/auth/login`, {
+    await axios.post(`${API_BASE}/auth/login`, {
       username: 'invalid',
       password: 'invalid',
     });
@@ -401,15 +401,13 @@ const testUpdateTruckStatus = async () => {
     const newStatus = originalStatus === 'active' ? 'maintenance' : 'active';
 
     // Update truck status
-    const response = await axios.put(
-      `${API_BASE}/trucks/${truckId}/status`,
-      {
+    const response = await fetch(`${API_BASE}/trucks/${truckId}/status`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${authToken}` },
+      body: JSON.stringify({
         status: newStatus,
-      },
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-      }
-    );
+      }),
+    });
 
     if (response.status === 200 && response.data.success) {
       const updatedTruck = response.data.data;
@@ -447,7 +445,7 @@ const testUpdateTruckStatus = async () => {
 
 const testUnauthorizedAccess = async () => {
   try {
-    const response = await axios.get(`${API_BASE}/trucks`);
+    await axios.get(`${API_BASE}/trucks`);
 
     // Should fail, so if we get here it's wrong
     return { success: false, error: 'Should have failed without auth token' };
@@ -671,7 +669,7 @@ const runLoadTest = async (concurrentUsers = 10, duration = 30) => {
   let successfulRequests = 0;
   let failedRequests = 0;
 
-  const workers = Array.from({ length: concurrentUsers }, async (_, workerId) => {
+  const workers = Array.from({ length: concurrentUsers }).map(async () => {
     while (Date.now() < endTime) {
       try {
         totalRequests++;

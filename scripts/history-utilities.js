@@ -557,10 +557,11 @@ if (require.main === module) {
     case 'events':
       utilities.generateSpecialEvents().catch(console.error);
       break;
-    case 'realtime':
+    case 'realtime': {
       const duration = parseInt(process.argv[3]) || 60;
       utilities.generateRealtimeSimulation(duration).catch(console.error);
       break;
+    }
     default:
       console.log(`
 History Utilities Commands:

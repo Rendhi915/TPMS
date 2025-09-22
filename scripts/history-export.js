@@ -123,7 +123,8 @@ class HistoryExporter {
     // Start JSON array
     await fs.writeFile(filepath, '[\n');
 
-    while (true) {
+    let hasMoreData = true;
+    while (hasMoreData) {
       const batch = await prisma.locationHistory.findMany({
         where,
         skip,
@@ -145,7 +146,10 @@ class HistoryExporter {
         orderBy: { recordedAt: 'asc' },
       });
 
-      if (batch.length === 0) break;
+      if (batch.length === 0) {
+        hasMoreData = false;
+        break;
+      }
 
       const jsonData = batch.map((record) => ({
         id: record.id,
@@ -194,26 +198,30 @@ class HistoryExporter {
     console.log(`🔄 Exporting to CSV: ${filename}`);
 
     // Write CSV header
-    const headers = [
-      'id',
-      'truck_id',
-      'truck_number',
-      'truck_status',
-      'truck_model',
-      'latitude',
-      'longitude',
-      'speed',
-      'heading',
-      'fuel_percentage',
-      'recorded_at',
-    ];
-    await fs.writeFile(filepath, headers.join(',') + '\n');
+    // Remove unused headers variable - using inline array instead
+    await fs.writeFile(
+      filepath,
+      [
+        'id',
+        'truck_id',
+        'truck_number',
+        'truck_status',
+        'truck_model',
+        'latitude',
+        'longitude',
+        'speed',
+        'heading',
+        'fuel_percentage',
+        'recorded_at',
+      ].join(',') + '\n'
+    );
 
     const where = this.buildWhereClause();
     let skip = 0;
     let totalExported = 0;
 
-    while (true) {
+    let hasMoreData = true;
+    while (hasMoreData) {
       const batch = await prisma.locationHistory.findMany({
         where,
         skip,
@@ -230,7 +238,10 @@ class HistoryExporter {
         orderBy: { recordedAt: 'asc' },
       });
 
-      if (batch.length === 0) break;
+      if (batch.length === 0) {
+        hasMoreData = false;
+        break;
+      }
 
       const csvRows = batch.map((record) =>
         [
@@ -290,7 +301,8 @@ SET foreign_key_checks = 0;
     let skip = 0;
     let totalExported = 0;
 
-    while (true) {
+    let hasMoreData = true;
+    while (hasMoreData) {
       const batch = await prisma.locationHistory.findMany({
         where,
         skip,
@@ -298,7 +310,10 @@ SET foreign_key_checks = 0;
         orderBy: { recordedAt: 'asc' },
       });
 
-      if (batch.length === 0) break;
+      if (batch.length === 0) {
+        hasMoreData = false;
+        break;
+      }
 
       const sqlInserts = batch.map(
         (record) =>
@@ -342,7 +357,8 @@ SET foreign_key_checks = 0;
     let skip = 0;
     let totalExported = 0;
 
-    while (true) {
+    let hasMoreData = true;
+    while (hasMoreData) {
       const batch = await prisma.locationHistory.findMany({
         where,
         skip,
@@ -359,7 +375,10 @@ SET foreign_key_checks = 0;
         orderBy: { recordedAt: 'asc' },
       });
 
-      if (batch.length === 0) break;
+      if (batch.length === 0) {
+        hasMoreData = false;
+        break;
+      }
 
       const features = batch.map((record) => ({
         type: 'Feature',
@@ -514,7 +533,6 @@ class HistoryImporter {
 
     const data = await fs.readFile(this.options.filepath, 'utf8');
     const lines = data.split('\n').filter((line) => line.trim());
-    const headers = lines[0].split(',');
     const records = lines.slice(1);
 
     console.log(`Found ${records.length.toLocaleString()} records to import`);

@@ -78,6 +78,25 @@ async function seedTireEventsForTruck(truck, deviceId, wheelCount, readingsPerTi
   }
 }
 
+async function worker(workerId, trucks, indexRef) {
+  while (indexRef.value < trucks.length) {
+    const i = indexRef.value++;
+    const truck = trucks[i];
+    const wheelCount = getWheelCountByCode(truck.code || '0006');
+    try {
+      const device = await ensureDeviceForTruck(truck);
+      await seedTireEventsForTruck(truck, device.id, wheelCount, 2);
+      if ((i + 1) % 50 === 0 || i === trucks.length - 1) {
+        console.log(
+          `Worker ${workerId}: Seeded ${i + 1}/${trucks.length} (truck ${truck.code}, wheels=${wheelCount})`
+        );
+      }
+    } catch (e) {
+      console.error(`Worker ${workerId}: Failed seeding for truck ${truck.code}:`, e.message);
+    }
+  }
+}
+
 async function main() {
   try {
     console.log('🔧 Seeding tire pressure dummy data for trucks 0001-1000...');
@@ -96,29 +115,12 @@ async function main() {
 
     // Limit concurrency to avoid DB overload
     const concurrency = 10;
-    let index = 0;
-
-    async function worker(workerId) {
-      while (index < trucks.length) {
-        const i = index++;
-        const truck = trucks[i];
-        const wheelCount = getWheelCountByCode(truck.code || '0006');
-        try {
-          const device = await ensureDeviceForTruck(truck);
-          await seedTireEventsForTruck(truck, device.id, wheelCount, 2);
-          if ((i + 1) % 50 === 0 || i === trucks.length - 1) {
-            console.log(
-              `Worker ${workerId}: Seeded ${i + 1}/${trucks.length} (truck ${truck.code}, wheels=${wheelCount})`
-            );
-          }
-        } catch (e) {
-          console.error(`Worker ${workerId}: Failed seeding for truck ${truck.code}:`, e.message);
-        }
-      }
-    }
+    const indexRef = { value: 0 };
 
     const workers = [];
-    for (let w = 0; w < concurrency; w++) workers.push(worker(w + 1));
+    for (let w = 0; w < concurrency; w++) {
+      workers.push(worker(w + 1, trucks, indexRef));
+    }
     await Promise.all(workers);
 
     console.log('✅ Completed seeding tire pressure events for 1000 trucks.');
