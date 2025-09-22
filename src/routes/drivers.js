@@ -2,11 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('../../prisma/generated/client');
 const authMiddleware = require('../middleware/auth');
+const {
+  validateDriverCreate,
+  validateDriverUpdate,
+  validateIntParam,
+  validatePagination
+} = require('../middleware/crudValidation');
 
 const prisma = new PrismaClient();
 
-// GET /api/drivers - Get all drivers
-router.get('/', authMiddleware, async (req, res) => {
+// GET /api/drivers - Get all drivers with filters and pagination
+router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
     const { page = 1, limit = 50, status, vendor_id } = req.query;
     const skip = (page - 1) * limit;
@@ -63,7 +69,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // GET /api/drivers/:driverId - Get specific driver details
-router.get('/:driverId', authMiddleware, async (req, res) => {
+router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
     const { driverId } = req.params;
 
@@ -106,7 +112,7 @@ router.get('/:driverId', authMiddleware, async (req, res) => {
 });
 
 // POST /api/drivers - Create new driver
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
   try {
     const {
       name,
@@ -169,7 +175,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // PUT /api/drivers/:driverId - Update driver
-router.put('/:driverId', authMiddleware, async (req, res) => {
+router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) => {
   try {
     const { driverId } = req.params;
     const {
@@ -233,8 +239,8 @@ router.put('/:driverId', authMiddleware, async (req, res) => {
   }
 });
 
-// DELETE /api/drivers/:driverId - Delete driver (soft delete by setting status to nonaktif)
-router.delete('/:driverId', authMiddleware, async (req, res) => {
+// DELETE /api/drivers/:driverId - Soft delete driver (set status to nonaktif)
+router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
     const { driverId } = req.params;
 

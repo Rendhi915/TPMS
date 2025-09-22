@@ -2,11 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('../../prisma/generated/client');
 const authMiddleware = require('../middleware/auth');
+const {
+  validateVendorCreate,
+  validateVendorUpdate,
+  validateIntParam,
+  validatePagination
+} = require('../middleware/crudValidation');
 
 const prisma = new PrismaClient();
 
 // GET /api/vendors - Get all vendors
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
     const vendors = await prisma.vendors.findMany({
       include: {
@@ -62,7 +68,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // GET /api/vendors/:vendorId - Get specific vendor details
-router.get('/:vendorId', authMiddleware, async (req, res) => {
+router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (req, res) => {
   try {
     const { vendorId } = req.params;
 
@@ -134,7 +140,7 @@ router.get('/:vendorId', authMiddleware, async (req, res) => {
 });
 
 // GET /api/vendors/:vendorId/trucks - Get trucks for specific vendor
-router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
+router.get('/:vendorId/trucks', authMiddleware, validateIntParam('vendorId'), validatePagination, async (req, res) => {
   try {
     const { vendorId } = req.params;
     const { page = 1, limit = 50 } = req.query;
@@ -210,7 +216,7 @@ router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
 });
 
 // POST /api/vendors - Create new vendor
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
   try {
     const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
 
@@ -262,7 +268,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // PUT /api/vendors/:vendorId - Update vendor
-router.put('/:vendorId', authMiddleware, async (req, res) => {
+router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
     const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
@@ -342,7 +348,7 @@ router.put('/:vendorId', authMiddleware, async (req, res) => {
 });
 
 // DELETE /api/vendors/:vendorId - Delete vendor (with validation)
-router.delete('/:vendorId', authMiddleware, async (req, res) => {
+router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (req, res) => {
   try {
     const { vendorId } = req.params;
 

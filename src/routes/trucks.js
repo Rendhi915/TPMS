@@ -2,9 +2,15 @@ const express = require('express');
 const router = express.Router();
 const truckController = require('../controllers/truckController');
 const authMiddleware = require('../middleware/auth');
+const {
+  validateTruckCreate,
+  validateTruckUpdate,
+  validateUUIDParam,
+  validatePagination
+} = require('../middleware/crudValidation');
 
 // GET /api/trucks - Get all trucks with filters
-router.get('/', authMiddleware, truckController.getAllTrucks);
+router.get('/', authMiddleware, validatePagination, truckController.getAllTrucks);
 
 // GET /api/trucks/realtime/locations - Get real-time truck locations (GeoJSON)
 router.get('/realtime/locations', authMiddleware, truckController.getRealtimeLocations);
@@ -35,13 +41,13 @@ router.put('/:id/alerts/:alertId/resolve', authMiddleware, truckController.resol
 router.put('/bulk/status', authMiddleware, truckController.bulkUpdateTruckStatus);
 
 // POST /api/trucks - Create new truck (protected)
-router.post('/', authMiddleware, truckController.createTruck);
+router.post('/', authMiddleware, validateTruckCreate, truckController.createTruck);
 
 // PUT /api/trucks/:id - Update truck (protected)
-router.put('/:id', authMiddleware, truckController.updateTruck);
+router.put('/:id', authMiddleware, validateTruckUpdate, truckController.updateTruck);
 
 // DELETE /api/trucks/:id - Delete truck (protected)
-router.delete('/:id', authMiddleware, truckController.deleteTruck);
+router.delete('/:id', authMiddleware, validateUUIDParam('id'), truckController.deleteTruck);
 
 // Compatibility routes moved to src/routes/history.js and mounted in routes/index.js
 
