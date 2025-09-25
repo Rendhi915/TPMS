@@ -7,7 +7,7 @@ const prismaService = require('../services/simplePrismaService');
 const getAllTrucks = async (req, res) => {
   try {
     console.log('🚛 getAllTrucks called with query:', req.query);
-    
+
     const filters = {
       status: req.query.status,
       page: parseInt(req.query.page) || 1,

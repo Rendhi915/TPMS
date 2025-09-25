@@ -43,7 +43,7 @@ class SimplePrismaService {
 
   async getAllTrucks(filters = {}) {
     console.log('🔍 SimplePrismaService.getAllTrucks called with filters:', filters);
-    
+
     const { status, page = 1, limit = 50, search, vendor, vendorId } = filters;
 
     const offset = (page - 1) * limit;
@@ -68,7 +68,7 @@ class SimplePrismaService {
 
     try {
       console.log('📊 Fetching trucks from database...');
-      
+
       // Get trucks with basic relations and latest sensor data
       const trucks = await this.prisma.truck.findMany({
         where,
@@ -332,26 +332,26 @@ class SimplePrismaService {
         FROM truck_status_event
         ORDER BY truck_id, changed_at DESC
       `;
-      
+
       // Count trucks by their latest status
       const statusCounts = latestStatusEvents.reduce((acc, item) => {
         const status = item.status || 'unknown';
         acc[status] = (acc[status] || 0) + 1;
         return acc;
       }, {});
-      
+
       console.log('✅ Trucks by status calculated', statusCounts);
 
       // Get low tire pressure count (tires with pressure < 1000 kPa)
       const lowTireCount = await this.prisma.tire_pressure_event.count({
         where: {
           pressure_kpa: {
-            lt: 1000
+            lt: 1000,
           },
           changed_at: {
-            gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
-          }
-        }
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+          },
+        },
       });
 
       // Get average fuel level from recent events
@@ -360,10 +360,9 @@ class SimplePrismaService {
         FROM fuel_level_event
         WHERE changed_at >= NOW() - INTERVAL '24 hours'
       `;
-      
-      const avgFuel = fuelStats.length > 0 && fuelStats[0].avg_fuel 
-        ? parseFloat(fuelStats[0].avg_fuel) 
-        : 0;
+
+      const avgFuel =
+        fuelStats.length > 0 && fuelStats[0].avg_fuel ? parseFloat(fuelStats[0].avg_fuel) : 0;
 
       const result = {
         totalTrucks,

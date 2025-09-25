@@ -310,7 +310,7 @@ class PrismaService {
         FROM truck_status_event
         ORDER BY truck_id, changed_at DESC
       `;
-      
+
       // Count trucks by their latest status
       const statusCounts = latestStatusEvents.reduce((acc, item) => {
         const status = item.status || 'unknown';
@@ -424,14 +424,14 @@ class PrismaService {
     try {
       // Get total truck count
       const totalTrucks = await this.prisma.truck.count();
-      
+
       // Get status breakdown from truck_status_event table
       const latestStatusEvents = await this.prisma.$queryRaw`
         SELECT DISTINCT ON (truck_id) truck_id, status
         FROM truck_status_event
         ORDER BY truck_id, changed_at DESC
       `;
-      
+
       // Count trucks by their latest status
       const statusCounts = latestStatusEvents.reduce((acc, item) => {
         const status = item.status || 'unknown';
