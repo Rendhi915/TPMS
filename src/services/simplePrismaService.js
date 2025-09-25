@@ -42,6 +42,8 @@ class SimplePrismaService {
   // ==========================================
 
   async getAllTrucks(filters = {}) {
+    console.log('🔍 SimplePrismaService.getAllTrucks called with filters:', filters);
+    
     const { status, page = 1, limit = 50, search, vendor, vendorId } = filters;
 
     const offset = (page - 1) * limit;
@@ -62,12 +64,11 @@ class SimplePrismaService {
       where.fleet_group = { name: { equals: vendor } };
     }
 
-    // Status filter if provided
-    if (status) {
-      where.status = status;
-    }
+    console.log('📋 Query where clause:', JSON.stringify(where, null, 2));
 
     try {
+      console.log('📊 Fetching trucks from database...');
+      
       // Get trucks with basic relations and latest sensor data
       const trucks = await this.prisma.truck.findMany({
         where,
@@ -112,14 +113,24 @@ class SimplePrismaService {
         take: parseInt(limit),
       });
 
+      console.log(`✅ Found ${trucks.length} trucks in database`);
+
       // Get total count for pagination
+      console.log('📊 Getting total count...');
       const totalCount = await this.prisma.truck.count({ where });
+      console.log(`📊 Total trucks count: ${totalCount}`);
 
       // Get basic summary statistics
+      console.log('📊 Getting summary statistics...');
       const summary = await this.getTruckSummaryStats();
+      console.log('✅ Summary statistics retrieved');
 
-      return {
-        trucks: trucks.map((t) => this.formatTruckResponse(t)),
+      console.log('🔄 Formatting truck responses...');
+      const formattedTrucks = trucks.map((t) => this.formatTruckResponse(t));
+      console.log(`✅ Formatted ${formattedTrucks.length} truck responses`);
+
+      const result = {
+        trucks: formattedTrucks,
         pagination: {
           current_page: parseInt(page),
           per_page: parseInt(limit),
@@ -128,8 +139,12 @@ class SimplePrismaService {
         },
         summary,
       };
+
+      console.log('✅ getAllTrucks completed successfully');
+      return result;
     } catch (error) {
-      console.error('Error in getAllTrucks:', error);
+      console.error('❌ Error in SimplePrismaService.getAllTrucks:', error);
+      console.error('❌ Error stack:', error.stack);
       throw error;
     }
   }
@@ -311,16 +326,58 @@ class SimplePrismaService {
       });
       console.log('✅ Total alerts:', totalAlerts);
 
-      // Count trucks by status instead of maintenance orders
-      const trucksByStatus = await this.prisma.truck.groupBy({
-        by: ['status'],
-        _count: {
-          status: true,
-        },
-      });
-      console.log('✅ Trucks by status calculated', trucksByStatus);
+      // Get trucks by status from truck_status_event table (truck table doesn't have status field)
+      const latestStatusEvents = await this.prisma.$queryRaw`
+        SELECT DISTINCT ON (truck_id) truck_id, status
+        FROM truck_status_event
+        ORDER BY truck_id, changed_at DESC
+      `;
+      
+      // Count trucks by their latest status
+      const statusCounts = latestStatusEvents.reduce((acc, item) => {
+        const status = item.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+      
+      console.log('✅ Trucks by status calculated', statusCounts);
 
-      // ... (rest of the code remains the same)
+      // Get low tire pressure count (tires with pressure < 1000 kPa)
+      const lowTireCount = await this.prisma.tire_pressure_event.count({
+        where: {
+          pressure_kpa: {
+            lt: 1000
+          },
+          changed_at: {
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
+          }
+        }
+      });
+
+      // Get average fuel level from recent events
+      const fuelStats = await this.prisma.$queryRaw`
+        SELECT AVG(fuel_percent) as avg_fuel
+        FROM fuel_level_event
+        WHERE changed_at >= NOW() - INTERVAL '24 hours'
+      `;
+      
+      const avgFuel = fuelStats.length > 0 && fuelStats[0].avg_fuel 
+        ? parseFloat(fuelStats[0].avg_fuel) 
+        : 0;
+
+      const result = {
+        totalTrucks,
+        activeTrucks: statusCounts.active || 0,
+        inactiveTrucks: statusCounts.inactive || 0,
+        maintenanceTrucks: statusCounts.maintenance || 0,
+        averageFuel: avgFuel,
+        totalPayload: 0, // Not available in current schema
+        alertsCount: totalAlerts,
+        lowTirePressureCount: lowTireCount,
+      };
+
+      console.log('✅ Dashboard stats completed:', result);
+      return result;
     } catch (error) {
       console.error('Error in getDashboardStats:', error);
       throw error;
@@ -331,16 +388,70 @@ class SimplePrismaService {
   // UTILITY METHODS
   // ==========================================
 
-  async getTrucksByStatus() {
+  async getTruckSummaryStats() {
     try {
-      const trucksByStatus = await this.prisma.truck.groupBy({
-        by: ['status'],
-        _count: {
-          status: true,
+      const totalTrucks = await this.prisma.truck.count();
+
+      // Since truck table doesn't have status field, get status from truck_status_event
+      const latestStatusEvents = await this.prisma.$queryRaw`
+        SELECT DISTINCT ON (truck_id) truck_id, status
+        FROM truck_status_event
+        ORDER BY truck_id, changed_at DESC
+      `;
+
+      // Count trucks by their latest status
+      const statusCounts = latestStatusEvents.reduce((acc, item) => {
+        const status = item.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+
+      const totalAlerts = await this.prisma.alert_event.count({
+        where: {
+          acknowledged: false,
         },
       });
 
-      return trucksByStatus;
+      return {
+        total: totalTrucks,
+        active: statusCounts.active || 0,
+        inactive: statusCounts.inactive || 0,
+        maintenance: statusCounts.maintenance || 0,
+        alerts: totalAlerts,
+      };
+    } catch (error) {
+      console.error('Error in getTruckSummaryStats:', error);
+      // Return default values if query fails
+      return {
+        total: 0,
+        active: 0,
+        inactive: 0,
+        maintenance: 0,
+        alerts: 0,
+      };
+    }
+  }
+
+  async getTrucksByStatus() {
+    try {
+      // Since truck table doesn't have status field, get status from truck_status_event
+      const latestStatusEvents = await this.prisma.$queryRaw`
+        SELECT DISTINCT ON (truck_id) truck_id, status
+        FROM truck_status_event
+        ORDER BY truck_id, changed_at DESC
+      `;
+
+      // Group by status
+      const statusGroups = latestStatusEvents.reduce((acc, item) => {
+        const status = item.status || 'unknown';
+        if (!acc[status]) {
+          acc[status] = { status, _count: { status: 0 } };
+        }
+        acc[status]._count.status++;
+        return acc;
+      }, {});
+
+      return Object.values(statusGroups);
     } catch (error) {
       console.error('Error in getTrucksByStatus:', error);
       throw error;
