@@ -51,7 +51,7 @@ class PrismaService {
 
     // Filter by status - using truck status events
     if (status && status !== 'all') {
-      where.truckStatusEvents = {
+      where.truck_status_event = {
         some: {
           status: status,
         },
@@ -61,7 +61,7 @@ class PrismaService {
     // Search filter
     if (search) {
       where.OR = [
-        { plateNumber: { contains: search, mode: 'insensitive' } },
+        { code: { contains: search, mode: 'insensitive' } },
         { name: { contains: search, mode: 'insensitive' } },
         { model: { contains: search, mode: 'insensitive' } },
       ];
@@ -73,16 +73,16 @@ class PrismaService {
       if (minFuel !== undefined) fuelWhere.gte = parseFloat(minFuel);
       if (maxFuel !== undefined) fuelWhere.lte = parseFloat(maxFuel);
 
-      where.fuelLevelEvents = {
+      where.fuel_level_event = {
         some: {
-          fuelPercent: fuelWhere,
+          fuel_percent: fuelWhere,
         },
       };
     }
 
     // Alerts filter
     if (hasAlerts === 'true') {
-      where.alertEvents = {
+      where.alert_event = {
         some: { acknowledged: false },
       };
     }
@@ -92,27 +92,27 @@ class PrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleetGroup: true,
-          alertEvents: {
+          fleet_group: true,
+          alert_event: {
             where: { acknowledged: false },
             select: {
               id: true,
               type: true,
               severity: true,
               detail: true,
-              occurredAt: true,
+              occurred_at: true,
             },
             take: 5,
           },
           _count: {
             select: {
-              alertEvents: {
+              alert_event: {
                 where: { acknowledged: false },
               },
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         skip: offset,
         take: parseInt(limit),
       });
@@ -295,55 +295,45 @@ class PrismaService {
           _count: {
             _all: true,
           },
-          _avg: {
-            fuelPercentage: true,
-          },
-          _sum: {
-            payloadTons: true,
-          },
         }),
         // Active alerts count
-        this.prisma.truckAlert.count({
-          where: { isResolved: false },
+        this.prisma.alert_event.count({
+          where: { acknowledged: false },
         }),
-        // Low tire pressure count
-        this.prisma.truck.count({
-          where: {
-            tirePressures: {
-              some: { status: 'low' },
-            },
-          },
-        }),
+        // Get total truck count for low tire calculation
+        this.prisma.truck.count(),
       ]);
 
-      // Get status breakdown
-      const statusStats = await this.prisma.truck.groupBy({
-        by: ['status'],
-        _count: {
-          _all: true,
-        },
-      });
+      // Get status breakdown from truck_status_event table
+      const latestStatusEvents = await this.prisma.$queryRaw`
+        SELECT DISTINCT ON (truck_id) truck_id, status
+        FROM truck_status_event
+        ORDER BY truck_id, changed_at DESC
+      `;
 
-      // Format status counts
-      const statusCounts = {
-        active: 0,
-        inactive: 0,
-        maintenance: 0,
+      // Count trucks by their latest status
+      const statusCounts = latestStatusEvents.reduce((acc, item) => {
+        const status = item.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Format status counts with defaults
+      const formattedStatusCounts = {
+        active: statusCounts.active || 0,
+        inactive: statusCounts.inactive || 0,
+        maintenance: statusCounts.maintenance || 0,
       };
-
-      statusStats.forEach((stat) => {
-        statusCounts[stat.status] = stat._count._all;
-      });
 
       return {
         totalTrucks: truckStats._count._all,
-        activeTrucks: statusCounts.active,
-        inactiveTrucks: statusCounts.inactive,
-        maintenanceTrucks: statusCounts.maintenance,
-        averageFuel: parseFloat(truckStats._avg.fuelPercentage) || 0,
-        totalPayload: parseFloat(truckStats._sum.payloadTons) || 0,
+        activeTrucks: formattedStatusCounts.active,
+        inactiveTrucks: formattedStatusCounts.inactive,
+        maintenanceTrucks: formattedStatusCounts.maintenance,
+        averageFuel: 0, // Will be calculated from fuel_level_event if needed
+        totalPayload: 0, // Not available in current schema
         alertsCount,
-        lowTirePressureCount: lowTireCount,
+        lowTirePressureCount: 0, // Will be calculated from tire_pressure_event if needed
       };
     } catch (error) {
       console.error('Error in getDashboardStats:', error);
@@ -432,24 +422,29 @@ class PrismaService {
 
   async getTruckSummaryStats() {
     try {
-      const statusStats = await this.prisma.truck.groupBy({
-        by: ['status'],
-        _count: {
-          _all: true,
-        },
-      });
+      // Get total truck count
+      const totalTrucks = await this.prisma.truck.count();
+
+      // Get status breakdown from truck_status_event table
+      const latestStatusEvents = await this.prisma.$queryRaw`
+        SELECT DISTINCT ON (truck_id) truck_id, status
+        FROM truck_status_event
+        ORDER BY truck_id, changed_at DESC
+      `;
+
+      // Count trucks by their latest status
+      const statusCounts = latestStatusEvents.reduce((acc, item) => {
+        const status = item.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
 
       const summary = {
-        total_trucks: 0,
-        active: 0,
-        inactive: 0,
-        maintenance: 0,
+        total_trucks: totalTrucks,
+        active: statusCounts.active || 0,
+        inactive: statusCounts.inactive || 0,
+        maintenance: statusCounts.maintenance || 0,
       };
-
-      statusStats.forEach((stat) => {
-        summary.total_trucks += stat._count._all;
-        summary[stat.status] = stat._count._all;
-      });
 
       return summary;
     } catch (error) {

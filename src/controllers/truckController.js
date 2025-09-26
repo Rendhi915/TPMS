@@ -6,6 +6,8 @@ const prismaService = require('../services/simplePrismaService');
 
 const getAllTrucks = async (req, res) => {
   try {
+    console.log('🚛 getAllTrucks called with query:', req.query);
+
     const filters = {
       status: req.query.status,
       page: parseInt(req.query.page) || 1,
@@ -18,12 +20,37 @@ const getAllTrucks = async (req, res) => {
       vendorId: req.query.vendorId,
     };
 
+    console.log('🔍 Filters applied:', filters);
+
     // Validate limit (prevent excessive queries)
     if (filters.limit > 200) {
       filters.limit = 200;
     }
 
+    console.log('📊 Calling prismaService.getAllTrucks...');
     const result = await prismaService.getAllTrucks(filters);
+    console.log('✅ prismaService.getAllTrucks completed successfully');
+
+    // Add null checks for result
+    if (!result) {
+      console.error('❌ prismaService.getAllTrucks returned null/undefined');
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch trucks - no data returned',
+        error: 'Service returned null result',
+      });
+    }
+
+    if (!result.trucks) {
+      console.error('❌ result.trucks is null/undefined');
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch trucks - invalid data structure',
+        error: 'Missing trucks array in result',
+      });
+    }
+
+    console.log(`📋 Retrieved ${result.trucks.length} trucks`);
 
     res.status(200).json({
       success: true,
@@ -31,7 +58,8 @@ const getAllTrucks = async (req, res) => {
       message: `Retrieved ${result.trucks.length} trucks successfully`,
     });
   } catch (error) {
-    console.error('Error in getAllTrucks:', error);
+    console.error('❌ Error in getAllTrucks:', error);
+    console.error('❌ Error stack:', error.stack);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch trucks',

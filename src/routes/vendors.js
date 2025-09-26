@@ -2,11 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('../../prisma/generated/client');
 const authMiddleware = require('../middleware/auth');
+const {
+  validateVendorCreate,
+  validateVendorUpdate,
+  validateIntParam,
+  validatePagination,
+} = require('../middleware/crudValidation');
 
 const prisma = new PrismaClient();
 
 // GET /api/vendors - Get all vendors
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
     const vendors = await prisma.vendors.findMany({
       include: {
@@ -62,7 +68,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // GET /api/vendors/:vendorId - Get specific vendor details
-router.get('/:vendorId', authMiddleware, async (req, res) => {
+router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (req, res) => {
   try {
     const { vendorId } = req.params;
 
@@ -134,83 +140,89 @@ router.get('/:vendorId', authMiddleware, async (req, res) => {
 });
 
 // GET /api/vendors/:vendorId/trucks - Get trucks for specific vendor
-router.get('/:vendorId/trucks', authMiddleware, async (req, res) => {
-  try {
-    const { vendorId } = req.params;
-    const { page = 1, limit = 50 } = req.query;
+router.get(
+  '/:vendorId/trucks',
+  authMiddleware,
+  validateIntParam('vendorId'),
+  validatePagination,
+  async (req, res) => {
+    try {
+      const { vendorId } = req.params;
+      const { page = 1, limit = 50 } = req.query;
 
-    const skip = (page - 1) * limit;
+      const skip = (page - 1) * limit;
 
-    const [trucks, total] = await Promise.all([
-      prisma.truck.findMany({
-        where: {
-          vendor_id: parseInt(vendorId),
-        },
-        include: {
-          vendor: {
-            select: {
-              nama_vendor: true,
+      const [trucks, total] = await Promise.all([
+        prisma.truck.findMany({
+          where: {
+            vendor_id: parseInt(vendorId),
+          },
+          include: {
+            vendor: {
+              select: {
+                nama_vendor: true,
+              },
+            },
+            truck_status_event: {
+              orderBy: {
+                changed_at: 'desc',
+              },
+              take: 1,
             },
           },
-          truck_status_event: {
-            orderBy: {
-              changed_at: 'desc',
-            },
-            take: 1,
+          orderBy: {
+            name: 'asc',
+          },
+          skip: skip,
+          take: parseInt(limit),
+        }),
+        prisma.truck.count({
+          where: {
+            vendor_id: parseInt(vendorId),
+          },
+        }),
+      ]);
+
+      const totalPages = Math.ceil(total / limit);
+
+      const trucksData = trucks.map((truck) => ({
+        id: truck.id,
+        name: truck.name,
+        code: truck.code,
+        model: truck.model,
+        status: truck.truck_status_event[0]?.status || 'active',
+        created_at: truck.created_at,
+        vendor_name: truck.vendor?.nama_vendor,
+      }));
+
+      res.status(200).json({
+        success: true,
+        data: {
+          trucks: trucksData,
+          pagination: {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            total: total,
+            totalPages: totalPages,
+            hasNext: page < totalPages,
+            hasPrev: page > 1,
           },
         },
-        orderBy: {
-          name: 'asc',
-        },
-        skip: skip,
-        take: parseInt(limit),
-      }),
-      prisma.truck.count({
-        where: {
-          vendor_id: parseInt(vendorId),
-        },
-      }),
-    ]);
-
-    const totalPages = Math.ceil(total / limit);
-
-    const trucksData = trucks.map((truck) => ({
-      id: truck.id,
-      name: truck.name,
-      code: truck.code,
-      model: truck.model,
-      status: truck.truck_status_event[0]?.status || 'active',
-      created_at: truck.created_at,
-      vendor_name: truck.vendor?.nama_vendor,
-    }));
-
-    res.status(200).json({
-      success: true,
-      data: {
-        trucks: trucksData,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total: total,
-          totalPages: totalPages,
-          hasNext: page < totalPages,
-          hasPrev: page > 1,
-        },
-      },
-      message: 'Vendor trucks retrieved successfully',
-    });
-  } catch (error) {
-    console.error('Error getting vendor trucks:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get vendor trucks',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
+        message: 'Vendor trucks retrieved successfully',
+      });
+    } catch (error) {
+      console.error('Error getting vendor trucks:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get vendor trucks',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+      });
+    }
   }
-});
+);
 
 // POST /api/vendors - Create new vendor
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
   try {
     const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
 
@@ -262,7 +274,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // PUT /api/vendors/:vendorId - Update vendor
-router.put('/:vendorId', authMiddleware, async (req, res) => {
+router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
     const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
@@ -342,7 +354,7 @@ router.put('/:vendorId', authMiddleware, async (req, res) => {
 });
 
 // DELETE /api/vendors/:vendorId - Delete vendor (with validation)
-router.delete('/:vendorId', authMiddleware, async (req, res) => {
+router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (req, res) => {
   try {
     const { vendorId } = req.params;
 
