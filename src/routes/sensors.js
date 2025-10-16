@@ -3,6 +3,7 @@ const router = express.Router();
 const sensorController = require('../controllers/sensorController');
 const { validateSensorData, handleValidationErrors } = require('../middleware/validation');
 const authMiddleware = require('../middleware/auth');
+const rateLimiter = require('../middleware/rateLimiter');
 
 // POST /api/sensors/tpdata - Tire pressure data ingestion
 router.post(
@@ -38,6 +39,9 @@ router.post(
 
 // POST /api/sensors/raw - Generic raw sensor data ingestion (for any sensor type)
 router.post('/raw', sensorController.ingestRawSensorData);
+
+// GET /api/sensors/last - Get last retrieved sensor data (with auth & rate limiting)
+router.get('/last', rateLimiter, authMiddleware, sensorController.getLastRetrievedData);
 
 // GET /api/sensors/queue/stats - Get sensor processing queue statistics
 router.get('/queue/stats', authMiddleware, sensorController.getQueueStats);

@@ -101,6 +101,20 @@ const ingestTirePressureData = async (req, res) => {
       }
     }
 
+    // Prepare raw JSON data with all fields preserved
+    const rawJsonData = {
+      sn: deviceSn,
+      truckId: resolvedTruckId || null,
+      simNumber: sensorData.simNumber || payload.simNumber || null,
+      data: {
+        tireNo: payload.tireNo || null,
+        exType: payload.exType || null,
+        tiprValue: payload.tiprValue || payload.pressureKpa || payload.pressure || null,
+        tempValue: payload.tempValue || payload.tempCelsius || null,
+        bat: payload.bat || payload.battery_level || null,
+      },
+    };
+
     // Insert raw sensor data first
     const rawDataQuery = `
       INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at, truck_id)
@@ -110,7 +124,7 @@ const ingestTirePressureData = async (req, res) => {
 
     const rawResult = await pool.query(rawDataQuery, [
       deviceSn,
-      JSON.stringify({ sn: deviceSn, truckId: resolvedTruckId || null, data: payload }),
+      JSON.stringify(rawJsonData),
       resolvedTruckId || null,
     ]);
 
@@ -153,6 +167,20 @@ const ingestTirePressureData = async (req, res) => {
 const ingestHubTemperatureData = async (req, res) => {
   try {
     const sensorData = req.body;
+    const payload = sensorData.data || sensorData;
+
+    // Prepare raw JSON data with all fields preserved
+    const rawJsonData = {
+      sn: sensorData.sn,
+      simNumber: sensorData.simNumber || payload.simNumber || null,
+      dataType: sensorData.dataType || payload.dataType || null,
+      data: {
+        tireNo: payload.tireNo || payload.hub_no || null,
+        exType: payload.exType || null,
+        tempValue: payload.tempValue || payload.tempCelsius || payload.temp_celsius || null,
+        bat: payload.bat || payload.battery_level || null,
+      },
+    };
 
     // Insert raw sensor data
     const rawDataQuery = `
@@ -161,7 +189,7 @@ const ingestHubTemperatureData = async (req, res) => {
       RETURNING id
     `;
 
-    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(sensorData)]);
+    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(rawJsonData)]);
 
     // Broadcast real-time update
     try {
@@ -201,6 +229,20 @@ const ingestHubTemperatureData = async (req, res) => {
 const ingestDeviceStatusData = async (req, res) => {
   try {
     const sensorData = req.body;
+    const payload = sensorData.data || sensorData;
+
+    // Prepare raw JSON data with all fields preserved
+    const rawJsonData = {
+      sn: sensorData.sn,
+      data: {
+        lng: payload.lng || payload.longitude || null,
+        lat: payload.lat || payload.latitude || null,
+        bat1: payload.bat1 || payload.host_bat || null,
+        bat2: payload.bat2 || payload.repeater1_bat || null,
+        bat3: payload.bat3 || payload.repeater2_bat || null,
+        lock: payload.lock || payload.lock_state || null,
+      },
+    };
 
     // Insert raw sensor data
     const rawDataQuery = `
@@ -209,7 +251,7 @@ const ingestDeviceStatusData = async (req, res) => {
       RETURNING id
     `;
 
-    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(sensorData)]);
+    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(rawJsonData)]);
 
     // Broadcast GPS update immediately for real-time tracking
     try {
@@ -254,6 +296,15 @@ const ingestDeviceStatusData = async (req, res) => {
 const ingestLockStateData = async (req, res) => {
   try {
     const sensorData = req.body;
+    const payload = sensorData.data || sensorData;
+
+    // Prepare raw JSON data with all fields preserved
+    const rawJsonData = {
+      sn: sensorData.sn,
+      data: {
+        is_lock: payload.is_lock || payload.isLocked || null,
+      },
+    };
 
     // Insert raw sensor data
     const rawDataQuery = `
@@ -262,7 +313,7 @@ const ingestLockStateData = async (req, res) => {
       RETURNING id
     `;
 
-    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(sensorData)]);
+    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(rawJsonData)]);
 
     // Broadcast lock state update
     try {
@@ -446,6 +497,130 @@ const processQueue = async (req, res) => {
   }
 };
 
+// ==========================================
+// GET LAST RETRIEVED DATA
+// ==========================================
+
+const getLastRetrievedData = async (req, res) => {
+  try {
+    const { limit = 15, cmd_type, device_sn } = req.query;
+
+    // Build WHERE clause
+    const conditions = [];
+    const params = [];
+    let paramIndex = 1;
+
+    if (cmd_type) {
+      conditions.push(`cmd_type = $${paramIndex}`);
+      params.push(cmd_type);
+      paramIndex++;
+    }
+
+    if (device_sn) {
+      conditions.push(`device_sn = $${paramIndex}`);
+      params.push(device_sn);
+      paramIndex++;
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    // Query to get last retrieved data from sensor_data_raw
+    const query = `
+      SELECT 
+        CAST(ROW_NUMBER() OVER (ORDER BY received_at DESC) AS INTEGER) as id,
+        device_sn as sn,
+        cmd_type as cmd,
+        received_at as "createdAt",
+        raw_json
+      FROM sensor_data_raw
+      ${whereClause}
+      ORDER BY received_at DESC
+      LIMIT $${paramIndex}
+    `;
+
+    params.push(parseInt(limit));
+
+    const result = await pool.query(query, params);
+
+    // Format the data according to the expected structure
+    const formattedData = result.rows.map((row) => {
+      const baseData = {
+        id: row.id,
+        sn: row.sn,
+        cmd: row.cmd,
+        createdAt: row.createdAt,
+      };
+
+      // Parse raw_json and extract relevant fields based on cmd type
+      const rawData = row.raw_json;
+
+      if (row.cmd === 'tpdata') {
+        // Tire pressure data
+        const data = rawData.data || rawData;
+        return {
+          ...baseData,
+          simNumber: data.simNumber || rawData.simNumber || null,
+          tireNo: data.tireNo || rawData.tireNo || null,
+          exType: data.exType || rawData.exType || null,
+          tiprValue: data.tiprValue || data.pressureKpa || data.pressure || null,
+          tempValue: data.tempValue || data.tempCelsius || null,
+          bat: data.bat || data.battery_level || null,
+        };
+      } else if (row.cmd === 'hubdata') {
+        // Hub temperature data
+        const data = rawData.data || rawData;
+        return {
+          ...baseData,
+          simNumber: data.simNumber || rawData.simNumber || null,
+          dataType: data.dataType || rawData.dataType || null,
+          tireNo: data.tireNo || rawData.tireNo || data.hub_no || rawData.hub_no || null,
+          exType: data.exType || rawData.exType || null,
+          tempValue: data.tempValue || data.tempCelsius || data.temp_celsius || null,
+          bat: data.bat || data.battery_level || null,
+        };
+      } else if (row.cmd === 'device') {
+        // GPS/Device status data
+        const data = rawData.data || rawData;
+        return {
+          ...baseData,
+          lng: data.lng || data.longitude || null,
+          lat: data.lat || data.latitude || null,
+          bat1: data.bat1 || data.host_bat || null,
+          bat2: data.bat2 || data.repeater1_bat || null,
+          bat3: data.bat3 || data.repeater2_bat || null,
+          lock: data.lock || data.lock_state || null,
+        };
+      } else if (row.cmd === 'state') {
+        // Lock state data
+        const data = rawData.data || rawData;
+        return {
+          ...baseData,
+          is_lock: data.is_lock || data.isLocked || null,
+        };
+      }
+
+      // Default: return base data with raw_json
+      return {
+        ...baseData,
+        ...rawData,
+      };
+    });
+
+    res.status(200).json({
+      message: 'Data retrieved successfully',
+      count: formattedData.length,
+      data: formattedData,
+    });
+  } catch (error) {
+    console.error('Error getting last retrieved data:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve sensor data',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
   ingestTirePressureData,
   ingestHubTemperatureData,
@@ -454,4 +629,5 @@ module.exports = {
   ingestRawSensorData,
   getQueueStats,
   processQueue,
+  getLastRetrievedData,
 };
