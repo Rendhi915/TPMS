@@ -533,6 +533,47 @@ Authorization: Bearer <your_token>
 
 ### 5.2 POST Create New Device
 
+> **⚠️ PENTING: Cara Mendapatkan `truck_id` yang Valid**
+> 
+> **MASALAH UMUM:** Error `"Invalid truck_id: truck not found"` terjadi karena `truck_id` yang Anda gunakan tidak ada di database.
+>
+> **SOLUSI - Ada 3 Cara:**
+>
+> **Cara 1: Gunakan Helper Script (PALING MUDAH) ⭐**
+> ```bash
+> node scripts/get-available-trucks.js
+> ```
+> Script ini akan menampilkan daftar lengkap truck_id yang valid dan contoh JSON request yang siap pakai!
+>
+> **Cara 2: Gunakan GET All Trucks API**
+> - Request ke: `http://localhost:3001/api/trucks`
+> - Dari response, copy field `"id"` (bukan `code` atau `name`)
+> - Format ID adalah UUID: `"a3af6242-c293-44bd-84ec-a250097f3e78"`
+>
+> **Cara 3: Cek Database Langsung**
+> ```sql
+> SELECT id, name, code, model FROM truck LIMIT 10;
+> ```
+>
+> **Contoh Response GET Trucks:**
+> ```json
+> {
+>   "success": true,
+>   "data": {
+>     "trucks": [
+>       {
+>         "id": "a3af6242-c293-44bd-84ec-a250097f3e78",
+>         "name": "Truck-001",
+>         "code": "T001",
+>         "model": "Hino 500",
+>         "year": 2022
+>       }
+>     ]
+>   }
+> }
+> ```
+> ⚠️ **PASTIKAN:** Copy field `"id"` (UUID format), BUKAN `"code"` atau `"name"`!
+
 **URL:** `http://localhost:3001/api/devices`
 
 **Method:** POST
@@ -546,7 +587,7 @@ Content-Type: application/json
 **Body (raw JSON):**
 ```json
 {
-  "truck_id": "truck-uuid-here",
+  "truck_id": "550e8400-e29b-41d4-a716-446655440000",
   "sn": "DEVICE12345",
   "sim_number": "081234567890"
 }
@@ -558,13 +599,18 @@ Content-Type: application/json
   "success": true,
   "data": {
     "id": "device-uuid",
-    "truck_id": "truck-uuid",
+    "truck_id": "550e8400-e29b-41d4-a716-446655440000",
     "sn": "DEVICE12345",
     "sim_number": "081234567890"
   },
   "message": "Device created successfully"
 }
 ```
+
+**Troubleshooting:**
+- ❌ **Error "Invalid truck_id"**: Pastikan truck_id yang Anda gunakan benar-benar ada di database (cek dengan GET /api/trucks)
+- ❌ **Error "Truck already has a device"**: Truck tersebut sudah memiliki device, pilih truck lain atau gunakan filter `hasDevice=false`
+- ❌ **Error "SN already exists"**: Serial number sudah digunakan, gunakan SN yang berbeda
 
 ---
 
@@ -599,6 +645,35 @@ Content-Type: application/json
 ```
 Authorization: Bearer <your_token>
 ```
+
+**Expected Response (200 OK) - Hard Delete:**
+```json
+{
+  "success": true,
+  "message": "Device deleted successfully"
+}
+```
+
+**Expected Response (200 OK) - Soft Delete:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "device-uuid",
+    "removed_at": "2025-10-17T04:30:00.000Z"
+  },
+  "message": "Device deactivated successfully (soft delete due to associated data)"
+}
+```
+
+**Behavior:**
+- 🗑️ **Hard Delete**: Device akan dihapus permanen jika tidak memiliki data sensor, GPS, atau tire pressure
+- 🔒 **Soft Delete**: Device hanya di-deactivate (set `removed_at`) jika memiliki data terkait untuk menjaga integritas data historis
+- ✅ **Foreign Key Handling**: Relasi `device_truck_assignment` akan dihapus otomatis sebelum delete
+
+**Troubleshooting:**
+- ❌ **Error "Foreign key constraint violated"**: Bug sudah diperbaiki! Restart server jika masih terjadi
+- ❌ **Error "Device not found"**: Pastikan device_id yang digunakan valid
 
 ---
 
