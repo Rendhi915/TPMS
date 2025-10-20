@@ -239,27 +239,43 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
   }
 });
 
-// DELETE /api/drivers/:driverId - Soft delete driver (set status to nonaktif)
+// DELETE /api/drivers/:driverId - Delete driver (hard delete or soft delete based on query param)
 router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
     const { driverId } = req.params;
+    const { permanent } = req.query; // ?permanent=true for hard delete
 
-    const driver = await prisma.drivers.update({
-      where: {
-        id: parseInt(driverId),
-      },
-      data: {
-        status: 'nonaktif',
-      },
-    });
+    if (permanent === 'true') {
+      // Hard delete - actually remove from database
+      await prisma.drivers.delete({
+        where: {
+          id: parseInt(driverId),
+        },
+      });
 
-    res.status(200).json({
-      success: true,
-      data: driver,
-      message: 'Driver deactivated successfully',
-    });
+      res.status(200).json({
+        success: true,
+        message: 'Driver deleted successfully',
+      });
+    } else {
+      // Soft delete - set status to nonaktif
+      const driver = await prisma.drivers.update({
+        where: {
+          id: parseInt(driverId),
+        },
+        data: {
+          status: 'nonaktif',
+        },
+      });
+
+      res.status(200).json({
+        success: true,
+        data: driver,
+        message: 'Driver deactivated successfully',
+      });
+    }
   } catch (error) {
-    console.error('Error deactivating driver:', error);
+    console.error('Error deleting driver:', error);
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
@@ -268,7 +284,7 @@ router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async 
     }
     res.status(500).json({
       success: false,
-      message: 'Failed to deactivate driver',
+      message: 'Failed to delete driver',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }

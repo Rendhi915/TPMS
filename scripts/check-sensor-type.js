@@ -3,7 +3,7 @@ const { PrismaClient } = require('../prisma/generated/client');
 
 async function checkSensorType() {
   const prisma = new PrismaClient();
-  
+
   try {
     const result = await prisma.$queryRaw`
       SELECT 
@@ -15,7 +15,7 @@ async function checkSensorType() {
         AND contype = 'c'
         AND conname LIKE '%type%'
     `;
-    
+
     console.log('Sensor type constraint:', JSON.stringify(result, null, 2));
   } catch (error) {
     console.error('Error:', error.message);

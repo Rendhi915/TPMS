@@ -9,10 +9,10 @@ async function checkWheelTypeConstraint() {
       FROM information_schema.check_constraints 
       WHERE constraint_name LIKE '%wheel_type%'
     `;
-    
+
     console.log('\n🔍 Wheel Type Constraint Check:\n');
     console.log(result);
-    
+
     // Also check enum values if exists
     const enumCheck = await prisma.$queryRaw`
       SELECT t.typname, e.enumlabel
@@ -21,10 +21,9 @@ async function checkWheelTypeConstraint() {
       WHERE t.typname LIKE '%wheel%'
       ORDER BY e.enumsortorder
     `;
-    
+
     console.log('\n🔍 Wheel Type Enum Values (if exists):\n');
     console.log(enumCheck);
-    
   } catch (error) {
     console.error('Error:', error.message);
   } finally {
