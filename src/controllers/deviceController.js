@@ -328,6 +328,7 @@ const deleteDevice = async (req, res) => {
         gps_position: { take: 1 },
         tire_pressure_event: { take: 1 },
         device_status_event: { take: 1 },
+        device_truck_assignment: true,
       },
     });
 
@@ -372,7 +373,14 @@ const deleteDevice = async (req, res) => {
         message: 'Device deactivated successfully (soft delete due to associated data)',
       });
     } else {
-      // Hard delete if no associated data
+      // Hard delete - first delete device_truck_assignment records
+      await prisma.device_truck_assignment.deleteMany({
+        where: {
+          device_id: deviceId,
+        },
+      });
+
+      // Then delete the device
       await prisma.device.delete({
         where: { id: deviceId },
       });

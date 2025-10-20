@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const miningAreaController = require('../controllers/miningAreaController');
 const authMiddleware = require('../middleware/auth');
+const {
+  validateMiningZoneCreate,
+  validateMiningZoneUpdate,
+  validateUUIDParam,
+} = require('../middleware/crudValidation');
 
 // GET /api/mining-area - Get all mining areas (GeoJSON) (protected)
 router.get('/', authMiddleware, miningAreaController.getMiningAreas);
@@ -22,12 +27,22 @@ router.get('/trucks/:truckId/zones', authMiddleware, miningAreaController.checkT
 router.get('/nearby', authMiddleware, miningAreaController.getNearbyTrucks);
 
 // POST /api/mining-area - Create new mining zone (protected)
-router.post('/', authMiddleware, miningAreaController.createMiningZone);
+router.post('/', authMiddleware, validateMiningZoneCreate, miningAreaController.createMiningZone);
 
 // PUT /api/mining-area/:zoneId - Update mining zone (protected)
-router.put('/:zoneId', authMiddleware, miningAreaController.updateMiningZone);
+router.put(
+  '/:zoneId',
+  authMiddleware,
+  validateMiningZoneUpdate,
+  miningAreaController.updateMiningZone
+);
 
 // DELETE /api/mining-area/:zoneId - Delete/deactivate mining zone (protected)
-router.delete('/:zoneId', authMiddleware, miningAreaController.deleteMiningZone);
+router.delete(
+  '/:zoneId',
+  authMiddleware,
+  validateUUIDParam('zoneId'),
+  miningAreaController.deleteMiningZone
+);
 
 module.exports = router;

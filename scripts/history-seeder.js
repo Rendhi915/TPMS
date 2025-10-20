@@ -18,10 +18,6 @@ const MINING_CONFIG = {
   },
   workZones: {
     mainPit: { lat: -3.5454, lng: 115.6044 },
-    processing: { lat: -3.65, lng: 115.575 },
-    maintenance: { lat: -3.52, lng: 115.62 },
-    wasteDump: { lat: -3.7, lng: 115.5 },
-    coalStockpile: { lat: -3.55, lng: 115.58 },
   },
   routes: [
     {
@@ -29,24 +25,7 @@ const MINING_CONFIG = {
       waypoints: [
         { lat: -3.5454, lng: 115.6044, zone: 'Main Pit' },
         { lat: -3.58, lng: 115.59, zone: 'Transport' },
-        { lat: -3.65, lng: 115.575, zone: 'Processing' },
-      ],
-    },
-    {
-      name: 'Waste Disposal Route',
-      waypoints: [
-        { lat: -3.65, lng: 115.575, zone: 'Processing' },
-        { lat: -3.675, lng: 115.54, zone: 'Transport' },
-        { lat: -3.7, lng: 115.5, zone: 'Waste Dump' },
-      ],
-    },
-    {
-      name: 'Maintenance Circuit',
-      waypoints: [
-        { lat: -3.52, lng: 115.62, zone: 'Maintenance' },
-        { lat: -3.53, lng: 115.61, zone: 'Yard' },
-        { lat: -3.54, lng: 115.6, zone: 'Inspection' },
-        { lat: -3.52, lng: 115.62, zone: 'Maintenance' },
+        { lat: -3.62, lng: 115.58, zone: 'Main Pit' },
       ],
     },
   ],
@@ -189,12 +168,7 @@ class HistorySeeder {
     const zoneMultiplier =
       {
         'Main Pit': 0.6, // Slow in pit
-        Processing: 0.7, // Moderate in processing
         Transport: 1.2, // Fast on transport routes
-        Maintenance: 0.4, // Very slow in maintenance
-        'Waste Dump': 0.8, // Moderate in waste area
-        Yard: 0.5, // Slow in yard
-        Inspection: 0.3, // Very slow during inspection
       }[zone] || 1.0;
 
     return Math.max(0, (baseSpeed + Math.random() * variation) * zoneMultiplier);

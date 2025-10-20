@@ -334,6 +334,46 @@ const validateDriverUpdate = [
 ];
 
 // ==========================================
+// MINING AREA VALIDATION
+// ==========================================
+
+const validateMiningZoneCreate = [
+  body('name')
+    .notEmpty()
+    .withMessage('Zone name is required')
+    .isLength({ min: 2, max: 255 })
+    .withMessage('Zone name must be between 2 and 255 characters'),
+  body('type')
+    .optional()
+    .isIn(['mining', 'loading', 'dumping', 'restricted', 'maintenance'])
+    .withMessage('Invalid zone type'),
+  body('coordinates').optional().isArray().withMessage('Coordinates must be an array'),
+  body('radius')
+    .optional()
+    .isFloat({ min: 0, max: 10000 })
+    .withMessage('Radius must be between 0 and 10000 meters'),
+  handleValidationErrors,
+];
+
+const validateMiningZoneUpdate = [
+  param('zoneId').isUUID().withMessage('Invalid zone ID'),
+  body('name')
+    .optional()
+    .isLength({ min: 2, max: 255 })
+    .withMessage('Zone name must be between 2 and 255 characters'),
+  body('type')
+    .optional()
+    .isIn(['mining', 'loading', 'dumping', 'restricted', 'maintenance'])
+    .withMessage('Invalid zone type'),
+  body('coordinates').optional().isArray().withMessage('Coordinates must be an array'),
+  body('radius')
+    .optional()
+    .isFloat({ min: 0, max: 10000 })
+    .withMessage('Radius must be between 0 and 10000 meters'),
+  handleValidationErrors,
+];
+
+// ==========================================
 // COMMON VALIDATIONS
 // ==========================================
 
@@ -368,6 +408,8 @@ module.exports = {
   validateSensorUpdate,
   validateDriverCreate,
   validateDriverUpdate,
+  validateMiningZoneCreate,
+  validateMiningZoneUpdate,
   validateUUIDParam,
   validateIntParam,
   validatePagination,

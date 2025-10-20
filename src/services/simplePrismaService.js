@@ -44,7 +44,7 @@ class SimplePrismaService {
   async getAllTrucks(filters = {}) {
     console.log('🔍 SimplePrismaService.getAllTrucks called with filters:', filters);
 
-    const { status, page = 1, limit = 50, search, vendor, vendorId } = filters;
+    const { page = 1, limit = 50, search, vendor, vendorId } = filters;
 
     const offset = (page - 1) * limit;
     const where = {};
@@ -278,14 +278,14 @@ class SimplePrismaService {
     }
   }
 
-  async updateTruckStatus(truckId, status) {
+  async updateTruckStatus(truckId, newStatus) {
     try {
       // Create a new truck status event
       const statusEvent = await this.prisma.truckStatusEvent.create({
         data: {
           truckId: truckId,
-          status: status,
-          note: `Status updated to ${status}`,
+          status: newStatus,
+          note: `Status updated to ${newStatus}`,
           changedAt: new Date(),
         },
       });
@@ -298,7 +298,7 @@ class SimplePrismaService {
       return {
         id: truck.id,
         truckNumber: truck.name,
-        status: status,
+        status: newStatus,
         lastUpdate: statusEvent.changedAt,
       };
     } catch (error) {

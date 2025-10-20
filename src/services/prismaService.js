@@ -289,7 +289,7 @@ class PrismaService {
 
   async getDashboardStats() {
     try {
-      const [truckStats, alertsCount, lowTireCount] = await Promise.all([
+      const [truckStats, alertsCount] = await Promise.all([
         // Truck statistics
         this.prisma.truck.aggregate({
           _count: {
@@ -300,8 +300,6 @@ class PrismaService {
         this.prisma.alert_event.count({
           where: { acknowledged: false },
         }),
-        // Get total truck count for low tire calculation
-        this.prisma.truck.count(),
       ]);
 
       // Get status breakdown from truck_status_event table
