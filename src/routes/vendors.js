@@ -235,7 +235,13 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
     const email = req.body.email;
     const kontak_person = req.body.kontak_person || req.body.contact_person;
 
-    console.log('📝 Creating vendor with data:', { nama_vendor, address, nomor_telepon, email, kontak_person });
+    console.log('📝 Creating vendor with data:', {
+      nama_vendor,
+      address,
+      nomor_telepon,
+      email,
+      kontak_person,
+    });
 
     // Validate required fields
     if (!nama_vendor) {
@@ -299,7 +305,7 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
-    
+
     // Support both frontend field names and database field names
     const nama_vendor = req.body.nama_vendor || req.body.name;
     const address = req.body.address;
@@ -308,7 +314,13 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
     const kontak_person = req.body.kontak_person || req.body.contact_person;
 
     console.log('📝 Updating vendor ID:', vendorId);
-    console.log('📝 Update data received:', { nama_vendor, address, nomor_telepon, email, kontak_person });
+    console.log('📝 Update data received:', {
+      nama_vendor,
+      address,
+      nomor_telepon,
+      email,
+      kontak_person,
+    });
 
     // Check if vendor exists
     const existingVendor = await prisma.vendors.findUnique({

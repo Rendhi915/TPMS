@@ -17,29 +17,29 @@ class SimplePrismaService {
   // Connection management with retry
   async connect() {
     let lastError;
-    
+
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         console.log(`🔄 Attempting database connection (${attempt}/${this.maxRetries})...`);
         await this.prisma.$connect();
         console.log('✅ Prisma connected to database successfully');
-        
+
         // Test the connection
         await this.prisma.$queryRaw`SELECT 1`;
         console.log('✅ Database connection verified');
-        
+
         return;
       } catch (error) {
         lastError = error;
         console.error(`❌ Connection attempt ${attempt} failed:`, error.message);
-        
+
         if (attempt < this.maxRetries) {
           console.log(`⏳ Retrying in ${this.retryDelay / 1000} seconds...`);
-          await new Promise(resolve => setTimeout(resolve, this.retryDelay));
+          await new Promise((resolve) => setTimeout(resolve, this.retryDelay));
         }
       }
     }
-    
+
     console.error('❌ All connection attempts failed');
     throw lastError;
   }
