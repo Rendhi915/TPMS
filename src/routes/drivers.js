@@ -239,8 +239,6 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
   }
 });
 
-});
-
 // DELETE /api/drivers/:driverId - Delete driver permanently
 router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
