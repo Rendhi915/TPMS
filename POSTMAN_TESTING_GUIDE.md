@@ -2,8 +2,26 @@
 
 ## 📋 Base Configuration
 - **Base URL**: `http://localhost:3001/api`
+- **Server URL**: `http://connectis.my.id:3001/api`
 - **Content-Type**: `application/json`
-- **Authentication**: JWT Bearer Token (untuk endpoint yang memerlukan auth)
+- **Authentication**: JWT Bearer Token (expires in 24 hours)
+- **Last Updated**: 20 Oktober 2025
+
+## 🚨 Recent Updates (20 Oktober 2025)
+
+### ⚠️ BREAKING CHANGES:
+
+1. **Driver DELETE - Now Permanent!**
+   - ❌ Removed: Soft delete functionality
+   - ❌ Removed: Query parameter `?permanent=true`
+   - ✅ Now: Hard delete only - data permanently removed
+   - ⚠️ WARNING: Cannot be recovered!
+
+2. **Vendor CRUD - Dual Naming Support**
+   - ✅ New: Support both `name` and `nama_vendor`
+   - ✅ New: Support both `phone` and `nomor_telepon`
+   - ✅ New: Support both `contact_person` and `kontak_person`
+   - ✅ All fields except name are now optional
 
 ---
 
@@ -679,6 +697,19 @@ Authorization: Bearer <your_token>
 
 ## 🏢 Step 6: CRUD Vendors (PERLU TOKEN)
 
+### ✅ NEW: Dual Naming Support
+
+**⚠️ UPDATE (20 Oktober 2025)**: Endpoint Vendor sekarang mendukung **dual naming convention**!
+
+Frontend bisa menggunakan field name yang berbeda:
+- `name` ATAU `nama_vendor`
+- `phone` ATAU `nomor_telepon`
+- `contact_person` ATAU `kontak_person`
+
+Backend akan menerima **KEDUANYA** dan bahkan bisa **DICAMPUR**! 🎉
+
+---
+
 ### 6.1 GET All Vendors
 
 **URL:** `http://localhost:3001/api/vendors`
@@ -689,6 +720,32 @@ Authorization: Bearer <your_token>
 ```
 Authorization: Bearer <your_token>
 ```
+
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "vendors": [
+      {
+        "id": 1,
+        "name": "PT Mining Solutions",
+        "nama_vendor": "PT Mining Solutions",
+        "phone": "021-12345678",
+        "nomor_telepon": "021-12345678",
+        "email": "info@mining.com",
+        "address": "Jakarta",
+        "contact_person": "John Doe",
+        "kontak_person": "John Doe",
+        "created_at": "2025-10-20T07:00:00.000Z",
+        "updated_at": "2025-10-20T07:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+**Note:** Response includes **BOTH** naming conventions untuk compatibility dengan frontend.
 
 ---
 
@@ -704,7 +761,7 @@ Authorization: Bearer <your_token>
 Content-Type: application/json
 ```
 
-**Body (raw JSON):**
+**✅ Body Option 1 - Database Naming:**
 ```json
 {
   "nama_vendor": "PT Mining Solutions Indonesia",
@@ -715,19 +772,67 @@ Content-Type: application/json
 }
 ```
 
+**✅ Body Option 2 - Frontend Naming (NEW!):**
+```json
+{
+  "name": "PT Mining Solutions Indonesia",
+  "address": "Jl. Industri No. 123, Jakarta",
+  "phone": "021-12345678",
+  "email": "info@miningsolutions.com",
+  "contact_person": "John Doe"
+}
+```
+
+**✅ Body Option 3 - Mixed (BISA!):**
+```json
+{
+  "name": "PT Mining Solutions Indonesia",
+  "nomor_telepon": "021-12345678",
+  "contact_person": "John Doe"
+}
+```
+
+**Required Fields:**
+- `name` OR `nama_vendor` (at least one is required)
+- All other fields are **OPTIONAL**
+
 **Expected Response (201 Created):**
 ```json
 {
   "success": true,
   "data": {
     "id": 10,
-    "nama_vendor": "PT Mining Solutions Indonesia",
-    "address": "Jl. Industri No. 123, Jakarta",
-    "nomor_telepon": "021-12345678",
+    "name": "PT Mining Solutions Indonesia",
+    "phone": "021-12345678",
+    "contact_person": "John Doe",
     "email": "info@miningsolutions.com",
-    "kontak_person": "John Doe"
+    "address": "Jl. Industri No. 123, Jakarta",
+    "created_at": "2025-10-20T08:30:00.000Z",
+    "updated_at": "2025-10-20T08:30:00.000Z"
   },
   "message": "Vendor created successfully"
+}
+```
+
+**Validation:**
+- ✅ Name: 2-255 characters
+- ✅ Phone: Max 50 characters (optional)
+- ✅ Email: Valid email format (optional)
+- ✅ Address: Max 500 characters (optional)
+- ✅ Contact person: Max 255 characters (optional)
+
+**Error Responses:**
+```json
+// Missing required field
+{
+  "success": false,
+  "message": "Missing required field: name or nama_vendor"
+}
+
+// Duplicate vendor name
+{
+  "success": false,
+  "message": "Vendor with this name already exists"
 }
 ```
 
@@ -745,12 +850,54 @@ Authorization: Bearer <your_token>
 Content-Type: application/json
 ```
 
-**Body (raw JSON):**
+**✅ Body - Support Dual Naming (All fields optional):**
 ```json
 {
-  "nomor_telepon": "021-87654321",
-  "email": "contact@miningsolutions.com"
+  "name": "PT Mining Solutions Updated",
+  "phone": "021-87654321",
+  "email": "contact@miningsolutions.com",
+  "contact_person": "Jane Smith"
 }
+```
+
+**Or using database naming:**
+```json
+{
+  "nama_vendor": "PT Mining Solutions Updated",
+  "nomor_telepon": "021-87654321",
+  "kontak_person": "Jane Smith"
+}
+```
+
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 10,
+    "name": "PT Mining Solutions Updated",
+    "phone": "021-87654321",
+    "contact_person": "Jane Smith",
+    "email": "contact@miningsolutions.com",
+    "address": "Jl. Industri No. 123, Jakarta",
+    "updated_at": "2025-10-20T09:15:00.000Z"
+  },
+  "message": "Vendor updated successfully"
+}
+```
+
+**⚠️ Important:** 
+- Check `updated_at` timestamp to verify data actually changed
+- Server logs will show detailed update process (check console)
+
+**Debugging:**
+Server akan menampilkan log detail:
+```
+📝 Updating vendor ID: 10
+📝 Update data received: { nama_vendor: 'PT Mining Solutions Updated', ... }
+📋 Current vendor data: { id: 10, nama_vendor: 'PT Mining Solutions', ... }
+🔄 Updating with data: { nama_vendor: 'PT Mining Solutions Updated', updated_at: ... }
+✅ Vendor updated successfully
 ```
 
 ---
@@ -766,9 +913,28 @@ Content-Type: application/json
 Authorization: Bearer <your_token>
 ```
 
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Vendor deleted successfully"
+}
+```
+
 ---
 
 ## 👨‍✈️ Step 7: CRUD Drivers (PERLU TOKEN)
+
+### ⚠️ BREAKING CHANGE: Driver DELETE Now Permanent!
+
+**⚠️ UPDATE (20 Oktober 2025)**: Driver DELETE sekarang **HARD DELETE** - Data dihapus **PERMANEN** dari database!
+
+**Perubahan:**
+- ❌ **REMOVED**: Soft delete functionality
+- ❌ **REMOVED**: Query parameter `?permanent=true`
+- ✅ **NOW**: Direct hard delete - data cannot be recovered!
+
+---
 
 ### 7.1 GET All Drivers
 
@@ -781,9 +947,77 @@ Authorization: Bearer <your_token>
 Authorization: Bearer <your_token>
 ```
 
+**Query Parameters (Optional):**
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 50)
+- `status`: Filter by status (`aktif`, `nonaktif`)
+- `vendor_id`: Filter by vendor ID
+
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "drivers": [
+      {
+        "id": 1,
+        "name": "Budi Santoso",
+        "phone": "081234567890",
+        "email": "budi@example.com",
+        "address": "Jakarta",
+        "license_number": "A123456789",
+        "license_type": "SIM B2 Umum",
+        "license_expiry": "2026-12-31T00:00:00.000Z",
+        "id_card_number": "3201234567890123",
+        "vendor_id": 1,
+        "status": "aktif",
+        "created_at": "2025-10-20T07:00:00.000Z",
+        "updated_at": "2025-10-20T07:00:00.000Z",
+        "vendor": {
+          "id": 1,
+          "nama_vendor": "PT Mining Solutions"
+        }
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 50,
+      "total": 25,
+      "totalPages": 1
+    }
+  }
+}
+```
+
 ---
 
-### 7.2 POST Create New Driver
+### 7.2 GET Driver by ID
+
+**URL:** `http://localhost:3001/api/drivers/{driver_id}`
+
+**Method:** GET
+
+**Headers:**
+```
+Authorization: Bearer <your_token>
+```
+
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Budi Santoso",
+    "license_number": "A123456789",
+    "status": "aktif"
+  }
+}
+```
+
+---
+
+### 7.3 POST Create New Driver
 
 **URL:** `http://localhost:3001/api/drivers`
 
@@ -811,6 +1045,20 @@ Content-Type: application/json
 }
 ```
 
+**Required Fields:**
+- `name` (2-255 characters)
+- `license_number` (1-50 characters)
+- `license_type` (1-20 characters)
+- `license_expiry` (ISO date format: YYYY-MM-DD)
+- `id_card_number` (1-50 characters)
+
+**Optional Fields:**
+- `phone` (max 50 characters)
+- `email` (valid email format)
+- `address` (text)
+- `vendor_id` (integer)
+- `status` (`aktif` or `nonaktif`, default: `aktif`)
+
 **Expected Response (201 Created):**
 ```json
 {
@@ -819,7 +1067,9 @@ Content-Type: application/json
     "id": 50,
     "name": "Budi Santoso",
     "license_number": "A123456789",
-    "status": "aktif"
+    "status": "aktif",
+    "created_at": "2025-10-20T08:30:00.000Z",
+    "updated_at": "2025-10-20T08:30:00.000Z"
   },
   "message": "Driver created successfully"
 }
@@ -827,7 +1077,7 @@ Content-Type: application/json
 
 ---
 
-### 7.3 PUT Update Driver
+### 7.4 PUT Update Driver
 
 **URL:** `http://localhost:3001/api/drivers/{driver_id}`
 
@@ -839,17 +1089,35 @@ Authorization: Bearer <your_token>
 Content-Type: application/json
 ```
 
-**Body (raw JSON):**
+**Body (raw JSON) - All fields optional:**
 ```json
 {
+  "name": "Budi Santoso Updated",
   "phone": "081234567899",
-  "status": "aktif"
+  "email": "budi.new@example.com",
+  "status": "nonaktif"
+}
+```
+
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 50,
+    "name": "Budi Santoso Updated",
+    "phone": "081234567899",
+    "email": "budi.new@example.com",
+    "status": "nonaktif",
+    "updated_at": "2025-10-20T09:00:00.000Z"
+  },
+  "message": "Driver updated successfully"
 }
 ```
 
 ---
 
-### 7.4 DELETE Driver (Soft Delete)
+### 7.5 DELETE Driver ⚠️ PERMANENT DELETE
 
 **URL:** `http://localhost:3001/api/drivers/{driver_id}`
 
@@ -860,7 +1128,64 @@ Content-Type: application/json
 Authorization: Bearer <your_token>
 ```
 
-**Note:** Ini adalah soft delete, status driver akan diubah menjadi "nonaktif"
+**⚠️ CRITICAL WARNING:**
+- This is a **HARD DELETE** - data will be **permanently removed** from database
+- **NO UNDO** - deleted data cannot be recovered!
+- **NO SOFT DELETE** - driver record will be completely erased
+- Make sure to confirm with user before executing this request!
+
+**Expected Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Driver deleted successfully"
+}
+```
+
+**Error Response - Driver Not Found (404):**
+```json
+{
+  "success": false,
+  "message": "Driver not found"
+}
+```
+
+**Testing Steps:**
+1. ✅ Get list of drivers first: `GET /api/drivers`
+2. ✅ Note the driver ID you want to delete
+3. ⚠️ **CONFIRM**: This is permanent! Data cannot be recovered
+4. 🗑️ Send DELETE request
+5. ✅ Verify driver is completely removed: `GET /api/drivers` (should not appear in list)
+
+**Recommended Frontend Implementation:**
+```javascript
+// Always show confirmation dialog before delete
+const deleteDriver = async (driverId) => {
+  const confirmed = confirm(
+    'PERINGATAN: Data driver akan dihapus PERMANEN dan tidak bisa dikembalikan!\n\n' +
+    'Apakah Anda yakin ingin menghapus driver ini?'
+  );
+  
+  if (!confirmed) {
+    return;
+  }
+  
+  // Proceed with delete
+  const response = await fetch(`http://localhost:3001/api/drivers/${driverId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  const result = await response.json();
+  
+  if (result.success) {
+    alert('✅ Driver berhasil dihapus permanen');
+    // Refresh driver list
+  }
+};
+```
 
 ---
 
@@ -943,7 +1268,7 @@ Authorization: Bearer <your_token>
 
 ### Authentication
 - [ ] POST /api/auth/login
-- [ ] Verify token received
+- [ ] Verify token received and saved
 
 ### Sensor Data Retrieval (Auth Required)
 - [ ] GET /api/sensors/last
@@ -960,21 +1285,34 @@ Authorization: Bearer <your_token>
 
 ### Devices CRUD (Auth Required)
 - [ ] GET /api/devices
-- [ ] POST /api/devices
+- [ ] POST /api/devices (verify truck_id exists)
 - [ ] PUT /api/devices/{id}
 - [ ] DELETE /api/devices/{id}
 
-### Vendors CRUD (Auth Required)
+### Vendors CRUD (Auth Required) ⭐ UPDATED
 - [ ] GET /api/vendors
-- [ ] POST /api/vendors
-- [ ] PUT /api/vendors/{id}
+- [ ] POST /api/vendors (test with `name` field)
+- [ ] POST /api/vendors (test with `nama_vendor` field)
+- [ ] POST /api/vendors (test with mixed field names)
+- [ ] PUT /api/vendors/{id} (verify `updated_at` changes)
 - [ ] DELETE /api/vendors/{id}
 
-### Drivers CRUD (Auth Required)
+### Drivers CRUD (Auth Required) ⚠️ UPDATED
 - [ ] GET /api/drivers
+- [ ] GET /api/drivers?status=aktif
+- [ ] GET /api/drivers/{id}
 - [ ] POST /api/drivers
 - [ ] PUT /api/drivers/{id}
-- [ ] DELETE /api/drivers/{id}
+- [ ] DELETE /api/drivers/{id} ⚠️ **WARNING: PERMANENT DELETE!**
+- [ ] Verify deleted driver is completely removed from database
+
+### Additional Tests for New Features
+- [ ] Vendor: Verify response includes both naming conventions
+- [ ] Vendor: Test optional fields (phone, email, address)
+- [ ] Vendor: Test duplicate name validation
+- [ ] Driver: Confirm delete warning in frontend
+- [ ] Driver: Verify no way to recover deleted driver
+- [ ] Check server logs for vendor operation details (📝, 📋, 🔄, ✅)
 
 ---
 
@@ -1015,5 +1353,152 @@ Semua endpoint harus:
 - ✅ Validate input dengan benar
 - ✅ Require authentication untuk endpoint yang dilindungi
 - ✅ Handle errors dengan graceful error messages
+
+---
+
+## 🧪 Testing Scenarios for Recent Changes
+
+### Scenario 1: Vendor Dual Naming Support
+
+**Test Case 1.1: Create with Frontend Naming**
+```json
+POST /api/vendors
+{
+  "name": "Test Vendor A",
+  "phone": "081234567890",
+  "contact_person": "John Doe"
+}
+
+Expected: ✅ Success (201)
+Verify: Response includes both naming conventions
+```
+
+**Test Case 1.2: Create with Database Naming**
+```json
+POST /api/vendors
+{
+  "nama_vendor": "Test Vendor B",
+  "nomor_telepon": "081234567890",
+  "kontak_person": "Jane Doe"
+}
+
+Expected: ✅ Success (201)
+Verify: Response includes both naming conventions
+```
+
+**Test Case 1.3: Create with Mixed Naming**
+```json
+POST /api/vendors
+{
+  "name": "Test Vendor C",
+  "nomor_telepon": "081234567890",
+  "contact_person": "Bob Smith"
+}
+
+Expected: ✅ Success (201)
+Verify: Backend accepts mixed field names
+```
+
+**Test Case 1.4: Update and Verify Timestamp**
+```json
+PUT /api/vendors/{id}
+{
+  "phone": "089999999999"
+}
+
+Expected: ✅ Success (200)
+Verify: 
+- Data actually changed in database
+- updated_at timestamp is different from created_at
+- Server logs show update process
+```
+
+---
+
+### Scenario 2: Driver Hard Delete
+
+**Test Case 2.1: Delete Driver Permanently**
+```
+1. GET /api/drivers → Note driver count and IDs
+2. DELETE /api/drivers/{id}
+3. GET /api/drivers → Verify count decreased
+4. GET /api/drivers/{id} → Should return 404
+5. Check database directly → Driver should not exist
+
+Expected: ✅ Driver completely removed, no trace in database
+```
+
+**Test Case 2.2: Delete Non-Existent Driver**
+```
+DELETE /api/drivers/99999
+
+Expected: ❌ 404 Not Found
+Response: { "success": false, "message": "Driver not found" }
+```
+
+**Test Case 2.3: Verify No Soft Delete**
+```
+After DELETE /api/drivers/{id}:
+- Driver should NOT have status = 'nonaktif'
+- Driver should NOT exist in database at all
+- No 'deleted_at' or 'removed_at' timestamp
+
+Expected: ✅ Record completely removed
+```
+
+---
+
+### Scenario 3: Vendor Optional Fields
+
+**Test Case 3.1: Minimal Required Fields**
+```json
+POST /api/vendors
+{
+  "name": "Minimal Vendor"
+}
+
+Expected: ✅ Success (201)
+Verify: All other fields are null/empty
+```
+
+**Test Case 3.2: Missing Required Field**
+```json
+POST /api/vendors
+{
+  "phone": "081234567890"
+}
+
+Expected: ❌ 400 Bad Request
+Response: { "message": "Missing required field: name or nama_vendor" }
+```
+
+---
+
+### Scenario 4: Server Logging Verification
+
+**Test Case 4.1: Check Vendor Create Logs**
+```
+1. POST /api/vendors with data
+2. Check server console for:
+   📝 Creating vendor with data: { ... }
+   ✅ Vendor created successfully: {id}
+
+Expected: ✅ Detailed logs visible in console
+```
+
+**Test Case 4.2: Check Vendor Update Logs**
+```
+1. PUT /api/vendors/{id} with data
+2. Check server console for:
+   📝 Updating vendor ID: {id}
+   📝 Update data received: { ... }
+   📋 Current vendor data: { ... }
+   🔄 Updating with data: { ... }
+   ✅ Vendor updated successfully
+
+Expected: ✅ Complete update flow logged
+```
+
+---
 
 **Happy Testing!** 🚀
