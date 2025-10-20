@@ -25,29 +25,39 @@ const handleValidationErrors = (req, res, next) => {
 // ==========================================
 
 const validateVendorCreate = [
+  // Accept both 'nama_vendor' and 'name' from frontend
   body('nama_vendor')
-    .notEmpty()
-    .withMessage('Vendor name is required')
+    .optional()
+    .isLength({ min: 2, max: 255 })
+    .withMessage('Vendor name must be between 2 and 255 characters'),
+  body('name')
+    .optional()
     .isLength({ min: 2, max: 255 })
     .withMessage('Vendor name must be between 2 and 255 characters'),
   body('address')
-    .optional()
+    .optional({ checkFalsy: true })
     .isLength({ max: 500 })
     .withMessage('Address must not exceed 500 characters'),
   body('nomor_telepon')
-    .optional()
-    .matches(/^[\d\s\-+()]+$/)
-    .withMessage('Invalid phone number format')
+    .optional({ checkFalsy: true })
+    .isLength({ max: 50 })
+    .withMessage('Phone number must not exceed 50 characters'),
+  body('phone')
+    .optional({ checkFalsy: true })
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
   body('email')
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
   body('kontak_person')
-    .optional()
+    .optional({ checkFalsy: true })
+    .isLength({ max: 255 })
+    .withMessage('Contact person must not exceed 255 characters'),
+  body('contact_person')
+    .optional({ checkFalsy: true })
     .isLength({ max: 255 })
     .withMessage('Contact person must not exceed 255 characters'),
   handleValidationErrors,
@@ -55,28 +65,39 @@ const validateVendorCreate = [
 
 const validateVendorUpdate = [
   param('vendorId').isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  // Accept both naming conventions from frontend
   body('nama_vendor')
-    .optional()
+    .optional({ checkFalsy: true })
+    .isLength({ min: 2, max: 255 })
+    .withMessage('Vendor name must be between 2 and 255 characters'),
+  body('name')
+    .optional({ checkFalsy: true })
     .isLength({ min: 2, max: 255 })
     .withMessage('Vendor name must be between 2 and 255 characters'),
   body('address')
-    .optional()
+    .optional({ checkFalsy: true })
     .isLength({ max: 500 })
     .withMessage('Address must not exceed 500 characters'),
   body('nomor_telepon')
-    .optional()
-    .matches(/^[\d\s\-+()]+$/)
-    .withMessage('Invalid phone number format')
+    .optional({ checkFalsy: true })
+    .isLength({ max: 50 })
+    .withMessage('Phone number must not exceed 50 characters'),
+  body('phone')
+    .optional({ checkFalsy: true })
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
   body('email')
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
   body('kontak_person')
-    .optional()
+    .optional({ checkFalsy: true })
+    .isLength({ max: 255 })
+    .withMessage('Contact person must not exceed 255 characters'),
+  body('contact_person')
+    .optional({ checkFalsy: true })
     .isLength({ max: 255 })
     .withMessage('Contact person must not exceed 255 characters'),
   handleValidationErrors,

@@ -11,6 +11,7 @@
  *   node scripts/seed-demo-trucks.js
  */
 
+require('dotenv').config();
 const { PrismaClient } = require('../prisma/generated/client');
 const prisma = new PrismaClient();
 
@@ -23,17 +24,18 @@ const MINING_AREA_BOUNDS = {
 };
 
 // Tire configuration for 10-wheel mining truck
+// Valid wheel_type values: 'steer', 'drive', 'trailer'
 const TIRE_POSITIONS = [
-  { no: 1, name: 'Front Left', type: 'front', wheel_type: 'single' },
-  { no: 2, name: 'Front Right', type: 'front', wheel_type: 'single' },
-  { no: 3, name: 'Rear Left Outer', type: 'rear', wheel_type: 'dual_outer' },
-  { no: 4, name: 'Rear Left Inner', type: 'rear', wheel_type: 'dual_inner' },
-  { no: 5, name: 'Rear Right Outer', type: 'rear', wheel_type: 'dual_outer' },
-  { no: 6, name: 'Rear Right Inner', type: 'rear', wheel_type: 'dual_inner' },
-  { no: 7, name: 'Rear2 Left Outer', type: 'rear', wheel_type: 'dual_outer' },
-  { no: 8, name: 'Rear2 Left Inner', type: 'rear', wheel_type: 'dual_inner' },
-  { no: 9, name: 'Rear2 Right Outer', type: 'rear', wheel_type: 'dual_outer' },
-  { no: 10, name: 'Rear2 Right Inner', type: 'rear', wheel_type: 'dual_inner' },
+  { no: 1, name: 'Front Left', type: 'front', wheel_type: 'steer' },
+  { no: 2, name: 'Front Right', type: 'front', wheel_type: 'steer' },
+  { no: 3, name: 'Rear Left Outer', type: 'rear', wheel_type: 'drive' },
+  { no: 4, name: 'Rear Left Inner', type: 'rear', wheel_type: 'drive' },
+  { no: 5, name: 'Rear Right Outer', type: 'rear', wheel_type: 'drive' },
+  { no: 6, name: 'Rear Right Inner', type: 'rear', wheel_type: 'drive' },
+  { no: 7, name: 'Rear2 Left Outer', type: 'rear', wheel_type: 'drive' },
+  { no: 8, name: 'Rear2 Left Inner', type: 'rear', wheel_type: 'drive' },
+  { no: 9, name: 'Rear2 Right Outer', type: 'rear', wheel_type: 'drive' },
+  { no: 10, name: 'Rear2 Right Inner', type: 'rear', wheel_type: 'drive' },
 ];
 
 // Truck configurations
@@ -171,14 +173,14 @@ async function createTruck(truckConfig) {
     const sensor = await prisma.sensor.create({
       data: {
         device_id: device.id,
-        type: 'TPMS',
+        type: 'tire',
         position_no: tirePos.no,
         sn: `${truckConfig.device_sn}-SENSOR-${String(tirePos.no).padStart(2, '0')}`,
       },
     });
     sensors.push(sensor);
   }
-  console.log(`   ✅ Sensors created (10 TPMS sensors)`);
+  console.log(`   ✅ Sensors created (10 tire sensors)`);
 
   // 6. Generate initial GPS position
   const gpsCoord = getRandomCoordinate();

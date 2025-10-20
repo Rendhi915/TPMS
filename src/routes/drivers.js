@@ -239,27 +239,24 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
   }
 });
 
-// DELETE /api/drivers/:driverId - Soft delete driver (set status to nonaktif)
+// DELETE /api/drivers/:driverId - Delete driver permanently
 router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
     const { driverId } = req.params;
 
-    const driver = await prisma.drivers.update({
+    // Hard delete - permanently remove from database
+    await prisma.drivers.delete({
       where: {
         id: parseInt(driverId),
-      },
-      data: {
-        status: 'nonaktif',
       },
     });
 
     res.status(200).json({
       success: true,
-      data: driver,
-      message: 'Driver deactivated successfully',
+      message: 'Driver deleted successfully',
     });
   } catch (error) {
-    console.error('Error deactivating driver:', error);
+    console.error('Error deleting driver:', error);
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
@@ -268,11 +265,13 @@ router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async 
     }
     res.status(500).json({
       success: false,
-      message: 'Failed to deactivate driver',
+      message: 'Failed to delete driver',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 });
+
+module.exports = router;
 
 // GET /api/drivers/expiring-licenses - Get drivers with expiring licenses
 router.get('/expiring-licenses', authMiddleware, async (req, res) => {

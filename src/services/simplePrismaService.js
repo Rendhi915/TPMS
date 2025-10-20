@@ -1,6 +1,6 @@
 const { PrismaClient } = require('../../prisma/generated/client');
 
-// Initialize Prisma Client
+// Initialize Prisma Client with optimized settings
 const prisma = new PrismaClient({
   log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
   errorFormat: 'colorless',
@@ -10,17 +10,38 @@ const prisma = new PrismaClient({
 class SimplePrismaService {
   constructor() {
     this.prisma = prisma;
+    this.maxRetries = 3;
+    this.retryDelay = 2000; // 2 seconds
   }
 
-  // Connection management
+  // Connection management with retry
   async connect() {
-    try {
-      await this.prisma.$connect();
-      console.log('✅ Prisma connected to database');
-    } catch (error) {
-      console.error('❌ Prisma connection failed:', error);
-      throw error;
+    let lastError;
+
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        console.log(`🔄 Attempting database connection (${attempt}/${this.maxRetries})...`);
+        await this.prisma.$connect();
+        console.log('✅ Prisma connected to database successfully');
+
+        // Test the connection
+        await this.prisma.$queryRaw`SELECT 1`;
+        console.log('✅ Database connection verified');
+
+        return;
+      } catch (error) {
+        lastError = error;
+        console.error(`❌ Connection attempt ${attempt} failed:`, error.message);
+
+        if (attempt < this.maxRetries) {
+          console.log(`⏳ Retrying in ${this.retryDelay / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, this.retryDelay));
+        }
+      }
     }
+
+    console.error('❌ All connection attempts failed');
+    throw lastError;
   }
 
   async disconnect() {

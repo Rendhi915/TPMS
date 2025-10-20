@@ -37,13 +37,17 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
       },
     });
 
+    // Return both naming conventions for frontend compatibility
     const vendorsWithCounts = vendors.map((vendor) => ({
       id: vendor.id,
-      name: vendor.nama_vendor,
+      name: vendor.nama_vendor, // frontend uses 'name'
+      nama_vendor: vendor.nama_vendor, // database field
       address: vendor.address,
-      phone: vendor.nomor_telepon,
+      phone: vendor.nomor_telepon, // frontend uses 'phone'
+      nomor_telepon: vendor.nomor_telepon, // database field
       email: vendor.email,
-      contact_person: vendor.kontak_person,
+      contact_person: vendor.kontak_person, // frontend uses 'contact_person'
+      kontak_person: vendor.kontak_person, // database field
       created_at: vendor.created_at,
       updated_at: vendor.updated_at,
       truck_count: vendor.trucks.length,
@@ -224,13 +228,26 @@ router.get(
 // POST /api/vendors - Create new vendor
 router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
   try {
-    const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
+    // Support both 'nama_vendor' and 'name' from frontend
+    const nama_vendor = req.body.nama_vendor || req.body.name;
+    const address = req.body.address;
+    const nomor_telepon = req.body.nomor_telepon || req.body.phone;
+    const email = req.body.email;
+    const kontak_person = req.body.kontak_person || req.body.contact_person;
+
+    console.log('📝 Creating vendor with data:', {
+      nama_vendor,
+      address,
+      nomor_telepon,
+      email,
+      kontak_person,
+    });
 
     // Validate required fields
     if (!nama_vendor) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required field: nama_vendor',
+        message: 'Missing required field: name or nama_vendor',
       });
     }
 
@@ -251,20 +268,31 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
     const vendor = await prisma.vendors.create({
       data: {
         nama_vendor,
-        address,
-        nomor_telepon,
-        email,
-        kontak_person,
+        address: address || null,
+        nomor_telepon: nomor_telepon || null,
+        email: email || null,
+        kontak_person: kontak_person || null,
       },
     });
 
+    console.log('✅ Vendor created successfully:', vendor.id);
+
     res.status(201).json({
       success: true,
-      data: vendor,
+      data: {
+        id: vendor.id,
+        name: vendor.nama_vendor,
+        address: vendor.address,
+        phone: vendor.nomor_telepon,
+        email: vendor.email,
+        contact_person: vendor.kontak_person,
+        created_at: vendor.created_at,
+        updated_at: vendor.updated_at,
+      },
       message: 'Vendor created successfully',
     });
   } catch (error) {
-    console.error('Error creating vendor:', error);
+    console.error('❌ Error creating vendor:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to create vendor',
@@ -277,7 +305,22 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
-    const { nama_vendor, address, nomor_telepon, email, kontak_person } = req.body;
+
+    // Support both frontend field names and database field names
+    const nama_vendor = req.body.nama_vendor || req.body.name;
+    const address = req.body.address;
+    const nomor_telepon = req.body.nomor_telepon || req.body.phone;
+    const email = req.body.email;
+    const kontak_person = req.body.kontak_person || req.body.contact_person;
+
+    console.log('📝 Updating vendor ID:', vendorId);
+    console.log('📝 Update data received:', {
+      nama_vendor,
+      address,
+      nomor_telepon,
+      email,
+      kontak_person,
+    });
 
     // Check if vendor exists
     const existingVendor = await prisma.vendors.findUnique({
@@ -290,6 +333,8 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
         message: 'Vendor not found',
       });
     }
+
+    console.log('📋 Current vendor data:', existingVendor);
 
     // Check if nama_vendor is being changed and if new name already exists
     if (nama_vendor && nama_vendor !== existingVendor.nama_vendor) {
@@ -308,13 +353,16 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
       }
     }
 
+    // Build update data - only include fields that are provided
     const updateData = {};
-    if (nama_vendor !== undefined) updateData.nama_vendor = nama_vendor;
+    if (nama_vendor !== undefined && nama_vendor !== null) updateData.nama_vendor = nama_vendor;
     if (address !== undefined) updateData.address = address;
     if (nomor_telepon !== undefined) updateData.nomor_telepon = nomor_telepon;
     if (email !== undefined) updateData.email = email;
     if (kontak_person !== undefined) updateData.kontak_person = kontak_person;
     updateData.updated_at = new Date();
+
+    console.log('🔄 Updating with data:', updateData);
 
     const vendor = await prisma.vendors.update({
       where: { id: parseInt(vendorId) },
@@ -338,13 +386,33 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
       },
     });
 
+    console.log('✅ Vendor updated successfully:', vendor.id);
+
+    // Return response with both naming conventions for frontend compatibility
     res.status(200).json({
       success: true,
-      data: vendor,
+      data: {
+        id: vendor.id,
+        name: vendor.nama_vendor,
+        nama_vendor: vendor.nama_vendor,
+        address: vendor.address,
+        phone: vendor.nomor_telepon,
+        nomor_telepon: vendor.nomor_telepon,
+        email: vendor.email,
+        contact_person: vendor.kontak_person,
+        kontak_person: vendor.kontak_person,
+        created_at: vendor.created_at,
+        updated_at: vendor.updated_at,
+        trucks: vendor.trucks,
+        drivers: vendor.drivers,
+        truck_count: vendor.trucks.length,
+        driver_count: vendor.drivers.length,
+      },
       message: 'Vendor updated successfully',
     });
   } catch (error) {
-    console.error('Error updating vendor:', error);
+    console.error('❌ Error updating vendor:', error);
+    console.error('Error details:', error.stack);
     res.status(500).json({
       success: false,
       message: 'Failed to update vendor',
