@@ -1,9 +1,9 @@
 /**
  * Helper Script: Get Available Trucks for Device Assignment
- * 
+ *
  * This script helps you find valid truck_id values from the database
  * that can be used when creating new devices via API.
- * 
+ *
  * Usage:
  *   node scripts/get-available-trucks.js
  */

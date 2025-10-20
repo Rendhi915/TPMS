@@ -1,12 +1,12 @@
 /**
  * Demo Trucks Seeder - truck-spiderman & truck-ironman
- * 
+ *
  * Creates 2 fully equipped mining trucks with:
  * - 10 wheels each (2 front + 8 rear dual configuration)
  * - TPMS sensors for each wheel (pressure + temperature)
  * - GPS tracking device
  * - Random positions within PT BORNEO INDOBARA mining area
- * 
+ *
  * Usage:
  *   node scripts/seed-demo-trucks.js
  */
@@ -18,7 +18,7 @@ const prisma = new PrismaClient();
 const MINING_AREA_BOUNDS = {
   minLng: 115.432199,
   maxLng: 115.658299,
-  minLat: -3.717200,
+  minLat: -3.7172,
   maxLat: -3.431898,
 };
 
@@ -62,9 +62,11 @@ const TRUCKS = [
  * Generate random coordinate within mining area bounds
  */
 function getRandomCoordinate() {
-  const lng = MINING_AREA_BOUNDS.minLng + 
+  const lng =
+    MINING_AREA_BOUNDS.minLng +
     Math.random() * (MINING_AREA_BOUNDS.maxLng - MINING_AREA_BOUNDS.minLng);
-  const lat = MINING_AREA_BOUNDS.minLat + 
+  const lat =
+    MINING_AREA_BOUNDS.minLat +
     Math.random() * (MINING_AREA_BOUNDS.maxLat - MINING_AREA_BOUNDS.minLat);
   return { lng, lat };
 }
@@ -97,7 +99,7 @@ function generateTireTemperature(tireNo, hasAnomaly = false) {
  * Determine if this tire should have an anomaly
  * Currently disabled - all tires use normal values
  */
-function shouldHaveAnomaly(tireNo, truckName) {
+function shouldHaveAnomaly() {
   // Anomalies disabled - return false for all tires
   return false;
 }
@@ -106,7 +108,7 @@ function shouldHaveAnomaly(tireNo, truckName) {
  * Get anomaly type for specific tire
  * Currently disabled - returns null for all tires
  */
-function getAnomalyType(tireNo, truckName) {
+function getAnomalyType() {
   // Anomalies disabled
   return null;
 }
@@ -200,13 +202,10 @@ async function createTruck(truckConfig) {
   for (const tirePos of TIRE_POSITIONS) {
     const hasAnomaly = shouldHaveAnomaly(tirePos.no, truckConfig.name);
     const anomalyType = getAnomalyType(tirePos.no, truckConfig.name);
-    
-    const pressure = generateTirePressure(
-      tirePos.no, 
-      hasAnomaly && anomalyType === 'low_pressure'
-    );
+
+    const pressure = generateTirePressure(tirePos.no, hasAnomaly && anomalyType === 'low_pressure');
     const temperature = generateTireTemperature(
-      tirePos.no, 
+      tirePos.no,
       hasAnomaly && anomalyType === 'overheating'
     );
 
@@ -238,13 +237,10 @@ async function createTruck(truckConfig) {
   for (const tirePos of TIRE_POSITIONS) {
     const hasAnomaly = shouldHaveAnomaly(tirePos.no, truckConfig.name);
     const anomalyType = getAnomalyType(tirePos.no, truckConfig.name);
-    
-    const pressure = generateTirePressure(
-      tirePos.no, 
-      hasAnomaly && anomalyType === 'low_pressure'
-    );
+
+    const pressure = generateTirePressure(tirePos.no, hasAnomaly && anomalyType === 'low_pressure');
     const temperature = generateTireTemperature(
-      tirePos.no, 
+      tirePos.no,
       hasAnomaly && anomalyType === 'overheating'
     );
 
@@ -310,10 +306,10 @@ async function createTruck(truckConfig) {
   console.log(`      - Location: [${gpsCoord.lng.toFixed(6)}, ${gpsCoord.lat.toFixed(6)}]`);
   console.log(`      - Tires: 10 wheels configured`);
   console.log(`      - Sensors: 10 TPMS sensors active`);
-  
+
   if (anomalies.length > 0) {
     console.log(`      - ⚠️  Anomalies detected:`);
-    anomalies.forEach(a => {
+    anomalies.forEach((a) => {
       console.log(`         • Tire ${a.tire} (${a.name}): ${a.type}`);
       console.log(`           Pressure: ${a.pressure} kPa, Temp: ${a.temperature}°C`);
     });
@@ -329,7 +325,9 @@ async function seedDemoTrucks() {
   try {
     console.log('🚀 Starting Demo Trucks Seeder...');
     console.log('📍 Mining Area: PT BORNEO INDOBARA');
-    console.log(`   Coordinates: [${MINING_AREA_BOUNDS.minLng}, ${MINING_AREA_BOUNDS.minLat}] to [${MINING_AREA_BOUNDS.maxLng}, ${MINING_AREA_BOUNDS.maxLat}]`);
+    console.log(
+      `   Coordinates: [${MINING_AREA_BOUNDS.minLng}, ${MINING_AREA_BOUNDS.minLat}] to [${MINING_AREA_BOUNDS.maxLng}, ${MINING_AREA_BOUNDS.maxLat}]`
+    );
 
     // Check if trucks already exist
     for (const truckConfig of TRUCKS) {
@@ -349,10 +347,11 @@ async function seedDemoTrucks() {
     console.log('\n📝 Next Steps:');
     console.log('   1. Test API endpoint: GET http://localhost:3001/api/trucks');
     console.log('   2. Test sensor data: GET http://localhost:3001/api/sensors/last');
-    console.log('   3. Test live tracking: GET http://localhost:3001/api/trucks/realtime-locations');
+    console.log(
+      '   3. Test live tracking: GET http://localhost:3001/api/trucks/realtime-locations'
+    );
     console.log('   4. Check WebSocket: ws://localhost:3001/ws');
     console.log('\n🎯 Trucks ready for live tracking frontend!');
-
   } catch (error) {
     console.error('❌ Error seeding demo trucks:', error);
     console.error(error.stack);
