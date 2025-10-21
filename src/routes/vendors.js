@@ -33,27 +33,14 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
         },
       },
       orderBy: {
-        nama_vendor: 'asc',
+        name: 'asc',
       },
     });
 
-    // Return both naming conventions for frontend compatibility
     const vendorsWithCounts = vendors.map((vendor) => ({
-      id: vendor.id,
-      name: vendor.nama_vendor, // frontend uses 'name'
-      nama_vendor: vendor.nama_vendor, // database field
-      address: vendor.address,
-      phone: vendor.nomor_telepon, // frontend uses 'phone'
-      nomor_telepon: vendor.nomor_telepon, // database field
-      email: vendor.email,
-      contact_person: vendor.kontak_person, // frontend uses 'contact_person'
-      kontak_person: vendor.kontak_person, // database field
-      created_at: vendor.created_at,
-      updated_at: vendor.updated_at,
-      truck_count: vendor.trucks.length,
-      driver_count: vendor.drivers.length,
-      trucks: vendor.trucks,
-      drivers: vendor.drivers,
+      ...vendor,
+      truckCount: vendor.trucks.length,
+      driverCount: vendor.drivers.length,
     }));
 
     res.status(200).json({
@@ -108,13 +95,13 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
 
     const vendorData = {
       id: vendor.id,
-      name: vendor.nama_vendor,
+      name: vendor.name,
       address: vendor.address,
-      phone: vendor.nomor_telepon,
+      phone: vendor.phone,
       email: vendor.email,
-      contact_person: vendor.kontak_person,
-      created_at: vendor.created_at,
-      updated_at: vendor.updated_at,
+      contactPerson: vendor.contactPerson,
+      createdAt: vendor.createdAt,
+      updatedAt: vendor.updatedAt,
       trucks: vendor.trucks.map((truck) => ({
         id: truck.id,
         name: truck.name,
@@ -159,12 +146,12 @@ router.get(
       const [trucks, total] = await Promise.all([
         prisma.truck.findMany({
           where: {
-            vendor_id: parseInt(vendorId),
+            vendorId: parseInt(vendorId),
           },
           include: {
             vendor: {
               select: {
-                nama_vendor: true,
+                name: true,
               },
             },
             truck_status_event: {
@@ -182,7 +169,7 @@ router.get(
         }),
         prisma.truck.count({
           where: {
-            vendor_id: parseInt(vendorId),
+            vendorId: parseInt(vendorId),
           },
         }),
       ]);
@@ -196,7 +183,7 @@ router.get(
         model: truck.model,
         status: truck.truck_status_event[0]?.status || 'active',
         created_at: truck.created_at,
-        vendor_name: truck.vendor?.nama_vendor,
+        vendorName: truck.vendor?.name,
       }));
 
       res.status(200).json({
@@ -228,33 +215,28 @@ router.get(
 // POST /api/vendors - Create new vendor
 router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
   try {
-    // Support both 'nama_vendor' and 'name' from frontend
-    const nama_vendor = req.body.nama_vendor || req.body.name;
-    const address = req.body.address;
-    const nomor_telepon = req.body.nomor_telepon || req.body.phone;
-    const email = req.body.email;
-    const kontak_person = req.body.kontak_person || req.body.contact_person;
+    const { name, address, phone, email, contactPerson } = req.body;
 
     console.log('📝 Creating vendor with data:', {
-      nama_vendor,
+      name,
       address,
-      nomor_telepon,
+      phone,
       email,
-      kontak_person,
+      contactPerson,
     });
 
     // Validate required fields
-    if (!nama_vendor) {
+    if (!name) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required field: name or nama_vendor',
+        message: 'Missing required field: name',
       });
     }
 
     // Check if vendor with same name already exists
     const existingVendor = await prisma.vendors.findFirst({
       where: {
-        nama_vendor: nama_vendor,
+        name: name,
       },
     });
 
@@ -267,11 +249,11 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 
     const vendor = await prisma.vendors.create({
       data: {
-        nama_vendor,
+        name,
         address: address || null,
-        nomor_telepon: nomor_telepon || null,
+        phone: phone || null,
         email: email || null,
-        kontak_person: kontak_person || null,
+        contactPerson: contactPerson || null,
       },
     });
 
@@ -279,16 +261,7 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 
     res.status(201).json({
       success: true,
-      data: {
-        id: vendor.id,
-        name: vendor.nama_vendor,
-        address: vendor.address,
-        phone: vendor.nomor_telepon,
-        email: vendor.email,
-        contact_person: vendor.kontak_person,
-        created_at: vendor.created_at,
-        updated_at: vendor.updated_at,
-      },
+      data: vendor,
       message: 'Vendor created successfully',
     });
   } catch (error) {
@@ -305,21 +278,15 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
-
-    // Support both frontend field names and database field names
-    const nama_vendor = req.body.nama_vendor || req.body.name;
-    const address = req.body.address;
-    const nomor_telepon = req.body.nomor_telepon || req.body.phone;
-    const email = req.body.email;
-    const kontak_person = req.body.kontak_person || req.body.contact_person;
+    const { name, address, phone, email, contactPerson } = req.body;
 
     console.log('📝 Updating vendor ID:', vendorId);
     console.log('📝 Update data received:', {
-      nama_vendor,
+      name,
       address,
-      nomor_telepon,
+      phone,
       email,
-      kontak_person,
+      contactPerson,
     });
 
     // Check if vendor exists
@@ -336,11 +303,11 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
 
     console.log('📋 Current vendor data:', existingVendor);
 
-    // Check if nama_vendor is being changed and if new name already exists
-    if (nama_vendor && nama_vendor !== existingVendor.nama_vendor) {
+    // Check if name is being changed and if new name already exists
+    if (name && name !== existingVendor.name) {
       const duplicateVendor = await prisma.vendors.findFirst({
         where: {
-          nama_vendor: nama_vendor,
+          name: name,
           id: { not: parseInt(vendorId) },
         },
       });
@@ -355,12 +322,12 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
 
     // Build update data - only include fields that are provided
     const updateData = {};
-    if (nama_vendor !== undefined && nama_vendor !== null) updateData.nama_vendor = nama_vendor;
+    if (name !== undefined && name !== null) updateData.name = name;
     if (address !== undefined) updateData.address = address;
-    if (nomor_telepon !== undefined) updateData.nomor_telepon = nomor_telepon;
+    if (phone !== undefined) updateData.phone = phone;
     if (email !== undefined) updateData.email = email;
-    if (kontak_person !== undefined) updateData.kontak_person = kontak_person;
-    updateData.updated_at = new Date();
+    if (contactPerson !== undefined) updateData.contactPerson = contactPerson;
+    updateData.updatedAt = new Date();
 
     console.log('🔄 Updating with data:', updateData);
 
@@ -380,6 +347,7 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
           select: {
             id: true,
             name: true,
+            phone: true,
             status: true,
           },
         },
@@ -388,31 +356,24 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
 
     console.log('✅ Vendor updated successfully:', vendor.id);
 
-    // Return response with both naming conventions for frontend compatibility
     res.status(200).json({
       success: true,
       data: {
-        id: vendor.id,
-        name: vendor.nama_vendor,
-        nama_vendor: vendor.nama_vendor,
-        address: vendor.address,
-        phone: vendor.nomor_telepon,
-        nomor_telepon: vendor.nomor_telepon,
-        email: vendor.email,
-        contact_person: vendor.kontak_person,
-        kontak_person: vendor.kontak_person,
-        created_at: vendor.created_at,
-        updated_at: vendor.updated_at,
-        trucks: vendor.trucks,
-        drivers: vendor.drivers,
-        truck_count: vendor.trucks.length,
-        driver_count: vendor.drivers.length,
+        ...vendor,
+        truckCount: vendor.trucks.length,
+        driverCount: vendor.drivers.length,
       },
       message: 'Vendor updated successfully',
     });
   } catch (error) {
     console.error('❌ Error updating vendor:', error);
     console.error('Error details:', error.stack);
+    if (error.code === 'P2025') {
+      return res.status(404).json({
+        success: false,
+        message: 'Vendor not found',
+      });
+    }
     res.status(500).json({
       success: false,
       message: 'Failed to update vendor',

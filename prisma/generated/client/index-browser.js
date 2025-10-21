@@ -328,12 +328,12 @@ exports.Prisma.TruckScalarFieldEnum = {
   name: 'name',
   model: 'model',
   year: 'year',
-  tire_config: 'tire_config',
-  fleet_group_id: 'fleet_group_id',
-  vendor_id: 'vendor_id',
-  created_at: 'created_at',
-  created_by: 'created_by',
-  updated_by: 'updated_by'
+  tireConfig: 'tireConfig',
+  fleetGroupId: 'fleetGroupId',
+  vendorId: 'vendorId',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
 };
 
 exports.Prisma.Truck_status_eventScalarFieldEnum = {
@@ -358,13 +358,13 @@ exports.Prisma.UsersScalarFieldEnum = {
 
 exports.Prisma.VendorsScalarFieldEnum = {
   id: 'id',
-  nama_vendor: 'nama_vendor',
+  name: 'name',
   address: 'address',
-  nomor_telepon: 'nomor_telepon',
+  phone: 'phone',
   email: 'email',
-  kontak_person: 'kontak_person',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
+  contactPerson: 'contactPerson',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.DriversScalarFieldEnum = {
@@ -373,14 +373,14 @@ exports.Prisma.DriversScalarFieldEnum = {
   phone: 'phone',
   email: 'email',
   address: 'address',
-  license_number: 'license_number',
-  license_type: 'license_type',
-  license_expiry: 'license_expiry',
-  id_card_number: 'id_card_number',
-  vendor_id: 'vendor_id',
+  licenseNumber: 'licenseNumber',
+  licenseType: 'licenseType',
+  licenseExpiry: 'licenseExpiry',
+  idCardNumber: 'idCardNumber',
+  vendorId: 'vendorId',
   status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {

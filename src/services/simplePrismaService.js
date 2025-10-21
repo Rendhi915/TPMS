@@ -94,7 +94,8 @@ class SimplePrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleet_group: true,
+          fleetGroup: true,
+          vendor: true,
           alert_event: {
             where: { acknowledged: false },
             take: 5,
@@ -129,7 +130,7 @@ class SimplePrismaService {
             },
           },
         },
-        orderBy: { created_at: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: offset,
         take: parseInt(limit),
       });
@@ -175,7 +176,8 @@ class SimplePrismaService {
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
         include: {
-          fleet_group: true,
+          fleetGroup: true,
+          vendor: true,
           alert_event: {
             orderBy: { occurred_at: 'desc' },
             take: 10,
@@ -245,7 +247,8 @@ class SimplePrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleet_group: true,
+          fleetGroup: true,
+          vendor: true,
           gps_position: {
             orderBy: { ts: 'desc' },
             take: 1,
@@ -258,7 +261,7 @@ class SimplePrismaService {
             },
           },
         },
-        orderBy: { created_at: 'desc' },
+        orderBy: { createdAt: 'desc' },
       });
 
       // Format as GeoJSON
@@ -544,7 +547,7 @@ class SimplePrismaService {
       engineHours: 0,
       odometer: 0,
       lastMaintenance: null,
-      lastUpdate: truck.created_at,
+      lastUpdate: truck.createdAt,
       alerts: truck.alert_event || [],
       alertCount: truck._count?.alert_event || 0,
     };
@@ -572,7 +575,7 @@ class SimplePrismaService {
       engineHours: 0,
       odometer: 0,
       lastMaintenance: null,
-      lastUpdate: truck.created_at,
+      lastUpdate: truck.createdAt,
       tires: (truck.tire_pressure_event || []).map((tire) => ({
         position: `Tire ${tire.tire_no}`,
         tireNumber: tire.tire_no,

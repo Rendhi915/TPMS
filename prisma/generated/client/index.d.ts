@@ -22750,12 +22750,12 @@ export namespace Prisma {
 
   export type TruckAvgAggregateOutputType = {
     year: number | null
-    vendor_id: number | null
+    vendorId: number | null
   }
 
   export type TruckSumAggregateOutputType = {
     year: number | null
-    vendor_id: number | null
+    vendorId: number | null
   }
 
   export type TruckMinAggregateOutputType = {
@@ -22765,12 +22765,12 @@ export namespace Prisma {
     name: string | null
     model: string | null
     year: number | null
-    tire_config: string | null
-    fleet_group_id: string | null
-    vendor_id: number | null
-    created_at: Date | null
-    created_by: string | null
-    updated_by: string | null
+    tireConfig: string | null
+    fleetGroupId: string | null
+    vendorId: number | null
+    createdAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
   }
 
   export type TruckMaxAggregateOutputType = {
@@ -22780,12 +22780,12 @@ export namespace Prisma {
     name: string | null
     model: string | null
     year: number | null
-    tire_config: string | null
-    fleet_group_id: string | null
-    vendor_id: number | null
-    created_at: Date | null
-    created_by: string | null
-    updated_by: string | null
+    tireConfig: string | null
+    fleetGroupId: string | null
+    vendorId: number | null
+    createdAt: Date | null
+    createdBy: string | null
+    updatedBy: string | null
   }
 
   export type TruckCountAggregateOutputType = {
@@ -22795,24 +22795,24 @@ export namespace Prisma {
     name: number
     model: number
     year: number
-    tire_config: number
-    fleet_group_id: number
-    vendor_id: number
-    created_at: number
-    created_by: number
-    updated_by: number
+    tireConfig: number
+    fleetGroupId: number
+    vendorId: number
+    createdAt: number
+    createdBy: number
+    updatedBy: number
     _all: number
   }
 
 
   export type TruckAvgAggregateInputType = {
     year?: true
-    vendor_id?: true
+    vendorId?: true
   }
 
   export type TruckSumAggregateInputType = {
     year?: true
-    vendor_id?: true
+    vendorId?: true
   }
 
   export type TruckMinAggregateInputType = {
@@ -22822,12 +22822,12 @@ export namespace Prisma {
     name?: true
     model?: true
     year?: true
-    tire_config?: true
-    fleet_group_id?: true
-    vendor_id?: true
-    created_at?: true
-    created_by?: true
-    updated_by?: true
+    tireConfig?: true
+    fleetGroupId?: true
+    vendorId?: true
+    createdAt?: true
+    createdBy?: true
+    updatedBy?: true
   }
 
   export type TruckMaxAggregateInputType = {
@@ -22837,12 +22837,12 @@ export namespace Prisma {
     name?: true
     model?: true
     year?: true
-    tire_config?: true
-    fleet_group_id?: true
-    vendor_id?: true
-    created_at?: true
-    created_by?: true
-    updated_by?: true
+    tireConfig?: true
+    fleetGroupId?: true
+    vendorId?: true
+    createdAt?: true
+    createdBy?: true
+    updatedBy?: true
   }
 
   export type TruckCountAggregateInputType = {
@@ -22852,12 +22852,12 @@ export namespace Prisma {
     name?: true
     model?: true
     year?: true
-    tire_config?: true
-    fleet_group_id?: true
-    vendor_id?: true
-    created_at?: true
-    created_by?: true
-    updated_by?: true
+    tireConfig?: true
+    fleetGroupId?: true
+    vendorId?: true
+    createdAt?: true
+    createdBy?: true
+    updatedBy?: true
     _all?: true
   }
 
@@ -22954,12 +22954,12 @@ export namespace Prisma {
     name: string | null
     model: string | null
     year: number | null
-    tire_config: string | null
-    fleet_group_id: string | null
-    vendor_id: number | null
-    created_at: Date
-    created_by: string | null
-    updated_by: string | null
+    tireConfig: string | null
+    fleetGroupId: string | null
+    vendorId: number | null
+    createdAt: Date
+    createdBy: string | null
+    updatedBy: string | null
     _count: TruckCountAggregateOutputType | null
     _avg: TruckAvgAggregateOutputType | null
     _sum: TruckSumAggregateOutputType | null
@@ -22988,12 +22988,12 @@ export namespace Prisma {
     name?: boolean
     model?: boolean
     year?: boolean
-    tire_config?: boolean
-    fleet_group_id?: boolean
-    vendor_id?: boolean
-    created_at?: boolean
-    created_by?: boolean
-    updated_by?: boolean
+    tireConfig?: boolean
+    fleetGroupId?: boolean
+    vendorId?: boolean
+    createdAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
     alert_event?: boolean | truck$alert_eventArgs<ExtArgs>
     daily_route?: boolean | truck$daily_routeArgs<ExtArgs>
     device?: boolean | truck$deviceArgs<ExtArgs>
@@ -23008,7 +23008,7 @@ export namespace Prisma {
     tire_position_config?: boolean | truck$tire_position_configArgs<ExtArgs>
     tire_pressure_event?: boolean | truck$tire_pressure_eventArgs<ExtArgs>
     trip?: boolean | truck$tripArgs<ExtArgs>
-    fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    fleetGroup?: boolean | truck$fleetGroupArgs<ExtArgs>
     vendor?: boolean | truck$vendorArgs<ExtArgs>
     truck_status_event?: boolean | truck$truck_status_eventArgs<ExtArgs>
     _count?: boolean | TruckCountOutputTypeDefaultArgs<ExtArgs>
@@ -23021,13 +23021,13 @@ export namespace Prisma {
     name?: boolean
     model?: boolean
     year?: boolean
-    tire_config?: boolean
-    fleet_group_id?: boolean
-    vendor_id?: boolean
-    created_at?: boolean
-    created_by?: boolean
-    updated_by?: boolean
-    fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    tireConfig?: boolean
+    fleetGroupId?: boolean
+    vendorId?: boolean
+    createdAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
+    fleetGroup?: boolean | truck$fleetGroupArgs<ExtArgs>
     vendor?: boolean | truck$vendorArgs<ExtArgs>
   }, ExtArgs["result"]["truck"]>
 
@@ -23038,12 +23038,12 @@ export namespace Prisma {
     name?: boolean
     model?: boolean
     year?: boolean
-    tire_config?: boolean
-    fleet_group_id?: boolean
-    vendor_id?: boolean
-    created_at?: boolean
-    created_by?: boolean
-    updated_by?: boolean
+    tireConfig?: boolean
+    fleetGroupId?: boolean
+    vendorId?: boolean
+    createdAt?: boolean
+    createdBy?: boolean
+    updatedBy?: boolean
   }
 
   export type truckInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -23061,13 +23061,13 @@ export namespace Prisma {
     tire_position_config?: boolean | truck$tire_position_configArgs<ExtArgs>
     tire_pressure_event?: boolean | truck$tire_pressure_eventArgs<ExtArgs>
     trip?: boolean | truck$tripArgs<ExtArgs>
-    fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    fleetGroup?: boolean | truck$fleetGroupArgs<ExtArgs>
     vendor?: boolean | truck$vendorArgs<ExtArgs>
     truck_status_event?: boolean | truck$truck_status_eventArgs<ExtArgs>
     _count?: boolean | TruckCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type truckIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    fleet_group?: boolean | truck$fleet_groupArgs<ExtArgs>
+    fleetGroup?: boolean | truck$fleetGroupArgs<ExtArgs>
     vendor?: boolean | truck$vendorArgs<ExtArgs>
   }
 
@@ -23088,7 +23088,7 @@ export namespace Prisma {
       tire_position_config: Prisma.$tire_position_configPayload<ExtArgs>[]
       tire_pressure_event: Prisma.$tire_pressure_eventPayload<ExtArgs>[]
       trip: Prisma.$tripPayload<ExtArgs>[]
-      fleet_group: Prisma.$fleet_groupPayload<ExtArgs> | null
+      fleetGroup: Prisma.$fleet_groupPayload<ExtArgs> | null
       vendor: Prisma.$vendorsPayload<ExtArgs> | null
       truck_status_event: Prisma.$truck_status_eventPayload<ExtArgs>[]
     }
@@ -23099,12 +23099,12 @@ export namespace Prisma {
       name: string | null
       model: string | null
       year: number | null
-      tire_config: string | null
-      fleet_group_id: string | null
-      vendor_id: number | null
-      created_at: Date
-      created_by: string | null
-      updated_by: string | null
+      tireConfig: string | null
+      fleetGroupId: string | null
+      vendorId: number | null
+      createdAt: Date
+      createdBy: string | null
+      updatedBy: string | null
     }, ExtArgs["result"]["truck"]>
     composites: {}
   }
@@ -23483,7 +23483,7 @@ export namespace Prisma {
     tire_position_config<T extends truck$tire_position_configArgs<ExtArgs> = {}>(args?: Subset<T, truck$tire_position_configArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$tire_position_configPayload<ExtArgs>, T, "findMany"> | Null>
     tire_pressure_event<T extends truck$tire_pressure_eventArgs<ExtArgs> = {}>(args?: Subset<T, truck$tire_pressure_eventArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$tire_pressure_eventPayload<ExtArgs>, T, "findMany"> | Null>
     trip<T extends truck$tripArgs<ExtArgs> = {}>(args?: Subset<T, truck$tripArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$tripPayload<ExtArgs>, T, "findMany"> | Null>
-    fleet_group<T extends truck$fleet_groupArgs<ExtArgs> = {}>(args?: Subset<T, truck$fleet_groupArgs<ExtArgs>>): Prisma__fleet_groupClient<$Result.GetResult<Prisma.$fleet_groupPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    fleetGroup<T extends truck$fleetGroupArgs<ExtArgs> = {}>(args?: Subset<T, truck$fleetGroupArgs<ExtArgs>>): Prisma__fleet_groupClient<$Result.GetResult<Prisma.$fleet_groupPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     vendor<T extends truck$vendorArgs<ExtArgs> = {}>(args?: Subset<T, truck$vendorArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     truck_status_event<T extends truck$truck_status_eventArgs<ExtArgs> = {}>(args?: Subset<T, truck$truck_status_eventArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$truck_status_eventPayload<ExtArgs>, T, "findMany"> | Null>
     /**
@@ -23521,12 +23521,12 @@ export namespace Prisma {
     readonly name: FieldRef<"truck", 'String'>
     readonly model: FieldRef<"truck", 'String'>
     readonly year: FieldRef<"truck", 'Int'>
-    readonly tire_config: FieldRef<"truck", 'String'>
-    readonly fleet_group_id: FieldRef<"truck", 'String'>
-    readonly vendor_id: FieldRef<"truck", 'Int'>
-    readonly created_at: FieldRef<"truck", 'DateTime'>
-    readonly created_by: FieldRef<"truck", 'String'>
-    readonly updated_by: FieldRef<"truck", 'String'>
+    readonly tireConfig: FieldRef<"truck", 'String'>
+    readonly fleetGroupId: FieldRef<"truck", 'String'>
+    readonly vendorId: FieldRef<"truck", 'Int'>
+    readonly createdAt: FieldRef<"truck", 'DateTime'>
+    readonly createdBy: FieldRef<"truck", 'String'>
+    readonly updatedBy: FieldRef<"truck", 'String'>
   }
     
 
@@ -24125,9 +24125,9 @@ export namespace Prisma {
   }
 
   /**
-   * truck.fleet_group
+   * truck.fleetGroup
    */
-  export type truck$fleet_groupArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type truck$fleetGroupArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the fleet_group
      */
@@ -26164,35 +26164,35 @@ export namespace Prisma {
 
   export type VendorsMinAggregateOutputType = {
     id: number | null
-    nama_vendor: string | null
+    name: string | null
     address: string | null
-    nomor_telepon: string | null
+    phone: string | null
     email: string | null
-    kontak_person: string | null
-    created_at: Date | null
-    updated_at: Date | null
+    contactPerson: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type VendorsMaxAggregateOutputType = {
     id: number | null
-    nama_vendor: string | null
+    name: string | null
     address: string | null
-    nomor_telepon: string | null
+    phone: string | null
     email: string | null
-    kontak_person: string | null
-    created_at: Date | null
-    updated_at: Date | null
+    contactPerson: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type VendorsCountAggregateOutputType = {
     id: number
-    nama_vendor: number
+    name: number
     address: number
-    nomor_telepon: number
+    phone: number
     email: number
-    kontak_person: number
-    created_at: number
-    updated_at: number
+    contactPerson: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -26207,35 +26207,35 @@ export namespace Prisma {
 
   export type VendorsMinAggregateInputType = {
     id?: true
-    nama_vendor?: true
+    name?: true
     address?: true
-    nomor_telepon?: true
+    phone?: true
     email?: true
-    kontak_person?: true
-    created_at?: true
-    updated_at?: true
+    contactPerson?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type VendorsMaxAggregateInputType = {
     id?: true
-    nama_vendor?: true
+    name?: true
     address?: true
-    nomor_telepon?: true
+    phone?: true
     email?: true
-    kontak_person?: true
-    created_at?: true
-    updated_at?: true
+    contactPerson?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type VendorsCountAggregateInputType = {
     id?: true
-    nama_vendor?: true
+    name?: true
     address?: true
-    nomor_telepon?: true
+    phone?: true
     email?: true
-    kontak_person?: true
-    created_at?: true
-    updated_at?: true
+    contactPerson?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -26327,13 +26327,13 @@ export namespace Prisma {
 
   export type VendorsGroupByOutputType = {
     id: number
-    nama_vendor: string
+    name: string
     address: string | null
-    nomor_telepon: string | null
+    phone: string | null
     email: string | null
-    kontak_person: string | null
-    created_at: Date
-    updated_at: Date
+    contactPerson: string | null
+    createdAt: Date
+    updatedAt: Date
     _count: VendorsCountAggregateOutputType | null
     _avg: VendorsAvgAggregateOutputType | null
     _sum: VendorsSumAggregateOutputType | null
@@ -26357,13 +26357,13 @@ export namespace Prisma {
 
   export type vendorsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    nama_vendor?: boolean
+    name?: boolean
     address?: boolean
-    nomor_telepon?: boolean
+    phone?: boolean
     email?: boolean
-    kontak_person?: boolean
-    created_at?: boolean
-    updated_at?: boolean
+    contactPerson?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     drivers?: boolean | vendors$driversArgs<ExtArgs>
     trucks?: boolean | vendors$trucksArgs<ExtArgs>
     _count?: boolean | VendorsCountOutputTypeDefaultArgs<ExtArgs>
@@ -26371,24 +26371,24 @@ export namespace Prisma {
 
   export type vendorsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    nama_vendor?: boolean
+    name?: boolean
     address?: boolean
-    nomor_telepon?: boolean
+    phone?: boolean
     email?: boolean
-    kontak_person?: boolean
-    created_at?: boolean
-    updated_at?: boolean
+    contactPerson?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["vendors"]>
 
   export type vendorsSelectScalar = {
     id?: boolean
-    nama_vendor?: boolean
+    name?: boolean
     address?: boolean
-    nomor_telepon?: boolean
+    phone?: boolean
     email?: boolean
-    kontak_person?: boolean
-    created_at?: boolean
-    updated_at?: boolean
+    contactPerson?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
   export type vendorsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -26406,13 +26406,13 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      nama_vendor: string
+      name: string
       address: string | null
-      nomor_telepon: string | null
+      phone: string | null
       email: string | null
-      kontak_person: string | null
-      created_at: Date
-      updated_at: Date
+      contactPerson: string | null
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["vendors"]>
     composites: {}
   }
@@ -26809,13 +26809,13 @@ export namespace Prisma {
    */ 
   interface vendorsFieldRefs {
     readonly id: FieldRef<"vendors", 'Int'>
-    readonly nama_vendor: FieldRef<"vendors", 'String'>
+    readonly name: FieldRef<"vendors", 'String'>
     readonly address: FieldRef<"vendors", 'String'>
-    readonly nomor_telepon: FieldRef<"vendors", 'String'>
+    readonly phone: FieldRef<"vendors", 'String'>
     readonly email: FieldRef<"vendors", 'String'>
-    readonly kontak_person: FieldRef<"vendors", 'String'>
-    readonly created_at: FieldRef<"vendors", 'DateTime'>
-    readonly updated_at: FieldRef<"vendors", 'DateTime'>
+    readonly contactPerson: FieldRef<"vendors", 'String'>
+    readonly createdAt: FieldRef<"vendors", 'DateTime'>
+    readonly updatedAt: FieldRef<"vendors", 'DateTime'>
   }
     
 
@@ -27198,12 +27198,12 @@ export namespace Prisma {
 
   export type DriversAvgAggregateOutputType = {
     id: number | null
-    vendor_id: number | null
+    vendorId: number | null
   }
 
   export type DriversSumAggregateOutputType = {
     id: number | null
-    vendor_id: number | null
+    vendorId: number | null
   }
 
   export type DriversMinAggregateOutputType = {
@@ -27212,14 +27212,14 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     address: string | null
-    license_number: string | null
-    license_type: string | null
-    license_expiry: Date | null
-    id_card_number: string | null
-    vendor_id: number | null
+    licenseNumber: string | null
+    licenseType: string | null
+    licenseExpiry: Date | null
+    idCardNumber: string | null
+    vendorId: number | null
     status: string | null
-    created_at: Date | null
-    updated_at: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type DriversMaxAggregateOutputType = {
@@ -27228,14 +27228,14 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     address: string | null
-    license_number: string | null
-    license_type: string | null
-    license_expiry: Date | null
-    id_card_number: string | null
-    vendor_id: number | null
+    licenseNumber: string | null
+    licenseType: string | null
+    licenseExpiry: Date | null
+    idCardNumber: string | null
+    vendorId: number | null
     status: string | null
-    created_at: Date | null
-    updated_at: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type DriversCountAggregateOutputType = {
@@ -27244,26 +27244,26 @@ export namespace Prisma {
     phone: number
     email: number
     address: number
-    license_number: number
-    license_type: number
-    license_expiry: number
-    id_card_number: number
-    vendor_id: number
+    licenseNumber: number
+    licenseType: number
+    licenseExpiry: number
+    idCardNumber: number
+    vendorId: number
     status: number
-    created_at: number
-    updated_at: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
 
   export type DriversAvgAggregateInputType = {
     id?: true
-    vendor_id?: true
+    vendorId?: true
   }
 
   export type DriversSumAggregateInputType = {
     id?: true
-    vendor_id?: true
+    vendorId?: true
   }
 
   export type DriversMinAggregateInputType = {
@@ -27272,14 +27272,14 @@ export namespace Prisma {
     phone?: true
     email?: true
     address?: true
-    license_number?: true
-    license_type?: true
-    license_expiry?: true
-    id_card_number?: true
-    vendor_id?: true
+    licenseNumber?: true
+    licenseType?: true
+    licenseExpiry?: true
+    idCardNumber?: true
+    vendorId?: true
     status?: true
-    created_at?: true
-    updated_at?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type DriversMaxAggregateInputType = {
@@ -27288,14 +27288,14 @@ export namespace Prisma {
     phone?: true
     email?: true
     address?: true
-    license_number?: true
-    license_type?: true
-    license_expiry?: true
-    id_card_number?: true
-    vendor_id?: true
+    licenseNumber?: true
+    licenseType?: true
+    licenseExpiry?: true
+    idCardNumber?: true
+    vendorId?: true
     status?: true
-    created_at?: true
-    updated_at?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type DriversCountAggregateInputType = {
@@ -27304,14 +27304,14 @@ export namespace Prisma {
     phone?: true
     email?: true
     address?: true
-    license_number?: true
-    license_type?: true
-    license_expiry?: true
-    id_card_number?: true
-    vendor_id?: true
+    licenseNumber?: true
+    licenseType?: true
+    licenseExpiry?: true
+    idCardNumber?: true
+    vendorId?: true
     status?: true
-    created_at?: true
-    updated_at?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -27407,14 +27407,14 @@ export namespace Prisma {
     phone: string | null
     email: string | null
     address: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date
-    id_card_number: string
-    vendor_id: number | null
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date
+    idCardNumber: string
+    vendorId: number | null
     status: string
-    created_at: Date
-    updated_at: Date
+    createdAt: Date
+    updatedAt: Date
     _count: DriversCountAggregateOutputType | null
     _avg: DriversAvgAggregateOutputType | null
     _sum: DriversSumAggregateOutputType | null
@@ -27442,14 +27442,14 @@ export namespace Prisma {
     phone?: boolean
     email?: boolean
     address?: boolean
-    license_number?: boolean
-    license_type?: boolean
-    license_expiry?: boolean
-    id_card_number?: boolean
-    vendor_id?: boolean
+    licenseNumber?: boolean
+    licenseType?: boolean
+    licenseExpiry?: boolean
+    idCardNumber?: boolean
+    vendorId?: boolean
     status?: boolean
-    created_at?: boolean
-    updated_at?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     vendor?: boolean | drivers$vendorArgs<ExtArgs>
   }, ExtArgs["result"]["drivers"]>
 
@@ -27459,14 +27459,14 @@ export namespace Prisma {
     phone?: boolean
     email?: boolean
     address?: boolean
-    license_number?: boolean
-    license_type?: boolean
-    license_expiry?: boolean
-    id_card_number?: boolean
-    vendor_id?: boolean
+    licenseNumber?: boolean
+    licenseType?: boolean
+    licenseExpiry?: boolean
+    idCardNumber?: boolean
+    vendorId?: boolean
     status?: boolean
-    created_at?: boolean
-    updated_at?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     vendor?: boolean | drivers$vendorArgs<ExtArgs>
   }, ExtArgs["result"]["drivers"]>
 
@@ -27476,14 +27476,14 @@ export namespace Prisma {
     phone?: boolean
     email?: boolean
     address?: boolean
-    license_number?: boolean
-    license_type?: boolean
-    license_expiry?: boolean
-    id_card_number?: boolean
-    vendor_id?: boolean
+    licenseNumber?: boolean
+    licenseType?: boolean
+    licenseExpiry?: boolean
+    idCardNumber?: boolean
+    vendorId?: boolean
     status?: boolean
-    created_at?: boolean
-    updated_at?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
   export type driversInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -27504,14 +27504,14 @@ export namespace Prisma {
       phone: string | null
       email: string | null
       address: string | null
-      license_number: string
-      license_type: string
-      license_expiry: Date
-      id_card_number: string
-      vendor_id: number | null
+      licenseNumber: string
+      licenseType: string
+      licenseExpiry: Date
+      idCardNumber: string
+      vendorId: number | null
       status: string
-      created_at: Date
-      updated_at: Date
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["drivers"]>
     composites: {}
   }
@@ -27911,14 +27911,14 @@ export namespace Prisma {
     readonly phone: FieldRef<"drivers", 'String'>
     readonly email: FieldRef<"drivers", 'String'>
     readonly address: FieldRef<"drivers", 'String'>
-    readonly license_number: FieldRef<"drivers", 'String'>
-    readonly license_type: FieldRef<"drivers", 'String'>
-    readonly license_expiry: FieldRef<"drivers", 'DateTime'>
-    readonly id_card_number: FieldRef<"drivers", 'String'>
-    readonly vendor_id: FieldRef<"drivers", 'Int'>
+    readonly licenseNumber: FieldRef<"drivers", 'String'>
+    readonly licenseType: FieldRef<"drivers", 'String'>
+    readonly licenseExpiry: FieldRef<"drivers", 'DateTime'>
+    readonly idCardNumber: FieldRef<"drivers", 'String'>
+    readonly vendorId: FieldRef<"drivers", 'Int'>
     readonly status: FieldRef<"drivers", 'String'>
-    readonly created_at: FieldRef<"drivers", 'DateTime'>
-    readonly updated_at: FieldRef<"drivers", 'DateTime'>
+    readonly createdAt: FieldRef<"drivers", 'DateTime'>
+    readonly updatedAt: FieldRef<"drivers", 'DateTime'>
   }
     
 
@@ -28546,12 +28546,12 @@ export namespace Prisma {
     name: 'name',
     model: 'model',
     year: 'year',
-    tire_config: 'tire_config',
-    fleet_group_id: 'fleet_group_id',
-    vendor_id: 'vendor_id',
-    created_at: 'created_at',
-    created_by: 'created_by',
-    updated_by: 'updated_by'
+    tireConfig: 'tireConfig',
+    fleetGroupId: 'fleetGroupId',
+    vendorId: 'vendorId',
+    createdAt: 'createdAt',
+    createdBy: 'createdBy',
+    updatedBy: 'updatedBy'
   };
 
   export type TruckScalarFieldEnum = (typeof TruckScalarFieldEnum)[keyof typeof TruckScalarFieldEnum]
@@ -28585,13 +28585,13 @@ export namespace Prisma {
 
   export const VendorsScalarFieldEnum: {
     id: 'id',
-    nama_vendor: 'nama_vendor',
+    name: 'name',
     address: 'address',
-    nomor_telepon: 'nomor_telepon',
+    phone: 'phone',
     email: 'email',
-    kontak_person: 'kontak_person',
-    created_at: 'created_at',
-    updated_at: 'updated_at'
+    contactPerson: 'contactPerson',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type VendorsScalarFieldEnum = (typeof VendorsScalarFieldEnum)[keyof typeof VendorsScalarFieldEnum]
@@ -28603,14 +28603,14 @@ export namespace Prisma {
     phone: 'phone',
     email: 'email',
     address: 'address',
-    license_number: 'license_number',
-    license_type: 'license_type',
-    license_expiry: 'license_expiry',
-    id_card_number: 'id_card_number',
-    vendor_id: 'vendor_id',
+    licenseNumber: 'licenseNumber',
+    licenseType: 'licenseType',
+    licenseExpiry: 'licenseExpiry',
+    idCardNumber: 'idCardNumber',
+    vendorId: 'vendorId',
     status: 'status',
-    created_at: 'created_at',
-    updated_at: 'updated_at'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type DriversScalarFieldEnum = (typeof DriversScalarFieldEnum)[keyof typeof DriversScalarFieldEnum]
@@ -30161,12 +30161,12 @@ export namespace Prisma {
     name?: StringNullableFilter<"truck"> | string | null
     model?: StringNullableFilter<"truck"> | string | null
     year?: IntNullableFilter<"truck"> | number | null
-    tire_config?: StringNullableFilter<"truck"> | string | null
-    fleet_group_id?: UuidNullableFilter<"truck"> | string | null
-    vendor_id?: IntNullableFilter<"truck"> | number | null
-    created_at?: DateTimeFilter<"truck"> | Date | string
-    created_by?: UuidNullableFilter<"truck"> | string | null
-    updated_by?: UuidNullableFilter<"truck"> | string | null
+    tireConfig?: StringNullableFilter<"truck"> | string | null
+    fleetGroupId?: UuidNullableFilter<"truck"> | string | null
+    vendorId?: IntNullableFilter<"truck"> | number | null
+    createdAt?: DateTimeFilter<"truck"> | Date | string
+    createdBy?: UuidNullableFilter<"truck"> | string | null
+    updatedBy?: UuidNullableFilter<"truck"> | string | null
     alert_event?: Alert_eventListRelationFilter
     daily_route?: Daily_routeListRelationFilter
     device?: DeviceListRelationFilter
@@ -30181,7 +30181,7 @@ export namespace Prisma {
     tire_position_config?: Tire_position_configListRelationFilter
     tire_pressure_event?: Tire_pressure_eventListRelationFilter
     trip?: TripListRelationFilter
-    fleet_group?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
+    fleetGroup?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
     vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
     truck_status_event?: Truck_status_eventListRelationFilter
   }
@@ -30193,12 +30193,12 @@ export namespace Prisma {
     name?: SortOrderInput | SortOrder
     model?: SortOrderInput | SortOrder
     year?: SortOrderInput | SortOrder
-    tire_config?: SortOrderInput | SortOrder
-    fleet_group_id?: SortOrderInput | SortOrder
-    vendor_id?: SortOrderInput | SortOrder
-    created_at?: SortOrder
-    created_by?: SortOrderInput | SortOrder
-    updated_by?: SortOrderInput | SortOrder
+    tireConfig?: SortOrderInput | SortOrder
+    fleetGroupId?: SortOrderInput | SortOrder
+    vendorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    updatedBy?: SortOrderInput | SortOrder
     alert_event?: alert_eventOrderByRelationAggregateInput
     daily_route?: daily_routeOrderByRelationAggregateInput
     device?: deviceOrderByRelationAggregateInput
@@ -30213,7 +30213,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configOrderByRelationAggregateInput
     tire_pressure_event?: tire_pressure_eventOrderByRelationAggregateInput
     trip?: tripOrderByRelationAggregateInput
-    fleet_group?: fleet_groupOrderByWithRelationInput
+    fleetGroup?: fleet_groupOrderByWithRelationInput
     vendor?: vendorsOrderByWithRelationInput
     truck_status_event?: truck_status_eventOrderByRelationAggregateInput
   }
@@ -30228,12 +30228,12 @@ export namespace Prisma {
     name?: StringNullableFilter<"truck"> | string | null
     model?: StringNullableFilter<"truck"> | string | null
     year?: IntNullableFilter<"truck"> | number | null
-    tire_config?: StringNullableFilter<"truck"> | string | null
-    fleet_group_id?: UuidNullableFilter<"truck"> | string | null
-    vendor_id?: IntNullableFilter<"truck"> | number | null
-    created_at?: DateTimeFilter<"truck"> | Date | string
-    created_by?: UuidNullableFilter<"truck"> | string | null
-    updated_by?: UuidNullableFilter<"truck"> | string | null
+    tireConfig?: StringNullableFilter<"truck"> | string | null
+    fleetGroupId?: UuidNullableFilter<"truck"> | string | null
+    vendorId?: IntNullableFilter<"truck"> | number | null
+    createdAt?: DateTimeFilter<"truck"> | Date | string
+    createdBy?: UuidNullableFilter<"truck"> | string | null
+    updatedBy?: UuidNullableFilter<"truck"> | string | null
     alert_event?: Alert_eventListRelationFilter
     daily_route?: Daily_routeListRelationFilter
     device?: DeviceListRelationFilter
@@ -30248,7 +30248,7 @@ export namespace Prisma {
     tire_position_config?: Tire_position_configListRelationFilter
     tire_pressure_event?: Tire_pressure_eventListRelationFilter
     trip?: TripListRelationFilter
-    fleet_group?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
+    fleetGroup?: XOR<Fleet_groupNullableRelationFilter, fleet_groupWhereInput> | null
     vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
     truck_status_event?: Truck_status_eventListRelationFilter
   }, "id" | "code" | "vin">
@@ -30260,12 +30260,12 @@ export namespace Prisma {
     name?: SortOrderInput | SortOrder
     model?: SortOrderInput | SortOrder
     year?: SortOrderInput | SortOrder
-    tire_config?: SortOrderInput | SortOrder
-    fleet_group_id?: SortOrderInput | SortOrder
-    vendor_id?: SortOrderInput | SortOrder
-    created_at?: SortOrder
-    created_by?: SortOrderInput | SortOrder
-    updated_by?: SortOrderInput | SortOrder
+    tireConfig?: SortOrderInput | SortOrder
+    fleetGroupId?: SortOrderInput | SortOrder
+    vendorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    createdBy?: SortOrderInput | SortOrder
+    updatedBy?: SortOrderInput | SortOrder
     _count?: truckCountOrderByAggregateInput
     _avg?: truckAvgOrderByAggregateInput
     _max?: truckMaxOrderByAggregateInput
@@ -30283,12 +30283,12 @@ export namespace Prisma {
     name?: StringNullableWithAggregatesFilter<"truck"> | string | null
     model?: StringNullableWithAggregatesFilter<"truck"> | string | null
     year?: IntNullableWithAggregatesFilter<"truck"> | number | null
-    tire_config?: StringNullableWithAggregatesFilter<"truck"> | string | null
-    fleet_group_id?: UuidNullableWithAggregatesFilter<"truck"> | string | null
-    vendor_id?: IntNullableWithAggregatesFilter<"truck"> | number | null
-    created_at?: DateTimeWithAggregatesFilter<"truck"> | Date | string
-    created_by?: UuidNullableWithAggregatesFilter<"truck"> | string | null
-    updated_by?: UuidNullableWithAggregatesFilter<"truck"> | string | null
+    tireConfig?: StringNullableWithAggregatesFilter<"truck"> | string | null
+    fleetGroupId?: UuidNullableWithAggregatesFilter<"truck"> | string | null
+    vendorId?: IntNullableWithAggregatesFilter<"truck"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"truck"> | Date | string
+    createdBy?: UuidNullableWithAggregatesFilter<"truck"> | string | null
+    updatedBy?: UuidNullableWithAggregatesFilter<"truck"> | string | null
   }
 
   export type truck_status_eventWhereInput = {
@@ -30429,26 +30429,26 @@ export namespace Prisma {
     OR?: vendorsWhereInput[]
     NOT?: vendorsWhereInput | vendorsWhereInput[]
     id?: IntFilter<"vendors"> | number
-    nama_vendor?: StringFilter<"vendors"> | string
+    name?: StringFilter<"vendors"> | string
     address?: StringNullableFilter<"vendors"> | string | null
-    nomor_telepon?: StringNullableFilter<"vendors"> | string | null
+    phone?: StringNullableFilter<"vendors"> | string | null
     email?: StringNullableFilter<"vendors"> | string | null
-    kontak_person?: StringNullableFilter<"vendors"> | string | null
-    created_at?: DateTimeFilter<"vendors"> | Date | string
-    updated_at?: DateTimeFilter<"vendors"> | Date | string
+    contactPerson?: StringNullableFilter<"vendors"> | string | null
+    createdAt?: DateTimeFilter<"vendors"> | Date | string
+    updatedAt?: DateTimeFilter<"vendors"> | Date | string
     drivers?: DriversListRelationFilter
     trucks?: TruckListRelationFilter
   }
 
   export type vendorsOrderByWithRelationInput = {
     id?: SortOrder
-    nama_vendor?: SortOrder
+    name?: SortOrder
     address?: SortOrderInput | SortOrder
-    nomor_telepon?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
-    kontak_person?: SortOrderInput | SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    contactPerson?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     drivers?: driversOrderByRelationAggregateInput
     trucks?: truckOrderByRelationAggregateInput
   }
@@ -30458,26 +30458,26 @@ export namespace Prisma {
     AND?: vendorsWhereInput | vendorsWhereInput[]
     OR?: vendorsWhereInput[]
     NOT?: vendorsWhereInput | vendorsWhereInput[]
-    nama_vendor?: StringFilter<"vendors"> | string
+    name?: StringFilter<"vendors"> | string
     address?: StringNullableFilter<"vendors"> | string | null
-    nomor_telepon?: StringNullableFilter<"vendors"> | string | null
+    phone?: StringNullableFilter<"vendors"> | string | null
     email?: StringNullableFilter<"vendors"> | string | null
-    kontak_person?: StringNullableFilter<"vendors"> | string | null
-    created_at?: DateTimeFilter<"vendors"> | Date | string
-    updated_at?: DateTimeFilter<"vendors"> | Date | string
+    contactPerson?: StringNullableFilter<"vendors"> | string | null
+    createdAt?: DateTimeFilter<"vendors"> | Date | string
+    updatedAt?: DateTimeFilter<"vendors"> | Date | string
     drivers?: DriversListRelationFilter
     trucks?: TruckListRelationFilter
   }, "id">
 
   export type vendorsOrderByWithAggregationInput = {
     id?: SortOrder
-    nama_vendor?: SortOrder
+    name?: SortOrder
     address?: SortOrderInput | SortOrder
-    nomor_telepon?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
-    kontak_person?: SortOrderInput | SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    contactPerson?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: vendorsCountOrderByAggregateInput
     _avg?: vendorsAvgOrderByAggregateInput
     _max?: vendorsMaxOrderByAggregateInput
@@ -30490,13 +30490,13 @@ export namespace Prisma {
     OR?: vendorsScalarWhereWithAggregatesInput[]
     NOT?: vendorsScalarWhereWithAggregatesInput | vendorsScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"vendors"> | number
-    nama_vendor?: StringWithAggregatesFilter<"vendors"> | string
+    name?: StringWithAggregatesFilter<"vendors"> | string
     address?: StringNullableWithAggregatesFilter<"vendors"> | string | null
-    nomor_telepon?: StringNullableWithAggregatesFilter<"vendors"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"vendors"> | string | null
     email?: StringNullableWithAggregatesFilter<"vendors"> | string | null
-    kontak_person?: StringNullableWithAggregatesFilter<"vendors"> | string | null
-    created_at?: DateTimeWithAggregatesFilter<"vendors"> | Date | string
-    updated_at?: DateTimeWithAggregatesFilter<"vendors"> | Date | string
+    contactPerson?: StringNullableWithAggregatesFilter<"vendors"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"vendors"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"vendors"> | Date | string
   }
 
   export type driversWhereInput = {
@@ -30508,14 +30508,14 @@ export namespace Prisma {
     phone?: StringNullableFilter<"drivers"> | string | null
     email?: StringNullableFilter<"drivers"> | string | null
     address?: StringNullableFilter<"drivers"> | string | null
-    license_number?: StringFilter<"drivers"> | string
-    license_type?: StringFilter<"drivers"> | string
-    license_expiry?: DateTimeFilter<"drivers"> | Date | string
-    id_card_number?: StringFilter<"drivers"> | string
-    vendor_id?: IntNullableFilter<"drivers"> | number | null
+    licenseNumber?: StringFilter<"drivers"> | string
+    licenseType?: StringFilter<"drivers"> | string
+    licenseExpiry?: DateTimeFilter<"drivers"> | Date | string
+    idCardNumber?: StringFilter<"drivers"> | string
+    vendorId?: IntNullableFilter<"drivers"> | number | null
     status?: StringFilter<"drivers"> | string
-    created_at?: DateTimeFilter<"drivers"> | Date | string
-    updated_at?: DateTimeFilter<"drivers"> | Date | string
+    createdAt?: DateTimeFilter<"drivers"> | Date | string
+    updatedAt?: DateTimeFilter<"drivers"> | Date | string
     vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
   }
 
@@ -30525,14 +30525,14 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
-    license_number?: SortOrder
-    license_type?: SortOrder
-    license_expiry?: SortOrder
-    id_card_number?: SortOrder
-    vendor_id?: SortOrderInput | SortOrder
+    licenseNumber?: SortOrder
+    licenseType?: SortOrder
+    licenseExpiry?: SortOrder
+    idCardNumber?: SortOrder
+    vendorId?: SortOrderInput | SortOrder
     status?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     vendor?: vendorsOrderByWithRelationInput
   }
 
@@ -30545,14 +30545,14 @@ export namespace Prisma {
     phone?: StringNullableFilter<"drivers"> | string | null
     email?: StringNullableFilter<"drivers"> | string | null
     address?: StringNullableFilter<"drivers"> | string | null
-    license_number?: StringFilter<"drivers"> | string
-    license_type?: StringFilter<"drivers"> | string
-    license_expiry?: DateTimeFilter<"drivers"> | Date | string
-    id_card_number?: StringFilter<"drivers"> | string
-    vendor_id?: IntNullableFilter<"drivers"> | number | null
+    licenseNumber?: StringFilter<"drivers"> | string
+    licenseType?: StringFilter<"drivers"> | string
+    licenseExpiry?: DateTimeFilter<"drivers"> | Date | string
+    idCardNumber?: StringFilter<"drivers"> | string
+    vendorId?: IntNullableFilter<"drivers"> | number | null
     status?: StringFilter<"drivers"> | string
-    created_at?: DateTimeFilter<"drivers"> | Date | string
-    updated_at?: DateTimeFilter<"drivers"> | Date | string
+    createdAt?: DateTimeFilter<"drivers"> | Date | string
+    updatedAt?: DateTimeFilter<"drivers"> | Date | string
     vendor?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
   }, "id">
 
@@ -30562,14 +30562,14 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
-    license_number?: SortOrder
-    license_type?: SortOrder
-    license_expiry?: SortOrder
-    id_card_number?: SortOrder
-    vendor_id?: SortOrderInput | SortOrder
+    licenseNumber?: SortOrder
+    licenseType?: SortOrder
+    licenseExpiry?: SortOrder
+    idCardNumber?: SortOrder
+    vendorId?: SortOrderInput | SortOrder
     status?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: driversCountOrderByAggregateInput
     _avg?: driversAvgOrderByAggregateInput
     _max?: driversMaxOrderByAggregateInput
@@ -30586,14 +30586,14 @@ export namespace Prisma {
     phone?: StringNullableWithAggregatesFilter<"drivers"> | string | null
     email?: StringNullableWithAggregatesFilter<"drivers"> | string | null
     address?: StringNullableWithAggregatesFilter<"drivers"> | string | null
-    license_number?: StringWithAggregatesFilter<"drivers"> | string
-    license_type?: StringWithAggregatesFilter<"drivers"> | string
-    license_expiry?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
-    id_card_number?: StringWithAggregatesFilter<"drivers"> | string
-    vendor_id?: IntNullableWithAggregatesFilter<"drivers"> | number | null
+    licenseNumber?: StringWithAggregatesFilter<"drivers"> | string
+    licenseType?: StringWithAggregatesFilter<"drivers"> | string
+    licenseExpiry?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
+    idCardNumber?: StringWithAggregatesFilter<"drivers"> | string
+    vendorId?: IntNullableWithAggregatesFilter<"drivers"> | number | null
     status?: StringWithAggregatesFilter<"drivers"> | string
-    created_at?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
-    updated_at?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"drivers"> | Date | string
   }
 
   export type alert_eventCreateInput = {
@@ -30974,7 +30974,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     created_by?: string | null
     updated_by?: string | null
-    truck?: truckCreateNestedManyWithoutFleet_groupInput
+    truck?: truckCreateNestedManyWithoutFleetGroupInput
   }
 
   export type fleet_groupUncheckedCreateInput = {
@@ -30985,7 +30985,7 @@ export namespace Prisma {
     created_at?: Date | string | null
     created_by?: string | null
     updated_by?: string | null
-    truck?: truckUncheckedCreateNestedManyWithoutFleet_groupInput
+    truck?: truckUncheckedCreateNestedManyWithoutFleetGroupInput
   }
 
   export type fleet_groupUpdateInput = {
@@ -30996,7 +30996,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
-    truck?: truckUpdateManyWithoutFleet_groupNestedInput
+    truck?: truckUpdateManyWithoutFleetGroupNestedInput
   }
 
   export type fleet_groupUncheckedUpdateInput = {
@@ -31007,7 +31007,7 @@ export namespace Prisma {
     created_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
     updated_by?: NullableStringFieldUpdateOperationsInput | string | null
-    truck?: truckUncheckedUpdateManyWithoutFleet_groupNestedInput
+    truck?: truckUncheckedUpdateManyWithoutFleetGroupNestedInput
   }
 
   export type fleet_groupCreateManyInput = {
@@ -31927,10 +31927,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -31945,7 +31945,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -31957,12 +31957,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -31987,10 +31987,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -32005,7 +32005,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -32017,12 +32017,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -32047,12 +32047,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
   }
 
   export type truckUpdateManyMutationInput = {
@@ -32062,10 +32062,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type truckUncheckedUpdateManyInput = {
@@ -32075,12 +32075,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type truck_status_eventCreateInput = {
@@ -32231,85 +32231,85 @@ export namespace Prisma {
   }
 
   export type vendorsCreateInput = {
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     drivers?: driversCreateNestedManyWithoutVendorInput
     trucks?: truckCreateNestedManyWithoutVendorInput
   }
 
   export type vendorsUncheckedCreateInput = {
     id?: number
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     drivers?: driversUncheckedCreateNestedManyWithoutVendorInput
     trucks?: truckUncheckedCreateNestedManyWithoutVendorInput
   }
 
   export type vendorsUpdateInput = {
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     drivers?: driversUpdateManyWithoutVendorNestedInput
     trucks?: truckUpdateManyWithoutVendorNestedInput
   }
 
   export type vendorsUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     drivers?: driversUncheckedUpdateManyWithoutVendorNestedInput
     trucks?: truckUncheckedUpdateManyWithoutVendorNestedInput
   }
 
   export type vendorsCreateManyInput = {
     id?: number
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type vendorsUpdateManyMutationInput = {
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type vendorsUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type driversCreateInput = {
@@ -32317,13 +32317,13 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     address?: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date | string
-    id_card_number: string
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date | string
+    idCardNumber: string
     status?: string
-    created_at?: Date | string
-    updated_at?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     vendor?: vendorsCreateNestedOneWithoutDriversInput
   }
 
@@ -32333,14 +32333,14 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     address?: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date | string
-    id_card_number: string
-    vendor_id?: number | null
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date | string
+    idCardNumber: string
+    vendorId?: number | null
     status?: string
-    created_at?: Date | string
-    updated_at?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type driversUpdateInput = {
@@ -32348,13 +32348,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     vendor?: vendorsUpdateOneWithoutDriversNestedInput
   }
 
@@ -32364,14 +32364,14 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type driversCreateManyInput = {
@@ -32380,14 +32380,14 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     address?: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date | string
-    id_card_number: string
-    vendor_id?: number | null
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date | string
+    idCardNumber: string
+    vendorId?: number | null
     status?: string
-    created_at?: Date | string
-    updated_at?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type driversUpdateManyMutationInput = {
@@ -32395,13 +32395,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type driversUncheckedUpdateManyInput = {
@@ -32410,14 +32410,14 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UuidFilter<$PrismaModel = never> = {
@@ -33823,17 +33823,17 @@ export namespace Prisma {
     name?: SortOrder
     model?: SortOrder
     year?: SortOrder
-    tire_config?: SortOrder
-    fleet_group_id?: SortOrder
-    vendor_id?: SortOrder
-    created_at?: SortOrder
-    created_by?: SortOrder
-    updated_by?: SortOrder
+    tireConfig?: SortOrder
+    fleetGroupId?: SortOrder
+    vendorId?: SortOrder
+    createdAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
   }
 
   export type truckAvgOrderByAggregateInput = {
     year?: SortOrder
-    vendor_id?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type truckMaxOrderByAggregateInput = {
@@ -33843,12 +33843,12 @@ export namespace Prisma {
     name?: SortOrder
     model?: SortOrder
     year?: SortOrder
-    tire_config?: SortOrder
-    fleet_group_id?: SortOrder
-    vendor_id?: SortOrder
-    created_at?: SortOrder
-    created_by?: SortOrder
-    updated_by?: SortOrder
+    tireConfig?: SortOrder
+    fleetGroupId?: SortOrder
+    vendorId?: SortOrder
+    createdAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
   }
 
   export type truckMinOrderByAggregateInput = {
@@ -33858,17 +33858,17 @@ export namespace Prisma {
     name?: SortOrder
     model?: SortOrder
     year?: SortOrder
-    tire_config?: SortOrder
-    fleet_group_id?: SortOrder
-    vendor_id?: SortOrder
-    created_at?: SortOrder
-    created_by?: SortOrder
-    updated_by?: SortOrder
+    tireConfig?: SortOrder
+    fleetGroupId?: SortOrder
+    vendorId?: SortOrder
+    createdAt?: SortOrder
+    createdBy?: SortOrder
+    updatedBy?: SortOrder
   }
 
   export type truckSumOrderByAggregateInput = {
     year?: SortOrder
-    vendor_id?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type Enumtruck_statusFilter<$PrismaModel = never> = {
@@ -33960,13 +33960,13 @@ export namespace Prisma {
 
   export type vendorsCountOrderByAggregateInput = {
     id?: SortOrder
-    nama_vendor?: SortOrder
+    name?: SortOrder
     address?: SortOrder
-    nomor_telepon?: SortOrder
+    phone?: SortOrder
     email?: SortOrder
-    kontak_person?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    contactPerson?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type vendorsAvgOrderByAggregateInput = {
@@ -33975,24 +33975,24 @@ export namespace Prisma {
 
   export type vendorsMaxOrderByAggregateInput = {
     id?: SortOrder
-    nama_vendor?: SortOrder
+    name?: SortOrder
     address?: SortOrder
-    nomor_telepon?: SortOrder
+    phone?: SortOrder
     email?: SortOrder
-    kontak_person?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    contactPerson?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type vendorsMinOrderByAggregateInput = {
     id?: SortOrder
-    nama_vendor?: SortOrder
+    name?: SortOrder
     address?: SortOrder
-    nomor_telepon?: SortOrder
+    phone?: SortOrder
     email?: SortOrder
-    kontak_person?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    contactPerson?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type vendorsSumOrderByAggregateInput = {
@@ -34005,19 +34005,19 @@ export namespace Prisma {
     phone?: SortOrder
     email?: SortOrder
     address?: SortOrder
-    license_number?: SortOrder
-    license_type?: SortOrder
-    license_expiry?: SortOrder
-    id_card_number?: SortOrder
-    vendor_id?: SortOrder
+    licenseNumber?: SortOrder
+    licenseType?: SortOrder
+    licenseExpiry?: SortOrder
+    idCardNumber?: SortOrder
+    vendorId?: SortOrder
     status?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type driversAvgOrderByAggregateInput = {
     id?: SortOrder
-    vendor_id?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type driversMaxOrderByAggregateInput = {
@@ -34026,14 +34026,14 @@ export namespace Prisma {
     phone?: SortOrder
     email?: SortOrder
     address?: SortOrder
-    license_number?: SortOrder
-    license_type?: SortOrder
-    license_expiry?: SortOrder
-    id_card_number?: SortOrder
-    vendor_id?: SortOrder
+    licenseNumber?: SortOrder
+    licenseType?: SortOrder
+    licenseExpiry?: SortOrder
+    idCardNumber?: SortOrder
+    vendorId?: SortOrder
     status?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type driversMinOrderByAggregateInput = {
@@ -34042,19 +34042,19 @@ export namespace Prisma {
     phone?: SortOrder
     email?: SortOrder
     address?: SortOrder
-    license_number?: SortOrder
-    license_type?: SortOrder
-    license_expiry?: SortOrder
-    id_card_number?: SortOrder
-    vendor_id?: SortOrder
+    licenseNumber?: SortOrder
+    licenseType?: SortOrder
+    licenseExpiry?: SortOrder
+    idCardNumber?: SortOrder
+    vendorId?: SortOrder
     status?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type driversSumOrderByAggregateInput = {
     id?: SortOrder
-    vendor_id?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type truckCreateNestedOneWithoutAlert_eventInput = {
@@ -34511,45 +34511,45 @@ export namespace Prisma {
     update?: XOR<XOR<truckUpdateToOneWithWhereWithoutDevice_truck_assignmentInput, truckUpdateWithoutDevice_truck_assignmentInput>, truckUncheckedUpdateWithoutDevice_truck_assignmentInput>
   }
 
-  export type truckCreateNestedManyWithoutFleet_groupInput = {
-    create?: XOR<truckCreateWithoutFleet_groupInput, truckUncheckedCreateWithoutFleet_groupInput> | truckCreateWithoutFleet_groupInput[] | truckUncheckedCreateWithoutFleet_groupInput[]
-    connectOrCreate?: truckCreateOrConnectWithoutFleet_groupInput | truckCreateOrConnectWithoutFleet_groupInput[]
-    createMany?: truckCreateManyFleet_groupInputEnvelope
+  export type truckCreateNestedManyWithoutFleetGroupInput = {
+    create?: XOR<truckCreateWithoutFleetGroupInput, truckUncheckedCreateWithoutFleetGroupInput> | truckCreateWithoutFleetGroupInput[] | truckUncheckedCreateWithoutFleetGroupInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutFleetGroupInput | truckCreateOrConnectWithoutFleetGroupInput[]
+    createMany?: truckCreateManyFleetGroupInputEnvelope
     connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
   }
 
-  export type truckUncheckedCreateNestedManyWithoutFleet_groupInput = {
-    create?: XOR<truckCreateWithoutFleet_groupInput, truckUncheckedCreateWithoutFleet_groupInput> | truckCreateWithoutFleet_groupInput[] | truckUncheckedCreateWithoutFleet_groupInput[]
-    connectOrCreate?: truckCreateOrConnectWithoutFleet_groupInput | truckCreateOrConnectWithoutFleet_groupInput[]
-    createMany?: truckCreateManyFleet_groupInputEnvelope
+  export type truckUncheckedCreateNestedManyWithoutFleetGroupInput = {
+    create?: XOR<truckCreateWithoutFleetGroupInput, truckUncheckedCreateWithoutFleetGroupInput> | truckCreateWithoutFleetGroupInput[] | truckUncheckedCreateWithoutFleetGroupInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutFleetGroupInput | truckCreateOrConnectWithoutFleetGroupInput[]
+    createMany?: truckCreateManyFleetGroupInputEnvelope
     connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
   }
 
-  export type truckUpdateManyWithoutFleet_groupNestedInput = {
-    create?: XOR<truckCreateWithoutFleet_groupInput, truckUncheckedCreateWithoutFleet_groupInput> | truckCreateWithoutFleet_groupInput[] | truckUncheckedCreateWithoutFleet_groupInput[]
-    connectOrCreate?: truckCreateOrConnectWithoutFleet_groupInput | truckCreateOrConnectWithoutFleet_groupInput[]
-    upsert?: truckUpsertWithWhereUniqueWithoutFleet_groupInput | truckUpsertWithWhereUniqueWithoutFleet_groupInput[]
-    createMany?: truckCreateManyFleet_groupInputEnvelope
+  export type truckUpdateManyWithoutFleetGroupNestedInput = {
+    create?: XOR<truckCreateWithoutFleetGroupInput, truckUncheckedCreateWithoutFleetGroupInput> | truckCreateWithoutFleetGroupInput[] | truckUncheckedCreateWithoutFleetGroupInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutFleetGroupInput | truckCreateOrConnectWithoutFleetGroupInput[]
+    upsert?: truckUpsertWithWhereUniqueWithoutFleetGroupInput | truckUpsertWithWhereUniqueWithoutFleetGroupInput[]
+    createMany?: truckCreateManyFleetGroupInputEnvelope
     set?: truckWhereUniqueInput | truckWhereUniqueInput[]
     disconnect?: truckWhereUniqueInput | truckWhereUniqueInput[]
     delete?: truckWhereUniqueInput | truckWhereUniqueInput[]
     connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
-    update?: truckUpdateWithWhereUniqueWithoutFleet_groupInput | truckUpdateWithWhereUniqueWithoutFleet_groupInput[]
-    updateMany?: truckUpdateManyWithWhereWithoutFleet_groupInput | truckUpdateManyWithWhereWithoutFleet_groupInput[]
+    update?: truckUpdateWithWhereUniqueWithoutFleetGroupInput | truckUpdateWithWhereUniqueWithoutFleetGroupInput[]
+    updateMany?: truckUpdateManyWithWhereWithoutFleetGroupInput | truckUpdateManyWithWhereWithoutFleetGroupInput[]
     deleteMany?: truckScalarWhereInput | truckScalarWhereInput[]
   }
 
-  export type truckUncheckedUpdateManyWithoutFleet_groupNestedInput = {
-    create?: XOR<truckCreateWithoutFleet_groupInput, truckUncheckedCreateWithoutFleet_groupInput> | truckCreateWithoutFleet_groupInput[] | truckUncheckedCreateWithoutFleet_groupInput[]
-    connectOrCreate?: truckCreateOrConnectWithoutFleet_groupInput | truckCreateOrConnectWithoutFleet_groupInput[]
-    upsert?: truckUpsertWithWhereUniqueWithoutFleet_groupInput | truckUpsertWithWhereUniqueWithoutFleet_groupInput[]
-    createMany?: truckCreateManyFleet_groupInputEnvelope
+  export type truckUncheckedUpdateManyWithoutFleetGroupNestedInput = {
+    create?: XOR<truckCreateWithoutFleetGroupInput, truckUncheckedCreateWithoutFleetGroupInput> | truckCreateWithoutFleetGroupInput[] | truckUncheckedCreateWithoutFleetGroupInput[]
+    connectOrCreate?: truckCreateOrConnectWithoutFleetGroupInput | truckCreateOrConnectWithoutFleetGroupInput[]
+    upsert?: truckUpsertWithWhereUniqueWithoutFleetGroupInput | truckUpsertWithWhereUniqueWithoutFleetGroupInput[]
+    createMany?: truckCreateManyFleetGroupInputEnvelope
     set?: truckWhereUniqueInput | truckWhereUniqueInput[]
     disconnect?: truckWhereUniqueInput | truckWhereUniqueInput[]
     delete?: truckWhereUniqueInput | truckWhereUniqueInput[]
     connect?: truckWhereUniqueInput | truckWhereUniqueInput[]
-    update?: truckUpdateWithWhereUniqueWithoutFleet_groupInput | truckUpdateWithWhereUniqueWithoutFleet_groupInput[]
-    updateMany?: truckUpdateManyWithWhereWithoutFleet_groupInput | truckUpdateManyWithWhereWithoutFleet_groupInput[]
+    update?: truckUpdateWithWhereUniqueWithoutFleetGroupInput | truckUpdateWithWhereUniqueWithoutFleetGroupInput[]
+    updateMany?: truckUpdateManyWithWhereWithoutFleetGroupInput | truckUpdateManyWithWhereWithoutFleetGroupInput[]
     deleteMany?: truckScalarWhereInput | truckScalarWhereInput[]
   }
 
@@ -36045,10 +36045,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
     device_status_event?: device_status_eventCreateNestedManyWithoutTruckInput
@@ -36062,7 +36062,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -36074,12 +36074,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
     device_status_event?: device_status_eventUncheckedCreateNestedManyWithoutTruckInput
@@ -36119,10 +36119,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
     device_status_event?: device_status_eventUpdateManyWithoutTruckNestedInput
@@ -36136,7 +36136,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -36148,12 +36148,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
     device_status_event?: device_status_eventUncheckedUpdateManyWithoutTruckNestedInput
@@ -36177,10 +36177,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
     device_status_event?: device_status_eventCreateNestedManyWithoutTruckInput
@@ -36194,7 +36194,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -36206,12 +36206,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
     device_status_event?: device_status_eventUncheckedCreateNestedManyWithoutTruckInput
@@ -36251,10 +36251,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
     device_status_event?: device_status_eventUpdateManyWithoutTruckNestedInput
@@ -36268,7 +36268,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -36280,12 +36280,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
     device_status_event?: device_status_eventUncheckedUpdateManyWithoutTruckNestedInput
@@ -36309,10 +36309,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device_status_event?: device_status_eventCreateNestedManyWithoutTruckInput
@@ -36326,7 +36326,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -36338,12 +36338,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device_status_event?: device_status_eventUncheckedCreateNestedManyWithoutTruckInput
@@ -36569,10 +36569,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device_status_event?: device_status_eventUpdateManyWithoutTruckNestedInput
@@ -36586,7 +36586,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -36598,12 +36598,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device_status_event?: device_status_eventUncheckedUpdateManyWithoutTruckNestedInput
@@ -36873,10 +36873,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -36890,7 +36890,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -36902,12 +36902,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -36992,10 +36992,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -37009,7 +37009,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -37021,12 +37021,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -37147,10 +37147,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -37164,7 +37164,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -37176,12 +37176,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -37336,10 +37336,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -37353,7 +37353,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -37365,12 +37365,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -37387,17 +37387,17 @@ export namespace Prisma {
     truck_status_event?: truck_status_eventUncheckedUpdateManyWithoutTruckNestedInput
   }
 
-  export type truckCreateWithoutFleet_groupInput = {
+  export type truckCreateWithoutFleetGroupInput = {
     id?: string
     code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -37416,18 +37416,18 @@ export namespace Prisma {
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
-  export type truckUncheckedCreateWithoutFleet_groupInput = {
+  export type truckUncheckedCreateWithoutFleetGroupInput = {
     id?: string
     code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -37445,30 +37445,30 @@ export namespace Prisma {
     truck_status_event?: truck_status_eventUncheckedCreateNestedManyWithoutTruckInput
   }
 
-  export type truckCreateOrConnectWithoutFleet_groupInput = {
+  export type truckCreateOrConnectWithoutFleetGroupInput = {
     where: truckWhereUniqueInput
-    create: XOR<truckCreateWithoutFleet_groupInput, truckUncheckedCreateWithoutFleet_groupInput>
+    create: XOR<truckCreateWithoutFleetGroupInput, truckUncheckedCreateWithoutFleetGroupInput>
   }
 
-  export type truckCreateManyFleet_groupInputEnvelope = {
-    data: truckCreateManyFleet_groupInput | truckCreateManyFleet_groupInput[]
+  export type truckCreateManyFleetGroupInputEnvelope = {
+    data: truckCreateManyFleetGroupInput | truckCreateManyFleetGroupInput[]
     skipDuplicates?: boolean
   }
 
-  export type truckUpsertWithWhereUniqueWithoutFleet_groupInput = {
+  export type truckUpsertWithWhereUniqueWithoutFleetGroupInput = {
     where: truckWhereUniqueInput
-    update: XOR<truckUpdateWithoutFleet_groupInput, truckUncheckedUpdateWithoutFleet_groupInput>
-    create: XOR<truckCreateWithoutFleet_groupInput, truckUncheckedCreateWithoutFleet_groupInput>
+    update: XOR<truckUpdateWithoutFleetGroupInput, truckUncheckedUpdateWithoutFleetGroupInput>
+    create: XOR<truckCreateWithoutFleetGroupInput, truckUncheckedCreateWithoutFleetGroupInput>
   }
 
-  export type truckUpdateWithWhereUniqueWithoutFleet_groupInput = {
+  export type truckUpdateWithWhereUniqueWithoutFleetGroupInput = {
     where: truckWhereUniqueInput
-    data: XOR<truckUpdateWithoutFleet_groupInput, truckUncheckedUpdateWithoutFleet_groupInput>
+    data: XOR<truckUpdateWithoutFleetGroupInput, truckUncheckedUpdateWithoutFleetGroupInput>
   }
 
-  export type truckUpdateManyWithWhereWithoutFleet_groupInput = {
+  export type truckUpdateManyWithWhereWithoutFleetGroupInput = {
     where: truckScalarWhereInput
-    data: XOR<truckUpdateManyMutationInput, truckUncheckedUpdateManyWithoutFleet_groupInput>
+    data: XOR<truckUpdateManyMutationInput, truckUncheckedUpdateManyWithoutFleetGroupInput>
   }
 
   export type truckScalarWhereInput = {
@@ -37481,12 +37481,12 @@ export namespace Prisma {
     name?: StringNullableFilter<"truck"> | string | null
     model?: StringNullableFilter<"truck"> | string | null
     year?: IntNullableFilter<"truck"> | number | null
-    tire_config?: StringNullableFilter<"truck"> | string | null
-    fleet_group_id?: UuidNullableFilter<"truck"> | string | null
-    vendor_id?: IntNullableFilter<"truck"> | number | null
-    created_at?: DateTimeFilter<"truck"> | Date | string
-    created_by?: UuidNullableFilter<"truck"> | string | null
-    updated_by?: UuidNullableFilter<"truck"> | string | null
+    tireConfig?: StringNullableFilter<"truck"> | string | null
+    fleetGroupId?: UuidNullableFilter<"truck"> | string | null
+    vendorId?: IntNullableFilter<"truck"> | number | null
+    createdAt?: DateTimeFilter<"truck"> | Date | string
+    createdBy?: UuidNullableFilter<"truck"> | string | null
+    updatedBy?: UuidNullableFilter<"truck"> | string | null
   }
 
   export type truckCreateWithoutFuel_level_eventInput = {
@@ -37496,10 +37496,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -37513,7 +37513,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -37525,12 +37525,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -37570,10 +37570,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -37587,7 +37587,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -37599,12 +37599,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -37712,10 +37712,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -37729,7 +37729,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -37741,12 +37741,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -37786,10 +37786,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -37803,7 +37803,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -37815,12 +37815,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -37883,10 +37883,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -37900,7 +37900,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -37912,12 +37912,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -38002,10 +38002,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -38019,7 +38019,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -38031,12 +38031,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -38099,10 +38099,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -38116,7 +38116,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -38128,12 +38128,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -38218,10 +38218,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -38235,7 +38235,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -38247,12 +38247,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -38360,10 +38360,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -38377,7 +38377,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -38389,12 +38389,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -38464,10 +38464,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -38481,7 +38481,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -38493,12 +38493,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -38616,10 +38616,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -38633,7 +38633,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -38645,12 +38645,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -38690,10 +38690,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -38707,7 +38707,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -38719,12 +38719,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -38748,10 +38748,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -38765,7 +38765,7 @@ export namespace Prisma {
     speed_event?: speed_eventCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -38777,12 +38777,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -38822,10 +38822,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -38839,7 +38839,7 @@ export namespace Prisma {
     speed_event?: speed_eventUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -38851,12 +38851,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -38919,10 +38919,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -38936,7 +38936,7 @@ export namespace Prisma {
     speed_event?: speed_eventCreateNestedManyWithoutTruckInput
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -38948,12 +38948,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -39038,10 +39038,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -39055,7 +39055,7 @@ export namespace Prisma {
     speed_event?: speed_eventUpdateManyWithoutTruckNestedInput
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -39067,12 +39067,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -39096,10 +39096,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -39113,7 +39113,7 @@ export namespace Prisma {
     speed_event?: speed_eventCreateNestedManyWithoutTruckInput
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
@@ -39125,12 +39125,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -39170,10 +39170,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -39187,7 +39187,7 @@ export namespace Prisma {
     speed_event?: speed_eventUpdateManyWithoutTruckNestedInput
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
@@ -39199,12 +39199,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -39611,25 +39611,25 @@ export namespace Prisma {
   }
 
   export type vendorsCreateWithoutTrucksInput = {
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     drivers?: driversCreateNestedManyWithoutVendorInput
   }
 
   export type vendorsUncheckedCreateWithoutTrucksInput = {
     id?: number
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     drivers?: driversUncheckedCreateNestedManyWithoutVendorInput
   }
 
@@ -40021,25 +40021,25 @@ export namespace Prisma {
   }
 
   export type vendorsUpdateWithoutTrucksInput = {
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     drivers?: driversUpdateManyWithoutVendorNestedInput
   }
 
   export type vendorsUncheckedUpdateWithoutTrucksInput = {
     id?: IntFieldUpdateOperationsInput | number
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     drivers?: driversUncheckedUpdateManyWithoutVendorNestedInput
   }
 
@@ -40078,10 +40078,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -40096,7 +40096,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     vendor?: vendorsCreateNestedOneWithoutTrucksInput
   }
 
@@ -40107,12 +40107,12 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -40152,10 +40152,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -40170,7 +40170,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     vendor?: vendorsUpdateOneWithoutTrucksNestedInput
   }
 
@@ -40181,12 +40181,12 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -40300,13 +40300,13 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     address?: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date | string
-    id_card_number: string
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date | string
+    idCardNumber: string
     status?: string
-    created_at?: Date | string
-    updated_at?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type driversUncheckedCreateWithoutVendorInput = {
@@ -40315,13 +40315,13 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     address?: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date | string
-    id_card_number: string
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date | string
+    idCardNumber: string
     status?: string
-    created_at?: Date | string
-    updated_at?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type driversCreateOrConnectWithoutVendorInput = {
@@ -40341,10 +40341,10 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
@@ -40359,7 +40359,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configCreateNestedManyWithoutTruckInput
     tire_pressure_event?: tire_pressure_eventCreateNestedManyWithoutTruckInput
     trip?: tripCreateNestedManyWithoutTruckInput
-    fleet_group?: fleet_groupCreateNestedOneWithoutTruckInput
+    fleetGroup?: fleet_groupCreateNestedOneWithoutTruckInput
     truck_status_event?: truck_status_eventCreateNestedManyWithoutTruckInput
   }
 
@@ -40370,11 +40370,11 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
     alert_event?: alert_eventUncheckedCreateNestedManyWithoutTruckInput
     daily_route?: daily_routeUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
@@ -40427,14 +40427,14 @@ export namespace Prisma {
     phone?: StringNullableFilter<"drivers"> | string | null
     email?: StringNullableFilter<"drivers"> | string | null
     address?: StringNullableFilter<"drivers"> | string | null
-    license_number?: StringFilter<"drivers"> | string
-    license_type?: StringFilter<"drivers"> | string
-    license_expiry?: DateTimeFilter<"drivers"> | Date | string
-    id_card_number?: StringFilter<"drivers"> | string
-    vendor_id?: IntNullableFilter<"drivers"> | number | null
+    licenseNumber?: StringFilter<"drivers"> | string
+    licenseType?: StringFilter<"drivers"> | string
+    licenseExpiry?: DateTimeFilter<"drivers"> | Date | string
+    idCardNumber?: StringFilter<"drivers"> | string
+    vendorId?: IntNullableFilter<"drivers"> | number | null
     status?: StringFilter<"drivers"> | string
-    created_at?: DateTimeFilter<"drivers"> | Date | string
-    updated_at?: DateTimeFilter<"drivers"> | Date | string
+    createdAt?: DateTimeFilter<"drivers"> | Date | string
+    updatedAt?: DateTimeFilter<"drivers"> | Date | string
   }
 
   export type truckUpsertWithWhereUniqueWithoutVendorInput = {
@@ -40454,25 +40454,25 @@ export namespace Prisma {
   }
 
   export type vendorsCreateWithoutDriversInput = {
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     trucks?: truckCreateNestedManyWithoutVendorInput
   }
 
   export type vendorsUncheckedCreateWithoutDriversInput = {
     id?: number
-    nama_vendor: string
+    name: string
     address?: string | null
-    nomor_telepon?: string | null
+    phone?: string | null
     email?: string | null
-    kontak_person?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     trucks?: truckUncheckedCreateNestedManyWithoutVendorInput
   }
 
@@ -40493,25 +40493,25 @@ export namespace Prisma {
   }
 
   export type vendorsUpdateWithoutDriversInput = {
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trucks?: truckUpdateManyWithoutVendorNestedInput
   }
 
   export type vendorsUncheckedUpdateWithoutDriversInput = {
     id?: IntFieldUpdateOperationsInput | number
-    nama_vendor?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    nomor_telepon?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
-    kontak_person?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trucks?: truckUncheckedUpdateManyWithoutVendorNestedInput
   }
 
@@ -40797,31 +40797,31 @@ export namespace Prisma {
     created_by?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type truckCreateManyFleet_groupInput = {
+  export type truckCreateManyFleetGroupInput = {
     id?: string
     code?: string | null
     vin?: string | null
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    vendor_id?: number | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    vendorId?: number | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
   }
 
-  export type truckUpdateWithoutFleet_groupInput = {
+  export type truckUpdateWithoutFleetGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -40840,18 +40840,18 @@ export namespace Prisma {
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
-  export type truckUncheckedUpdateWithoutFleet_groupInput = {
+  export type truckUncheckedUpdateWithoutFleetGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -40869,18 +40869,18 @@ export namespace Prisma {
     truck_status_event?: truck_status_eventUncheckedUpdateManyWithoutTruckNestedInput
   }
 
-  export type truckUncheckedUpdateManyWithoutFleet_groupInput = {
+  export type truckUncheckedUpdateManyWithoutFleetGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: NullableStringFieldUpdateOperationsInput | string | null
     vin?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    vendorId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type sensor_processing_queueCreateManySensor_data_rawInput = {
@@ -41567,13 +41567,13 @@ export namespace Prisma {
     phone?: string | null
     email?: string | null
     address?: string | null
-    license_number: string
-    license_type: string
-    license_expiry: Date | string
-    id_card_number: string
+    licenseNumber: string
+    licenseType: string
+    licenseExpiry: Date | string
+    idCardNumber: string
     status?: string
-    created_at?: Date | string
-    updated_at?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type truckCreateManyVendorInput = {
@@ -41583,11 +41583,11 @@ export namespace Prisma {
     name?: string | null
     model?: string | null
     year?: number | null
-    tire_config?: string | null
-    fleet_group_id?: string | null
-    created_at?: Date | string
-    created_by?: string | null
-    updated_by?: string | null
+    tireConfig?: string | null
+    fleetGroupId?: string | null
+    createdAt?: Date | string
+    createdBy?: string | null
+    updatedBy?: string | null
   }
 
   export type driversUpdateWithoutVendorInput = {
@@ -41595,13 +41595,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type driversUncheckedUpdateWithoutVendorInput = {
@@ -41610,13 +41610,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type driversUncheckedUpdateManyWithoutVendorInput = {
@@ -41625,13 +41625,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
-    license_number?: StringFieldUpdateOperationsInput | string
-    license_type?: StringFieldUpdateOperationsInput | string
-    license_expiry?: DateTimeFieldUpdateOperationsInput | Date | string
-    id_card_number?: StringFieldUpdateOperationsInput | string
+    licenseNumber?: StringFieldUpdateOperationsInput | string
+    licenseType?: StringFieldUpdateOperationsInput | string
+    licenseExpiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    idCardNumber?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type truckUpdateWithoutVendorInput = {
@@ -41641,10 +41641,10 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
@@ -41659,7 +41659,7 @@ export namespace Prisma {
     tire_position_config?: tire_position_configUpdateManyWithoutTruckNestedInput
     tire_pressure_event?: tire_pressure_eventUpdateManyWithoutTruckNestedInput
     trip?: tripUpdateManyWithoutTruckNestedInput
-    fleet_group?: fleet_groupUpdateOneWithoutTruckNestedInput
+    fleetGroup?: fleet_groupUpdateOneWithoutTruckNestedInput
     truck_status_event?: truck_status_eventUpdateManyWithoutTruckNestedInput
   }
 
@@ -41670,11 +41670,11 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     alert_event?: alert_eventUncheckedUpdateManyWithoutTruckNestedInput
     daily_route?: daily_routeUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
@@ -41699,11 +41699,11 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     model?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableIntFieldUpdateOperationsInput | number | null
-    tire_config?: NullableStringFieldUpdateOperationsInput | string | null
-    fleet_group_id?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_by?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_by?: NullableStringFieldUpdateOperationsInput | string | null
+    tireConfig?: NullableStringFieldUpdateOperationsInput | string | null
+    fleetGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 
