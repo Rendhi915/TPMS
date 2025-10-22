@@ -92,7 +92,8 @@ class PrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleet_group: true,
+          fleetGroup: true,
+          vendor: true,
           alert_event: {
             where: { acknowledged: false },
             select: {
@@ -112,7 +113,7 @@ class PrismaService {
             },
           },
         },
-        orderBy: { created_at: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: offset,
         take: parseInt(limit),
       });

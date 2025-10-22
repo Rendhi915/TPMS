@@ -20,7 +20,7 @@ const {
   logSystemHealth,
   logError,
   logSecurityEvent,
-  logPerformanceMetric
+  logPerformanceMetric,
 } = require('./src/utils/adminLogger');
 
 const PORT = process.env.PORT || 3001;
@@ -41,7 +41,7 @@ class WebSocketServer {
     this.subscriptions = {
       truckUpdates: new Set(),
       alerts: new Set(),
-      dashboard: new Set()
+      dashboard: new Set(),
     };
     this.isReady = false;
     this.server = null;
@@ -68,14 +68,14 @@ class WebSocketServer {
         path: '/ws',
         perMessageDeflate: {
           zlibDeflateOptions: {
-            level: 3
-          }
-        }
+            level: 3,
+          },
+        },
       });
 
       this.setupWebSocketHandlers();
       this.startRealtimeBroadcast();
-      
+
       // Initialize websocket service with this server instance
       websocketService.initialize(this);
       console.log('📡 WebSocket handlers configured');
@@ -92,42 +92,41 @@ class WebSocketServer {
     try {
       console.log('🔄 Initializing Prisma database connection...');
       logDatabaseConnection('CONNECTING', { action: 'database_init_start' });
-      
+
       await prismaService.connect();
-      
+
       const health = await prismaService.healthCheck();
       if (health.status === 'healthy') {
         console.log('✅ Database connection healthy');
-        logDatabaseConnection('CONNECTED', { 
+        logDatabaseConnection('CONNECTED', {
           status: 'healthy',
-          database_health: health 
+          database_health: health,
         });
         this.isReady = true;
       } else {
         throw new Error(`Database health check failed: ${health.error}`);
       }
-      
+
       const connectionInfo = await prismaService.getConnectionInfo();
       console.log(`📊 Database: ${connectionInfo.database_name}`);
       console.log(`🔌 Active connections: ${connectionInfo.active_connections}`);
-      
+
       logDatabaseConnection('OPTIMIZING', {
         database_name: connectionInfo.database_name,
-        active_connections: connectionInfo.active_connections
+        active_connections: connectionInfo.active_connections,
       });
-      
+
       await prismaService.optimizeDatabase();
       console.log('⚡ Database optimization completed');
       logDatabaseConnection('OPTIMIZED', { action: 'database_optimization_completed' });
-      
     } catch (error) {
       console.error('❌ Database initialization failed:', error);
-      logError(error, { 
+      logError(error, {
         context: 'database_initialization',
-        environment: NODE_ENV 
+        environment: NODE_ENV,
       });
       this.isReady = false;
-      
+
       if (NODE_ENV === 'production') {
         process.exit(1);
       }
@@ -144,20 +143,20 @@ class WebSocketServer {
         subscriptions: new Set(),
         connectedAt: new Date(),
         lastPing: new Date(),
-        ip: request.headers['x-forwarded-for'] || request.connection.remoteAddress
+        ip: request.headers['x-forwarded-for'] || request.connection.remoteAddress,
       };
 
       this.clients.set(clientId, clientInfo);
       console.log(`📱 Client connected: ${clientId} from ${clientInfo.ip}`);
-      
+
       // Add client to websocket service
       websocketService.addClient(clientId, clientInfo);
-      
+
       // Log WebSocket connection
       logWebSocketConnection({
         clientId: clientId,
         ip: clientInfo.ip,
-        userAgent: request.headers['user-agent']
+        userAgent: request.headers['user-agent'],
       });
 
       // Send connection acknowledgment
@@ -166,8 +165,8 @@ class WebSocketServer {
         data: {
           clientId: clientId,
           serverTime: new Date().toISOString(),
-          availableSubscriptions: ['truck_updates', 'alerts', 'dashboard']
-        }
+          availableSubscriptions: ['truck_updates', 'alerts', 'dashboard'],
+        },
       });
 
       // Handle incoming messages
@@ -184,15 +183,15 @@ class WebSocketServer {
       // Handle client disconnect
       ws.on('close', (code, reason) => {
         console.log(`📱 Client disconnected: ${clientId} (${code}: ${reason})`);
-        
+
         // Log WebSocket disconnection
         const connectionDuration = Date.now() - clientInfo.connectedAt.getTime();
         logWebSocketDisconnection({
           clientId: clientId,
           connectionDuration: Math.round(connectionDuration / 1000), // in seconds
-          reason: reason?.toString() || `Code: ${code}`
+          reason: reason?.toString() || `Code: ${code}`,
         });
-        
+
         // Remove client from websocket service
         websocketService.removeClient(clientId);
         this.handleDisconnect(clientId);
@@ -233,14 +232,19 @@ class WebSocketServer {
           this.sendMessage(client.ws, {
             type: 'pong',
             requestId,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
           break;
 
         case 'subscribe':
           const channel = message.channel || data?.channel;
           if (!channel) {
-            this.sendError(client.ws, 'MISSING_CHANNEL', 'Channel is required for subscription', requestId);
+            this.sendError(
+              client.ws,
+              'MISSING_CHANNEL',
+              'Channel is required for subscription',
+              requestId
+            );
             break;
           }
           await this.handleSubscription(clientId, channel);
@@ -248,14 +252,19 @@ class WebSocketServer {
           this.sendMessage(client.ws, {
             type: 'subscription_ack',
             requestId,
-            data: { channel: channel, status: 'subscribed' }
+            data: { channel: channel, status: 'subscribed' },
           });
           break;
 
         case 'unsubscribe':
           const unsubChannel = message.channel || data?.channel;
           if (!unsubChannel) {
-            this.sendError(client.ws, 'MISSING_CHANNEL', 'Channel is required for unsubscription', requestId);
+            this.sendError(
+              client.ws,
+              'MISSING_CHANNEL',
+              'Channel is required for unsubscription',
+              requestId
+            );
             break;
           }
           this.handleUnsubscription(clientId, unsubChannel);
@@ -263,7 +272,7 @@ class WebSocketServer {
           this.sendMessage(client.ws, {
             type: 'subscription_ack',
             requestId,
-            data: { channel: unsubChannel, status: 'unsubscribed' }
+            data: { channel: unsubChannel, status: 'unsubscribed' },
           });
           break;
 
@@ -272,7 +281,7 @@ class WebSocketServer {
           this.sendMessage(client.ws, {
             type: 'trucks_data',
             requestId,
-            data: trucks
+            data: trucks,
           });
           break;
 
@@ -281,7 +290,7 @@ class WebSocketServer {
           this.sendMessage(client.ws, {
             type: 'dashboard_data',
             requestId,
-            data: dashboardData
+            data: dashboardData,
           });
           break;
 
@@ -290,7 +299,7 @@ class WebSocketServer {
           this.sendMessage(client.ws, {
             type: 'truck_details',
             requestId,
-            data: truckDetails
+            data: truckDetails,
           });
           break;
 
@@ -300,46 +309,51 @@ class WebSocketServer {
           logAdminOperation('UPDATE_TRUCK_STATUS', clientId, {
             truckId: data.truckId,
             newStatus: data.status,
-            clientIp: client.ip || 'unknown'
+            clientIp: client.ip || 'unknown',
           });
           this.sendMessage(client.ws, {
             type: 'truck_status_updated',
             requestId,
-            data: updateResult
+            data: updateResult,
           });
           break;
 
         case 'resolve_alert':
           const alertResult = await this.resolveAlert(data.alertId);
-          
+
           // Log admin operation
           logAdminOperation('RESOLVE_ALERT', clientId, {
             alertId: data.alertId,
-            clientIp: client.ip || 'unknown'
+            clientIp: client.ip || 'unknown',
           });
-          
+
           this.sendMessage(client.ws, {
             type: 'alert_resolved',
             requestId,
-            data: alertResult
+            data: alertResult,
           });
           break;
 
         case 'health_check':
           const health = await this.getSystemHealth();
-          
+
           // Log system health check
           logSystemHealth(health);
-          
+
           this.sendMessage(client.ws, {
             type: 'health_status',
             requestId,
-            data: health
+            data: health,
           });
           break;
 
         default:
-          this.sendError(client.ws, 'UNKNOWN_MESSAGE_TYPE', `Unknown message type: ${type}`, requestId);
+          this.sendError(
+            client.ws,
+            'UNKNOWN_MESSAGE_TYPE',
+            `Unknown message type: ${type}`,
+            requestId
+          );
       }
     } catch (error) {
       console.error(`❌ Error handling message ${type} from client ${clientId}:`, error);
@@ -362,7 +376,7 @@ class WebSocketServer {
         this.sendMessage(client.ws, {
           type: 'truck_locations',
           data: locations,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
 
@@ -373,7 +387,7 @@ class WebSocketServer {
         this.sendMessage(client.ws, {
           type: 'current_alerts',
           data: alerts,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
 
@@ -384,7 +398,7 @@ class WebSocketServer {
         this.sendMessage(client.ws, {
           type: 'dashboard_data',
           data: dashboardData,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
     }
@@ -442,8 +456,8 @@ class WebSocketServer {
       requestId,
       error: {
         code,
-        message
-      }
+        message,
+      },
     });
   }
 
@@ -472,7 +486,7 @@ class WebSocketServer {
         this.broadcastToSubscription(this.subscriptions.truckUpdates, {
           type: 'truck_locations_update',
           data: locations,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       } catch (error) {
         console.error('❌ Error broadcasting truck locations:', error);
@@ -488,33 +502,33 @@ class WebSocketServer {
           where: {
             acknowledged: false,
             occurred_at: {
-              gte: new Date(Date.now() - 60000) // Last minute
-            }
+              gte: new Date(Date.now() - 60000), // Last minute
+            },
           },
           include: {
             truck: {
               select: {
-                name: true
-              }
-            }
+                name: true,
+              },
+            },
           },
           orderBy: {
-            occurred_at: 'desc'
-          }
+            occurred_at: 'desc',
+          },
         });
 
         if (recentAlerts.length > 0) {
           this.broadcastToSubscription(this.subscriptions.alerts, {
             type: 'new_alerts',
-            data: recentAlerts.map(alert => ({
+            data: recentAlerts.map((alert) => ({
               id: alert.id,
               type: alert.type,
               severity: alert.severity,
               detail: alert.detail,
               truckName: alert.truck.name,
-              occurredAt: alert.occurred_at
+              occurredAt: alert.occurred_at,
             })),
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
       } catch (error) {
@@ -531,7 +545,7 @@ class WebSocketServer {
         this.broadcastToSubscription(this.subscriptions.dashboard, {
           type: 'dashboard_update',
           data: dashboardData,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       } catch (error) {
         console.error('❌ Error broadcasting dashboard updates:', error);
@@ -564,12 +578,12 @@ class WebSocketServer {
       include: {
         currentLocation: true,
         alerts: {
-          where: { isResolved: false }
-        }
+          where: { isResolved: false },
+        },
       },
       orderBy: {
-        truckNumber: 'asc'
-      }
+        truckNumber: 'asc',
+      },
     });
   }
 
@@ -582,13 +596,13 @@ class WebSocketServer {
         currentLocation: true,
         alerts: {
           orderBy: { createdAt: 'desc' },
-          take: 10
+          take: 10,
         },
         maintenanceRecords: {
           orderBy: { scheduledDate: 'desc' },
-          take: 5
-        }
-      }
+          take: 5,
+        },
+      },
     });
   }
 
@@ -601,16 +615,16 @@ class WebSocketServer {
     // Determine active trucks from recent GPS positions (last 30 minutes)
     const recentPositions = await prismaService.prisma.gps_position.findMany({
       where: {
-        ts: { gte: new Date(Date.now() - 30 * 60 * 1000) }
+        ts: { gte: new Date(Date.now() - 30 * 60 * 1000) },
       },
       select: { truck_id: true, speed_kph: true },
-      distinct: ['truck_id']
+      distinct: ['truck_id'],
     });
-    const activeTrucks = recentPositions.filter(p => (p.speed_kph || 0) > 5).length;
+    const activeTrucks = recentPositions.filter((p) => (p.speed_kph || 0) > 5).length;
 
     // Unresolved alerts (use correct model name alert_event)
     const unresolvedAlerts = await prismaService.prisma.alert_event.count({
-      where: { acknowledged: false }
+      where: { acknowledged: false },
     });
 
     const recentMaintenances = 0; // No maintenance table in current schema
@@ -619,14 +633,14 @@ class WebSocketServer {
       fleet: {
         total: totalTrucks,
         active: activeTrucks,
-        inactive: Math.max(0, totalTrucks - activeTrucks)
+        inactive: Math.max(0, totalTrucks - activeTrucks),
       },
       alerts: {
-        unresolved: unresolvedAlerts
+        unresolved: unresolvedAlerts,
       },
       maintenance: {
-        recentCount: recentMaintenances
-      }
+        recentCount: recentMaintenances,
+      },
     };
   }
 
@@ -638,13 +652,13 @@ class WebSocketServer {
       include: {
         truck: {
           select: {
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       orderBy: {
-        occurred_at: 'desc'
-      }
+        occurred_at: 'desc',
+      },
     });
   }
 
@@ -653,7 +667,7 @@ class WebSocketServer {
 
     return await prismaService.prisma.truck.update({
       where: { id: truckId },
-      data: { status }
+      data: { status },
     });
   }
 
@@ -663,8 +677,8 @@ class WebSocketServer {
     return await prismaService.prisma.alertEvent.update({
       where: { id: alertId },
       data: {
-        acknowledged: true
-      }
+        acknowledged: true,
+      },
     });
   }
 
@@ -676,21 +690,21 @@ class WebSocketServer {
       database: {
         status: health.status,
         name: connectionInfo.database_name,
-        connections: connectionInfo.active_connections
+        connections: connectionInfo.active_connections,
       },
       websocket: {
         connectedClients: this.clients.size,
         subscriptions: {
           truckUpdates: this.subscriptions.truckUpdates.size,
           alerts: this.subscriptions.alerts.size,
-          dashboard: this.subscriptions.dashboard.size
-        }
+          dashboard: this.subscriptions.dashboard.size,
+        },
       },
       server: {
         environment: NODE_ENV,
         uptime: process.uptime(),
-        memory: process.memoryUsage()
-      }
+        memory: process.memoryUsage(),
+      },
     };
   }
 
@@ -729,13 +743,13 @@ const wsServer = new WebSocketServer();
 
 const startServer = async () => {
   const startTime = Date.now();
-  
+
   try {
     const server = await wsServer.initialize();
 
     server.listen(PORT, '0.0.0.0', () => {
       const bootTime = Date.now() - startTime;
-      
+
       console.log('🚀 ================================');
       console.log(`🚛 Fleet Management Server`);
       console.log('🚀 ================================');
@@ -755,7 +769,7 @@ const startServer = async () => {
         databaseStatus: wsServer.isReady ? 'connected' : 'disconnected',
         startupTime: bootTime,
         adminId: 'system',
-        serverVersion: '2.0.0'
+        serverVersion: '2.0.0',
       });
 
       if (NODE_ENV === 'development') {
@@ -769,13 +783,12 @@ const startServer = async () => {
         console.log('🚀 ================================');
       }
     });
-
   } catch (error) {
     console.error('❌ Server startup failed:', error);
-    logError(error, { 
+    logError(error, {
       context: 'server_startup',
       port: PORT,
-      environment: NODE_ENV 
+      environment: NODE_ENV,
     });
     process.exit(1);
   }

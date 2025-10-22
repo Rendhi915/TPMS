@@ -12,10 +12,30 @@ const app = express();
 app.use(helmet());
 app.use(compression());
 
-// CORS configuration
+// CORS configuration - Secure for production
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'https://connectis.my.id',
+  'http://localhost:3000',
+  'http://localhost:5173', // Vite default
+];
+
 app.use(
   cors({
-    origin: '*',
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        // In development, allow all origins
+        if (process.env.NODE_ENV === 'development') {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

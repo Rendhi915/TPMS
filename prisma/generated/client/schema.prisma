@@ -297,12 +297,12 @@ model truck {
   name                    String?
   model                   String?
   year                    Int?
-  tire_config             String?
-  fleet_group_id          String?                   @db.Uuid
-  vendor_id               Int?
-  created_at              DateTime                  @default(now()) @db.Timestamptz(6)
-  created_by              String?                   @db.Uuid
-  updated_by              String?                   @db.Uuid
+  tireConfig              String?                   @map("tire_config")
+  fleetGroupId            String?                   @map("fleet_group_id") @db.Uuid
+  vendorId                Int?                      @map("vendor_id")
+  createdAt               DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdBy               String?                   @map("created_by") @db.Uuid
+  updatedBy               String?                   @map("updated_by") @db.Uuid
   alert_event             alert_event[]
   daily_route             daily_route[]
   device                  device[]
@@ -317,8 +317,8 @@ model truck {
   tire_position_config    tire_position_config[]
   tire_pressure_event     tire_pressure_event[]
   trip                    trip[]
-  fleet_group             fleet_group?              @relation(fields: [fleet_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  vendor                  vendors?                  @relation(fields: [vendor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  fleetGroup              fleet_group?              @relation(fields: [fleetGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vendor                  vendors?                  @relation(fields: [vendorId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   truck_status_event      truck_status_event[]
 }
 
@@ -359,38 +359,38 @@ enum alert_type {
 
 model vendors {
   id            Int       @id @default(autoincrement())
-  nama_vendor   String    @db.VarChar(255)
+  name          String    @map("nama_vendor") @db.VarChar(255)
   address       String?
-  nomor_telepon String?   @db.VarChar(50)
+  phone         String?   @map("nomor_telepon") @db.VarChar(50)
   email         String?   @db.VarChar(255)
-  kontak_person String?   @db.VarChar(255)
-  created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+  contactPerson String?   @map("kontak_person") @db.VarChar(255)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
   drivers       drivers[]
   trucks        truck[]
 
-  @@index([nama_vendor], map: "idx_vendors_nama")
+  @@index([name], map: "idx_vendors_nama")
 }
 
 model drivers {
-  id             Int      @id @default(autoincrement())
-  name           String   @db.VarChar(255)
-  phone          String?  @db.VarChar(50)
-  email          String?  @db.VarChar(255)
-  address        String?
-  license_number String   @db.VarChar(50)
-  license_type   String   @db.VarChar(20)
-  license_expiry DateTime @db.Date
-  id_card_number String   @db.VarChar(50)
-  vendor_id      Int?
-  status         String   @default("aktif") @db.VarChar(20)
-  created_at     DateTime @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime @default(now()) @db.Timestamptz(6)
-  vendor         vendors? @relation(fields: [vendor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(255)
+  phone         String?  @db.VarChar(50)
+  email         String?  @db.VarChar(255)
+  address       String?
+  licenseNumber String   @map("license_number") @db.VarChar(50)
+  licenseType   String   @map("license_type") @db.VarChar(20)
+  licenseExpiry DateTime @map("license_expiry") @db.Date
+  idCardNumber  String   @map("id_card_number") @db.VarChar(50)
+  vendorId      Int?     @map("vendor_id")
+  status        String   @default("aktif") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  vendor        vendors? @relation(fields: [vendorId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
-  @@index([vendor_id], map: "idx_drivers_vendor_id")
+  @@index([vendorId], map: "idx_drivers_vendor_id")
   @@index([status], map: "idx_drivers_status")
-  @@index([license_expiry], map: "idx_drivers_license_expiry")
+  @@index([licenseExpiry], map: "idx_drivers_license_expiry")
 }
 
 enum truck_status {

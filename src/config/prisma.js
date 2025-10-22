@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('../../prisma/generated/client');
 
 // Enhanced Prisma configuration with connection resilience
 const prisma = new PrismaClient({

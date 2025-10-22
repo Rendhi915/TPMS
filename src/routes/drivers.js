@@ -14,12 +14,12 @@ const prisma = new PrismaClient();
 // GET /api/drivers - Get all drivers with filters and pagination
 router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
-    const { page = 1, limit = 50, status, vendor_id } = req.query;
+    const { page = 1, limit = 50, status, vendorId } = req.query;
     const skip = (page - 1) * limit;
 
     const where = {};
     if (status) where.status = status;
-    if (vendor_id) where.vendor_id = parseInt(vendor_id);
+    if (vendorId) where.vendorId = parseInt(vendorId);
 
     const [drivers, total] = await Promise.all([
       prisma.drivers.findMany({
@@ -28,7 +28,7 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
           vendor: {
             select: {
               id: true,
-              nama_vendor: true,
+              name: true,
             },
           },
         },
@@ -81,9 +81,9 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
         vendor: {
           select: {
             id: true,
-            nama_vendor: true,
+            name: true,
             address: true,
-            nomor_telepon: true,
+            phone: true,
           },
         },
       },
@@ -119,20 +119,20 @@ router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
       phone,
       email,
       address,
-      license_number,
-      license_type,
-      license_expiry,
-      id_card_number,
-      vendor_id,
+      licenseNumber,
+      licenseType,
+      licenseExpiry,
+      idCardNumber,
+      vendorId,
       status = 'aktif',
     } = req.body;
 
     // Validate required fields
-    if (!name || !license_number || !license_type || !license_expiry || !id_card_number) {
+    if (!name || !licenseNumber || !licenseType || !licenseExpiry || !idCardNumber) {
       return res.status(400).json({
         success: false,
         message:
-          'Missing required fields: name, license_number, license_type, license_expiry, id_card_number',
+          'Missing required fields: name, licenseNumber, licenseType, licenseExpiry, idCardNumber',
       });
     }
 
@@ -142,18 +142,18 @@ router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
         phone,
         email,
         address,
-        license_number,
-        license_type,
-        license_expiry: new Date(license_expiry),
-        id_card_number,
-        vendor_id: vendor_id ? parseInt(vendor_id) : null,
+        licenseNumber,
+        licenseType,
+        licenseExpiry: new Date(licenseExpiry),
+        idCardNumber,
+        vendorId: vendorId ? parseInt(vendorId) : null,
         status,
       },
       include: {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true,
+            name: true,
           },
         },
       },
@@ -183,11 +183,11 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
       phone,
       email,
       address,
-      license_number,
-      license_type,
-      license_expiry,
-      id_card_number,
-      vendor_id,
+      licenseNumber,
+      licenseType,
+      licenseExpiry,
+      idCardNumber,
+      vendorId,
       status,
     } = req.body;
 
@@ -196,11 +196,11 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
     if (phone !== undefined) updateData.phone = phone;
     if (email !== undefined) updateData.email = email;
     if (address !== undefined) updateData.address = address;
-    if (license_number !== undefined) updateData.license_number = license_number;
-    if (license_type !== undefined) updateData.license_type = license_type;
-    if (license_expiry !== undefined) updateData.license_expiry = new Date(license_expiry);
-    if (id_card_number !== undefined) updateData.id_card_number = id_card_number;
-    if (vendor_id !== undefined) updateData.vendor_id = vendor_id ? parseInt(vendor_id) : null;
+    if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber;
+    if (licenseType !== undefined) updateData.licenseType = licenseType;
+    if (licenseExpiry !== undefined) updateData.licenseExpiry = new Date(licenseExpiry);
+    if (idCardNumber !== undefined) updateData.idCardNumber = idCardNumber;
+    if (vendorId !== undefined) updateData.vendorId = vendorId ? parseInt(vendorId) : null;
     if (status !== undefined) updateData.status = status;
 
     const driver = await prisma.drivers.update({
@@ -212,7 +212,7 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
         vendor: {
           select: {
             id: true,
-            nama_vendor: true,
+            name: true,
           },
         },
       },
@@ -282,7 +282,7 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
 
     const drivers = await prisma.drivers.findMany({
       where: {
-        license_expiry: {
+        licenseExpiry: {
           lte: futureDate,
         },
         status: 'aktif',
@@ -291,12 +291,12 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true,
+            name: true,
           },
         },
       },
       orderBy: {
-        license_expiry: 'asc',
+        licenseExpiry: 'asc',
       },
     });
 
