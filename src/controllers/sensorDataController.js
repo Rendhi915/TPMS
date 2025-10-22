@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 /**
  * Process incoming sensor data from vendor
  * Handles 4 command types: tpdata, hubdata, device, state
- * 
+ *
  * Expected JSON format:
  * {
  *   "cmd": "tpdata|hubdata|device|state",
@@ -21,7 +21,7 @@ async function processSensorData(req, res) {
     if (!cmd || !sn || !data) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: cmd, sn, data'
+        error: 'Missing required fields: cmd, sn, data',
       });
     }
 
@@ -31,8 +31,8 @@ async function processSensorData(req, res) {
         device_sn: sn,
         cmd_type: cmd,
         raw_json: data,
-        processed: false
-      }
+        processed: false,
+      },
     });
 
     // Find device by serial number
@@ -40,8 +40,8 @@ async function processSensorData(req, res) {
       where: { sn },
       include: {
         truck: true,
-        sensor: true
-      }
+        sensor: true,
+      },
     });
 
     if (!device) {
@@ -49,14 +49,14 @@ async function processSensorData(req, res) {
       await prisma.sensor_data_raw.update({
         where: { id: rawDataRecord.id },
         data: {
-          processed: true
-        }
+          processed: true,
+        },
       });
 
       return res.status(404).json({
         success: false,
         error: `Device not found for SN: ${sn}`,
-        rawDataId: rawDataRecord.id
+        rawDataId: rawDataRecord.id,
       });
     }
 
@@ -84,36 +84,35 @@ async function processSensorData(req, res) {
         await prisma.sensor_data_raw.update({
           where: { id: rawDataRecord.id },
           data: {
-            processed: true
-          }
+            processed: true,
+          },
         });
 
         return res.status(400).json({
           success: false,
           error: `Unknown command type: ${cmd}`,
-          rawDataId: rawDataRecord.id
+          rawDataId: rawDataRecord.id,
         });
     }
 
     // Mark raw data as processed
     await prisma.sensor_data_raw.update({
       where: { id: rawDataRecord.id },
-      data: { processed: true }
+      data: { processed: true },
     });
 
     return res.status(200).json({
       success: true,
       message: `Data processed successfully for command: ${cmd}`,
       rawDataId: rawDataRecord.id,
-      result
+      result,
     });
-
   } catch (error) {
     console.error('Error processing sensor data:', error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 }
@@ -122,7 +121,7 @@ async function processSensorData(req, res) {
  * Process tire pressure and temperature data (tpdata)
  * Maps: tiprValue -> pressure_kpa, tempValue -> temp_celsius, tireNo -> tire_no
  */
-async function processTireData(device, data, rawDataId) {
+async function processTireData(device, data, _rawDataId) {
   const records = [];
 
   // Data can be single object or array
@@ -136,7 +135,7 @@ async function processTireData(device, data, rawDataId) {
       pressure_kpa: item.tiprValue || item.pressure_kpa,
       temp_celsius: item.tempValue || item.temp_celsius,
       ex_type: item.exType || item.ex_type || '1,3',
-      battery_level: item.bat || item.battery_level
+      battery_level: item.bat || item.battery_level,
     };
 
     // Only add raw_data_id if the field exists in schema
@@ -146,7 +145,7 @@ async function processTireData(device, data, rawDataId) {
     // }
 
     const record = await prisma.tire_pressure_event.create({
-      data: recordData
+      data: recordData,
     });
     records.push(record);
   }
@@ -154,7 +153,7 @@ async function processTireData(device, data, rawDataId) {
   return {
     type: 'tire_pressure_event',
     count: records.length,
-    records: records.map(r => r.id)
+    records: records.map((r) => r.id),
   };
 }
 
@@ -162,7 +161,7 @@ async function processTireData(device, data, rawDataId) {
  * Process hub temperature data (hubdata)
  * Maps: tempValue -> temp_celsius, tireNo -> hub_no
  */
-async function processHubData(device, data, rawDataId) {
+async function processHubData(device, data, _rawDataId) {
   const records = [];
 
   const dataArray = Array.isArray(data) ? data : [data];
@@ -173,7 +172,7 @@ async function processHubData(device, data, rawDataId) {
       truck_id: device.truck_id,
       hub_no: item.tireNo || item.hub_no,
       temp_celsius: item.tempValue || item.temp_celsius,
-      battery_level: item.bat || item.battery_level
+      battery_level: item.bat || item.battery_level,
     };
 
     // Only add raw_data_id if the field exists in schema
@@ -182,7 +181,7 @@ async function processHubData(device, data, rawDataId) {
     // }
 
     const record = await prisma.hub_temperature_event.create({
-      data: recordData
+      data: recordData,
     });
     records.push(record);
   }
@@ -190,7 +189,7 @@ async function processHubData(device, data, rawDataId) {
   return {
     type: 'hub_temperature_event',
     count: records.length,
-    records: records.map(r => r.id)
+    records: records.map((r) => r.id),
   };
 }
 
@@ -199,13 +198,14 @@ async function processHubData(device, data, rawDataId) {
  * Creates both GPS position and device status records
  * Maps: lng/lat -> pos (PostGIS), bat1 -> host_bat, bat2 -> repeater1_bat, bat3 -> repeater2_bat
  */
-async function processDeviceData(device, data, rawDataId) {
+async function processDeviceData(device, data, _rawDataId) {
   const results = { gps: null, deviceStatus: null };
 
   // Process GPS data if coordinates are present
   if (data.lng && data.lat) {
     // Use raw SQL for PostGIS geography insertion
-    await prisma.$executeRawUnsafe(`
+    await prisma.$executeRawUnsafe(
+      `
       INSERT INTO gps_position (device_id, truck_id, ts, pos, speed_kph, heading_deg, hdop, source)
       VALUES ($1::uuid, $2::uuid, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326)::geography, $6, $7, $8, $9)
     `,
@@ -224,14 +224,19 @@ async function processDeviceData(device, data, rawDataId) {
   }
 
   // Process device battery status if battery data is present
-  if (data.bat1 !== undefined || data.bat2 !== undefined || data.bat3 !== undefined || data.lock !== undefined) {
+  if (
+    data.bat1 !== undefined ||
+    data.bat2 !== undefined ||
+    data.bat3 !== undefined ||
+    data.lock !== undefined
+  ) {
     const statusData = {
       device_id: device.id,
       truck_id: device.truck_id,
       host_bat: data.bat1,
       repeater1_bat: data.bat2,
       repeater2_bat: data.bat3,
-      lock_state: data.lock
+      lock_state: data.lock,
     };
 
     // Only add raw_data_id if the field exists in schema
@@ -240,7 +245,7 @@ async function processDeviceData(device, data, rawDataId) {
     // }
 
     const statusRecord = await prisma.device_status_event.create({
-      data: statusData
+      data: statusData,
     });
 
     results.deviceStatus = statusRecord.id;
@@ -249,7 +254,7 @@ async function processDeviceData(device, data, rawDataId) {
   return {
     type: 'device_data',
     gps: results.gps,
-    deviceStatus: results.deviceStatus
+    deviceStatus: results.deviceStatus,
   };
 }
 
@@ -257,11 +262,11 @@ async function processDeviceData(device, data, rawDataId) {
  * Process lock state data (state)
  * Maps: is_lock -> is_lock
  */
-async function processStateData(device, data, rawDataId) {
+async function processStateData(device, data, _rawDataId) {
   const recordData = {
     device_id: device.id,
     truck_id: device.truck_id,
-    is_lock: data.is_lock !== undefined ? data.is_lock : data.lock
+    is_lock: data.is_lock !== undefined ? data.is_lock : data.lock,
   };
 
   // Only add raw_data_id if the field exists in schema
@@ -270,13 +275,13 @@ async function processStateData(device, data, rawDataId) {
   // }
 
   const record = await prisma.lock_event.create({
-    data: recordData
+    data: recordData,
   });
 
   return {
     type: 'lock_event',
     id: record.id,
-    isLock: record.is_lock
+    isLock: record.is_lock,
   };
 }
 
@@ -291,13 +296,13 @@ async function processBulkSensorData(req, res) {
     if (!Array.isArray(data) || data.length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'Expected array of data records'
+        error: 'Expected array of data records',
       });
     }
 
     const results = {
       success: [],
-      failed: []
+      failed: [],
     };
 
     for (const record of data) {
@@ -308,7 +313,7 @@ async function processBulkSensorData(req, res) {
         if (!cmd || !sn || !itemData) {
           results.failed.push({
             record,
-            error: 'Missing required fields'
+            error: 'Missing required fields',
           });
           continue;
         }
@@ -319,8 +324,8 @@ async function processBulkSensorData(req, res) {
             device_sn: sn,
             cmd_type: cmd,
             raw_json: itemData,
-            processed: false
-          }
+            processed: false,
+          },
         });
 
         // Find device
@@ -328,21 +333,21 @@ async function processBulkSensorData(req, res) {
           where: { sn },
           include: {
             truck: true,
-            sensor: true
-          }
+            sensor: true,
+          },
         });
 
         if (!device) {
           await prisma.sensor_data_raw.update({
             where: { id: rawDataRecord.id },
             data: {
-              processed: true
-            }
+              processed: true,
+            },
           });
 
           results.failed.push({
             record,
-            error: `Device not found for SN: ${sn}`
+            error: `Device not found for SN: ${sn}`,
           });
           continue;
         }
@@ -366,12 +371,12 @@ async function processBulkSensorData(req, res) {
             await prisma.sensor_data_raw.update({
               where: { id: rawDataRecord.id },
               data: {
-                processed: true
-              }
+                processed: true,
+              },
             });
             results.failed.push({
               record,
-              error: `Unknown command type: ${cmd}`
+              error: `Unknown command type: ${cmd}`,
             });
             continue;
         }
@@ -379,20 +384,19 @@ async function processBulkSensorData(req, res) {
         // Mark as processed
         await prisma.sensor_data_raw.update({
           where: { id: rawDataRecord.id },
-          data: { processed: true }
+          data: { processed: true },
         });
 
         results.success.push({
           cmd,
           sn,
           rawDataId: rawDataRecord.id,
-          result
+          result,
         });
-
       } catch (error) {
         results.failed.push({
           record,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -403,17 +407,16 @@ async function processBulkSensorData(req, res) {
       summary: {
         total: data.length,
         success: results.success.length,
-        failed: results.failed.length
+        failed: results.failed.length,
       },
-      results
+      results,
     });
-
   } catch (error) {
     console.error('Error processing bulk sensor data:', error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 }
@@ -426,7 +429,7 @@ async function getUnprocessedData(req, res) {
     const { limit = 100, cmd_type } = req.query;
 
     const where = {
-      processed: false
+      processed: false,
     };
 
     if (cmd_type) {
@@ -436,21 +439,20 @@ async function getUnprocessedData(req, res) {
     const unprocessed = await prisma.sensor_data_raw.findMany({
       where,
       take: parseInt(limit),
-      orderBy: { received_at: 'desc' }
+      orderBy: { received_at: 'desc' },
     });
 
     return res.status(200).json({
       success: true,
       count: unprocessed.length,
-      data: unprocessed
+      data: unprocessed,
     });
-
   } catch (error) {
     console.error('Error fetching unprocessed data:', error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: error.message
+      message: error.message,
     });
   }
 }
@@ -458,5 +460,5 @@ async function getUnprocessedData(req, res) {
 module.exports = {
   processSensorData,
   processBulkSensorData,
-  getUnprocessedData
+  getUnprocessedData,
 };

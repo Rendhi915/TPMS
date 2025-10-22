@@ -29,15 +29,8 @@ const MINING_AREA = {
   minLng: 115.432199,
   maxLng: 115.6583,
   centerLat: -3.5454,
-  centerLng: 115.6044
+  centerLng: 115.6044,
 };
-
-function generateRandomLocation() {
-  return {
-    lat: randomFloat(MINING_AREA.minLat, MINING_AREA.maxLat, 6),
-    lng: randomFloat(MINING_AREA.minLng, MINING_AREA.maxLng, 6)
-  };
-}
 
 // Truck models variety
 const TRUCK_MODELS = [
@@ -48,22 +41,22 @@ const TRUCK_MODELS = [
   'Scania P-Series',
   'Volvo FM',
   'Mercedes-Benz Actros',
-  'MAN TGS'
+  'MAN TGS',
 ];
 
 async function seedVendorsAndDrivers() {
   console.log('\n📦 Seeding Vendors...');
-  
+
   const vendors = [
     { name: 'PT Transport Indo', phone: '021-12345678', email: 'info@transportindo.co.id' },
     { name: 'PT Sentosa Logistics', phone: '021-87654321', email: 'contact@sentosalog.co.id' },
-    { name: 'PT Maju Bersama', phone: '021-55555555', email: 'support@majubersama.co.id' }
+    { name: 'PT Maju Bersama', phone: '021-55555555', email: 'support@majubersama.co.id' },
   ];
 
   const createdVendors = [];
   for (const vendor of vendors) {
     const existing = await prisma.vendors.findFirst({
-      where: { name: vendor.name }
+      where: { name: vendor.name },
     });
 
     if (existing) {
@@ -76,8 +69,8 @@ async function seedVendorsAndDrivers() {
           phone: vendor.phone,
           email: vendor.email,
           address: 'Jakarta, Indonesia',
-          contactPerson: 'Fleet Manager'
-        }
+          contactPerson: 'Fleet Manager',
+        },
       });
       createdVendors.push(created);
       console.log(`   ✓ Created vendor: ${vendor.name}`);
@@ -85,23 +78,34 @@ async function seedVendorsAndDrivers() {
   }
 
   console.log(`\n👨‍✈️ Seeding Drivers...`);
-  
+
   const driverNames = [
-    'Budi Santoso', 'Ahmad Wijaya', 'Siti Nurhaliza', 'Joko Widodo',
-    'Eko Prasetyo', 'Dewi Lestari', 'Rizki Ramadhan', 'Andi Setiawan',
-    'Nur Hidayat', 'Farhan Abdullah', 'Indra Gunawan', 'Mega Wati',
-    'Hendra Kusuma', 'Wulan Sari', 'Agus Salim'
+    'Budi Santoso',
+    'Ahmad Wijaya',
+    'Siti Nurhaliza',
+    'Joko Widodo',
+    'Eko Prasetyo',
+    'Dewi Lestari',
+    'Rizki Ramadhan',
+    'Andi Setiawan',
+    'Nur Hidayat',
+    'Farhan Abdullah',
+    'Indra Gunawan',
+    'Mega Wati',
+    'Hendra Kusuma',
+    'Wulan Sari',
+    'Agus Salim',
   ];
 
   const createdDrivers = [];
   for (let i = 0; i < Math.min(15, driverNames.length); i++) {
     const vendorId = createdVendors[i % createdVendors.length].id;
-    
+
     const existing = await prisma.drivers.findFirst({
-      where: { 
+      where: {
         name: driverNames[i],
-        vendorId: vendorId 
-      }
+        vendorId: vendorId,
+      },
     });
 
     if (existing) {
@@ -122,8 +126,8 @@ async function seedVendorsAndDrivers() {
           licenseExpiry: licenseExpiry,
           idCardNumber: `317${randomInt(1000000000000, 9999999999999)}`,
           vendorId: vendorId,
-          status: 'aktif'
-        }
+          status: 'aktif',
+        },
       });
       createdDrivers.push(driver);
       console.log(`   ✓ Created driver: ${driverNames[i]}`);
@@ -135,17 +139,17 @@ async function seedVendorsAndDrivers() {
 
 async function seedFleetGroups() {
   console.log('\n🏢 Seeding Fleet Groups...');
-  
+
   const fleetGroups = [
     { name: 'Mining Fleet A', site: 'Main Pit' },
     { name: 'Mining Fleet B', site: 'Secondary Pit' },
-    { name: 'Transport Fleet', site: 'Hauling Zone' }
+    { name: 'Transport Fleet', site: 'Hauling Zone' },
   ];
 
   const createdGroups = [];
   for (const group of fleetGroups) {
     const existing = await prisma.fleet_group.findFirst({
-      where: { name: group.name }
+      where: { name: group.name },
     });
 
     if (existing) {
@@ -156,8 +160,8 @@ async function seedFleetGroups() {
         data: {
           name: group.name,
           site: group.site,
-          description: `Fleet for ${group.site}`
-        }
+          description: `Fleet for ${group.site}`,
+        },
       });
       createdGroups.push(created);
       console.log(`   ✓ Created fleet group: ${group.name}`);
@@ -169,15 +173,15 @@ async function seedFleetGroups() {
 
 async function seedTrucks(vendors, fleetGroups) {
   console.log(`\n🚛 Seeding ${TRUCK_COUNT} Trucks...`);
-  
+
   const createdTrucks = [];
 
   for (let i = 1; i <= TRUCK_COUNT; i++) {
     const code = padCode(i);
-    
+
     // Check if truck already exists
     const existing = await prisma.truck.findUnique({
-      where: { code: code }
+      where: { code: code },
     });
 
     if (existing) {
@@ -200,8 +204,8 @@ async function seedTrucks(vendors, fleetGroups) {
         year: year,
         tireConfig: `${WHEELS_PER_TRUCK}-wheel`,
         vendorId: vendorId,
-        fleetGroupId: fleetGroupId
-      }
+        fleetGroupId: fleetGroupId,
+      },
     });
 
     createdTrucks.push(truck);
@@ -217,14 +221,14 @@ async function seedTrucks(vendors, fleetGroups) {
 
 async function seedDevicesAndSensors(trucks) {
   console.log(`\n📡 Seeding Devices and Sensors...`);
-  
+
   for (let i = 0; i < trucks.length; i++) {
     const truck = trucks[i];
     const deviceSN = `TPM-${truck.code}`;
 
     // Check if device exists
     let device = await prisma.device.findUnique({
-      where: { sn: deviceSN }
+      where: { sn: deviceSN },
     });
 
     if (!device) {
@@ -232,14 +236,14 @@ async function seedDevicesAndSensors(trucks) {
         data: {
           truck_id: truck.id,
           sn: deviceSN,
-          sim_number: `628${randomInt(100000000, 999999999)}`
-        }
+          sim_number: `628${randomInt(100000000, 999999999)}`,
+        },
       });
     }
 
     // Create sensors for each wheel
     const existingSensors = await prisma.sensor.count({
-      where: { device_id: device.id }
+      where: { device_id: device.id },
     });
 
     if (existingSensors === 0) {
@@ -249,13 +253,13 @@ async function seedDevicesAndSensors(trucks) {
             device_id: device.id,
             type: 'TPMS',
             position_no: wheelNo,
-            sn: `SENSOR-${truck.code}-W${padCode(wheelNo, 2)}`
-          }
+            sn: `SENSOR-${truck.code}-W${padCode(wheelNo, 2)}`,
+          },
         });
       }
     }
 
-    if ((i + 1) % 25 === 0 || (i + 1) === trucks.length) {
+    if ((i + 1) % 25 === 0 || i + 1 === trucks.length) {
       console.log(`   ✓ Progress: ${i + 1}/${trucks.length} devices and sensors`);
     }
   }
@@ -265,15 +269,15 @@ async function seedDevicesAndSensors(trucks) {
 
 async function seedTPMSData(trucks) {
   console.log(`\n📊 Seeding TPMS Data...`);
-  
+
   const now = Date.now();
   let totalRecords = 0;
 
   for (let i = 0; i < trucks.length; i++) {
     const truck = trucks[i];
-    
+
     const device = await prisma.device.findFirst({
-      where: { truck_id: truck.id }
+      where: { truck_id: truck.id },
     });
 
     if (!device) continue;
@@ -301,15 +305,15 @@ async function seedTPMSData(trucks) {
             pressure_kpa: pressure,
             temp_celsius: temp,
             battery_level: randomInt(70, 100),
-            changed_at: timestamp
-          }
+            changed_at: timestamp,
+          },
         });
 
         totalRecords++;
       }
     }
 
-    if ((i + 1) % 20 === 0 || (i + 1) === trucks.length) {
+    if ((i + 1) % 20 === 0 || i + 1 === trucks.length) {
       console.log(`   ✓ Progress: ${i + 1}/${trucks.length} trucks (${totalRecords} TPMS records)`);
     }
   }
@@ -319,15 +323,15 @@ async function seedTPMSData(trucks) {
 
 async function seedGPSData(trucks) {
   console.log(`\n📍 Seeding GPS Data...`);
-  
+
   const now = Date.now();
   let totalRecords = 0;
 
   for (let i = 0; i < trucks.length; i++) {
     const truck = trucks[i];
-    
+
     const device = await prisma.device.findFirst({
-      where: { truck_id: truck.id }
+      where: { truck_id: truck.id },
     });
 
     if (!device) continue;
@@ -348,15 +352,16 @@ async function seedGPSData(trucks) {
       currentLat = Math.max(MINING_AREA.minLat, Math.min(MINING_AREA.maxLat, currentLat));
       currentLng = Math.max(MINING_AREA.minLng, Math.min(MINING_AREA.maxLng, currentLng));
 
-      await prisma.$executeRawUnsafe(`
+      await prisma.$executeRawUnsafe(
+        `
         INSERT INTO gps_position (device_id, truck_id, ts, pos, speed_kph, heading_deg, hdop, source)
         VALUES ($1, $2, $3, ST_SetSRID(ST_MakePoint($4, $5), 4326)::geography, $6, $7, $8, $9)
-      `, 
-        device.id, 
-        truck.id, 
-        timestamp, 
-        currentLng, 
-        currentLat, 
+      `,
+        device.id,
+        truck.id,
+        timestamp,
+        currentLng,
+        currentLat,
         randomFloat(10, 50, 1), // speed
         randomFloat(0, 360, 1), // heading
         randomFloat(1.0, 2.5, 1), // hdop
@@ -366,7 +371,7 @@ async function seedGPSData(trucks) {
       totalRecords++;
     }
 
-    if ((i + 1) % 20 === 0 || (i + 1) === trucks.length) {
+    if ((i + 1) % 20 === 0 || i + 1 === trucks.length) {
       console.log(`   ✓ Progress: ${i + 1}/${trucks.length} trucks (${totalRecords} GPS points)`);
     }
   }
@@ -416,7 +421,6 @@ async function main() {
     console.log(`   2. Start server: npm start`);
     console.log(`   3. Test API endpoints`);
     console.log(`   4. Check dashboard at http://localhost:3000\n`);
-
   } catch (error) {
     console.error('\n❌ Error during seeding:', error.message);
     console.error(error);

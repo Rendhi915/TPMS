@@ -1,9 +1,9 @@
 {
-    "watch": ["src/", "server.js"],
-    "ext": "js,json",
-    "ignore": ["tests/", "logs/", "uploads/"],
-    "exec": "node server.js",
-    "env": {
-      "NODE_ENV": "development"
-    }
+  "watch": ["src/", "server.js"],
+  "ext": "js,json",
+  "ignore": ["tests/", "logs/", "uploads/"],
+  "exec": "node server.js",
+  "env": {
+    "NODE_ENV": "development"
   }
+}

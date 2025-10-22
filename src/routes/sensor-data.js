@@ -4,7 +4,7 @@ const router = express.Router();
 const {
   processSensorData,
   processBulkSensorData,
-  getUnprocessedData
+  getUnprocessedData,
 } = require('../controllers/sensorDataController');
 const authMiddleware = require('../middleware/auth');
 
@@ -13,7 +13,7 @@ const authMiddleware = require('../middleware/auth');
  * @desc    Process single sensor data record
  * @access  Public (should be authenticated in production)
  * @body    { cmd: string, sn: string, data: object }
- * 
+ *
  * Example:
  * {
  *   "cmd": "tpdata",
@@ -33,7 +33,7 @@ router.post('/process', processSensorData);
  * @desc    Process multiple sensor data records at once
  * @access  Public (should be authenticated in production)
  * @body    { data: array }
- * 
+ *
  * Example:
  * {
  *   "data": [
