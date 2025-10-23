@@ -271,18 +271,21 @@ const validateDriverCreate = [
     .isLength({ min: 1, max: 50 })
     .withMessage('ID card number must be between 1 and 50 characters'),
   body('phone')
-    .optional()
+    .optional({ checkFalsy: true })
     .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
   body('email')
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('vendorId').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  body('vendorId')
+    .optional({ checkFalsy: true })
+    .isInt({ min: 1 })
+    .withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])
@@ -310,18 +313,21 @@ const validateDriverUpdate = [
     .isLength({ min: 1, max: 50 })
     .withMessage('ID card number must be between 1 and 50 characters'),
   body('phone')
-    .optional()
+    .optional({ checkFalsy: true })
     .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
   body('email')
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('vendorId').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  body('vendorId')
+    .optional({ checkFalsy: true })
+    .isInt({ min: 1 })
+    .withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])
