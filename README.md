@@ -55,6 +55,7 @@ PORT=5000
 ```
 
 Generate secure JWT secret:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
@@ -64,12 +65,14 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ## API Endpoints
 
 ### Authentication
+
 ```
 POST   /api/auth/login     - Login and get JWT token
 GET    /api/auth/me        - Get current user
 ```
 
 ### Core Resources
+
 ```
 GET    /api/trucks         - List trucks (paginated)
 GET    /api/drivers        - List drivers
@@ -82,6 +85,7 @@ GET    /api/alerts         - Active alerts
 **Authentication:** All endpoints require `Authorization: Bearer <token>` header except `/api/auth/login`
 
 **Example:**
+
 ```bash
 curl -X GET http://localhost:5000/api/trucks \
   -H "Authorization: Bearer YOUR_TOKEN"
@@ -137,6 +141,7 @@ pm2 monit
 ```
 
 **Deployment checklist:**
+
 - Set `NODE_ENV=production`
 - Generate strong JWT_SECRET (64+ chars)
 - Configure CORS whitelist
