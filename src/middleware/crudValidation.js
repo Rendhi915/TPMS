@@ -255,37 +255,22 @@ const validateDriverCreate = [
     .withMessage('License number is required')
     .isLength({ min: 1, max: 50 })
     .withMessage('License number must be between 1 and 50 characters'),
-  body('licenseType')
-    .notEmpty()
-    .withMessage('License type is required')
-    .isLength({ min: 1, max: 20 })
-    .withMessage('License type must be between 1 and 20 characters'),
-  body('licenseExpiry')
-    .notEmpty()
-    .withMessage('License expiry date is required')
-    .isISO8601()
-    .withMessage('Invalid license expiry date format'),
-  body('idCardNumber')
-    .notEmpty()
-    .withMessage('ID card number is required')
-    .isLength({ min: 1, max: 50 })
-    .withMessage('ID card number must be between 1 and 50 characters'),
   body('phone')
     .optional({ checkFalsy: true })
     .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
+  body('address')
+    .optional({ checkFalsy: true })
+    .isLength({ max: 500 })
+    .withMessage('Address must not exceed 500 characters'),
   body('email')
     .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('vendorId')
-    .optional({ checkFalsy: true })
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])
@@ -303,31 +288,22 @@ const validateDriverUpdate = [
     .optional()
     .isLength({ min: 1, max: 50 })
     .withMessage('License number must be between 1 and 50 characters'),
-  body('licenseType')
-    .optional()
-    .isLength({ min: 1, max: 20 })
-    .withMessage('License type must be between 1 and 20 characters'),
-  body('licenseExpiry').optional().isISO8601().withMessage('Invalid license expiry date format'),
-  body('idCardNumber')
-    .optional()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('ID card number must be between 1 and 50 characters'),
   body('phone')
     .optional({ checkFalsy: true })
     .matches(/^[\d\s\-+()]+$/)
     .withMessage('Invalid phone number format')
     .isLength({ max: 50 })
     .withMessage('Phone number must not exceed 50 characters'),
+  body('address')
+    .optional({ checkFalsy: true })
+    .isLength({ max: 500 })
+    .withMessage('Address must not exceed 500 characters'),
   body('email')
     .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('vendorId')
-    .optional({ checkFalsy: true })
-    .isInt({ min: 1 })
-    .withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])

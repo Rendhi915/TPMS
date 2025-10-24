@@ -11,6 +11,14 @@ const {
 
 const prisma = new PrismaClient();
 
+// Normalize incoming driver payload to accept snake_case (from some frontends)
+// and map them to the expected camelCase fields used by validation middleware.
+const normalizeDriverPayload = (req, res, next) => {
+  const b = req.body || {};
+  if (b.license_number && !b.licenseNumber) b.licenseNumber = b.license_number;
+  next();
+};
+
 // GET /api/drivers - Get all drivers with filters and pagination
 router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
@@ -112,26 +120,32 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
 });
 
 // POST /api/drivers - Create new driver
-router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
+router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, async (req, res) => {
   try {
-    const { name, phone, email, address, licenseNumber, status = 'aktif' } = req.body;
+    const {
+      name,
+      phone,
+      email,
+      address,
+      licenseNumber,
+      status = 'aktif',
+    } = req.body;
 
-    // Validate required fields
-    if (!name || !licenseNumber) {
-      return res.status(400).json({
-        success: false,
-        message:
-          'Missing required fields: name, licenseNumber, licenseType, licenseExpiry, idCardNumber',
-      });
-    }
+    // Validation handled by validateDriverCreate middleware
+    // Required: name, licenseNumber
+    // Optional: phone, email, address, status
 
     const driver = await prisma.drivers.create({
       data: {
         name,
-        phone,
-        email,
-        address,
+        phone: phone || null,
+        email: email || null,
+        address: address || null,
         licenseNumber,
+        licenseType: 'N/A', // Default value since not provided by frontend
+        licenseExpiry: new Date('2099-12-31'), // Default far future date
+        idCardNumber: licenseNumber, // Use licenseNumber as default
+        vendorId: null,
         status,
       },
       include: {
@@ -160,7 +174,7 @@ router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
 });
 
 // PUT /api/drivers/:driverId - Update driver
-router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) => {
+router.put('/:driverId', authMiddleware, normalizeDriverPayload, validateDriverUpdate, async (req, res) => {
   try {
     const { driverId } = req.params;
     const {
@@ -169,10 +183,6 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
       email,
       address,
       licenseNumber,
-      licenseType,
-      licenseExpiry,
-      idCardNumber,
-      vendorId,
       status,
     } = req.body;
 
@@ -182,10 +192,6 @@ router.put('/:driverId', authMiddleware, validateDriverUpdate, async (req, res) 
     if (email !== undefined) updateData.email = email;
     if (address !== undefined) updateData.address = address;
     if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber;
-    if (licenseType !== undefined) updateData.licenseType = licenseType;
-    if (licenseExpiry !== undefined) updateData.licenseExpiry = new Date(licenseExpiry);
-    if (idCardNumber !== undefined) updateData.idCardNumber = idCardNumber;
-    if (vendorId !== undefined) updateData.vendorId = vendorId ? parseInt(vendorId) : null;
     if (status !== undefined) updateData.status = status;
 
     const driver = await prisma.drivers.update({
@@ -255,8 +261,6 @@ router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async 
     });
   }
 });
-
-module.exports = router;
 
 // GET /api/drivers/expiring-licenses - Get drivers with expiring licenses
 router.get('/expiring-licenses', authMiddleware, async (req, res) => {
