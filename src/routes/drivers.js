@@ -122,14 +122,7 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
 // POST /api/drivers - Create new driver
 router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, async (req, res) => {
   try {
-    const {
-      name,
-      phone,
-      email,
-      address,
-      licenseNumber,
-      status = 'aktif',
-    } = req.body;
+    const { name, phone, email, address, licenseNumber, status = 'aktif' } = req.body;
 
     // Validation handled by validateDriverCreate middleware
     // Required: name, licenseNumber
@@ -174,61 +167,60 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
 });
 
 // PUT /api/drivers/:driverId - Update driver
-router.put('/:driverId', authMiddleware, normalizeDriverPayload, validateDriverUpdate, async (req, res) => {
-  try {
-    const { driverId } = req.params;
-    const {
-      name,
-      phone,
-      email,
-      address,
-      licenseNumber,
-      status,
-    } = req.body;
+router.put(
+  '/:driverId',
+  authMiddleware,
+  normalizeDriverPayload,
+  validateDriverUpdate,
+  async (req, res) => {
+    try {
+      const { driverId } = req.params;
+      const { name, phone, email, address, licenseNumber, status } = req.body;
 
-    const updateData = {};
-    if (name !== undefined) updateData.name = name;
-    if (phone !== undefined) updateData.phone = phone;
-    if (email !== undefined) updateData.email = email;
-    if (address !== undefined) updateData.address = address;
-    if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber;
-    if (status !== undefined) updateData.status = status;
+      const updateData = {};
+      if (name !== undefined) updateData.name = name;
+      if (phone !== undefined) updateData.phone = phone;
+      if (email !== undefined) updateData.email = email;
+      if (address !== undefined) updateData.address = address;
+      if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber;
+      if (status !== undefined) updateData.status = status;
 
-    const driver = await prisma.drivers.update({
-      where: {
-        id: parseInt(driverId),
-      },
-      data: updateData,
-      include: {
-        vendor: {
-          select: {
-            id: true,
-            name: true,
+      const driver = await prisma.drivers.update({
+        where: {
+          id: parseInt(driverId),
+        },
+        data: updateData,
+        include: {
+          vendor: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    res.status(200).json({
-      success: true,
-      data: driver,
-      message: 'Driver updated successfully',
-    });
-  } catch (error) {
-    console.error('Error updating driver:', error);
-    if (error.code === 'P2025') {
-      return res.status(404).json({
+      res.status(200).json({
+        success: true,
+        data: driver,
+        message: 'Driver updated successfully',
+      });
+    } catch (error) {
+      console.error('Error updating driver:', error);
+      if (error.code === 'P2025') {
+        return res.status(404).json({
+          success: false,
+          message: 'Driver not found',
+        });
+      }
+      res.status(500).json({
         success: false,
-        message: 'Driver not found',
+        message: 'Failed to update driver',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
       });
     }
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update driver',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
   }
-});
+);
 
 // DELETE /api/drivers/:driverId - Delete driver permanently
 router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
