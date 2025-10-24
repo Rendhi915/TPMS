@@ -120,15 +120,11 @@ router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
       email,
       address,
       licenseNumber,
-      licenseType,
-      licenseExpiry,
-      idCardNumber,
-      vendorId,
       status = 'aktif',
     } = req.body;
 
     // Validate required fields
-    if (!name || !licenseNumber || !licenseType || !licenseExpiry || !idCardNumber) {
+    if (!name || !licenseNumber ) {
       return res.status(400).json({
         success: false,
         message:
@@ -143,10 +139,6 @@ router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
         email,
         address,
         licenseNumber,
-        licenseType,
-        licenseExpiry: new Date(licenseExpiry),
-        idCardNumber,
-        vendorId: vendorId ? parseInt(vendorId) : null,
         status,
       },
       include: {
