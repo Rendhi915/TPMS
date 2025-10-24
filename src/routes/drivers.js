@@ -114,17 +114,10 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
 // POST /api/drivers - Create new driver
 router.post('/', authMiddleware, validateDriverCreate, async (req, res) => {
   try {
-    const {
-      name,
-      phone,
-      email,
-      address,
-      licenseNumber,
-      status = 'aktif',
-    } = req.body;
+    const { name, phone, email, address, licenseNumber, status = 'aktif' } = req.body;
 
     // Validate required fields
-    if (!name || !licenseNumber ) {
+    if (!name || !licenseNumber) {
       return res.status(400).json({
         success: false,
         message:
