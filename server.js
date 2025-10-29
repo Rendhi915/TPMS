@@ -9,7 +9,7 @@ require('dotenv').config();
 // Import services
 const prismaService = require('./src/services/simplePrismaService');
 const websocketService = require('./src/services/websocketService');
-const queueProcessingService = require('./src/services/queueProcessingService');
+// const queueProcessingService = require('./src/services/queueProcessingService'); // Not used anymore - direct write to DB
 const {
   logServerStartup,
   logServerShutdown,
@@ -498,22 +498,23 @@ class WebSocketServer {
       if (!this.isReady || this.subscriptions.alerts.size === 0) return;
 
       try {
-        const recentAlerts = await prismaService.prisma.alert_event.findMany({
+        const recentAlerts = await prismaService.prisma.alert_events.findMany({
           where: {
-            acknowledged: false,
-            occurred_at: {
+            status: 'active',
+            deleted_at: null,
+            created_at: {
               gte: new Date(Date.now() - 60000), // Last minute
             },
           },
           include: {
             truck: {
               select: {
-                name: true,
+                plate: true,
               },
             },
           },
           orderBy: {
-            occurred_at: 'desc',
+            created_at: 'desc',
           },
         });
 
@@ -524,9 +525,9 @@ class WebSocketServer {
               id: alert.id,
               type: alert.type,
               severity: alert.severity,
-              detail: alert.detail,
-              truckName: alert.truck.name,
-              occurredAt: alert.occurred_at,
+              message: alert.message,
+              truckPlate: alert.truck?.plate || null,
+              createdAt: alert.created_at,
             })),
             timestamp: new Date().toISOString(),
           });
@@ -610,21 +611,32 @@ class WebSocketServer {
     if (!this.isReady) throw new Error('Database not ready');
 
     // Total trucks
-    const totalTrucks = await prismaService.prisma.truck.count();
-
-    // Determine active trucks from recent GPS positions (last 30 minutes)
-    const recentPositions = await prismaService.prisma.gps_position.findMany({
-      where: {
-        ts: { gte: new Date(Date.now() - 30 * 60 * 1000) },
-      },
-      select: { truck_id: true, speed_kph: true },
-      distinct: ['truck_id'],
+    const totalTrucks = await prismaService.prisma.truck.count({
+      where: { deleted_at: null },
     });
-    const activeTrucks = recentPositions.filter((p) => (p.speed_kph || 0) > 5).length;
 
-    // Unresolved alerts (use correct model name alert_event)
-    const unresolvedAlerts = await prismaService.prisma.alert_event.count({
-      where: { acknowledged: false },
+    // Determine active trucks from recent locations (last 30 minutes)
+    const recentPositions = await prismaService.prisma.location.findMany({
+      where: {
+        timestamp: { gte: new Date(Date.now() - 30 * 60 * 1000) },
+      },
+      include: {
+        device: {
+          select: {
+            truck_id: true,
+          },
+        },
+      },
+      distinct: ['device_id'],
+    });
+    const activeTrucks = recentPositions.filter((p) => (p.speed || 0) > 5).length;
+
+    // Unresolved alerts
+    const unresolvedAlerts = await prismaService.prisma.alert_events.count({
+      where: {
+        status: 'active',
+        deleted_at: null,
+      },
     });
 
     const recentMaintenances = 0; // No maintenance table in current schema
@@ -647,17 +659,20 @@ class WebSocketServer {
   async getUnresolvedAlerts() {
     if (!this.isReady) throw new Error('Database not ready');
 
-    return await prismaService.prisma.alert_event.findMany({
-      where: { acknowledged: false },
+    return await prismaService.prisma.alert_events.findMany({
+      where: {
+        status: 'active',
+        deleted_at: null,
+      },
       include: {
         truck: {
           select: {
-            name: true,
+            plate: true,
           },
         },
       },
       orderBy: {
-        occurred_at: 'desc',
+        created_at: 'desc',
       },
     });
   }

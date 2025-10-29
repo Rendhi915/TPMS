@@ -296,43 +296,44 @@ class PrismaService {
           _count: {
             _all: true,
           },
+          where: {
+            deleted_at: null,
+          },
         }),
         // Active alerts count
-        this.prisma.alert_event.count({
-          where: { acknowledged: false },
+        this.prisma.alert_events.count({
+          where: {
+            status: 'active',
+          },
         }),
       ]);
 
-      // Get status breakdown from truck_status_event table
-      const latestStatusEvents = await this.prisma.$queryRaw`
-        SELECT DISTINCT ON (truck_id) truck_id, status
-        FROM truck_status_event
-        ORDER BY truck_id, changed_at DESC
-      `;
+      // Get status breakdown from truck table
+      const statusCounts = await this.prisma.truck.groupBy({
+        by: ['status'],
+        where: {
+          deleted_at: null,
+        },
+        _count: {
+          _all: true,
+        },
+      });
 
-      // Count trucks by their latest status
-      const statusCounts = latestStatusEvents.reduce((acc, item) => {
-        const status = item.status || 'unknown';
-        acc[status] = (acc[status] || 0) + 1;
+      // Format status counts with defaults
+      const formattedStatusCounts = statusCounts.reduce((acc, item) => {
+        acc[item.status] = item._count._all;
         return acc;
       }, {});
 
-      // Format status counts with defaults
-      const formattedStatusCounts = {
-        active: statusCounts.active || 0,
-        inactive: statusCounts.inactive || 0,
-        maintenance: statusCounts.maintenance || 0,
-      };
-
       return {
         totalTrucks: truckStats._count._all,
-        activeTrucks: formattedStatusCounts.active,
-        inactiveTrucks: formattedStatusCounts.inactive,
-        maintenanceTrucks: formattedStatusCounts.maintenance,
-        averageFuel: 0, // Will be calculated from fuel_level_event if needed
+        activeTrucks: formattedStatusCounts.active || formattedStatusCounts.operational || 0,
+        inactiveTrucks: formattedStatusCounts.inactive || 0,
+        maintenanceTrucks: formattedStatusCounts.maintenance || 0,
+        averageFuel: 0, // Not available in current schema
         totalPayload: 0, // Not available in current schema
         alertsCount,
-        lowTirePressureCount: 0, // Will be calculated from tire_pressure_event if needed
+        lowTirePressureCount: 0, // Will calculate from sensor_data if needed
       };
     } catch (error) {
       console.error('Error in getDashboardStats:', error);

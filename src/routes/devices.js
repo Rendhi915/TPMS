@@ -29,6 +29,9 @@ router.get(
 // POST /api/devices - Create new device
 router.post('/', authMiddleware, validateDeviceCreate, deviceController.createDevice);
 
+// POST /api/devices/with-sensors - Create device with sensors in one request
+router.post('/with-sensors', authMiddleware, deviceController.createDeviceWithSensors);
+
 // PUT /api/devices/:deviceId - Update device
 router.put('/:deviceId', authMiddleware, validateDeviceUpdate, deviceController.updateDevice);
 

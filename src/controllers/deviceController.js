@@ -15,17 +15,16 @@ const getAllDevices = async (req, res) => {
     if (truck_id) where.truck_id = truck_id;
     if (search) {
       where.OR = [
-        { sn: { contains: search, mode: 'insensitive' } },
-        { sim_number: { contains: search, mode: 'insensitive' } },
+        { deviceId: { contains: search, mode: 'insensitive' } },
+        { simNumber: { contains: search, mode: 'insensitive' } },
       ];
     }
 
-    // Filter by status (active = not removed)
-    if (status === 'active') {
-      where.removed_at = null;
-    } else if (status === 'inactive') {
-      where.removed_at = { not: null };
+    // Filter by status and deleted_at
+    if (status) {
+      where.status = status;
     }
+    where.deleted_at = null; // Always exclude soft-deleted devices
 
     const [devices, total] = await Promise.all([
       prisma.device.findMany({
@@ -34,22 +33,24 @@ const getAllDevices = async (req, res) => {
           truck: {
             select: {
               id: true,
-              name: true,
-              code: true,
-              model: true,
+              plate: true,
+              type: true,
+              status: true,
             },
           },
-          sensor: {
+          sensors: {
+            where: { deleted_at: null },
             select: {
               id: true,
-              type: true,
-              position_no: true,
-              sn: true,
+              tireNo: true,
+              simNumber: true,
+              sensorNo: true,
+              sensor_lock: true,
             },
           },
         },
         orderBy: {
-          installed_at: 'desc',
+          created_at: 'desc',
         },
         skip: skip,
         take: parseInt(limit),
@@ -94,24 +95,34 @@ const getDeviceById = async (req, res) => {
         truck: {
           select: {
             id: true,
-            name: true,
-            code: true,
-            model: true,
+            plate: true,
+            type: true,
+            status: true,
           },
         },
-        sensor: {
+        sensors: {
+          where: { deleted_at: null },
           select: {
             id: true,
-            type: true,
-            position_no: true,
-            sn: true,
-            installed_at: true,
-            removed_at: true,
+            tireNo: true,
+            simNumber: true,
+            sensorNo: true,
+            sensor_lock: true,
+            created_at: true,
+            deleted_at: true,
           },
         },
-        device_status_event: {
-          orderBy: { reported_at: 'desc' },
+        locations: {
+          orderBy: { created_at: 'desc' },
           take: 10,
+          select: {
+            id: true,
+            lat: true,
+            long: true,
+            speed: true,
+            heading: true,
+            created_at: true,
+          },
         },
       },
     });
@@ -140,25 +151,25 @@ const getDeviceById = async (req, res) => {
 
 const createDevice = async (req, res) => {
   try {
-    const { truck_id, sn, sim_number } = req.body;
+    const { truck_id, deviceId, simNumber, bat1, bat2, bat3, lock, status } = req.body;
 
     // Validate required fields
-    if (!truck_id || !sn) {
+    if (!truck_id || !deviceId) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: truck_id, sn',
+        message: 'Missing required fields: truck_id, deviceId',
       });
     }
 
-    // Check if device with same serial number already exists
+    // Check if device with same deviceId already exists
     const existingDevice = await prisma.device.findUnique({
-      where: { sn: sn },
+      where: { deviceId: deviceId },
     });
 
     if (existingDevice) {
       return res.status(409).json({
         success: false,
-        message: 'Device with this serial number already exists',
+        message: 'Device with this deviceId already exists',
       });
     }
 
@@ -177,27 +188,23 @@ const createDevice = async (req, res) => {
     const device = await prisma.device.create({
       data: {
         truck_id,
-        sn,
-        sim_number,
+        deviceId,
+        simNumber,
+        bat1: bat1 || 0,
+        bat2: bat2 || 0,
+        bat3: bat3 || 0,
+        lock: lock || 0,
+        status: status || 'active',
       },
       include: {
         truck: {
           select: {
             id: true,
-            name: true,
-            code: true,
-            model: true,
+            plate: true,
+            type: true,
+            status: true,
           },
         },
-      },
-    });
-
-    // Create device assignment record
-    await prisma.device_truck_assignment.create({
-      data: {
-        device_id: device.id,
-        truck_id: truck_id,
-        is_active: true,
       },
     });
 
@@ -219,7 +226,7 @@ const createDevice = async (req, res) => {
 const updateDevice = async (req, res) => {
   try {
     const { deviceId } = req.params;
-    const { truck_id, sn, sim_number } = req.body;
+    const { truck_id, deviceId: newDeviceId, simNumber, bat1, bat2, bat3, lock, status } = req.body;
 
     // Check if device exists
     const existingDevice = await prisma.device.findUnique({
@@ -233,16 +240,16 @@ const updateDevice = async (req, res) => {
       });
     }
 
-    // Check if serial number is being changed and if new SN already exists
-    if (sn && sn !== existingDevice.sn) {
+    // Check if deviceId is being changed and if new deviceId already exists
+    if (newDeviceId && newDeviceId !== existingDevice.deviceId) {
       const duplicateDevice = await prisma.device.findUnique({
-        where: { sn: sn },
+        where: { deviceId: newDeviceId },
       });
 
       if (duplicateDevice) {
         return res.status(409).json({
           success: false,
-          message: 'Device with this serial number already exists',
+          message: 'Device with this deviceId already exists',
         });
       }
     }
@@ -259,32 +266,17 @@ const updateDevice = async (req, res) => {
           message: 'Invalid truck_id: truck not found',
         });
       }
-
-      // Create new assignment record if truck is being changed
-      await prisma.device_truck_assignment.updateMany({
-        where: {
-          device_id: deviceId,
-          is_active: true,
-        },
-        data: {
-          is_active: false,
-          removed_at: new Date(),
-        },
-      });
-
-      await prisma.device_truck_assignment.create({
-        data: {
-          device_id: deviceId,
-          truck_id: truck_id,
-          is_active: true,
-        },
-      });
     }
 
     const updateData = {};
     if (truck_id !== undefined) updateData.truck_id = truck_id;
-    if (sn !== undefined) updateData.sn = sn;
-    if (sim_number !== undefined) updateData.sim_number = sim_number;
+    if (newDeviceId !== undefined) updateData.deviceId = newDeviceId;
+    if (simNumber !== undefined) updateData.simNumber = simNumber;
+    if (bat1 !== undefined) updateData.bat1 = bat1;
+    if (bat2 !== undefined) updateData.bat2 = bat2;
+    if (bat3 !== undefined) updateData.bat3 = bat3;
+    if (lock !== undefined) updateData.lock = lock;
+    if (status !== undefined) updateData.status = status;
 
     const device = await prisma.device.update({
       where: { id: deviceId },
@@ -293,9 +285,9 @@ const updateDevice = async (req, res) => {
         truck: {
           select: {
             id: true,
-            name: true,
-            code: true,
-            model: true,
+            plate: true,
+            type: true,
+            status: true,
           },
         },
       },
@@ -324,11 +316,8 @@ const deleteDevice = async (req, res) => {
     const device = await prisma.device.findUnique({
       where: { id: deviceId },
       include: {
-        sensor: true,
-        gps_position: { take: 1 },
-        tire_pressure_event: { take: 1 },
-        device_status_event: { take: 1 },
-        device_truck_assignment: true,
+        sensors: { where: { deleted_at: null } },
+        locations: { take: 1 },
       },
     });
 
@@ -340,30 +329,14 @@ const deleteDevice = async (req, res) => {
     }
 
     // Check if device has associated data
-    const hasData =
-      device.sensor.length > 0 ||
-      device.gps_position.length > 0 ||
-      device.tire_pressure_event.length > 0 ||
-      device.device_status_event.length > 0;
+    const hasData = device.sensors.length > 0 || device.locations.length > 0;
 
     if (hasData) {
       // Soft delete - mark as removed
       const updatedDevice = await prisma.device.update({
         where: { id: deviceId },
         data: {
-          removed_at: new Date(),
-        },
-      });
-
-      // Deactivate assignments
-      await prisma.device_truck_assignment.updateMany({
-        where: {
-          device_id: deviceId,
-          is_active: true,
-        },
-        data: {
-          is_active: false,
-          removed_at: new Date(),
+          deleted_at: new Date(),
         },
       });
 
@@ -373,14 +346,7 @@ const deleteDevice = async (req, res) => {
         message: 'Device deactivated successfully (soft delete due to associated data)',
       });
     } else {
-      // Hard delete - first delete device_truck_assignment records
-      await prisma.device_truck_assignment.deleteMany({
-        where: {
-          device_id: deviceId,
-        },
-      });
-
-      // Then delete the device
+      // Hard delete if no associated data
       await prisma.device.delete({
         where: { id: deviceId },
       });
@@ -406,19 +372,12 @@ const deleteDevice = async (req, res) => {
 
 const getAllSensors = async (req, res) => {
   try {
-    const { page = 1, limit = 50, device_id, type, status } = req.query;
+    const { page = 1, limit = 50, device_id, status } = req.query;
     const skip = (page - 1) * limit;
 
     const where = {};
     if (device_id) where.device_id = device_id;
-    if (type) where.type = type;
-
-    // Filter by status (active = not removed)
-    if (status === 'active') {
-      where.removed_at = null;
-    } else if (status === 'inactive') {
-      where.removed_at = { not: null };
-    }
+    where.deleted_at = null;
 
     const [sensors, total] = await Promise.all([
       prisma.sensor.findMany({
@@ -428,17 +387,20 @@ const getAllSensors = async (req, res) => {
             select: {
               id: true,
               sn: true,
+              truck_id: true,
+              status: true,
               truck: {
                 select: {
                   id: true,
+                  plate: true,
                   name: true,
-                  code: true,
+                  type: true,
                 },
               },
             },
           },
         },
-        orderBy: [{ device_id: 'asc' }, { position_no: 'asc' }],
+        orderBy: [{ device_id: 'asc' }, { tireNo: 'asc' }],
         skip: skip,
         take: parseInt(limit),
       }),
@@ -447,10 +409,29 @@ const getAllSensors = async (req, res) => {
 
     const totalPages = Math.ceil(total / limit);
 
+    const sensorsData = sensors.map((sensor) => ({
+      id: sensor.id,
+      sn: sensor.sn,
+      device_id: sensor.device_id,
+      tireNo: sensor.tireNo,
+      sensorNo: sensor.sensorNo,
+      simNumber: sensor.simNumber,
+      sensor_lock: sensor.sensor_lock,
+      status: sensor.status,
+      created_at: sensor.created_at,
+      device: sensor.device
+        ? {
+            id: sensor.device.id,
+            sn: sensor.device.sn,
+            truck: sensor.device.truck,
+          }
+        : null,
+    }));
+
     res.status(200).json({
       success: true,
       data: {
-        sensors,
+        sensors: sensorsData,
         pagination: {
           page: parseInt(page),
           limit: parseInt(limit),
@@ -482,15 +463,26 @@ const getSensorById = async (req, res) => {
         device: {
           select: {
             id: true,
-            sn: true,
+            deviceId: true,
             truck: {
               select: {
                 id: true,
-                name: true,
-                code: true,
-                model: true,
+                plate: true,
+                type: true,
+                status: true,
               },
             },
+          },
+        },
+        sensor_data: {
+          orderBy: { created_at: 'desc' },
+          take: 10,
+          select: {
+            id: true,
+            tiprValue: true,
+            tempValue: true,
+            bat: true,
+            created_at: true,
           },
         },
       },
@@ -520,13 +512,13 @@ const getSensorById = async (req, res) => {
 
 const createSensor = async (req, res) => {
   try {
-    const { device_id, type, position_no, sn } = req.body;
+    const { device_id, tireNo, simNumber, sensorNo, sensor_lock } = req.body;
 
     // Validate required fields
-    if (!device_id || !position_no) {
+    if (!device_id || !tireNo) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: device_id, position_no',
+        message: 'Missing required fields: device_id, tireNo',
       });
     }
 
@@ -542,53 +534,54 @@ const createSensor = async (req, res) => {
       });
     }
 
-    // Check if sensor with same serial number already exists (if SN provided)
-    if (sn) {
+    // Check if sensorNo already exists (if provided)
+    if (sensorNo) {
       const existingSensor = await prisma.sensor.findUnique({
-        where: { sn: sn },
+        where: { sensorNo: sensorNo },
       });
 
       if (existingSensor) {
         return res.status(409).json({
           success: false,
-          message: 'Sensor with this serial number already exists',
+          message: 'Sensor with this sensorNo already exists',
         });
       }
     }
 
-    // Check if position is already occupied on this device
+    // Check if tireNo is already occupied on this device
     const existingPosition = await prisma.sensor.findFirst({
       where: {
         device_id: device_id,
-        position_no: position_no,
-        removed_at: null,
+        tireNo: parseInt(tireNo),
+        deleted_at: null,
       },
     });
 
     if (existingPosition) {
       return res.status(409).json({
         success: false,
-        message: `Position ${position_no} is already occupied on this device`,
+        message: `Tire position ${tireNo} is already occupied on this device`,
       });
     }
 
     const sensor = await prisma.sensor.create({
       data: {
         device_id,
-        type,
-        position_no: parseInt(position_no),
-        sn,
+        tireNo: parseInt(tireNo),
+        simNumber,
+        sensorNo,
+        sensor_lock: sensor_lock || 0,
       },
       include: {
         device: {
           select: {
             id: true,
-            sn: true,
+            deviceId: true,
             truck: {
               select: {
                 id: true,
-                name: true,
-                code: true,
+                plate: true,
+                type: true,
               },
             },
           },
@@ -614,7 +607,7 @@ const createSensor = async (req, res) => {
 const updateSensor = async (req, res) => {
   try {
     const { sensorId } = req.params;
-    const { device_id, type, position_no, sn } = req.body;
+    const { device_id, tireNo, simNumber, sensorNo, sensor_lock } = req.body;
 
     // Check if sensor exists
     const existingSensor = await prisma.sensor.findUnique({
@@ -642,30 +635,27 @@ const updateSensor = async (req, res) => {
       }
     }
 
-    // Check serial number conflicts
-    if (sn && sn !== existingSensor.sn) {
+    // Check sensorNo conflicts
+    if (sensorNo && sensorNo !== existingSensor.sensorNo) {
       const duplicateSensor = await prisma.sensor.findUnique({
-        where: { sn: sn },
+        where: { sensorNo: sensorNo },
       });
 
       if (duplicateSensor) {
         return res.status(409).json({
           success: false,
-          message: 'Sensor with this serial number already exists',
+          message: 'Sensor with this sensorNo already exists',
         });
       }
     }
 
-    // Check position conflicts
-    if (
-      position_no &&
-      (position_no !== existingSensor.position_no || device_id !== existingSensor.device_id)
-    ) {
+    // Check tireNo conflicts
+    if (tireNo && (tireNo !== existingSensor.tireNo || device_id !== existingSensor.device_id)) {
       const conflictSensor = await prisma.sensor.findFirst({
         where: {
           device_id: device_id || existingSensor.device_id,
-          position_no: parseInt(position_no),
-          removed_at: null,
+          tireNo: parseInt(tireNo),
+          deleted_at: null,
           id: { not: sensorId },
         },
       });
@@ -673,16 +663,17 @@ const updateSensor = async (req, res) => {
       if (conflictSensor) {
         return res.status(409).json({
           success: false,
-          message: `Position ${position_no} is already occupied on this device`,
+          message: `Tire position ${tireNo} is already occupied on this device`,
         });
       }
     }
 
     const updateData = {};
     if (device_id !== undefined) updateData.device_id = device_id;
-    if (type !== undefined) updateData.type = type;
-    if (position_no !== undefined) updateData.position_no = parseInt(position_no);
-    if (sn !== undefined) updateData.sn = sn;
+    if (tireNo !== undefined) updateData.tireNo = parseInt(tireNo);
+    if (simNumber !== undefined) updateData.simNumber = simNumber;
+    if (sensorNo !== undefined) updateData.sensorNo = sensorNo;
+    if (sensor_lock !== undefined) updateData.sensor_lock = sensor_lock;
 
     const sensor = await prisma.sensor.update({
       where: { id: sensorId },
@@ -691,12 +682,12 @@ const updateSensor = async (req, res) => {
         device: {
           select: {
             id: true,
-            sn: true,
+            deviceId: true,
             truck: {
               select: {
                 id: true,
-                name: true,
-                code: true,
+                plate: true,
+                type: true,
               },
             },
           },
@@ -735,11 +726,11 @@ const deleteSensor = async (req, res) => {
       });
     }
 
-    // Soft delete - mark as removed
+    // Soft delete - mark as deleted
     const updatedSensor = await prisma.sensor.update({
       where: { id: sensorId },
       data: {
-        removed_at: new Date(),
+        deleted_at: new Date(),
       },
     });
 
@@ -758,6 +749,182 @@ const deleteSensor = async (req, res) => {
   }
 };
 
+// ==========================================
+// CREATE DEVICE WITH SENSORS (Combined Endpoint)
+// ==========================================
+
+const createDeviceWithSensors = async (req, res) => {
+  try {
+    const {
+      // Device fields
+      truck_id,
+      deviceId,
+      simNumber,
+      bat1,
+      bat2,
+      bat3,
+      lock,
+      status,
+      // Sensors array
+      sensors,
+    } = req.body;
+
+    // Validate required device fields
+    if (!deviceId || !simNumber) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required device fields: deviceId, simNumber',
+      });
+    }
+
+    // Validate truck exists if provided
+    if (truck_id) {
+      const truck = await prisma.truck.findUnique({
+        where: { id: truck_id },
+      });
+
+      if (!truck) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid truck_id: truck not found',
+        });
+      }
+    }
+
+    // Check if deviceId already exists
+    const existingDevice = await prisma.device.findUnique({
+      where: { deviceId: deviceId },
+    });
+
+    if (existingDevice) {
+      return res.status(409).json({
+        success: false,
+        message: 'Device with this deviceId already exists',
+      });
+    }
+
+    // Validate sensors array if provided
+    if (sensors && Array.isArray(sensors)) {
+      // Check for duplicate tireNo in input
+      const tireNumbers = sensors.map((s) => s.tireNo);
+      const duplicateTireNo = tireNumbers.filter(
+        (item, index) => tireNumbers.indexOf(item) !== index
+      );
+
+      if (duplicateTireNo.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Duplicate tire positions in request: ${duplicateTireNo.join(', ')}`,
+        });
+      }
+
+      // Check for duplicate sensorNo in input
+      const sensorNumbers = sensors.filter((s) => s.sensorNo).map((s) => s.sensorNo);
+      const duplicateSensorNo = sensorNumbers.filter(
+        (item, index) => sensorNumbers.indexOf(item) !== index
+      );
+
+      if (duplicateSensorNo.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Duplicate sensorNo in request: ${duplicateSensorNo.join(', ')}`,
+        });
+      }
+
+      // Check if any sensorNo already exists in database
+      if (sensorNumbers.length > 0) {
+        const existingSensors = await prisma.sensor.findMany({
+          where: {
+            sensorNo: {
+              in: sensorNumbers,
+            },
+          },
+        });
+
+        if (existingSensors.length > 0) {
+          return res.status(409).json({
+            success: false,
+            message: `SensorNo already exists: ${existingSensors.map((s) => s.sensorNo).join(', ')}`,
+          });
+        }
+      }
+    }
+
+    // Create device and sensors in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create device
+      const newDevice = await tx.device.create({
+        data: {
+          truck_id: truck_id || null,
+          deviceId,
+          simNumber,
+          bat1: bat1 || null,
+          bat2: bat2 || null,
+          bat3: bat3 || null,
+          lock: lock || 0,
+          status: status || 'active',
+        },
+      });
+
+      // Create sensors if provided
+      let createdSensors = [];
+      if (sensors && Array.isArray(sensors) && sensors.length > 0) {
+        for (const sensorData of sensors) {
+          if (!sensorData.tireNo) {
+            throw new Error('Each sensor must have a tireNo');
+          }
+
+          const sensor = await tx.sensor.create({
+            data: {
+              device_id: newDevice.id,
+              tireNo: parseInt(sensorData.tireNo),
+              simNumber: sensorData.simNumber || null,
+              sensorNo: sensorData.sensorNo || null,
+              sensor_lock: sensorData.sensor_lock || 0,
+            },
+          });
+
+          createdSensors.push(sensor);
+        }
+      }
+
+      // Fetch complete device with relations
+      const completeDevice = await tx.device.findUnique({
+        where: { id: newDevice.id },
+        include: {
+          truck: {
+            select: {
+              id: true,
+              plate: true,
+              type: true,
+              status: true,
+            },
+          },
+          sensors: {
+            where: { deleted_at: null },
+            orderBy: { tireNo: 'asc' },
+          },
+        },
+      });
+
+      return completeDevice;
+    });
+
+    res.status(201).json({
+      success: true,
+      data: result,
+      message: `Device created successfully with ${result.sensors.length} sensor(s)`,
+    });
+  } catch (error) {
+    console.error('Error creating device with sensors:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create device with sensors',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
   getAllDevices,
   getDeviceById,
@@ -769,4 +936,5 @@ module.exports = {
   createSensor,
   updateSensor,
   deleteSensor,
+  createDeviceWithSensors,
 };

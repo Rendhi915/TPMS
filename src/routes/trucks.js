@@ -12,6 +12,12 @@ const {
 // GET /api/trucks - Get all trucks with filters
 router.get('/', authMiddleware, validatePagination, truckController.getAllTrucks);
 
+// GET /api/trucks/summary - Get truck status summary
+router.get('/summary', authMiddleware, truckController.getTruckSummary);
+
+// GET /api/trucks/by-status - Get trucks by status
+router.get('/by-status', authMiddleware, truckController.getTrucksByStatus);
+
 // GET /api/trucks/realtime/locations - Get real-time truck locations (GeoJSON)
 router.get('/realtime/locations', authMiddleware, truckController.getRealtimeLocations);
 
@@ -30,6 +36,9 @@ router.get('/:id/history', authMiddleware, truckController.getTruckLocationHisto
 
 // GET /api/trucks/:id/alerts - Get truck alerts (protected)
 router.get('/:id/alerts', authMiddleware, truckController.getTruckAlerts);
+
+// GET /api/trucks/:id/location-history - Get truck location history (alternative)
+router.get('/:id/location-history', authMiddleware, truckController.getTruckLocationHistoryAlt);
 
 // PUT /api/trucks/:id/status - Update truck status (protected)
 router.put('/:id/status', authMiddleware, truckController.updateTruckStatus);

@@ -12,10 +12,13 @@ router.get('/fleet-summary', authMiddleware, dashboardController.getFleetSummary
 // GET /api/dashboard/alerts - Get alert summary
 router.get('/alerts', authMiddleware, dashboardController.getAlertSummary);
 
-// GET /api/dashboard/fuel - Get fuel report
-router.get('/fuel', authMiddleware, dashboardController.getFuelReport);
-
 // GET /api/dashboard/maintenance - Get maintenance report
 router.get('/maintenance', authMiddleware, dashboardController.getMaintenanceReport);
+
+// GET /api/dashboard/recent-alerts - Get recent alerts
+router.get('/recent-alerts', authMiddleware, dashboardController.getRecentAlerts);
+
+// GET /api/dashboard/fleet-performance - Get fleet performance metrics
+router.get('/fleet-performance', authMiddleware, dashboardController.getFleetPerformanceMetrics);
 
 module.exports = router;

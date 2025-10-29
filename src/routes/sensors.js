@@ -2,8 +2,17 @@ const express = require('express');
 const router = express.Router();
 const sensorController = require('../controllers/sensorController');
 const { validateSensorData, handleValidationErrors } = require('../middleware/validation');
+const {
+  validateIntParam,
+  validatePagination,
+  validateUUIDParam,
+} = require('../middleware/crudValidation');
 const authMiddleware = require('../middleware/auth');
 const rateLimiter = require('../middleware/rateLimiter');
+
+// ==========================================
+// DATA INGESTION ROUTES (No Auth)
+// ==========================================
 
 // POST /api/sensors/tpdata - Tire pressure data ingestion
 router.post(
@@ -11,14 +20,6 @@ router.post(
   validateSensorData('tpdata'),
   handleValidationErrors,
   sensorController.ingestTirePressureData
-);
-
-// POST /api/sensors/hubdata - Hub temperature data ingestion
-router.post(
-  '/hubdata',
-  validateSensorData('hubdata'),
-  handleValidationErrors,
-  sensorController.ingestHubTemperatureData
 );
 
 // POST /api/sensors/device - GPS & device status data ingestion
@@ -37,16 +38,26 @@ router.post(
   sensorController.ingestLockStateData
 );
 
-// POST /api/sensors/raw - Generic raw sensor data ingestion (for any sensor type)
-router.post('/raw', sensorController.ingestRawSensorData);
-
 // GET /api/sensors/last - Get last retrieved sensor data (with auth & rate limiting)
 router.get('/last', rateLimiter, authMiddleware, sensorController.getLastRetrievedData);
 
-// GET /api/sensors/queue/stats - Get sensor processing queue statistics
-router.get('/queue/stats', authMiddleware, sensorController.getQueueStats);
+// ==========================================
+// CRUD ROUTES (With Auth)
+// ==========================================
 
-// POST /api/sensors/queue/process - Manually trigger queue processing (admin only)
-router.post('/queue/process', authMiddleware, sensorController.processQueue);
+// POST /api/sensors/create - Create new sensor
+router.post('/create', authMiddleware, sensorController.createSensor);
+
+// GET /api/sensors - Get all sensors with pagination
+router.get('/', authMiddleware, validatePagination, sensorController.getAllSensors);
+
+// GET /api/sensors/:id - Get sensor by ID
+router.get('/:id', authMiddleware, validateUUIDParam('id'), sensorController.getSensorById);
+
+// PUT /api/sensors/:id - Update sensor
+router.put('/:id', authMiddleware, validateUUIDParam('id'), sensorController.updateSensor);
+
+// DELETE /api/sensors/:id - Delete sensor (soft delete)
+router.delete('/:id', authMiddleware, validateUUIDParam('id'), sensorController.deleteSensor);
 
 module.exports = router;
