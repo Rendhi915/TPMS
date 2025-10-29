@@ -589,7 +589,7 @@ const getTruckLocationsByName = async (req, res) => {
 
 const createTruck = async (req, res) => {
   try {
-    const { plate, type, status, driver_id, vendor_id, image } = req.body;
+    const { name, plate, type, status, driver_id, vendor_id, image, model, year, vin } = req.body;
 
     // Validate required fields
     if (!plate) {
@@ -652,8 +652,12 @@ const createTruck = async (req, res) => {
 
     const truck = await prismaService.prisma.truck.create({
       data: {
+        name: name || plate, // Use plate as name if name not provided
         plate,
         type,
+        model,
+        year: year ? parseInt(year) : null,
+        vin,
         status: truckStatus,
         driver_id,
         vendor_id,

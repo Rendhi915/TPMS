@@ -34,17 +34,17 @@ const validateVendorCreate = [
     .optional({ checkFalsy: true })
     .isLength({ max: 500 })
     .withMessage('Address must not exceed 500 characters'),
-  body('phone')
+  body('telephone')
     .optional({ checkFalsy: true })
     .isLength({ max: 50 })
-    .withMessage('Phone number must not exceed 50 characters'),
+    .withMessage('Telephone number must not exceed 50 characters'),
   body('email')
     .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('contactPerson')
+  body('contact_person')
     .optional({ checkFalsy: true })
     .isLength({ max: 255 })
     .withMessage('Contact person must not exceed 255 characters'),
@@ -61,17 +61,17 @@ const validateVendorUpdate = [
     .optional({ checkFalsy: true })
     .isLength({ max: 500 })
     .withMessage('Address must not exceed 500 characters'),
-  body('phone')
+  body('telephone')
     .optional({ checkFalsy: true })
     .isLength({ max: 50 })
-    .withMessage('Phone number must not exceed 50 characters'),
+    .withMessage('Telephone number must not exceed 50 characters'),
   body('email')
     .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
-  body('contactPerson')
+  body('contact_person')
     .optional({ checkFalsy: true })
     .isLength({ max: 255 })
     .withMessage('Contact person must not exceed 255 characters'),
@@ -84,16 +84,14 @@ const validateVendorUpdate = [
 
 const validateTruckCreate = [
   body('name')
-    .notEmpty()
-    .withMessage('Truck name is required')
+    .optional()
     .isLength({ min: 1, max: 255 })
     .withMessage('Truck name must be between 1 and 255 characters'),
-  body('code')
-    .optional()
-    .isLength({ max: 4 })
-    .withMessage('Truck code must not exceed 4 characters')
-    .matches(/^[A-Z0-9]+$/)
-    .withMessage('Truck code must contain only uppercase letters and numbers'),
+  body('plate')
+    .notEmpty()
+    .withMessage('Truck plate is required')
+    .isLength({ min: 1, max: 50 })
+    .withMessage('Plate must be between 1 and 50 characters'),
   body('vin')
     .optional()
     .isLength({ min: 17, max: 17 })
@@ -104,12 +102,20 @@ const validateTruckCreate = [
     .optional()
     .isLength({ max: 255 })
     .withMessage('Model must not exceed 255 characters'),
+  body('type')
+    .optional()
+    .isLength({ max: 100 })
+    .withMessage('Type must not exceed 100 characters'),
   body('year')
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() + 1 })
     .withMessage('Invalid year'),
-  body('vendorId').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
-  body('fleetGroupId').optional().isUUID().withMessage('Invalid fleet group ID'),
+  body('vendor_id').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  body('driver_id').optional().isInt({ min: 1 }).withMessage('Invalid driver ID'),
+  body('status')
+    .optional()
+    .isIn(['active', 'inactive', 'maintenance'])
+    .withMessage('Status must be active, inactive, or maintenance'),
   handleValidationErrors,
 ];
 
@@ -119,12 +125,10 @@ const validateTruckUpdate = [
     .optional()
     .isLength({ min: 1, max: 255 })
     .withMessage('Truck name must be between 1 and 255 characters'),
-  body('code')
+  body('plate')
     .optional()
-    .isLength({ max: 4 })
-    .withMessage('Truck code must not exceed 4 characters')
-    .matches(/^[A-Z0-9]+$/)
-    .withMessage('Truck code must contain only uppercase letters and numbers'),
+    .isLength({ min: 1, max: 50 })
+    .withMessage('Plate must be between 1 and 50 characters'),
   body('vin')
     .optional()
     .isLength({ min: 17, max: 17 })
@@ -135,12 +139,20 @@ const validateTruckUpdate = [
     .optional()
     .isLength({ max: 255 })
     .withMessage('Model must not exceed 255 characters'),
+  body('type')
+    .optional()
+    .isLength({ max: 100 })
+    .withMessage('Type must not exceed 100 characters'),
   body('year')
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() + 1 })
     .withMessage('Invalid year'),
-  body('vendorId').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
-  body('fleetGroupId').optional().isUUID().withMessage('Invalid fleet group ID'),
+  body('vendor_id').optional().isInt({ min: 1 }).withMessage('Invalid vendor ID'),
+  body('driver_id').optional().isInt({ min: 1 }).withMessage('Invalid driver ID'),
+  body('status')
+    .optional()
+    .isIn(['active', 'inactive', 'maintenance'])
+    .withMessage('Status must be active, inactive, or maintenance'),
   handleValidationErrors,
 ];
 
@@ -250,27 +262,35 @@ const validateDriverCreate = [
     .withMessage('Driver name is required')
     .isLength({ min: 2, max: 255 })
     .withMessage('Driver name must be between 2 and 255 characters'),
-  body('licenseNumber')
+  body('license_number')
     .notEmpty()
     .withMessage('License number is required')
     .isLength({ min: 1, max: 50 })
     .withMessage('License number must be between 1 and 50 characters'),
-  body('phone')
+  body('telephone')
     .optional({ checkFalsy: true })
     .matches(/^[\d\s\-+()]+$/)
-    .withMessage('Invalid phone number format')
+    .withMessage('Invalid telephone number format')
     .isLength({ max: 50 })
-    .withMessage('Phone number must not exceed 50 characters'),
-  body('address')
-    .optional({ checkFalsy: true })
-    .isLength({ max: 500 })
-    .withMessage('Address must not exceed 500 characters'),
+    .withMessage('Telephone number must not exceed 50 characters'),
   body('email')
     .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
+  body('license_type')
+    .optional({ checkFalsy: true })
+    .isLength({ max: 20 })
+    .withMessage('License type must not exceed 20 characters'),
+  body('license_expiry')
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .withMessage('License expiry must be a valid date'),
+  body('vendor_id')
+    .optional({ checkFalsy: true })
+    .isInt({ min: 1 })
+    .withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])
@@ -284,26 +304,34 @@ const validateDriverUpdate = [
     .optional()
     .isLength({ min: 2, max: 255 })
     .withMessage('Driver name must be between 2 and 255 characters'),
-  body('licenseNumber')
+  body('license_number')
     .optional()
     .isLength({ min: 1, max: 50 })
     .withMessage('License number must be between 1 and 50 characters'),
-  body('phone')
+  body('telephone')
     .optional({ checkFalsy: true })
     .matches(/^[\d\s\-+()]+$/)
-    .withMessage('Invalid phone number format')
+    .withMessage('Invalid telephone number format')
     .isLength({ max: 50 })
-    .withMessage('Phone number must not exceed 50 characters'),
-  body('address')
-    .optional({ checkFalsy: true })
-    .isLength({ max: 500 })
-    .withMessage('Address must not exceed 500 characters'),
+    .withMessage('Telephone number must not exceed 50 characters'),
   body('email')
     .optional({ checkFalsy: true })
     .isEmail()
     .withMessage('Invalid email format')
     .isLength({ max: 255 })
     .withMessage('Email must not exceed 255 characters'),
+  body('license_type')
+    .optional({ checkFalsy: true })
+    .isLength({ max: 20 })
+    .withMessage('License type must not exceed 20 characters'),
+  body('license_expiry')
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .withMessage('License expiry must be a valid date'),
+  body('vendor_id')
+    .optional({ checkFalsy: true })
+    .isInt({ min: 1 })
+    .withMessage('Invalid vendor ID'),
   body('status')
     .optional()
     .isIn(['aktif', 'nonaktif'])

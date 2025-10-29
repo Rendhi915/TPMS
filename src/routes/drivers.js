@@ -11,11 +11,16 @@ const {
 
 const prisma = new PrismaClient();
 
-// Normalize incoming driver payload to accept snake_case (from some frontends)
-// and map them to the expected camelCase fields used by validation middleware.
+// Normalize incoming driver payload to accept both snake_case and camelCase
 const normalizeDriverPayload = (req, res, next) => {
   const b = req.body || {};
+  
+  // Map license_number (from validation) to database field
   if (b.license_number && !b.licenseNumber) b.licenseNumber = b.license_number;
+  
+  // Map telephone to phone (database uses 'phone')
+  if (b.telephone && !b.phone) b.phone = b.telephone;
+  
   next();
 };
 
@@ -57,13 +62,11 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
     const driversData = drivers.map((driver) => ({
       id: driver.id,
       name: driver.name,
-      telephone: driver.telephone,
+      telephone: driver.phone, // Map phone to telephone for frontend
       email: driver.email,
-      address: driver.address,
       license_number: driver.license_number,
       license_type: driver.license_type,
       license_expiry: driver.license_expiry,
-      id_card_number: driver.id_card_number,
       status: driver.status,
       vendor: driver.vendor
         ? {
@@ -133,13 +136,11 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
     const driverData = {
       id: driver.id,
       name: driver.name,
-      telephone: driver.telephone,
+      telephone: driver.phone, // Map phone to telephone for frontend
       email: driver.email,
-      address: driver.address,
       license_number: driver.license_number,
       license_type: driver.license_type,
       license_expiry: driver.license_expiry,
-      id_card_number: driver.id_card_number,
       status: driver.status,
       vendor: driver.vendor
         ? {
@@ -174,12 +175,11 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
     const {
       name,
       telephone,
+      phone, // Accept both telephone and phone
       email,
-      address,
       license_number,
       license_type = 'B1',
       license_expiry,
-      id_card_number,
       vendor_id,
       status = 'aktif',
     } = req.body;
@@ -190,13 +190,11 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
     const driver = await prisma.drivers.create({
       data: {
         name,
-        telephone: telephone || null,
+        phone: phone || telephone || null, // Use phone or telephone
         email: email || null,
-        address: address || null,
         license_number,
         license_type,
         license_expiry: licenseExpiryDate,
-        id_card_number: id_card_number || license_number, // Default to license_number if not provided
         vendor_id: vendor_id ? parseInt(vendor_id) : null,
         status,
       },
@@ -215,13 +213,11 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
       data: {
         id: driver.id,
         name: driver.name,
-        telephone: driver.telephone,
+        telephone: driver.phone, // Return as telephone for frontend
         email: driver.email,
-        address: driver.address,
         license_number: driver.license_number,
         license_type: driver.license_type,
         license_expiry: driver.license_expiry,
-        id_card_number: driver.id_card_number,
         status: driver.status,
         vendor: driver.vendor
           ? {
@@ -255,25 +251,22 @@ router.put(
       const {
         name,
         telephone,
+        phone, // Accept both
         email,
-        address,
         license_number,
         license_type,
         license_expiry,
-        id_card_number,
         vendor_id,
         status,
       } = req.body;
 
       const updateData = {};
       if (name !== undefined) updateData.name = name;
-      if (telephone !== undefined) updateData.telephone = telephone;
+      if (telephone !== undefined || phone !== undefined) updateData.phone = phone || telephone;
       if (email !== undefined) updateData.email = email;
-      if (address !== undefined) updateData.address = address;
       if (license_number !== undefined) updateData.license_number = license_number;
       if (license_type !== undefined) updateData.license_type = license_type;
       if (license_expiry !== undefined) updateData.license_expiry = new Date(license_expiry);
-      if (id_card_number !== undefined) updateData.id_card_number = id_card_number;
       if (vendor_id !== undefined) updateData.vendor_id = vendor_id ? parseInt(vendor_id) : null;
       if (status !== undefined) updateData.status = status;
       updateData.updated_at = new Date();
@@ -298,13 +291,11 @@ router.put(
         data: {
           id: driver.id,
           name: driver.name,
-          telephone: driver.telephone,
+          telephone: driver.phone, // Return as telephone for frontend
           email: driver.email,
-          address: driver.address,
           license_number: driver.license_number,
           license_type: driver.license_type,
           license_expiry: driver.license_expiry,
-          id_card_number: driver.id_card_number,
           status: driver.status,
           vendor: driver.vendor
             ? {
@@ -415,7 +406,7 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
     const driversData = drivers.map((driver) => ({
       id: driver.id,
       name: driver.name,
-      telephone: driver.telephone,
+      telephone: driver.phone, // Map phone to telephone for frontend
       license_number: driver.license_number,
       license_type: driver.license_type,
       license_expiry: driver.license_expiry,
