@@ -21,27 +21,22 @@ const login = async (req, res) => {
 
     const { username, password } = req.body;
 
-    // Find user by username or email using Prisma
+    // Find user by email (username field now contains email)
     let user;
     try {
-      user = await prismaService.prisma.users.findFirst({
+      user = await prismaService.prisma.user_admin.findFirst({
         where: {
-          OR: [{ username: username }, { email: username }],
-          is_active: true,
+          email: username, // username field contains email
+          status: 'active',
+          deleted_at: null,
         },
       });
     } catch (error) {
-      console.log('Users table not found, using demo authentication');
-      // Demo user for development
-      if (username === 'admin' && password === 'admin123') {
-        user = {
-          id: '00000000-0000-0000-0000-000000000001',
-          username: 'admin',
-          email: 'admin@fleet.com',
-          role: 'admin',
-          is_active: true,
-        };
-      }
+      console.log('user_admin table error:', error.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Database error',
+      });
     }
 
     if (!user) {
@@ -59,10 +54,8 @@ const login = async (req, res) => {
       });
     }
 
-    // Check password - for demo purposes, we'll accept 'admin123' for admin user
-    const isValidPassword =
-      password === 'admin123' ||
-      (user.password_hash && (await bcrypt.compare(password, user.password_hash)));
+    // Check password (password field is already hashed in database)
+    const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
       // Log failed login attempt - wrong password
@@ -84,26 +77,31 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         userId: user.id,
-        username: user.username,
+        name: user.name,
+        email: user.email,
         role: user.role,
       },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
-    // Update last login (optional) - skip if users table doesn't exist
+    // Update last login
     try {
-      await prismaService.prisma.users.update({
+      await prismaService.prisma.user_admin.update({
         where: { id: user.id },
-        data: { updated_at: new Date() },
+        data: {
+          last_login: new Date(),
+          updated_at: new Date(),
+        },
       });
     } catch (error) {
-      console.log('Skipping user update - users table may not exist');
+      console.log('Failed to update last login:', error.message);
     }
 
     // Log successful admin login
     logAdminOperation('USER_LOGIN', user.id, {
-      username: user.username,
+      name: user.name,
+      email: user.email,
       role: user.role,
       ip: req.ip || req.connection.remoteAddress,
       userAgent: req.get('User-Agent'),
@@ -114,7 +112,8 @@ const login = async (req, res) => {
     // Log admin activity for real-time monitoring
     const adminActivityData = {
       adminId: user.id,
-      adminUsername: user.username,
+      adminName: user.name,
+      adminEmail: user.email,
       adminRole: user.role,
       clientIp: req.ip || req.connection.remoteAddress,
       userAgent: req.get('User-Agent'),
@@ -130,7 +129,8 @@ const login = async (req, res) => {
       action: 'ADMIN_LOGIN_SUCCESS',
       admin: {
         id: user.id,
-        username: user.username,
+        name: user.name,
+        email: user.email,
         role: user.role,
       },
       details: {
@@ -148,7 +148,7 @@ const login = async (req, res) => {
         token,
         user: {
           id: user.id,
-          username: user.username,
+          name: user.name,
           email: user.email,
           role: user.role,
         },
@@ -189,25 +189,13 @@ const verifyToken = (req, res, next) => {
 
 const getCurrentUser = async (req, res) => {
   try {
-    let user;
-    try {
-      user = await prismaService.prisma.users.findFirst({
-        where: {
-          id: req.user.userId,
-          is_active: true,
-        },
-      });
-    } catch (error) {
-      // Return demo user if users table doesn't exist
-      user = {
+    const user = await prismaService.prisma.user_admin.findFirst({
+      where: {
         id: req.user.userId,
-        username: req.user.username,
-        email: 'admin@fleet.com',
-        role: req.user.role,
-        created_at: new Date(),
-        updated_at: new Date(),
-      };
-    }
+        status: 'active',
+        deleted_at: null,
+      },
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -220,9 +208,10 @@ const getCurrentUser = async (req, res) => {
       success: true,
       data: {
         id: user.id,
-        username: user.username,
+        name: user.name,
         email: user.email,
         role: user.role,
+        lastLogin: user.last_login,
         createdAt: user.created_at,
         updatedAt: user.updated_at,
       },

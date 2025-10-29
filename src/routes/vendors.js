@@ -14,38 +14,75 @@ const prisma = new PrismaClient();
 // GET /api/vendors - Get all vendors
 router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
-    const vendors = await prisma.vendors.findMany({
-      include: {
-        trucks: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            model: true,
+    const { page = 1, limit = 50 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const [vendors, total] = await Promise.all([
+      prisma.vendors.findMany({
+        where: {
+          deleted_at: null,
+        },
+        include: {
+          trucks: {
+            where: { deleted_at: null },
+            select: {
+              id: true,
+              name: true,
+              plate: true,
+              model: true,
+              status: true,
+            },
+          },
+          drivers: {
+            where: { deleted_at: null },
+            select: {
+              id: true,
+              name: true,
+              status: true,
+            },
           },
         },
-        drivers: {
-          select: {
-            id: true,
-            name: true,
-            status: true,
-          },
+        orderBy: {
+          name_vendor: 'asc',
         },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
+        skip: skip,
+        take: parseInt(limit),
+      }),
+      prisma.vendors.count({
+        where: { deleted_at: null },
+      }),
+    ]);
 
     const vendorsWithCounts = vendors.map((vendor) => ({
-      ...vendor,
+      id: vendor.id,
+      name: vendor.name_vendor,
+      address: vendor.address,
+      telephone: vendor.telephone,
+      email: vendor.email,
+      contact_person: vendor.contact_person,
+      created_at: vendor.created_at,
+      updated_at: vendor.updated_at,
+      trucks: vendor.trucks,
+      drivers: vendor.drivers,
       truckCount: vendor.trucks.length,
       driverCount: vendor.drivers.length,
     }));
 
+    const totalPages = Math.ceil(total / limit);
+
     res.status(200).json({
       success: true,
-      data: vendorsWithCounts,
+      data: {
+        vendors: vendorsWithCounts,
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total: total,
+          totalPages: totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
+      },
       message: 'Vendors retrieved successfully',
     });
   } catch (error) {
@@ -69,18 +106,20 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
       },
       include: {
         trucks: {
-          include: {
-            truck_status_event: {
-              orderBy: {
-                changed_at: 'desc',
-              },
-              take: 1,
-            },
+          where: { deleted_at: null },
+          select: {
+            id: true,
+            name: true,
+            plate: true,
+            model: true,
+            status: true,
+            created_at: true,
           },
         },
         drivers: {
           where: {
             status: 'aktif',
+            deleted_at: null,
           },
         },
       },
@@ -95,21 +134,14 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
 
     const vendorData = {
       id: vendor.id,
-      name: vendor.name,
+      name: vendor.name_vendor,
       address: vendor.address,
-      phone: vendor.phone,
+      telephone: vendor.telephone,
       email: vendor.email,
-      contactPerson: vendor.contactPerson,
-      createdAt: vendor.createdAt,
-      updatedAt: vendor.updatedAt,
-      trucks: vendor.trucks.map((truck) => ({
-        id: truck.id,
-        name: truck.name,
-        code: truck.code,
-        model: truck.model,
-        status: truck.truck_status_event[0]?.status || 'active',
-        created_at: truck.created_at,
-      })),
+      contact_person: vendor.contact_person,
+      created_at: vendor.created_at,
+      updated_at: vendor.updated_at,
+      trucks: vendor.trucks,
       drivers: vendor.drivers,
       truck_count: vendor.trucks.length,
       driver_count: vendor.drivers.length,
@@ -146,19 +178,14 @@ router.get(
       const [trucks, total] = await Promise.all([
         prisma.truck.findMany({
           where: {
-            vendorId: parseInt(vendorId),
+            vendor_id: parseInt(vendorId),
+            deleted_at: null,
           },
           include: {
             vendor: {
               select: {
-                name: true,
+                name_vendor: true,
               },
-            },
-            truck_status_event: {
-              orderBy: {
-                changed_at: 'desc',
-              },
-              take: 1,
             },
           },
           orderBy: {
@@ -169,7 +196,8 @@ router.get(
         }),
         prisma.truck.count({
           where: {
-            vendorId: parseInt(vendorId),
+            vendor_id: parseInt(vendorId),
+            deleted_at: null,
           },
         }),
       ]);
@@ -179,11 +207,12 @@ router.get(
       const trucksData = trucks.map((truck) => ({
         id: truck.id,
         name: truck.name,
-        code: truck.code,
+        plate: truck.plate,
         model: truck.model,
-        status: truck.truck_status_event[0]?.status || 'active',
+        type: truck.type,
+        status: truck.status,
         created_at: truck.created_at,
-        vendorName: truck.vendor?.name,
+        vendor_name: truck.vendor?.name_vendor,
       }));
 
       res.status(200).json({
@@ -215,15 +244,7 @@ router.get(
 // POST /api/vendors - Create new vendor
 router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
   try {
-    const { name, address, phone, email, contactPerson } = req.body;
-
-    console.log('📝 Creating vendor with data:', {
-      name,
-      address,
-      phone,
-      email,
-      contactPerson,
-    });
+    const { name, address, telephone, email, contact_person } = req.body;
 
     // Validate required fields
     if (!name) {
@@ -236,7 +257,8 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
     // Check if vendor with same name already exists
     const existingVendor = await prisma.vendors.findFirst({
       where: {
-        name: name,
+        name_vendor: name,
+        deleted_at: null,
       },
     });
 
@@ -249,19 +271,25 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 
     const vendor = await prisma.vendors.create({
       data: {
-        name,
+        name_vendor: name,
         address: address || null,
-        phone: phone || null,
+        telephone: telephone || null,
         email: email || null,
-        contactPerson: contactPerson || null,
+        contact_person: contact_person || null,
       },
     });
 
-    console.log('✅ Vendor created successfully:', vendor.id);
-
     res.status(201).json({
       success: true,
-      data: vendor,
+      data: {
+        id: vendor.id,
+        name: vendor.name_vendor,
+        address: vendor.address,
+        telephone: vendor.telephone,
+        email: vendor.email,
+        contact_person: vendor.contact_person,
+        created_at: vendor.created_at,
+      },
       message: 'Vendor created successfully',
     });
   } catch (error) {
@@ -278,20 +306,14 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
-    const { name, address, phone, email, contactPerson } = req.body;
-
-    console.log('📝 Updating vendor ID:', vendorId);
-    console.log('📝 Update data received:', {
-      name,
-      address,
-      phone,
-      email,
-      contactPerson,
-    });
+    const { name, address, telephone, email, contact_person } = req.body;
 
     // Check if vendor exists
     const existingVendor = await prisma.vendors.findUnique({
-      where: { id: parseInt(vendorId) },
+      where: {
+        id: parseInt(vendorId),
+        deleted_at: null,
+      },
     });
 
     if (!existingVendor) {
@@ -301,14 +323,13 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
       });
     }
 
-    console.log('📋 Current vendor data:', existingVendor);
-
     // Check if name is being changed and if new name already exists
-    if (name && name !== existingVendor.name) {
+    if (name && name !== existingVendor.name_vendor) {
       const duplicateVendor = await prisma.vendors.findFirst({
         where: {
-          name: name,
+          name_vendor: name,
           id: { not: parseInt(vendorId) },
+          deleted_at: null,
         },
       });
 
@@ -322,52 +343,58 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
 
     // Build update data - only include fields that are provided
     const updateData = {};
-    if (name !== undefined && name !== null) updateData.name = name;
+    if (name !== undefined && name !== null) updateData.name_vendor = name;
     if (address !== undefined) updateData.address = address;
-    if (phone !== undefined) updateData.phone = phone;
+    if (telephone !== undefined) updateData.telephone = telephone;
     if (email !== undefined) updateData.email = email;
-    if (contactPerson !== undefined) updateData.contactPerson = contactPerson;
-    updateData.updatedAt = new Date();
-
-    console.log('🔄 Updating with data:', updateData);
+    if (contact_person !== undefined) updateData.contact_person = contact_person;
+    updateData.updated_at = new Date();
 
     const vendor = await prisma.vendors.update({
       where: { id: parseInt(vendorId) },
       data: updateData,
       include: {
         trucks: {
+          where: { deleted_at: null },
           select: {
             id: true,
             name: true,
-            code: true,
+            plate: true,
             model: true,
+            status: true,
           },
         },
         drivers: {
+          where: { deleted_at: null },
           select: {
             id: true,
             name: true,
-            phone: true,
+            telephone: true,
             status: true,
           },
         },
       },
     });
 
-    console.log('✅ Vendor updated successfully:', vendor.id);
-
     res.status(200).json({
       success: true,
       data: {
-        ...vendor,
-        truckCount: vendor.trucks.length,
-        driverCount: vendor.drivers.length,
+        id: vendor.id,
+        name: vendor.name_vendor,
+        address: vendor.address,
+        telephone: vendor.telephone,
+        email: vendor.email,
+        contact_person: vendor.contact_person,
+        trucks: vendor.trucks,
+        drivers: vendor.drivers,
+        truck_count: vendor.trucks.length,
+        driver_count: vendor.drivers.length,
+        updated_at: vendor.updated_at,
       },
       message: 'Vendor updated successfully',
     });
   } catch (error) {
     console.error('❌ Error updating vendor:', error);
-    console.error('Error details:', error.stack);
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
@@ -382,17 +409,24 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
   }
 });
 
-// DELETE /api/vendors/:vendorId - Delete vendor (with validation)
+// DELETE /api/vendors/:vendorId - Soft delete vendor (with validation)
 router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (req, res) => {
   try {
     const { vendorId } = req.params;
 
     // Check if vendor exists
     const vendor = await prisma.vendors.findUnique({
-      where: { id: parseInt(vendorId) },
+      where: {
+        id: parseInt(vendorId),
+        deleted_at: null,
+      },
       include: {
-        trucks: true,
-        drivers: true,
+        trucks: {
+          where: { deleted_at: null },
+        },
+        drivers: {
+          where: { deleted_at: null },
+        },
       },
     });
 
@@ -403,12 +437,12 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
       });
     }
 
-    // Check if vendor has associated trucks or drivers
+    // Check if vendor has active trucks or drivers
     if (vendor.trucks.length > 0 || vendor.drivers.length > 0) {
       return res.status(400).json({
         success: false,
         message:
-          'Cannot delete vendor with associated trucks or drivers. Please reassign or remove them first.',
+          'Cannot delete vendor with active trucks or drivers. Please reassign or remove them first.',
         data: {
           truck_count: vendor.trucks.length,
           driver_count: vendor.drivers.length,
@@ -416,8 +450,10 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
       });
     }
 
-    await prisma.vendors.delete({
+    // Soft delete
+    await prisma.vendors.update({
       where: { id: parseInt(vendorId) },
+      data: { deleted_at: new Date() },
     });
 
     res.status(200).json({

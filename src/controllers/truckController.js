@@ -225,35 +225,47 @@ const getTruckLocationHistory = async (req, res) => {
     const truckId = req.params.id;
     const { hours = 24, limit = 100 } = req.query;
 
-    // Validate truck ID
-    if (!truckId || isNaN(parseInt(truckId))) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid truck ID provided',
-      });
-    }
-
     // Calculate time range
     const since = new Date();
     since.setHours(since.getHours() - parseInt(hours));
 
-    const locationHistory = await prismaService.prisma.locationHistory.findMany({
-      where: {
-        truckId: truckId,
-        recordedAt: {
-          gte: since,
+    // Get locations via device.locations (location table)
+    const truck = await prismaService.prisma.truck.findUnique({
+      where: { id: truckId },
+      include: {
+        devices: {
+          where: { deleted_at: null },
+          include: {
+            locations: {
+              where: {
+                created_at: { gte: since },
+              },
+              orderBy: { created_at: 'desc' },
+              take: parseInt(limit),
+            },
+          },
         },
       },
-      orderBy: {
-        recordedAt: 'desc',
-      },
-      take: parseInt(limit),
     });
+
+    if (!truck) {
+      return res.status(404).json({
+        success: false,
+        message: 'Truck not found',
+      });
+    }
+
+    // Flatten locations from all devices
+    const locationHistory = truck.devices.flatMap((device) => device.locations);
+
+    // Sort by timestamp
+    locationHistory.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     // Format as GeoJSON LineString for tracking
     const coordinates = locationHistory
+      .slice()
       .reverse() // Oldest first for proper line drawing
-      .map((point) => [parseFloat(point.longitude), parseFloat(point.latitude)]);
+      .map((point) => [parseFloat(point.long), parseFloat(point.lat)]);
 
     const geoJsonTrack = {
       type: 'Feature',
@@ -273,12 +285,11 @@ const getTruckLocationHistory = async (req, res) => {
       data: {
         track: geoJsonTrack,
         points: locationHistory.map((point) => ({
-          latitude: parseFloat(point.latitude),
-          longitude: parseFloat(point.longitude),
-          speed: parseFloat(point.speed),
+          latitude: parseFloat(point.lat),
+          longitude: parseFloat(point.long),
+          speed: parseFloat(point.speed || 0),
           heading: point.heading,
-          fuel: point.fuelPercentage ? parseFloat(point.fuelPercentage) : null,
-          timestamp: point.recordedAt,
+          timestamp: point.created_at,
         })),
       },
       message: `Retrieved ${locationHistory.length} location points for the last ${hours} hours`,
@@ -298,21 +309,23 @@ const getTruckAlerts = async (req, res) => {
     const truckId = req.params.id;
     const { resolved = false, limit = 50 } = req.query;
 
-    // Validate truck ID (should be 4-digit format like 0001)
-    if (!truckId || !/^\d{4}$/.test(truckId)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid truck ID provided. Expected 4-digit format (e.g., 0001)',
-      });
-    }
-
-    const alerts = await prismaService.prisma.truckAlert.findMany({
+    const alerts = await prismaService.prisma.alert_events.findMany({
       where: {
-        truckId: truckId,
-        isResolved: resolved === 'true' ? true : false,
+        truck_id: truckId,
+        status: resolved === 'true' ? 'resolved' : 'active',
+      },
+      include: {
+        alert: {
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            severity: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc',
+        created_at: 'desc',
       },
       take: parseInt(limit),
     });
@@ -323,12 +336,14 @@ const getTruckAlerts = async (req, res) => {
         truckId: truckId,
         alerts: alerts.map((alert) => ({
           id: alert.id,
-          type: alert.alertType,
-          severity: alert.severity,
+          code: alert.alert?.code || 'unknown',
+          name: alert.alert?.name || 'Unknown',
+          severity: alert.alert?.severity || 'warning',
           message: alert.message,
-          isResolved: alert.isResolved,
-          createdAt: alert.createdAt,
-          resolvedAt: alert.resolvedAt,
+          value: alert.value,
+          status: alert.status,
+          createdAt: alert.created_at,
+          resolvedAt: alert.resolved_at,
         })),
         totalCount: alerts.length,
       },
@@ -348,23 +363,17 @@ const resolveAlert = async (req, res) => {
   try {
     const { truckId, alertId } = req.params;
 
-    // Validate IDs
-    if (!truckId || isNaN(parseInt(truckId)) || !alertId || isNaN(parseInt(alertId))) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid truck ID or alert ID provided',
-      });
-    }
-
-    const resolvedAlert = await prismaService.prisma.truckAlert.updateMany({
+    const resolvedAlert = await prismaService.prisma.alert_events.updateMany({
       where: {
-        id: parseInt(alertId),
-        truckId: truckId,
-        isResolved: false,
+        id: alertId,
+        truck_id: truckId,
+        status: 'active',
+        deleted_at: null,
       },
       data: {
-        isResolved: true,
-        resolvedAt: new Date(),
+        status: 'resolved',
+        resolved_at: new Date(),
+        updated_at: new Date(),
       },
     });
 
@@ -413,16 +422,15 @@ const bulkUpdateTruckStatus = async (req, res) => {
       });
     }
 
-    // Bulk update
+    // Bulk update (truck IDs are UUIDs now)
     const updateResult = await prismaService.prisma.truck.updateMany({
       where: {
-        id: {
-          in: truckIds.filter((id) => /^\d{4}$/.test(id)),
-        },
+        id: { in: truckIds },
+        deleted_at: null,
       },
       data: {
         status: status,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       },
     });
 
@@ -444,13 +452,13 @@ const bulkUpdateTruckStatus = async (req, res) => {
   }
 };
 
-// New function for getting truck locations by truck name
+// New function for getting truck locations by truck plate
 const getTruckLocationsByName = async (req, res) => {
   try {
-    const truckName = decodeURIComponent(req.params.truckName);
+    const truckPlate = decodeURIComponent(req.params.truckName); // keeping param name for compatibility
     const { timeRange = '24h', limit = 200, minSpeed = 0 } = req.query;
 
-    console.log(`Getting location history for truck: ${truckName}`);
+    console.log(`Getting location history for truck plate: ${truckPlate}`);
 
     // Parse time range
     let hoursBack = 24;
@@ -464,64 +472,71 @@ const getTruckLocationsByName = async (req, res) => {
     const since = new Date();
     since.setHours(since.getHours() - hoursBack);
 
-    // First, find the truck by name
-    const truck = await prismaService.prisma.$queryRaw`
-      SELECT id, name, model FROM truck 
-      WHERE name = ${truckName}
-      LIMIT 1
-    `;
+    // Find truck by plate with locations from devices
+    const truck = await prismaService.prisma.truck.findFirst({
+      where: {
+        plate: truckPlate,
+        deleted_at: null,
+      },
+      select: {
+        id: true,
+        plate: true,
+        type: true,
+        devices: {
+          where: { deleted_at: null },
+          select: {
+            locations: {
+              where: {
+                created_at: { gte: since },
+                speed: { gte: parseFloat(minSpeed) },
+              },
+              orderBy: { created_at: 'desc' },
+              take: parseInt(limit),
+              select: {
+                id: true,
+                lat: true,
+                long: true,
+                speed: true,
+                heading: true,
+                created_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    if (truck.length === 0) {
+    if (!truck) {
       return res.status(404).json({
         success: false,
-        message: `Truck with name '${truckName}' not found`,
+        message: `Truck with plate '${truckPlate}' not found`,
       });
     }
 
-    const truckId = truck[0].id;
-
-    // Get GPS positions for this truck
-    const gpsPositions = await prismaService.prisma.$queryRaw`
-      SELECT 
-        id,
-        truck_id,
-        ts,
-        ST_X(pos::geometry) as longitude,
-        ST_Y(pos::geometry) as latitude,
-        speed_kph,
-        heading_deg,
-        hdop,
-        source
-      FROM gps_position 
-      WHERE truck_id = ${truckId}
-        AND ts >= ${since}::timestamptz
-        AND speed_kph >= ${parseFloat(minSpeed)}
-      ORDER BY ts DESC
-      LIMIT ${parseInt(limit)}
-    `;
-
-    // Format response (convert BigInt to string)
-    const locations = gpsPositions.map((pos) => ({
-      id: pos.id.toString(),
-      latitude: parseFloat(pos.latitude),
-      longitude: parseFloat(pos.longitude),
-      speed: parseFloat(pos.speed_kph) || 0,
-      heading: parseFloat(pos.heading_deg) || 0,
-      hdop: parseFloat(pos.hdop) || 0,
-      timestamp: pos.ts,
-      source: pos.source,
-    }));
+    // Flatten locations from all devices
+    const locations = truck.devices
+      .flatMap((device) => device.locations)
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .map((pos) => ({
+        id: pos.id,
+        latitude: parseFloat(pos.lat),
+        longitude: parseFloat(pos.long),
+        speed: parseFloat(pos.speed) || 0,
+        heading: parseFloat(pos.heading) || 0,
+        timestamp: pos.created_at,
+      }));
 
     // Create GeoJSON track
     const coordinates = locations
+      .slice()
       .reverse() // Oldest first for proper line drawing
       .map((point) => [point.longitude, point.latitude]);
 
     const geoJsonTrack = {
       type: 'Feature',
       properties: {
-        truckName: truckName,
-        truckId: truckId,
+        truckPlate: truckPlate,
+        truckId: truck.id,
         timeRange: timeRange,
         totalPoints: coordinates.length,
         minSpeed: minSpeed,
@@ -542,9 +557,9 @@ const getTruckLocationsByName = async (req, res) => {
       success: true,
       data: locations, // Frontend expects data to be the array directly
       truck: {
-        id: truckId,
-        truckName: truckName,
-        model: truck[0].model,
+        id: truck.id,
+        plate: truckPlate,
+        type: truck.type,
       },
       track: geoJsonTrack,
       summary: {
@@ -556,7 +571,7 @@ const getTruckLocationsByName = async (req, res) => {
             ? (locations.reduce((sum, loc) => sum + loc.speed, 0) / locations.length).toFixed(1)
             : 0,
       },
-      message: `Retrieved ${locations.length} location points for truck ${truckName} over the last ${hoursBack} hours`,
+      message: `Retrieved ${locations.length} location points for truck ${truckPlate} over the last ${hoursBack} hours`,
     });
   } catch (error) {
     console.error('Error in getTruckLocationsByName:', error);
@@ -574,33 +589,28 @@ const getTruckLocationsByName = async (req, res) => {
 
 const createTruck = async (req, res) => {
   try {
-    const { code, vin, name, model, year, tire_config, fleet_group_id, vendor_id } = req.body;
+    const { plate, type, status, driver_id, vendor_id, image } = req.body;
 
     // Validate required fields
-    if (!name) {
+    if (!plate) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required field: name',
+        message: 'Missing required field: plate',
       });
     }
 
-    // Check if truck with same code or VIN already exists
+    // Check if truck with same plate already exists
     const existingTruck = await prismaService.prisma.truck.findFirst({
       where: {
-        OR: [code ? { code: code } : {}, vin ? { vin: vin } : {}, { name: name }].filter(
-          (condition) => Object.keys(condition).length > 0
-        ),
+        plate: plate,
+        deleted_at: null,
       },
     });
 
     if (existingTruck) {
-      let conflictField = 'name';
-      if (existingTruck.code === code) conflictField = 'code';
-      if (existingTruck.vin === vin) conflictField = 'VIN';
-
       return res.status(409).json({
         success: false,
-        message: `Truck with this ${conflictField} already exists`,
+        message: 'Truck with this plate already exists',
       });
     }
 
@@ -617,52 +627,52 @@ const createTruck = async (req, res) => {
       }
     }
 
-    // Validate fleet_group_id if provided
-    if (fleet_group_id) {
-      const fleetGroup = await prismaService.prisma.fleet_group.findUnique({
-        where: { id: fleet_group_id },
+    // Validate driver_id if provided
+    if (driver_id) {
+      const driver = await prismaService.prisma.drivers.findUnique({
+        where: { id: driver_id },
       });
-      if (!fleetGroup) {
+      if (!driver) {
         return res.status(400).json({
           success: false,
-          message: 'Invalid fleet_group_id: fleet group not found',
+          message: 'Invalid driver_id: driver not found',
         });
       }
     }
 
+    // Validate status
+    const validStatuses = ['active', 'inactive', 'maintenance'];
+    const truckStatus = status || 'active';
+    if (!validStatuses.includes(truckStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+      });
+    }
+
     const truck = await prismaService.prisma.truck.create({
       data: {
-        code,
-        vin,
-        name,
-        model,
-        year: year ? parseInt(year) : null,
-        tire_config,
-        fleet_group_id,
+        plate,
+        type,
+        status: truckStatus,
+        driver_id,
         vendor_id,
+        image,
       },
       include: {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true,
+            name_vendor: true,
           },
         },
-        fleet_group: {
+        driver: {
           select: {
             id: true,
             name: true,
+            license_number: true,
           },
         },
-      },
-    });
-
-    // Create initial truck status event
-    await prismaService.prisma.truck_status_event.create({
-      data: {
-        truck_id: truck.id,
-        status: 'active',
-        note: 'Initial truck registration',
       },
     });
 
@@ -684,7 +694,7 @@ const createTruck = async (req, res) => {
 const updateTruck = async (req, res) => {
   try {
     const { id } = req.params;
-    const { code, vin, name, model, year, tire_config, fleet_group_id, vendor_id } = req.body;
+    const { plate, type, status, driver_id, vendor_id, image } = req.body;
 
     // Check if truck exists
     const existingTruck = await prismaService.prisma.truck.findUnique({
@@ -698,31 +708,22 @@ const updateTruck = async (req, res) => {
       });
     }
 
-    // Check for conflicts with other trucks
-    const conflictTruck = await prismaService.prisma.truck.findFirst({
-      where: {
-        AND: [
-          { id: { not: id } },
-          {
-            OR: [
-              code && code !== existingTruck.code ? { code: code } : {},
-              vin && vin !== existingTruck.vin ? { vin: vin } : {},
-              name && name !== existingTruck.name ? { name: name } : {},
-            ].filter((condition) => Object.keys(condition).length > 0),
-          },
-        ],
-      },
-    });
-
-    if (conflictTruck) {
-      let conflictField = 'name';
-      if (conflictTruck.code === code) conflictField = 'code';
-      if (conflictTruck.vin === vin) conflictField = 'VIN';
-
-      return res.status(409).json({
-        success: false,
-        message: `Another truck with this ${conflictField} already exists`,
+    // Check for plate conflict with other trucks
+    if (plate && plate !== existingTruck.plate) {
+      const conflictTruck = await prismaService.prisma.truck.findFirst({
+        where: {
+          plate: plate,
+          id: { not: id },
+          deleted_at: null,
+        },
       });
+
+      if (conflictTruck) {
+        return res.status(409).json({
+          success: false,
+          message: 'Another truck with this plate already exists',
+        });
+      }
     }
 
     // Validate vendor_id if provided
@@ -738,28 +739,37 @@ const updateTruck = async (req, res) => {
       }
     }
 
-    // Validate fleet_group_id if provided
-    if (fleet_group_id && fleet_group_id !== existingTruck.fleet_group_id) {
-      const fleetGroup = await prismaService.prisma.fleet_group.findUnique({
-        where: { id: fleet_group_id },
+    // Validate driver_id if provided
+    if (driver_id && driver_id !== existingTruck.driver_id) {
+      const driver = await prismaService.prisma.drivers.findUnique({
+        where: { id: driver_id },
       });
-      if (!fleetGroup) {
+      if (!driver) {
         return res.status(400).json({
           success: false,
-          message: 'Invalid fleet_group_id: fleet group not found',
+          message: 'Invalid driver_id: driver not found',
+        });
+      }
+    }
+
+    // Validate status if provided
+    if (status) {
+      const validStatuses = ['active', 'inactive', 'maintenance'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
         });
       }
     }
 
     const updateData = {};
-    if (code !== undefined) updateData.code = code;
-    if (vin !== undefined) updateData.vin = vin;
-    if (name !== undefined) updateData.name = name;
-    if (model !== undefined) updateData.model = model;
-    if (year !== undefined) updateData.year = year ? parseInt(year) : null;
-    if (tire_config !== undefined) updateData.tire_config = tire_config;
-    if (fleet_group_id !== undefined) updateData.fleet_group_id = fleet_group_id;
+    if (plate !== undefined) updateData.plate = plate;
+    if (type !== undefined) updateData.type = type;
+    if (status !== undefined) updateData.status = status;
+    if (driver_id !== undefined) updateData.driver_id = driver_id;
     if (vendor_id !== undefined) updateData.vendor_id = vendor_id;
+    if (image !== undefined) updateData.image = image;
 
     const truck = await prismaService.prisma.truck.update({
       where: { id: id },
@@ -768,13 +778,14 @@ const updateTruck = async (req, res) => {
         vendor: {
           select: {
             id: true,
-            nama_vendor: true,
+            name_vendor: true,
           },
         },
-        fleet_group: {
+        driver: {
           select: {
             id: true,
             name: true,
+            license_number: true,
           },
         },
       },
@@ -803,10 +814,8 @@ const deleteTruck = async (req, res) => {
     const truck = await prismaService.prisma.truck.findUnique({
       where: { id: id },
       include: {
-        device: true,
-        gps_position: { take: 1 },
-        tire_pressure_event: { take: 1 },
-        alert_event: { take: 1 },
+        devices: { take: 1 },
+        alert_events: { take: 1 },
       },
     });
 
@@ -818,29 +827,26 @@ const deleteTruck = async (req, res) => {
     }
 
     // Check if truck has associated data that would prevent deletion
-    const hasData =
-      truck.device.length > 0 ||
-      truck.gps_position.length > 0 ||
-      truck.tire_pressure_event.length > 0 ||
-      truck.alert_event.length > 0;
+    const hasData = truck.devices.length > 0 || truck.alert_events.length > 0;
 
     if (hasData) {
       return res.status(400).json({
         success: false,
         message:
-          'Cannot delete truck with associated sensor data, GPS positions, or alerts. Consider deactivating instead.',
+          'Cannot delete truck with associated devices or alerts. Consider soft-deleting by setting deleted_at instead.',
         data: {
-          device_count: truck.device.length,
-          has_gps_data: truck.gps_position.length > 0,
-          has_tire_data: truck.tire_pressure_event.length > 0,
-          has_alerts: truck.alert_event.length > 0,
+          device_count: truck.devices.length,
+          has_alerts: truck.alert_events.length > 0,
         },
       });
     }
 
-    // Delete truck (cascade will handle related records)
-    await prismaService.prisma.truck.delete({
+    // Soft delete truck (set deleted_at)
+    await prismaService.prisma.truck.update({
       where: { id: id },
+      data: {
+        deleted_at: new Date(),
+      },
     });
 
     res.status(200).json({
@@ -852,6 +858,198 @@ const deleteTruck = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to delete truck',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET TRUCK SUMMARY
+const getTruckSummary = async (req, res) => {
+  try {
+    const statusCounts = await prismaService.prisma.truck.groupBy({
+      by: ['status'],
+      where: {
+        deleted_at: null,
+      },
+      _count: {
+        _all: true,
+      },
+    });
+
+    const summary = {
+      total: 0,
+      operational: 0,
+      maintenance: 0,
+      inactive: 0,
+    };
+
+    statusCounts.forEach((item) => {
+      const count = item._count._all;
+      summary.total += count;
+
+      if (item.status === 'operational') summary.operational = count;
+      else if (item.status === 'maintenance') summary.maintenance = count;
+      else if (item.status === 'inactive') summary.inactive = count;
+    });
+
+    res.status(200).json({
+      success: true,
+      data: summary,
+      message: 'Truck summary retrieved successfully',
+    });
+  } catch (error) {
+    console.error('Error getting truck summary:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch truck summary',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET TRUCKS BY STATUS
+const getTrucksByStatus = async (req, res) => {
+  try {
+    const { status = 'operational', page = 1, limit = 50 } = req.query;
+    const skip = (page - 1) * limit;
+
+    const [trucks, total] = await Promise.all([
+      prismaService.prisma.truck.findMany({
+        where: {
+          status: status,
+          deleted_at: null,
+        },
+        include: {
+          vendor: {
+            select: {
+              id: true,
+              name_vendor: true,
+            },
+          },
+          driver: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        orderBy: {
+          name: 'asc',
+        },
+        skip: skip,
+        take: parseInt(limit),
+      }),
+      prismaService.prisma.truck.count({
+        where: {
+          status: status,
+          deleted_at: null,
+        },
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        trucks: trucks.map((truck) => ({
+          id: truck.id,
+          name: truck.name,
+          plate: truck.plate,
+          model: truck.model,
+          type: truck.type,
+          status: truck.status,
+          vendor: truck.vendor
+            ? {
+                id: truck.vendor.id,
+                name: truck.vendor.name_vendor,
+              }
+            : null,
+          driver: truck.driver,
+          created_at: truck.created_at,
+        })),
+        pagination: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total: total,
+          totalPages: totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
+      },
+      message: `Retrieved ${trucks.length} trucks with status: ${status}`,
+    });
+  } catch (error) {
+    console.error('Error getting trucks by status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch trucks by status',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET TRUCK LOCATION HISTORY (alternative endpoint)
+const getTruckLocationHistoryAlt = async (req, res) => {
+  try {
+    const truckId = req.params.id;
+    const { limit = 50, startDate, endDate } = req.query;
+
+    // Get device for this truck
+    const device = await prismaService.prisma.device.findFirst({
+      where: {
+        truck_id: truckId,
+        deleted_at: null,
+      },
+      select: { id: true },
+    });
+
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: 'No device found for this truck',
+      });
+    }
+
+    const where = {
+      device_id: device.id,
+    };
+
+    if (startDate || endDate) {
+      where.recorded_at = {};
+      if (startDate) where.recorded_at.gte = new Date(startDate);
+      if (endDate) where.recorded_at.lte = new Date(endDate);
+    }
+
+    const locations = await prismaService.prisma.location_history.findMany({
+      where,
+      orderBy: {
+        recorded_at: 'desc',
+      },
+      take: parseInt(limit),
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        truck_id: truckId,
+        device_id: device.id,
+        locations: locations.map((loc) => ({
+          id: loc.id,
+          lat: loc.lat,
+          long: loc.long,
+          altitude: loc.altitude,
+          recorded_at: loc.recorded_at,
+        })),
+        count: locations.length,
+      },
+      message: `Retrieved ${locations.length} location records`,
+    });
+  } catch (error) {
+    console.error('Error getting truck location history:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch location history',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
@@ -871,4 +1069,7 @@ module.exports = {
   createTruck,
   updateTruck,
   deleteTruck,
+  getTruckSummary,
+  getTrucksByStatus,
+  getTruckLocationHistoryAlt,
 };

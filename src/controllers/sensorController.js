@@ -1,143 +1,97 @@
-const pool = require('../config/database');
+const { PrismaClient } = require('../../prisma/generated/client');
 const { broadcastSensorUpdate } = require('../services/websocketService');
 
-// ==========================================
-// SENSOR DATA INGESTION CONTROLLER
-// ==========================================
+const prisma = new PrismaClient();
 
-async function resolveDeviceSnByTruckId(truckId) {
-  if (!truckId) return null;
-  try {
-    const q = `
-      SELECT sn FROM device
-      WHERE truck_id = $1
-      AND (removed_at IS NULL OR removed_at > NOW())
-      ORDER BY installed_at DESC
-      LIMIT 1
-    `;
-    const r = await pool.query(q, [truckId]);
-    return r.rows[0]?.sn || null;
-  } catch (e) {
-    console.log('resolveDeviceSnByTruckId error:', e.message);
-    return null;
-  }
-}
-
-async function resolveTruckIdByAlternateKeys({
-  truckId,
-  truck_id,
-  truckCode,
-  code,
-  truckName,
-  name,
-}) {
-  // If we already have a UUID, return it
-  if (truckId) return truckId;
-  if (truck_id) return truck_id;
-  try {
-    // Try by code first
-    if (truckCode || code) {
-      const q = `SELECT id FROM truck WHERE code = $1 LIMIT 1`;
-      const r = await pool.query(q, [truckCode || code]);
-      if (r.rows[0]?.id) return r.rows[0].id;
-    }
-    // Then by name
-    if (truckName || name) {
-      const q2 = `SELECT id FROM truck WHERE name = $1 LIMIT 1`;
-      const r2 = await pool.query(q2, [truckName || name]);
-      if (r2.rows[0]?.id) return r2.rows[0].id;
-    }
-  } catch (e) {
-    console.log('resolveTruckIdByAlternateKeys error:', e.message);
-  }
-  return null;
-}
+// ==========================================
+// SENSOR DATA INGESTION CONTROLLER (Direct Write - No Queue)
+// ==========================================
 
 const ingestTirePressureData = async (req, res) => {
   try {
     const sensorData = req.body;
-    const payload = sensorData.data || sensorData; // support both shapes
+    const payload = sensorData.data || sensorData;
 
-    // Accept multiple input shapes: { sn, data: {...} } or { deviceSn, ... } or { truckId, ... }
-    let deviceSn = sensorData.sn || sensorData.deviceSn || null;
-    const resolvedTruckId = await resolveTruckIdByAlternateKeys({
-      truckId: sensorData.truckId,
-      truck_id: sensorData.truck_id,
-      truckCode: sensorData.truckCode,
-      code: sensorData.code,
-      truckName: sensorData.truckName,
-      name: sensorData.name,
-    });
-    if (!deviceSn && resolvedTruckId) {
-      deviceSn = await resolveDeviceSnByTruckId(resolvedTruckId);
+    // Extract sensor identifiers
+    const sensorNo = payload.sensorNo || sensorData.sensorNo || null;
+    const tireNo = payload.tireNo || sensorData.tireNo || null;
+    const deviceId = sensorData.deviceId || payload.deviceId || null;
+
+    if (!sensorNo && !tireNo) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required field: sensorNo or tireNo',
+      });
     }
 
-    if (!deviceSn) {
-      // As a fallback, create a virtual device SN tied to the truckId so data can still be queued
-      if (
-        resolvedTruckId ||
-        sensorData.truckId ||
-        sensorData.truck_id ||
-        sensorData.truckCode ||
-        sensorData.code ||
-        sensorData.truckName ||
-        sensorData.name
-      ) {
-        const ident =
-          resolvedTruckId ||
-          sensorData.truckId ||
-          sensorData.truck_id ||
-          sensorData.truckCode ||
-          sensorData.code ||
-          sensorData.truckName ||
-          sensorData.name;
-        deviceSn = `virtual-${ident}`;
-      } else {
-        return res.status(400).json({
-          success: false,
-          message:
-            'Missing device serial number (sn). Provide sn/deviceSn or a valid truckId with an assigned device.',
+    // Find sensor by sensorNo or by deviceId + tireNo
+    let sensor = null;
+    if (sensorNo) {
+      sensor = await prisma.sensor.findUnique({
+        where: { sensorNo: sensorNo },
+        include: { device: true },
+      });
+    } else if (deviceId && tireNo) {
+      const device = await prisma.device.findUnique({
+        where: { deviceId: deviceId },
+      });
+      if (device) {
+        sensor = await prisma.sensor.findFirst({
+          where: {
+            device_id: device.id,
+            tireNo: parseInt(tireNo),
+            deleted_at: null,
+          },
+          include: { device: true },
         });
       }
     }
 
-    // Prepare raw JSON data with all fields preserved
-    const rawJsonData = {
-      sn: deviceSn,
-      truckId: resolvedTruckId || null,
-      simNumber: sensorData.simNumber || payload.simNumber || null,
+    if (!sensor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Sensor not found. Please register the sensor first.',
+      });
+    }
+
+    // Extract sensor values
+    const tiprValue = payload.tiprValue || payload.pressureKpa || payload.pressure || null;
+    const tempValue = payload.tempValue || payload.tempCelsius || payload.temperature || null;
+    const bat = payload.bat || payload.battery_level || payload.battery || null;
+
+    // Insert directly to sensor_data table
+    const sensorDataRecord = await prisma.sensor_data.create({
       data: {
-        tireNo: payload.tireNo || null,
-        exType: payload.exType || null,
-        tiprValue: payload.tiprValue || payload.pressureKpa || payload.pressure || null,
-        tempValue: payload.tempValue || payload.tempCelsius || null,
-        bat: payload.bat || payload.battery_level || null,
+        sensor_id: sensor.id,
+        tiprValue: tiprValue ? parseFloat(tiprValue) : null,
+        tempValue: tempValue ? parseFloat(tempValue) : null,
+        bat: bat ? parseFloat(bat) : null,
       },
-    };
+    });
 
-    // Insert raw sensor data first
-    const rawDataQuery = `
-      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at, truck_id)
-      VALUES ($1, 'tpdata', $2, NOW(), $3)
-      RETURNING id
-    `;
-
-    const rawResult = await pool.query(rawDataQuery, [
-      deviceSn,
-      JSON.stringify(rawJsonData),
-      resolvedTruckId || null,
-    ]);
+    // Update device battery levels if available
+    if (sensor.device && (payload.bat1 || payload.bat2 || payload.bat3)) {
+      await prisma.device.update({
+        where: { id: sensor.device_id },
+        data: {
+          bat1: payload.bat1 ? parseFloat(payload.bat1) : undefined,
+          bat2: payload.bat2 ? parseFloat(payload.bat2) : undefined,
+          bat3: payload.bat3 ? parseFloat(payload.bat3) : undefined,
+        },
+      });
+    }
 
     // Broadcast real-time update via WebSocket
     try {
       broadcastSensorUpdate({
         type: 'tire_pressure',
-        deviceSn: deviceSn,
+        sensorNo: sensor.sensorNo,
+        tireNo: sensor.tireNo,
+        deviceId: sensor.device?.deviceId,
         data: {
-          tireNo: payload.tireNo,
-          pressure: payload.tiprValue ?? payload.pressureKpa ?? payload.pressure ?? null,
-          temperature: payload.tempValue ?? payload.tempCelsius ?? null,
-          battery: payload.bat ?? null,
+          pressure: tiprValue,
+          temperature: tempValue,
+          battery: bat,
         },
         timestamp: new Date().toISOString(),
       });
@@ -147,11 +101,16 @@ const ingestTirePressureData = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Tire pressure data received successfully',
+      message: 'Tire pressure data ingested successfully',
       data: {
-        rawDataId: rawResult.rows[0].id,
-        deviceSn: deviceSn,
-        processingStatus: 'queued',
+        id: sensorDataRecord.id,
+        sensor_id: sensor.id,
+        tireNo: sensor.tireNo,
+        sensorNo: sensor.sensorNo,
+        tiprValue: sensorDataRecord.tiprValue,
+        tempValue: sensorDataRecord.tempValue,
+        bat: sensorDataRecord.bat,
+        created_at: sensorDataRecord.created_at,
       },
     });
   } catch (error) {
@@ -164,123 +123,99 @@ const ingestTirePressureData = async (req, res) => {
   }
 };
 
-const ingestHubTemperatureData = async (req, res) => {
-  try {
-    const sensorData = req.body;
-    const payload = sensorData.data || sensorData;
-
-    // Prepare raw JSON data with all fields preserved
-    const rawJsonData = {
-      sn: sensorData.sn,
-      simNumber: sensorData.simNumber || payload.simNumber || null,
-      dataType: sensorData.dataType || payload.dataType || null,
-      data: {
-        tireNo: payload.tireNo || payload.hub_no || null,
-        exType: payload.exType || null,
-        tempValue: payload.tempValue || payload.tempCelsius || payload.temp_celsius || null,
-        bat: payload.bat || payload.battery_level || null,
-      },
-    };
-
-    // Insert raw sensor data
-    const rawDataQuery = `
-      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
-      VALUES ($1, 'hubdata', $2, NOW())
-      RETURNING id
-    `;
-
-    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(rawJsonData)]);
-
-    // Broadcast real-time update
-    try {
-      broadcastSensorUpdate({
-        type: 'hub_temperature',
-        deviceSn: sensorData.sn,
-        data: {
-          tireNo: sensorData.data.tireNo,
-          temperature: sensorData.data.tempValue,
-          battery: sensorData.data.bat,
-        },
-        timestamp: new Date().toISOString(),
-      });
-    } catch (wsError) {
-      console.log('WebSocket broadcast failed:', wsError.message);
-    }
-
-    res.status(201).json({
-      success: true,
-      message: 'Hub temperature data received successfully',
-      data: {
-        rawDataId: rawResult.rows[0].id,
-        deviceSn: sensorData.sn,
-        processingStatus: 'queued',
-      },
-    });
-  } catch (error) {
-    console.error('Error ingesting hub temperature data:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to ingest hub temperature data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
-  }
-};
+// ==========================================
+// INGEST DEVICE STATUS DATA (GPS, Battery, Lock)
+// ==========================================
 
 const ingestDeviceStatusData = async (req, res) => {
   try {
-    const sensorData = req.body;
-    const payload = sensorData.data || sensorData;
+    const payload = req.body;
+    const deviceId = payload.deviceId || payload.device_id;
 
-    // Prepare raw JSON data with all fields preserved
-    const rawJsonData = {
-      sn: sensorData.sn,
-      data: {
-        lng: payload.lng || payload.longitude || null,
-        lat: payload.lat || payload.latitude || null,
-        bat1: payload.bat1 || payload.host_bat || null,
-        bat2: payload.bat2 || payload.repeater1_bat || null,
-        bat3: payload.bat3 || payload.repeater2_bat || null,
-        lock: payload.lock || payload.lock_state || null,
-      },
-    };
-
-    // Insert raw sensor data
-    const rawDataQuery = `
-      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
-      VALUES ($1, 'device', $2, NOW())
-      RETURNING id
-    `;
-
-    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(rawJsonData)]);
-
-    // Broadcast GPS update immediately for real-time tracking
-    try {
-      broadcastSensorUpdate({
-        type: 'gps_update',
-        deviceSn: sensorData.sn,
-        data: {
-          longitude: sensorData.data.lng,
-          latitude: sensorData.data.lat,
-          batteryLevels: {
-            host: sensorData.data.bat1,
-            repeater1: sensorData.data.bat2,
-            repeater2: sensorData.data.bat3,
-          },
-          lockState: sensorData.data.lock,
-        },
-        timestamp: new Date().toISOString(),
+    if (!deviceId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required field: deviceId',
       });
-    } catch (wsError) {
-      console.log('WebSocket broadcast failed:', wsError.message);
+    }
+
+    // Find device
+    const device = await prisma.device.findUnique({
+      where: { deviceId: deviceId },
+    });
+
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: 'Device not found. Please register the device first.',
+      });
+    }
+
+    // Update device battery levels and lock status
+    const deviceUpdate = {};
+    if (payload.bat1 !== undefined) deviceUpdate.bat1 = parseFloat(payload.bat1);
+    if (payload.bat2 !== undefined) deviceUpdate.bat2 = parseFloat(payload.bat2);
+    if (payload.bat3 !== undefined) deviceUpdate.bat3 = parseFloat(payload.bat3);
+    if (payload.lock !== undefined) deviceUpdate.lock = payload.lock;
+
+    if (Object.keys(deviceUpdate).length > 0) {
+      await prisma.device.update({
+        where: { id: device.id },
+        data: deviceUpdate,
+      });
+    }
+
+    // If GPS data included, write to location table
+    let locationRecord = null;
+    if (payload.latitude && payload.longitude) {
+      locationRecord = await prisma.location.create({
+        data: {
+          device_id: device.id,
+          latitude: parseFloat(payload.latitude),
+          longitude: parseFloat(payload.longitude),
+          speed: payload.speed ? parseFloat(payload.speed) : null,
+          heading: payload.heading ? parseFloat(payload.heading) : null,
+          altitude: payload.altitude ? parseFloat(payload.altitude) : null,
+          accuracy: payload.accuracy ? parseFloat(payload.accuracy) : null,
+          timestamp: payload.timestamp ? new Date(payload.timestamp) : new Date(),
+        },
+      });
+
+      // Broadcast location update via WebSocket
+      try {
+        broadcastSensorUpdate({
+          type: 'location',
+          deviceId: device.deviceId,
+          truck_id: device.truck_id,
+          data: {
+            latitude: locationRecord.latitude,
+            longitude: locationRecord.longitude,
+            speed: locationRecord.speed,
+            heading: locationRecord.heading,
+          },
+          timestamp: locationRecord.timestamp.toISOString(),
+        });
+      } catch (wsError) {
+        console.log('WebSocket broadcast failed:', wsError.message);
+      }
     }
 
     res.status(201).json({
       success: true,
-      message: 'Device status data received successfully',
+      message: 'Device status data ingested successfully',
       data: {
-        rawDataId: rawResult.rows[0].id,
-        deviceSn: sensorData.sn,
-        processingStatus: 'queued',
+        device_id: device.id,
+        deviceId: device.deviceId,
+        updated: deviceUpdate,
+        location: locationRecord
+          ? {
+              id: locationRecord.id,
+              latitude: locationRecord.latitude,
+              longitude: locationRecord.longitude,
+              speed: locationRecord.speed,
+              timestamp: locationRecord.timestamp,
+            }
+          : null,
       },
     });
   } catch (error) {
@@ -293,35 +228,58 @@ const ingestDeviceStatusData = async (req, res) => {
   }
 };
 
+// ==========================================
+// INGEST LOCK STATE DATA
+// ==========================================
+
 const ingestLockStateData = async (req, res) => {
   try {
-    const sensorData = req.body;
-    const payload = sensorData.data || sensorData;
+    const payload = req.body;
+    const deviceId = payload.deviceId || payload.device_id;
+    const lockState = payload.lock !== undefined ? payload.lock : payload.lockState;
 
-    // Prepare raw JSON data with all fields preserved
-    const rawJsonData = {
-      sn: sensorData.sn,
+    if (!deviceId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required field: deviceId',
+      });
+    }
+
+    if (lockState === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required field: lock or lockState',
+      });
+    }
+
+    // Find device
+    const device = await prisma.device.findUnique({
+      where: { deviceId: deviceId },
+    });
+
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: 'Device not found. Please register the device first.',
+      });
+    }
+
+    // Update device lock status
+    const updatedDevice = await prisma.device.update({
+      where: { id: device.id },
       data: {
-        is_lock: payload.is_lock || payload.isLocked || null,
+        lock: lockState,
       },
-    };
+    });
 
-    // Insert raw sensor data
-    const rawDataQuery = `
-      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
-      VALUES ($1, 'state', $2, NOW())
-      RETURNING id
-    `;
-
-    const rawResult = await pool.query(rawDataQuery, [sensorData.sn, JSON.stringify(rawJsonData)]);
-
-    // Broadcast lock state update
+    // Broadcast lock state update via WebSocket
     try {
       broadcastSensorUpdate({
         type: 'lock_state',
-        deviceSn: sensorData.sn,
+        deviceId: device.deviceId,
+        truck_id: device.truck_id,
         data: {
-          isLocked: sensorData.data.is_lock,
+          lock: updatedDevice.lock,
         },
         timestamp: new Date().toISOString(),
       });
@@ -329,285 +287,82 @@ const ingestLockStateData = async (req, res) => {
       console.log('WebSocket broadcast failed:', wsError.message);
     }
 
-    res.status(201).json({
-      success: true,
-      message: 'Lock state data received successfully',
-      data: {
-        rawDataId: rawResult.rows[0].id,
-        deviceSn: sensorData.sn,
-        processingStatus: 'queued',
-      },
-    });
-  } catch (error) {
-    console.error('Error ingesting lock state data:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to ingest lock state data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
-  }
-};
-
-const ingestRawSensorData = async (req, res) => {
-  try {
-    const { deviceSn, cmdType, data } = req.body;
-
-    // Validate required fields
-    if (!deviceSn || !cmdType || !data) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required fields: deviceSn, cmdType, data',
-      });
-    }
-
-    // Insert raw sensor data
-    const rawDataQuery = `
-      INSERT INTO sensor_data_raw (device_sn, cmd_type, raw_json, received_at)
-      VALUES ($1, $2, $3, NOW())
-      RETURNING id
-    `;
-
-    const rawResult = await pool.query(rawDataQuery, [
-      deviceSn,
-      cmdType,
-      JSON.stringify({ sn: deviceSn, cmd: cmdType, data }),
-    ]);
-
-    res.status(201).json({
-      success: true,
-      message: 'Raw sensor data received successfully',
-      data: {
-        rawDataId: rawResult.rows[0].id,
-        deviceSn: deviceSn,
-        cmdType: cmdType,
-        processingStatus: 'queued',
-      },
-    });
-  } catch (error) {
-    console.error('Error ingesting raw sensor data:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to ingest raw sensor data',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
-  }
-};
-
-// ==========================================
-// QUEUE MANAGEMENT
-// ==========================================
-
-const getQueueStats = async (req, res) => {
-  try {
-    const statsQuery = `
-      SELECT 
-        COUNT(*) as total_items,
-        COUNT(*) FILTER (WHERE processed = false) as pending_items,
-        COUNT(*) FILTER (WHERE processed = true) as processed_items,
-        COUNT(*) FILTER (WHERE cmd_type = 'device') as gps_items,
-        COUNT(*) FILTER (WHERE cmd_type = 'tpdata') as tire_pressure_items,
-        COUNT(*) FILTER (WHERE cmd_type = 'hubdata') as hub_temp_items,
-        COUNT(*) FILTER (WHERE cmd_type = 'state') as lock_state_items,
-        MIN(received_at) as oldest_item,
-        MAX(received_at) as newest_item
-      FROM sensor_data_raw
-      WHERE received_at >= NOW() - INTERVAL '24 hours'
-    `;
-
-    const result = await pool.query(statsQuery);
-    const stats = result.rows[0];
-
-    // Get processing performance stats
-    const performanceQuery = `
-      SELECT * FROM get_queue_stats()
-    `;
-
-    let performanceStats = {};
-    try {
-      const perfResult = await pool.query(performanceQuery);
-      performanceStats = perfResult.rows[0] || {};
-    } catch (perfError) {
-      console.log('Performance stats not available:', perfError.message);
-    }
-
     res.status(200).json({
       success: true,
+      message: 'Lock state updated successfully',
       data: {
-        queue: {
-          totalItems: parseInt(stats.total_items),
-          pendingItems: parseInt(stats.pending_items),
-          processedItems: parseInt(stats.processed_items),
-          oldestItem: stats.oldest_item,
-          newestItem: stats.newest_item,
-        },
-        breakdown: {
-          gpsItems: parseInt(stats.gps_items),
-          tirePressureItems: parseInt(stats.tire_pressure_items),
-          hubTempItems: parseInt(stats.hub_temp_items),
-          lockStateItems: parseInt(stats.lock_state_items),
-        },
-        performance: performanceStats,
+        device_id: updatedDevice.id,
+        deviceId: updatedDevice.deviceId,
+        lock: updatedDevice.lock,
       },
-      message: 'Queue statistics retrieved successfully',
     });
   } catch (error) {
-    console.error('Error getting queue stats:', error);
+    console.error('Error updating lock state:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get queue statistics',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
-  }
-};
-
-const processQueue = async (req, res) => {
-  try {
-    const { batchSize = 100 } = req.body;
-
-    // Validate batch size
-    if (batchSize > 1000) {
-      return res.status(400).json({
-        success: false,
-        message: 'Batch size cannot exceed 1000',
-      });
-    }
-
-    // Process queue batch
-    const processQuery = `SELECT * FROM process_sensor_queue_batch($1)`;
-    const result = await pool.query(processQuery, [batchSize]);
-
-    const processResult = result.rows[0];
-
-    res.status(200).json({
-      success: true,
-      data: {
-        processedCount: processResult.processed_count,
-        errorCount: processResult.error_count,
-        batchSize: batchSize,
-      },
-      message: `Processed ${processResult.processed_count} sensor data items`,
-    });
-  } catch (error) {
-    console.error('Error processing queue:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to process sensor queue',
+      message: 'Failed to update lock state',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }
 };
 
 // ==========================================
-// GET LAST RETRIEVED DATA
+// GET LAST SENSOR DATA
 // ==========================================
 
 const getLastRetrievedData = async (req, res) => {
   try {
-    const { limit = 15, cmd_type, device_sn } = req.query;
+    const { limit = 15, device_id, sensor_id } = req.query;
 
-    // Build WHERE clause
-    const conditions = [];
-    const params = [];
-    let paramIndex = 1;
-
-    if (cmd_type) {
-      conditions.push(`cmd_type = $${paramIndex}`);
-      params.push(cmd_type);
-      paramIndex++;
+    const where = {};
+    if (sensor_id) where.sensor_id = sensor_id;
+    if (device_id) {
+      where.sensor = {
+        device_id: device_id,
+      };
     }
 
-    if (device_sn) {
-      conditions.push(`device_sn = $${paramIndex}`);
-      params.push(device_sn);
-      paramIndex++;
-    }
-
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
-    // Query to get last retrieved data from sensor_data_raw
-    const query = `
-      SELECT 
-        CAST(ROW_NUMBER() OVER (ORDER BY received_at DESC) AS INTEGER) as id,
-        device_sn as sn,
-        cmd_type as cmd,
-        received_at as "createdAt",
-        raw_json
-      FROM sensor_data_raw
-      ${whereClause}
-      ORDER BY received_at DESC
-      LIMIT $${paramIndex}
-    `;
-
-    params.push(parseInt(limit));
-
-    const result = await pool.query(query, params);
-
-    // Format the data according to the expected structure
-    const formattedData = result.rows.map((row) => {
-      const baseData = {
-        id: row.id,
-        sn: row.sn,
-        cmd: row.cmd,
-        createdAt: row.createdAt,
-      };
-
-      // Parse raw_json and extract relevant fields based on cmd type
-      const rawData = row.raw_json;
-
-      if (row.cmd === 'tpdata') {
-        // Tire pressure data
-        const data = rawData.data || rawData;
-        return {
-          ...baseData,
-          simNumber: data.simNumber || rawData.simNumber || null,
-          tireNo: data.tireNo || rawData.tireNo || null,
-          exType: data.exType || rawData.exType || null,
-          tiprValue: data.tiprValue || data.pressureKpa || data.pressure || null,
-          tempValue: data.tempValue || data.tempCelsius || null,
-          bat: data.bat || data.battery_level || null,
-        };
-      } else if (row.cmd === 'hubdata') {
-        // Hub temperature data
-        const data = rawData.data || rawData;
-        return {
-          ...baseData,
-          simNumber: data.simNumber || rawData.simNumber || null,
-          dataType: data.dataType || rawData.dataType || null,
-          tireNo: data.tireNo || rawData.tireNo || data.hub_no || rawData.hub_no || null,
-          exType: data.exType || rawData.exType || null,
-          tempValue: data.tempValue || data.tempCelsius || data.temp_celsius || null,
-          bat: data.bat || data.battery_level || null,
-        };
-      } else if (row.cmd === 'device') {
-        // GPS/Device status data
-        const data = rawData.data || rawData;
-        return {
-          ...baseData,
-          lng: data.lng || data.longitude || null,
-          lat: data.lat || data.latitude || null,
-          bat1: data.bat1 || data.host_bat || null,
-          bat2: data.bat2 || data.repeater1_bat || null,
-          bat3: data.bat3 || data.repeater2_bat || null,
-          lock: data.lock || data.lock_state || null,
-        };
-      } else if (row.cmd === 'state') {
-        // Lock state data
-        const data = rawData.data || rawData;
-        return {
-          ...baseData,
-          is_lock: data.is_lock || data.isLocked || null,
-        };
-      }
-
-      // Default: return base data with raw_json
-      return {
-        ...baseData,
-        ...rawData,
-      };
+    // Query sensor_data with sensor and device info
+    const sensorDataRecords = await prisma.sensor_data.findMany({
+      where,
+      include: {
+        sensor: {
+          include: {
+            device: {
+              select: {
+                id: true,
+                sn: true,
+                truck_id: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        recorded_at: 'desc',
+      },
+      take: parseInt(limit),
     });
 
+    // Format the data
+    const formattedData = sensorDataRecords.map((record) => ({
+      id: record.id,
+      sensor_id: record.sensor_id,
+      sensorNo: record.sensor?.sensorNo,
+      tireNo: record.sensor?.tireNo,
+      device_sn: record.sensor?.device?.sn,
+      truck_id: record.sensor?.device?.truck_id,
+      tiprValue: record.tiprValue,
+      tempValue: record.tempValue,
+      bat: record.bat,
+      exType: record.exType,
+      recorded_at: record.recorded_at,
+    }));
+
     res.status(200).json({
-      message: 'Data retrieved successfully',
+      success: true,
+      message: 'Sensor data retrieved successfully',
       count: formattedData.length,
       data: formattedData,
     });
@@ -621,13 +376,426 @@ const getLastRetrievedData = async (req, res) => {
   }
 };
 
+// ==========================================
+// SENSOR CRUD OPERATIONS
+// ==========================================
+
+/**
+ * GET /api/sensors - Get all sensors with pagination and filters
+ */
+const getAllSensors = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const skip = (page - 1) * limit;
+
+    // Filters
+    const { device_id, status, tireNo, search } = req.query;
+
+    const where = {
+      deleted_at: null,
+    };
+
+    if (device_id) {
+      where.device_id = device_id; // UUID
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (tireNo) {
+      where.tireNo = parseInt(tireNo);
+    }
+
+    if (search) {
+      where.OR = [
+        { sn: { contains: search, mode: 'insensitive' } },
+        { sensorNo: { contains: search, mode: 'insensitive' } },
+        { simNumber: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    // Get sensors with device and truck info
+    const [sensors, total] = await Promise.all([
+      prisma.sensor.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          device: {
+            include: {
+              truck: {
+                select: {
+                  id: true,
+                  name: true,
+                  plate: true,
+                  status: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [{ device_id: 'asc' }, { tireNo: 'asc' }],
+      }),
+      prisma.sensor.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.json({
+      success: true,
+      data: {
+        sensors,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Get all sensors error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch sensors',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * GET /api/sensors/:id - Get sensor by ID
+ */
+const getSensorById = async (req, res) => {
+  try {
+    const sensorId = req.params.id; // UUID, not parseInt
+
+    const sensor = await prisma.sensor.findFirst({
+      where: {
+        id: sensorId,
+        deleted_at: null,
+      },
+      include: {
+        device: {
+          include: {
+            truck: {
+              select: {
+                id: true,
+                name: true,
+                plate: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!sensor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Sensor not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: sensor,
+    });
+  } catch (error) {
+    console.error('Get sensor by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch sensor',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * POST /api/sensors/create - Create new sensor
+ */
+const createSensor = async (req, res) => {
+  try {
+    const { sn, device_id, tireNo, simNumber, sensorNo, sensor_lock, status } = req.body;
+
+    // Validation
+    if (!sn || !device_id || tireNo === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields: sn, device_id, tireNo',
+      });
+    }
+
+    // Check if device exists
+    const device = await prisma.device.findUnique({
+      where: { id: device_id }, // UUID
+    });
+
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: 'Device not found',
+      });
+    }
+
+    // Check for duplicate sn
+    const existingSensor = await prisma.sensor.findFirst({
+      where: {
+        sn,
+        deleted_at: null,
+      },
+    });
+
+    if (existingSensor) {
+      return res.status(400).json({
+        success: false,
+        message: 'Sensor with this SN already exists',
+      });
+    }
+
+    // Check for duplicate sensorNo if provided
+    if (sensorNo) {
+      const existingSensorNo = await prisma.sensor.findFirst({
+        where: {
+          sensorNo,
+          deleted_at: null,
+        },
+      });
+
+      if (existingSensorNo) {
+        return res.status(400).json({
+          success: false,
+          message: 'Sensor with this sensorNo already exists',
+        });
+      }
+    }
+
+    // Create sensor
+    const sensor = await prisma.sensor.create({
+      data: {
+        sn,
+        device_id: device_id, // UUID
+        tireNo: parseInt(tireNo),
+        simNumber: simNumber || null,
+        sensorNo: sensorNo || null,
+        sensor_lock: sensor_lock ? parseInt(sensor_lock) : 0, // 0=unlocked, 1=locked
+        status: status || 'active',
+      },
+      include: {
+        device: {
+          include: {
+            truck: {
+              select: {
+                id: true,
+                name: true,
+                plate: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Sensor created successfully',
+      data: sensor,
+    });
+  } catch (error) {
+    console.error('Create sensor error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create sensor',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * PUT /api/sensors/:id - Update sensor
+ */
+const updateSensor = async (req, res) => {
+  try {
+    const sensorId = req.params.id; // UUID
+    const { sn, device_id, tireNo, simNumber, sensorNo, sensor_lock, status } = req.body;
+
+    // Check if sensor exists
+    const existingSensor = await prisma.sensor.findFirst({
+      where: {
+        id: sensorId,
+        deleted_at: null,
+      },
+    });
+
+    if (!existingSensor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Sensor not found',
+      });
+    }
+
+    // Check if device_id is being updated and exists
+    if (device_id && device_id !== existingSensor.device_id) {
+      const device = await prisma.device.findUnique({
+        where: { id: device_id }, // UUID
+      });
+
+      if (!device) {
+        return res.status(404).json({
+          success: false,
+          message: 'Device not found',
+        });
+      }
+    }
+
+    // Check for duplicate sn if being updated
+    if (sn && sn !== existingSensor.sn) {
+      const duplicateSn = await prisma.sensor.findFirst({
+        where: {
+          sn,
+          deleted_at: null,
+          NOT: {
+            id: sensorId,
+          },
+        },
+      });
+
+      if (duplicateSn) {
+        return res.status(400).json({
+          success: false,
+          message: 'Sensor with this SN already exists',
+        });
+      }
+    }
+
+    // Check for duplicate sensorNo if being updated
+    if (sensorNo && sensorNo !== existingSensor.sensorNo) {
+      const duplicateSensorNo = await prisma.sensor.findFirst({
+        where: {
+          sensorNo,
+          deleted_at: null,
+          NOT: {
+            id: sensorId,
+          },
+        },
+      });
+
+      if (duplicateSensorNo) {
+        return res.status(400).json({
+          success: false,
+          message: 'Sensor with this sensorNo already exists',
+        });
+      }
+    }
+
+    // Build update data
+    const updateData = {};
+
+    if (sn !== undefined) updateData.sn = sn;
+    if (device_id !== undefined) updateData.device_id = device_id; // UUID
+    if (tireNo !== undefined) updateData.tireNo = parseInt(tireNo);
+    if (simNumber !== undefined) updateData.simNumber = simNumber;
+    if (sensorNo !== undefined) updateData.sensorNo = sensorNo;
+    if (sensor_lock !== undefined) updateData.sensor_lock = parseInt(sensor_lock);
+    if (status !== undefined) updateData.status = status;
+
+    // Update sensor
+    const sensor = await prisma.sensor.update({
+      where: { id: sensorId },
+      data: updateData,
+      include: {
+        device: {
+          include: {
+            truck: {
+              select: {
+                id: true,
+                name: true,
+                plate: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      message: 'Sensor updated successfully',
+      data: sensor,
+    });
+  } catch (error) {
+    console.error('Update sensor error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update sensor',
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * DELETE /api/sensors/:id - Soft delete sensor
+ */
+const deleteSensor = async (req, res) => {
+  try {
+    const sensorId = req.params.id; // UUID
+
+    // Check if sensor exists
+    const sensor = await prisma.sensor.findFirst({
+      where: {
+        id: sensorId,
+        deleted_at: null,
+      },
+    });
+
+    if (!sensor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Sensor not found',
+      });
+    }
+
+    // Soft delete
+    await prisma.sensor.update({
+      where: { id: sensorId },
+      data: {
+        deleted_at: new Date(),
+        status: 'inactive',
+      },
+    });
+
+    res.json({
+      success: true,
+      message: 'Sensor deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete sensor error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete sensor',
+      error: error.message,
+    });
+  }
+};
+
+// ==========================================
+// MODULE EXPORTS
+// ==========================================
+
 module.exports = {
   ingestTirePressureData,
-  ingestHubTemperatureData,
   ingestDeviceStatusData,
   ingestLockStateData,
-  ingestRawSensorData,
-  getQueueStats,
-  processQueue,
   getLastRetrievedData,
+  // CRUD Operations
+  getAllSensors,
+  getSensorById,
+  createSensor,
+  updateSensor,
+  deleteSensor,
 };

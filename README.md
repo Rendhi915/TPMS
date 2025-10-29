@@ -148,19 +148,4 @@ pm2 monit
 - Enable HTTPS
 - Run `npx prisma migrate deploy`
 
----
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file
-
----
-
-## Support
-
-- **Issues:** [GitHub Issues](https://github.com/training-solonet/tpms-backend/issues)
-- **Email:** support@tpms-backend.com
-
----
-
 **Version 2.0.0** | Built with Express.js, Prisma, and PostgreSQL

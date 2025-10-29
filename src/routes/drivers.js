@@ -25,9 +25,11 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
     const { page = 1, limit = 50, status, vendorId } = req.query;
     const skip = (page - 1) * limit;
 
-    const where = {};
+    const where = {
+      deleted_at: null,
+    };
     if (status) where.status = status;
-    if (vendorId) where.vendorId = parseInt(vendorId);
+    if (vendorId) where.vendor_id = parseInt(vendorId);
 
     const [drivers, total] = await Promise.all([
       prisma.drivers.findMany({
@@ -36,7 +38,8 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
           vendor: {
             select: {
               id: true,
-              name: true,
+              name_vendor: true,
+              telephone: true,
             },
           },
         },
@@ -51,10 +54,32 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
 
     const totalPages = Math.ceil(total / limit);
 
+    const driversData = drivers.map((driver) => ({
+      id: driver.id,
+      name: driver.name,
+      telephone: driver.telephone,
+      email: driver.email,
+      address: driver.address,
+      license_number: driver.license_number,
+      license_type: driver.license_type,
+      license_expiry: driver.license_expiry,
+      id_card_number: driver.id_card_number,
+      status: driver.status,
+      vendor: driver.vendor
+        ? {
+            id: driver.vendor.id,
+            name: driver.vendor.name_vendor,
+            telephone: driver.vendor.telephone,
+          }
+        : null,
+      created_at: driver.created_at,
+      updated_at: driver.updated_at,
+    }));
+
     res.status(200).json({
       success: true,
       data: {
-        drivers,
+        drivers: driversData,
         pagination: {
           page: parseInt(page),
           limit: parseInt(limit),
@@ -84,14 +109,15 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
     const driver = await prisma.drivers.findUnique({
       where: {
         id: parseInt(driverId),
+        deleted_at: null,
       },
       include: {
         vendor: {
           select: {
             id: true,
-            name: true,
+            name_vendor: true,
             address: true,
-            phone: true,
+            telephone: true,
           },
         },
       },
@@ -104,9 +130,32 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
       });
     }
 
+    const driverData = {
+      id: driver.id,
+      name: driver.name,
+      telephone: driver.telephone,
+      email: driver.email,
+      address: driver.address,
+      license_number: driver.license_number,
+      license_type: driver.license_type,
+      license_expiry: driver.license_expiry,
+      id_card_number: driver.id_card_number,
+      status: driver.status,
+      vendor: driver.vendor
+        ? {
+            id: driver.vendor.id,
+            name: driver.vendor.name_vendor,
+            address: driver.vendor.address,
+            telephone: driver.vendor.telephone,
+          }
+        : null,
+      created_at: driver.created_at,
+      updated_at: driver.updated_at,
+    };
+
     res.status(200).json({
       success: true,
-      data: driver,
+      data: driverData,
       message: 'Driver details retrieved successfully',
     });
   } catch (error) {
@@ -122,30 +171,40 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
 // POST /api/drivers - Create new driver
 router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, async (req, res) => {
   try {
-    const { name, phone, email, address, licenseNumber, status = 'aktif' } = req.body;
+    const {
+      name,
+      telephone,
+      email,
+      address,
+      license_number,
+      license_type = 'B1',
+      license_expiry,
+      id_card_number,
+      vendor_id,
+      status = 'aktif',
+    } = req.body;
 
-    // Validation handled by validateDriverCreate middleware
-    // Required: name, licenseNumber
-    // Optional: phone, email, address, status
+    // Parse license_expiry if provided, otherwise use far future
+    const licenseExpiryDate = license_expiry ? new Date(license_expiry) : new Date('2099-12-31');
 
     const driver = await prisma.drivers.create({
       data: {
         name,
-        phone: phone || null,
+        telephone: telephone || null,
         email: email || null,
         address: address || null,
-        licenseNumber,
-        licenseType: 'N/A', // Default value since not provided by frontend
-        licenseExpiry: new Date('2099-12-31'), // Default far future date
-        idCardNumber: licenseNumber, // Use licenseNumber as default
-        vendorId: null,
+        license_number,
+        license_type,
+        license_expiry: licenseExpiryDate,
+        id_card_number: id_card_number || license_number, // Default to license_number if not provided
+        vendor_id: vendor_id ? parseInt(vendor_id) : null,
         status,
       },
       include: {
         vendor: {
           select: {
             id: true,
-            name: true,
+            name_vendor: true,
           },
         },
       },
@@ -153,7 +212,25 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
 
     res.status(201).json({
       success: true,
-      data: driver,
+      data: {
+        id: driver.id,
+        name: driver.name,
+        telephone: driver.telephone,
+        email: driver.email,
+        address: driver.address,
+        license_number: driver.license_number,
+        license_type: driver.license_type,
+        license_expiry: driver.license_expiry,
+        id_card_number: driver.id_card_number,
+        status: driver.status,
+        vendor: driver.vendor
+          ? {
+              id: driver.vendor.id,
+              name: driver.vendor.name_vendor,
+            }
+          : null,
+        created_at: driver.created_at,
+      },
       message: 'Driver created successfully',
     });
   } catch (error) {
@@ -175,15 +252,31 @@ router.put(
   async (req, res) => {
     try {
       const { driverId } = req.params;
-      const { name, phone, email, address, licenseNumber, status } = req.body;
+      const {
+        name,
+        telephone,
+        email,
+        address,
+        license_number,
+        license_type,
+        license_expiry,
+        id_card_number,
+        vendor_id,
+        status,
+      } = req.body;
 
       const updateData = {};
       if (name !== undefined) updateData.name = name;
-      if (phone !== undefined) updateData.phone = phone;
+      if (telephone !== undefined) updateData.telephone = telephone;
       if (email !== undefined) updateData.email = email;
       if (address !== undefined) updateData.address = address;
-      if (licenseNumber !== undefined) updateData.licenseNumber = licenseNumber;
+      if (license_number !== undefined) updateData.license_number = license_number;
+      if (license_type !== undefined) updateData.license_type = license_type;
+      if (license_expiry !== undefined) updateData.license_expiry = new Date(license_expiry);
+      if (id_card_number !== undefined) updateData.id_card_number = id_card_number;
+      if (vendor_id !== undefined) updateData.vendor_id = vendor_id ? parseInt(vendor_id) : null;
       if (status !== undefined) updateData.status = status;
+      updateData.updated_at = new Date();
 
       const driver = await prisma.drivers.update({
         where: {
@@ -194,7 +287,7 @@ router.put(
           vendor: {
             select: {
               id: true,
-              name: true,
+              name_vendor: true,
             },
           },
         },
@@ -202,7 +295,25 @@ router.put(
 
       res.status(200).json({
         success: true,
-        data: driver,
+        data: {
+          id: driver.id,
+          name: driver.name,
+          telephone: driver.telephone,
+          email: driver.email,
+          address: driver.address,
+          license_number: driver.license_number,
+          license_type: driver.license_type,
+          license_expiry: driver.license_expiry,
+          id_card_number: driver.id_card_number,
+          status: driver.status,
+          vendor: driver.vendor
+            ? {
+                id: driver.vendor.id,
+                name: driver.vendor.name_vendor,
+              }
+            : null,
+          updated_at: driver.updated_at,
+        },
         message: 'Driver updated successfully',
       });
     } catch (error) {
@@ -222,15 +333,34 @@ router.put(
   }
 );
 
-// DELETE /api/drivers/:driverId - Delete driver permanently
+// DELETE /api/drivers/:driverId - Soft delete driver
 router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
     const { driverId } = req.params;
 
-    // Hard delete - permanently remove from database
-    await prisma.drivers.delete({
+    // Check if driver exists and not already deleted
+    const existingDriver = await prisma.drivers.findUnique({
       where: {
         id: parseInt(driverId),
+        deleted_at: null,
+      },
+    });
+
+    if (!existingDriver) {
+      return res.status(404).json({
+        success: false,
+        message: 'Driver not found',
+      });
+    }
+
+    // Soft delete
+    await prisma.drivers.update({
+      where: {
+        id: parseInt(driverId),
+      },
+      data: {
+        deleted_at: new Date(),
+        updated_at: new Date(),
       },
     });
 
@@ -263,27 +393,44 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
 
     const drivers = await prisma.drivers.findMany({
       where: {
-        licenseExpiry: {
+        license_expiry: {
           lte: futureDate,
         },
         status: 'aktif',
+        deleted_at: null,
       },
       include: {
         vendor: {
           select: {
             id: true,
-            name: true,
+            name_vendor: true,
           },
         },
       },
       orderBy: {
-        licenseExpiry: 'asc',
+        license_expiry: 'asc',
       },
     });
 
+    const driversData = drivers.map((driver) => ({
+      id: driver.id,
+      name: driver.name,
+      telephone: driver.telephone,
+      license_number: driver.license_number,
+      license_type: driver.license_type,
+      license_expiry: driver.license_expiry,
+      status: driver.status,
+      vendor: driver.vendor
+        ? {
+            id: driver.vendor.id,
+            name: driver.vendor.name_vendor,
+          }
+        : null,
+    }));
+
     res.status(200).json({
       success: true,
-      data: drivers,
+      data: driversData,
       message: `Drivers with licenses expiring in ${days} days retrieved successfully`,
     });
   } catch (error) {

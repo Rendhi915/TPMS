@@ -7,394 +7,231 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [pgcrypto, postgis]
+  extensions = [pgcrypto]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model alert_event {
-  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id     String     @db.Uuid
-  type         alert_type
-  severity     Int?       @db.SmallInt
-  detail       Json?
-  occurred_at  DateTime   @default(now()) @db.Timestamptz(6)
-  acknowledged Boolean    @default(false)
-  created_by   String?    @db.Uuid
-  truck        truck      @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model daily_route {
-  id           String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id     String?                  @db.Uuid
-  route_date   DateTime                 @db.Date
-  geom         Unsupported("geography")
-  point_count  Int
-  generated_at DateTime                 @default(now()) @db.Timestamptz(6)
-  created_by   String?                  @db.Uuid
-  truck        truck?                   @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@unique([truck_id, route_date])
-}
-
-model device {
-  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id                String                    @db.Uuid
-  sn                      String                    @unique
-  sim_number              String?
-  installed_at            DateTime                  @default(now()) @db.Timestamptz(6)
-  removed_at              DateTime?                 @db.Timestamptz(6)
-  created_by              String?                   @db.Uuid
-  updated_by              String?                   @db.Uuid
-  truck                   truck                     @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  device_status_event     device_status_event[]
-  device_truck_assignment device_truck_assignment[]
-  gps_position            gps_position[]
-  hub_temperature_event   hub_temperature_event[]
-  lock_event              lock_event[]
-  sensor                  sensor[]
-  tire_pressure_event     tire_pressure_event[]
-
-  @@index([sim_number], map: "idx_device_sim_number")
-  @@index([sn], map: "idx_device_sn")
-}
-
-model device_status_event {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_id     String   @db.Uuid
-  truck_id      String   @db.Uuid
-  host_bat      Int?     @db.SmallInt
-  repeater1_bat Int?     @db.SmallInt
-  repeater2_bat Int?     @db.SmallInt
-  lock_state    Int?     @db.SmallInt
-  reported_at   DateTime @default(now()) @db.Timestamptz(6)
-  created_by    String?  @db.Uuid
-  device        device   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  truck         truck    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([truck_id, reported_at(sort: Desc)], map: "idx_device_status_event_truck_id")
-}
-
-model device_truck_assignment {
-  id                                               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_id                                        String?   @db.Uuid
-  truck_id                                         String?   @db.Uuid
-  assigned_at                                      DateTime  @default(now()) @db.Timestamptz(6)
-  assigned_by                                      String?   @db.Uuid
-  removed_at                                       DateTime? @db.Timestamptz(6)
-  removed_by                                       String?   @db.Uuid
-  is_active                                        Boolean?  @default(true)
-  users_device_truck_assignment_assigned_byTousers users?    @relation("device_truck_assignment_assigned_byTousers", fields: [assigned_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  device                                           device?   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_device_truck_assignment_removed_byTousers  users?    @relation("device_truck_assignment_removed_byTousers", fields: [removed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  truck                                            truck?    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([device_id, assigned_at(sort: Desc)], map: "idx_device_truck_assignment_device_id")
-  @@index([truck_id, assigned_at(sort: Desc)], map: "idx_device_truck_assignment_truck_id")
-}
-
-model fleet_group {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
-  site        String?
-  description String?
-  created_at  DateTime? @default(now()) @db.Timestamptz(6)
-  created_by  String?   @db.Uuid
-  updated_by  String?   @db.Uuid
-  truck       truck[]
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model fuel_level_event {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id     String   @db.Uuid
-  fuel_percent Float?   @db.Real
-  changed_at   DateTime @db.Timestamptz(6)
-  source       String?
-  created_by   String?  @db.Uuid
-  truck        truck    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([truck_id, changed_at(sort: Desc)], map: "idx_fuel_level_event_truck_ts")
-}
-
-model geofence {
-  id         String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name       String
-  area       Unsupported("geography")
-  created_by String?                  @db.Uuid
-  created_at DateTime?                @default(now()) @db.Timestamptz(6)
-}
-
-/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
-model gps_position {
-  id          BigInt                   @default(autoincrement())
-  device_id   String?                  @db.Uuid
-  truck_id    String                   @db.Uuid
-  ts          DateTime                 @db.Timestamptz(6)
-  pos         Unsupported("geography")
-  speed_kph   Float?                   @db.Real
-  heading_deg Float?                   @db.Real
-  hdop        Float?                   @db.Real
-  source      String?
-  device      device?                  @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  truck       truck                    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([id, ts])
-  @@index([pos], map: "idx_gps_position_pos", type: Gist)
-  @@index([pos], map: "idx_gps_position_spatial", type: Gist)
-  @@index([truck_id, ts(sort: Desc)], map: "idx_gps_position_truck_ts")
-}
-
-model hub_temperature_event {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_id     String   @db.Uuid
-  truck_id      String   @db.Uuid
-  hub_no        Int?
-  temp_celsius  Float?   @db.Real
-  ex_type       String?
-  battery_level Int?     @db.SmallInt
-  changed_at    DateTime @default(now()) @db.Timestamptz(6)
-  created_by    String?  @db.Uuid
-  device        device   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  truck         truck    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([truck_id, changed_at(sort: Desc)], map: "idx_hub_temperature_event_truck_id")
-  @@index([truck_id, changed_at(sort: Desc)], map: "idx_hub_temperature_event_truck_ts")
-}
-
-model lock_event {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_id   String   @db.Uuid
-  truck_id    String   @db.Uuid
-  is_lock     Int?     @db.SmallInt
-  reported_at DateTime @default(now()) @db.Timestamptz(6)
-  created_by  String?  @db.Uuid
-  device      device   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  truck       truck    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([truck_id, reported_at(sort: Desc)], map: "idx_lock_event_truck_id")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model sensor {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_id    String    @db.Uuid
-  type         String?
-  position_no  Int
-  sn           String?   @unique
-  installed_at DateTime? @default(now()) @db.Timestamptz(6)
-  removed_at   DateTime? @db.Timestamptz(6)
-  created_by   String?   @db.Uuid
-  updated_by   String?   @db.Uuid
-  device       device    @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model sensor_data_raw {
-  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_sn               String
-  cmd_type                String
-  truck_id                String?                   @db.Uuid
-  tire_no                 Int?
-  raw_json                Json
-  processed               Boolean?                  @default(false)
-  received_at             DateTime                  @default(now()) @db.Timestamptz(6)
-  processed_at            DateTime?                 @db.Timestamptz(6)
-  truck                   truck?                    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sensor_processing_queue sensor_processing_queue[]
-
-  @@index([cmd_type, received_at(sort: Desc)], map: "idx_sensor_data_raw_cmd_type")
-  @@index([device_sn, received_at(sort: Desc)], map: "idx_sensor_data_raw_device_sn")
-  @@index([processed, received_at(sort: Desc)], map: "idx_sensor_data_raw_processed")
-}
-
-model sensor_processing_queue {
-  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  raw_data_id     String?          @db.Uuid
-  priority        Int?             @default(1)
-  attempts        Int?             @default(0)
-  max_attempts    Int?             @default(3)
-  error_message   String?
-  created_at      DateTime?        @default(now()) @db.Timestamptz(6)
-  processed_at    DateTime?        @db.Timestamptz(6)
-  sensor_data_raw sensor_data_raw? @relation(fields: [raw_data_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([priority, created_at], map: "idx_sensor_processing_queue_priority")
-  @@index([processed_at], map: "idx_sensor_processing_queue_processed")
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model spatial_ref_sys {
-  srid      Int     @id
-  auth_name String? @db.VarChar(256)
-  auth_srid Int?
-  srtext    String? @db.VarChar(2048)
-  proj4text String? @db.VarChar(2048)
-}
-
-model speed_event {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id   String   @db.Uuid
-  speed_kph  Float?   @db.Real
-  changed_at DateTime @db.Timestamptz(6)
-  source     String?
-  created_by String?  @db.Uuid
-  truck      truck    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([truck_id, changed_at(sort: Desc)], map: "idx_speed_event_truck_ts")
-}
-
-model tire_error_code {
-  code        Int     @id
-  description String?
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model tire_position_config {
-  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id      String?   @db.Uuid
-  tire_no       Int
-  position_name String?
-  wheel_type    String?
-  is_active     Boolean?  @default(true)
-  created_at    DateTime? @default(now()) @db.Timestamptz(6)
-  truck         truck?    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@unique([truck_id, tire_no])
-}
-
-model tire_pressure_event {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  device_id     String   @db.Uuid
-  truck_id      String   @db.Uuid
-  tire_no       Int
-  pressure_kpa  Float?   @db.Real
-  temp_celsius  Float?   @db.Real
-  ex_type       String?
-  battery_level Int?     @db.SmallInt
-  changed_at    DateTime @default(now()) @db.Timestamptz(6)
-  created_by    String?  @db.Uuid
-  device        device   @relation(fields: [device_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  truck         truck    @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@index([tire_no, changed_at(sort: Desc)], map: "idx_tire_pressure_event_tire_no")
-  @@index([truck_id, changed_at(sort: Desc)], map: "idx_tire_pressure_event_truck_id")
-  @@index([truck_id, changed_at(sort: Desc)], map: "idx_tire_pressure_event_truck_ts")
-}
-
-model trip {
-  id        String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id  String                    @db.Uuid
-  start_ts  DateTime                  @db.Timestamptz(6)
-  end_ts    DateTime?                 @db.Timestamptz(6)
-  start_pos Unsupported("geography")?
-  end_pos   Unsupported("geography")?
-  truck     truck                     @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model truck {
-  id                      String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code                    String?                   @unique @db.VarChar(4)
-  vin                     String?                   @unique
-  name                    String?
-  model                   String?
-  year                    Int?
-  tireConfig              String?                   @map("tire_config")
-  fleetGroupId            String?                   @map("fleet_group_id") @db.Uuid
-  vendorId                Int?                      @map("vendor_id")
-  createdAt               DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
-  createdBy               String?                   @map("created_by") @db.Uuid
-  updatedBy               String?                   @map("updated_by") @db.Uuid
-  alert_event             alert_event[]
-  daily_route             daily_route[]
-  device                  device[]
-  device_status_event     device_status_event[]
-  device_truck_assignment device_truck_assignment[]
-  fuel_level_event        fuel_level_event[]
-  gps_position            gps_position[]
-  hub_temperature_event   hub_temperature_event[]
-  lock_event              lock_event[]
-  sensor_data_raw         sensor_data_raw[]
-  speed_event             speed_event[]
-  tire_position_config    tire_position_config[]
-  tire_pressure_event     tire_pressure_event[]
-  trip                    trip[]
-  fleetGroup              fleet_group?              @relation(fields: [fleetGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  vendor                  vendors?                  @relation(fields: [vendorId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-  truck_status_event      truck_status_event[]
-}
-
-model truck_status_event {
-  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  truck_id   String       @db.Uuid
-  status     truck_status
-  note       String?
-  changed_at DateTime     @default(now()) @db.Timestamptz(6)
-  created_by String?      @db.Uuid
-  truck      truck        @relation(fields: [truck_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model users {
-  id                                                                 String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username                                                           String                    @unique
-  email                                                              String?                   @unique
-  password_hash                                                      String
-  role                                                               String?                   @default("user")
-  is_active                                                          Boolean?                  @default(true)
-  created_at                                                         DateTime?                 @default(now()) @db.Timestamptz(6)
-  updated_at                                                         DateTime?                 @default(now()) @db.Timestamptz(6)
-  device_truck_assignment_device_truck_assignment_assigned_byTousers device_truck_assignment[] @relation("device_truck_assignment_assigned_byTousers")
-  device_truck_assignment_device_truck_assignment_removed_byTousers  device_truck_assignment[] @relation("device_truck_assignment_removed_byTousers")
-}
-
-enum alert_type {
-  LOW_TIRE
-  SPEEDING
-  IDLE
-  GEOFENCE_IN
-  GEOFENCE_OUT
-  FUEL_DROP
-  HIGH_TEMP
-  DEVICE_LOST
-}
+// ==========================================
+// MASTER TABLES
+// ==========================================
 
 model vendors {
-  id            Int       @id @default(autoincrement())
-  name          String    @map("nama_vendor") @db.VarChar(255)
-  address       String?
-  phone         String?   @map("nomor_telepon") @db.VarChar(50)
-  email         String?   @db.VarChar(255)
-  contactPerson String?   @map("kontak_person") @db.VarChar(255)
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  drivers       drivers[]
-  trucks        truck[]
+  id             Int       @id @default(autoincrement())
+  name_vendor    String    @db.VarChar(255)
+  address        String?   @db.Text
+  telephone      String?   @db.VarChar(50)
+  email          String?   @db.VarChar(255)
+  contact_person String?   @db.VarChar(255)
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at     DateTime? @db.Timestamptz(6)
+  drivers        drivers[]
+  trucks         truck[]
 
-  @@index([name], map: "idx_vendors_nama")
+  @@index([name_vendor], map: "idx_vendors_nama")
 }
 
 model drivers {
-  id            Int       @id @default(autoincrement())
-  name          String    @db.VarChar(255)
-  phone         String?   @db.VarChar(50)
-  email         String?   @db.VarChar(255)
-  address       String?
-  licenseNumber String    @map("license_number") @db.VarChar(50)
-  licenseType   String    @map("license_type") @db.VarChar(20)
-  licenseExpiry DateTime  @map("license_expiry") @db.Date
-  idCardNumber  String    @map("id_card_number") @db.VarChar(50)
-  vendorId      Int?      @map("vendor_id")
-  status        String    @default("aktif") @db.VarChar(20)
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  vendor        vendors?  @relation(fields: [vendorId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(255)
+  phone          String?   @db.VarChar(50)
+  email          String?   @db.VarChar(255)
+  license_number String    @db.VarChar(50)
+  license_type   String    @db.VarChar(20)
+  license_expiry DateTime  @db.Date
+  vendor_id      Int?
+  status         String    @default("aktif") @db.VarChar(20)
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at     DateTime? @db.Timestamptz(6)
+  vendor         vendors?  @relation(fields: [vendor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  trucks         truck[]
 
-  @@index([vendorId], map: "idx_drivers_vendor_id")
+  @@index([vendor_id], map: "idx_drivers_vendor_id")
   @@index([status], map: "idx_drivers_status")
-  @@index([licenseExpiry], map: "idx_drivers_license_expiry")
+  @@index([license_expiry], map: "idx_drivers_license_expiry")
 }
 
-enum truck_status {
-  active
-  inactive
-  maintenance
+model truck {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String         @db.VarChar(255)
+  image        String?        @db.VarChar(255)
+  year         Int?
+  model        String?        @db.VarChar(255)
+  type         String?        @db.VarChar(100)
+  vendor_id    Int?
+  status       String         @default("active") @db.VarChar(50)
+  vin          String?        @unique @db.VarChar(50)
+  plate        String?        @unique @db.VarChar(50)
+  driver_id    Int?
+  created_at   DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime       @default(now()) @db.Timestamptz(6)
+  deleted_at   DateTime?      @db.Timestamptz(6)
+  created_by   String?        @db.Uuid
+  updated_by   String?        @db.Uuid
+  vendor       vendors?       @relation(fields: [vendor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  driver       drivers?       @relation(fields: [driver_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  devices      device[]
+  alert_events alert_events[]
+
+  @@index([vin], map: "idx_truck_vin")
+  @@index([plate], map: "idx_truck_plate")
+  @@index([vendor_id], map: "idx_truck_vendor_id")
+}
+
+// ==========================================
+// USER ADMIN
+// ==========================================
+
+model user_admin {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String    @db.VarChar(255)
+  email      String    @unique @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  role       String    @default("admin") @db.VarChar(50)
+  last_login DateTime? @db.Timestamptz(6)
+  status     String    @default("active") @db.VarChar(20)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at DateTime? @db.Timestamptz(6)
+
+  @@index([email], map: "idx_user_admin_email")
+  @@index([status], map: "idx_user_admin_status")
+}
+
+// ==========================================
+// IoT DEVICES & SENSOR DATA
+// ==========================================
+
+model device {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  truck_id         String             @db.Uuid
+  sn               String             @unique @db.VarChar(50)
+  bat1             Int?               @db.SmallInt
+  bat2             Int?               @db.SmallInt
+  bat3             Int?               @db.SmallInt
+  lock             Int                @default(0) @db.SmallInt
+  sim_number       String?            @db.VarChar(50)
+  installed_at     DateTime           @default(now()) @db.Timestamptz(6)
+  status           String             @default("active") @db.VarChar(50)
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime           @default(now()) @db.Timestamptz(6)
+  deleted_at       DateTime?          @db.Timestamptz(6)
+  truck            truck              @relation(fields: [truck_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sensors          sensor[]
+  locations        location[]
+  location_history location_history[]
+  alert_events     alert_events[]
+
+  @@index([sn], map: "idx_device_sn")
+  @@index([truck_id], map: "idx_device_truck")
+}
+
+model sensor {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sn          String        @unique @db.VarChar(50)
+  device_id   String        @db.Uuid
+  tireNo      Int
+  simNumber   String?       @db.VarChar(50)
+  sensorNo    Int?
+  sensor_lock Int           @default(0) @db.SmallInt
+  status      String        @default("active") @db.VarChar(20)
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  deleted_at  DateTime?     @db.Timestamptz(6)
+  device      device        @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sensor_data sensor_data[]
+  alert_events alert_events[]
+
+  @@index([sn], map: "idx_sensor_sn")
+  @@index([tireNo], map: "idx_sensor_tireNo")
+  @@index([device_id], map: "idx_sensor_device_id")
+}
+
+model sensor_data {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sensor_id   String   @db.Uuid
+  tempValue   Float?   @db.Real
+  tirepValue  Float?   @db.Real
+  exType      String?  @db.VarChar(50)
+  bat         Int?     @db.SmallInt
+  recorded_at DateTime @default(now()) @db.Timestamptz(6)
+  sensor      sensor   @relation(fields: [sensor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([sensor_id], map: "idx_sensor_data_sensor_id")
+  @@index([recorded_at], map: "idx_sensor_data_recorded_at")
+}
+
+// ==========================================
+// LOCATION & TRACKING
+// ==========================================
+
+model location {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  device_id        String             @db.Uuid
+  lat              Float              @db.DoublePrecision
+  long             Float              @db.DoublePrecision
+  recorded_at      DateTime           @default(now()) @db.Timestamptz(6)
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  device           device             @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  location_history location_history[]
+
+  @@index([device_id], map: "idx_location_device_id")
+  @@index([recorded_at], map: "idx_location_recorded_at")
+}
+
+model location_history {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  location_id String   @db.Uuid
+  device_id   String   @db.Uuid
+  lat         Float    @db.DoublePrecision
+  long        Float    @db.DoublePrecision
+  recorded_at DateTime @default(now()) @db.Timestamptz(6)
+  location    location @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  device      device   @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([device_id], map: "idx_location_history_device")
+  @@index([recorded_at], map: "idx_location_history_time")
+}
+
+// ==========================================
+// ALERT SYSTEM
+// ==========================================
+
+model alert {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code          String         @unique @db.VarChar(50)
+  name          String         @db.VarChar(255)
+  description   String?        @db.Text
+  severity      String         @default("warning") @db.VarChar(20)
+  threshold_min Float?         @db.Real
+  threshold_max Float?         @db.Real
+  created_at    DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime       @default(now()) @db.Timestamptz(6)
+  deleted_at    DateTime?      @db.Timestamptz(6)
+  alert_events  alert_events[]
+
+  @@index([code], map: "idx_alert_code")
+  @@index([severity], map: "idx_alert_severity")
+}
+
+model alert_events {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alert_id    String    @db.Uuid
+  device_id   String?   @db.Uuid
+  sensor_id   String?   @db.Uuid
+  truck_id    String?   @db.Uuid
+  value       Float?    @db.Real
+  message     String?   @db.Text
+  status      String    @default("active") @db.VarChar(20)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  resolved_at DateTime? @db.Timestamptz(6)
+  alert       alert     @relation(fields: [alert_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  device      device?   @relation(fields: [device_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  sensor      sensor?   @relation(fields: [sensor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  truck       truck?    @relation(fields: [truck_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([alert_id], map: "idx_alert_events_alert_id")
+  @@index([device_id], map: "idx_alert_events_device_id")
+  @@index([sensor_id], map: "idx_alert_events_sensor_id")
+  @@index([truck_id], map: "idx_alert_events_truck_id")
+  @@index([status], map: "idx_alert_events_status")
 }

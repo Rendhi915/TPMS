@@ -68,21 +68,22 @@ class SimplePrismaService {
     const { page = 1, limit = 50, search, vendor, vendorId } = filters;
 
     const offset = (page - 1) * limit;
-    const where = {};
+    const where = { deleted_at: null }; // Only non-deleted trucks
 
     // Search filter
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
         { model: { contains: search, mode: 'insensitive' } },
+        { plate: { contains: search, mode: 'insensitive' } },
       ];
     }
 
-    // Vendor filter by id or name
+    // Vendor filter
     if (vendorId) {
-      where.fleet_group_id = vendorId;
+      where.vendor_id = parseInt(vendorId);
     } else if (vendor) {
-      where.fleet_group = { name: { equals: vendor } };
+      where.vendor = { name_vendor: { equals: vendor, mode: 'insensitive' } };
     }
 
     console.log('📋 Query where clause:', JSON.stringify(where, null, 2));
@@ -90,47 +91,53 @@ class SimplePrismaService {
     try {
       console.log('📊 Fetching trucks from database...');
 
-      // Get trucks with basic relations and latest sensor data
+      // Get trucks with basic relations
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleetGroup: true,
-          vendor: true,
-          alert_event: {
-            where: { acknowledged: false },
-            take: 5,
-            orderBy: { occurred_at: 'desc' },
-          },
-          fuel_level_event: {
-            take: 1,
-            orderBy: { changed_at: 'desc' },
-            select: { fuel_percent: true, changed_at: true },
-          },
-          tire_pressure_event: {
-            take: 24, // enough to cover 8 tires * 3 readings
-            orderBy: { changed_at: 'desc' },
+          vendor: {
             select: {
-              tire_no: true,
-              pressure_kpa: true,
-              temp_celsius: true,
-              battery_level: true,
-              changed_at: true,
+              id: true,
+              name_vendor: true,
+              telephone: true,
+              email: true,
             },
           },
-          hub_temperature_event: {
+          driver: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              license_number: true,
+            },
+          },
+          devices: {
+            where: { deleted_at: null },
+            select: {
+              id: true,
+              sn: true,
+              bat1: true,
+              bat2: true,
+              bat3: true,
+              lock: true,
+              status: true,
+            },
             take: 1,
-            orderBy: { changed_at: 'desc' },
-            select: { temp_celsius: true, changed_at: true },
+          },
+          alert_events: {
+            where: { status: 'active' },
+            take: 5,
+            orderBy: { created_at: 'desc' },
           },
           _count: {
             select: {
-              alert_event: {
-                where: { acknowledged: false },
+              alert_events: {
+                where: { status: 'active' },
               },
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         skip: offset,
         take: parseInt(limit),
       });
@@ -176,14 +183,43 @@ class SimplePrismaService {
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
         include: {
-          fleetGroup: true,
-          vendor: true,
-          alert_event: {
-            orderBy: { occurred_at: 'desc' },
-            take: 10,
+          vendor: {
+            select: {
+              id: true,
+              name_vendor: true,
+              telephone: true,
+              email: true,
+            },
           },
-          tire_pressure_event: {
-            orderBy: { changed_at: 'desc' },
+          driver: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              license_number: true,
+              license_type: true,
+            },
+          },
+          devices: {
+            where: { deleted_at: null },
+            include: {
+              sensors: {
+                where: { deleted_at: null },
+                include: {
+                  sensor_data: {
+                    orderBy: { recorded_at: 'desc' },
+                    take: 1,
+                  },
+                },
+              },
+              locations: {
+                orderBy: { created_at: 'desc' },
+                take: 1,
+              },
+            },
+          },
+          alert_events: {
+            orderBy: { created_at: 'desc' },
             take: 10,
           },
         },
@@ -202,32 +238,58 @@ class SimplePrismaService {
 
   async getTruckTires(truckId) {
     try {
-      const tirePressures = await this.prisma.tire_pressure_event.findMany({
-        where: { truck_id: truckId },
-        orderBy: { changed_at: 'desc' },
-        take: 10,
-      });
-
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
-        select: { id: true, name: true },
+        select: {
+          id: true,
+          name: true,
+          devices: {
+            where: { deleted_at: null },
+            include: {
+              sensors: {
+                where: { deleted_at: null },
+                include: {
+                  sensor_data: {
+                    orderBy: { recorded_at: 'desc' },
+                    take: 1,
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!truck) {
         throw new Error('Truck not found');
       }
 
+      // Collect sensor data from all devices/sensors
+      const tirePressures = [];
+      for (const device of truck.devices) {
+        for (const sensor of device.sensors) {
+          if (sensor.sensor_data.length > 0) {
+            const data = sensor.sensor_data[0];
+            tirePressures.push({
+              position: `Tire ${sensor.tireNo}`,
+              tireNumber: sensor.tireNo,
+              pressure: data.tiprValue ? parseFloat(data.tiprValue) : null,
+              status: data.tiprValue && data.tiprValue > 100 ? 'normal' : 'low',
+              temperature: data.tempValue ? parseFloat(data.tempValue) : null,
+              battery: data.bat || null,
+              lastUpdated: data.recorded_at,
+            });
+          }
+        }
+      }
+
+      // Sort by tire number
+      tirePressures.sort((a, b) => a.tireNumber - b.tireNumber);
+
       return {
         truckId: truck.id,
         truckNumber: truck.name,
-        tirePressures: tirePressures.map((tire) => ({
-          position: `Tire ${tire.tire_no}`,
-          tireNumber: tire.tire_no,
-          pressure: tire.pressure_kpa ? parseFloat(tire.pressure_kpa) : null,
-          status: tire.pressure_kpa > 1000 ? 'normal' : 'low',
-          temperature: tire.temp_celsius ? parseFloat(tire.temp_celsius) : null,
-          lastUpdated: tire.changed_at,
-        })),
+        tirePressures,
         lastUpdated: new Date(),
       };
     } catch (error) {
@@ -238,39 +300,55 @@ class SimplePrismaService {
 
   async getRealtimeLocations(status) {
     try {
-      const where = {};
+      const where = { deleted_at: null };
       if (status) {
         where.status = status;
       }
 
-      // Get latest GPS positions for trucks
+      // Get trucks with their latest location
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          fleetGroup: true,
-          vendor: true,
-          gps_position: {
-            orderBy: { ts: 'desc' },
+          vendor: {
+            select: {
+              id: true,
+              name_vendor: true,
+            },
+          },
+          driver: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          devices: {
+            where: { deleted_at: null },
+            include: {
+              locations: {
+                orderBy: { created_at: 'desc' },
+                take: 1,
+              },
+            },
             take: 1,
           },
           _count: {
             select: {
-              alert_event: {
-                where: { acknowledged: false },
+              alert_events: {
+                where: { status: 'active' },
               },
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
       });
 
       // Format as GeoJSON
       const geoJsonData = {
         type: 'FeatureCollection',
         features: trucks
-          .filter((truck) => truck.gps_position.length > 0)
+          .filter((truck) => truck.devices.length > 0 && truck.devices[0].locations.length > 0)
           .map((truck) => {
-            const latestGps = truck.gps_position[0];
+            const latestLocation = truck.devices[0].locations[0];
             return {
               type: 'Feature',
               properties: {
@@ -278,18 +356,16 @@ class SimplePrismaService {
                 truckNumber: truck.name,
                 name: truck.name,
                 model: truck.model,
-                status: 'active', // Default status
-                speed: latestGps.speedKph || 0,
-                heading: latestGps.headingDeg || 0,
-                fuel: 75, // Default fuel level
-                payload: 0, // Default payload
-                driver: null,
-                lastUpdate: latestGps.ts,
-                alertCount: truck._count.alert_event,
+                plate: truck.plate,
+                status: truck.status || 'active',
+                driver: truck.driver?.name || null,
+                vendor: truck.vendor?.name_vendor || null,
+                lastUpdate: latestLocation.created_at,
+                alertCount: truck._count.alert_events,
               },
               geometry: {
                 type: 'Point',
-                coordinates: [0, 0], // Will be updated with actual coordinates from PostGIS
+                coordinates: [parseFloat(latestLocation.long), parseFloat(latestLocation.lat)],
               },
             };
           }),
@@ -304,26 +380,26 @@ class SimplePrismaService {
 
   async updateTruckStatus(truckId, newStatus) {
     try {
-      // Create a new truck status event
-      const statusEvent = await this.prisma.truckStatusEvent.create({
-        data: {
-          truckId: truckId,
-          status: newStatus,
-          note: `Status updated to ${newStatus}`,
-          changedAt: new Date(),
-        },
-      });
-
-      const truck = await this.prisma.truck.findUnique({
+      // Update truck status directly (no event table anymore)
+      const truck = await this.prisma.truck.update({
         where: { id: truckId },
-        select: { id: true, name: true },
+        data: {
+          status: newStatus,
+          updated_at: new Date(),
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          updated_at: true,
+        },
       });
 
       return {
         id: truck.id,
         truckNumber: truck.name,
-        status: newStatus,
-        lastUpdate: statusEvent.changedAt,
+        status: truck.status,
+        lastUpdate: truck.updated_at,
       };
     } catch (error) {
       console.error('Error in updateTruckStatus:', error);
@@ -339,62 +415,51 @@ class SimplePrismaService {
     try {
       console.log('🔍 Starting getDashboardStats...');
 
-      // Get basic counts from actual tables
-      const totalTrucks = await this.prisma.truck.count();
+      // Get basic counts
+      const totalTrucks = await this.prisma.truck.count({
+        where: { deleted_at: null },
+      });
       console.log('✅ Total trucks:', totalTrucks);
 
-      const totalAlerts = await this.prisma.alert_event.count({
-        where: {
-          acknowledged: false, // Unacknowledged alerts only
-        },
+      // Count active alerts
+      const totalAlerts = await this.prisma.alert_events.count({
+        where: { status: 'active' },
       });
-      console.log('✅ Total alerts:', totalAlerts);
+      console.log('✅ Total active alerts:', totalAlerts);
 
-      // Get trucks by status from truck_status_event table (truck table doesn't have status field)
-      const latestStatusEvents = await this.prisma.$queryRaw`
-        SELECT DISTINCT ON (truck_id) truck_id, status
-        FROM truck_status_event
-        ORDER BY truck_id, changed_at DESC
-      `;
+      // Get trucks by status (status field now exists in truck table)
+      const statusCounts = await this.prisma.truck.groupBy({
+        by: ['status'],
+        where: { deleted_at: null },
+        _count: { status: true },
+      });
 
-      // Count trucks by their latest status
-      const statusCounts = latestStatusEvents.reduce((acc, item) => {
-        const status = item.status || 'unknown';
-        acc[status] = (acc[status] || 0) + 1;
+      const trucksByStatus = statusCounts.reduce((acc, item) => {
+        acc[item.status] = item._count.status;
         return acc;
       }, {});
 
-      console.log('✅ Trucks by status calculated', statusCounts);
+      console.log('✅ Trucks by status:', trucksByStatus);
 
-      // Get low tire pressure count (tires with pressure < 1000 kPa)
-      const lowTireCount = await this.prisma.tire_pressure_event.count({
+      // Get sensor data stats (low tire pressure count)
+      const lowTireCount = await this.prisma.sensor_data.count({
         where: {
-          pressure_kpa: {
-            lt: 1000,
-          },
-          changed_at: {
+          tiprValue: { lt: 100 }, // Assuming pressure in bar, < 100 is low
+          recorded_at: {
             gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
           },
         },
       });
 
-      // Get average fuel level from recent events
-      const fuelStats = await this.prisma.$queryRaw`
-        SELECT AVG(fuel_percent) as avg_fuel
-        FROM fuel_level_event
-        WHERE changed_at >= NOW() - INTERVAL '24 hours'
-      `;
-
-      const avgFuel =
-        fuelStats.length > 0 && fuelStats[0].avg_fuel ? parseFloat(fuelStats[0].avg_fuel) : 0;
+      console.log('✅ Low tire pressure count:', lowTireCount);
 
       const result = {
         totalTrucks,
-        activeTrucks: statusCounts.active || 0,
-        inactiveTrucks: statusCounts.inactive || 0,
-        maintenanceTrucks: statusCounts.maintenance || 0,
-        averageFuel: avgFuel,
-        totalPayload: 0, // Not available in current schema
+        activeTrucks: trucksByStatus.active || 0,
+        inactiveTrucks: trucksByStatus.inactive || 0,
+        maintenanceTrucks: trucksByStatus.maintenance || 0,
+        averageFuel: 0, // No fuel data in new schema
+        totalPayload: 0, // Not available
         alertsCount: totalAlerts,
         lowTirePressureCount: lowTireCount,
       };
@@ -413,33 +478,31 @@ class SimplePrismaService {
 
   async getTruckSummaryStats() {
     try {
-      const totalTrucks = await this.prisma.truck.count();
+      const totalTrucks = await this.prisma.truck.count({
+        where: { deleted_at: null },
+      });
 
-      // Since truck table doesn't have status field, get status from truck_status_event
-      const latestStatusEvents = await this.prisma.$queryRaw`
-        SELECT DISTINCT ON (truck_id) truck_id, status
-        FROM truck_status_event
-        ORDER BY truck_id, changed_at DESC
-      `;
+      // Get trucks by status from truck table (status field exists now)
+      const statusCounts = await this.prisma.truck.groupBy({
+        by: ['status'],
+        where: { deleted_at: null },
+        _count: { status: true },
+      });
 
-      // Count trucks by their latest status
-      const statusCounts = latestStatusEvents.reduce((acc, item) => {
-        const status = item.status || 'unknown';
-        acc[status] = (acc[status] || 0) + 1;
+      const trucksByStatus = statusCounts.reduce((acc, item) => {
+        acc[item.status] = item._count.status;
         return acc;
       }, {});
 
-      const totalAlerts = await this.prisma.alert_event.count({
-        where: {
-          acknowledged: false,
-        },
+      const totalAlerts = await this.prisma.alert_events.count({
+        where: { status: 'active' },
       });
 
       return {
         total: totalTrucks,
-        active: statusCounts.active || 0,
-        inactive: statusCounts.inactive || 0,
-        maintenance: statusCounts.maintenance || 0,
+        active: trucksByStatus.active || 0,
+        inactive: trucksByStatus.inactive || 0,
+        maintenance: trucksByStatus.maintenance || 0,
         alerts: totalAlerts,
       };
     } catch (error) {
@@ -457,24 +520,17 @@ class SimplePrismaService {
 
   async getTrucksByStatus() {
     try {
-      // Since truck table doesn't have status field, get status from truck_status_event
-      const latestStatusEvents = await this.prisma.$queryRaw`
-        SELECT DISTINCT ON (truck_id) truck_id, status
-        FROM truck_status_event
-        ORDER BY truck_id, changed_at DESC
-      `;
+      // Get status counts from truck table
+      const statusCounts = await this.prisma.truck.groupBy({
+        by: ['status'],
+        where: { deleted_at: null },
+        _count: { status: true },
+      });
 
-      // Group by status
-      const statusGroups = latestStatusEvents.reduce((acc, item) => {
-        const status = item.status || 'unknown';
-        if (!acc[status]) {
-          acc[status] = { status, _count: { status: 0 } };
-        }
-        acc[status]._count.status++;
-        return acc;
-      }, {});
-
-      return Object.values(statusGroups);
+      return statusCounts.map((item) => ({
+        status: item.status,
+        _count: { status: item._count.status },
+      }));
     } catch (error) {
       console.error('Error in getTrucksByStatus:', error);
       throw error;
@@ -482,116 +538,102 @@ class SimplePrismaService {
   }
 
   formatTruckResponse(truck) {
-    // Latest fuel
-    const latestFuel =
-      Array.isArray(truck.fuel_level_event) && truck.fuel_level_event.length > 0
-        ? truck.fuel_level_event[0]
-        : null;
-
-    // Latest hub temperature
-    const latestHubTemp =
-      Array.isArray(truck.hub_temperature_event) && truck.hub_temperature_event.length > 0
-        ? truck.hub_temperature_event[0]
-        : null;
-
-    // Build latest per-tire map (dedupe by tire_no)
-    const tireMap = new Map();
-    if (Array.isArray(truck.tire_pressure_event)) {
-      for (const e of truck.tire_pressure_event) {
-        if (!tireMap.has(e.tire_no)) {
-          tireMap.set(e.tire_no, e); // since sorted desc, first seen is latest
-        }
-      }
-    }
-    const tires = Array.from(tireMap.values())
-      .sort((a, b) => a.tire_no - b.tire_no)
-      .map((t) => ({
-        position: `Tire ${t.tire_no}`,
-        tireNumber: t.tire_no,
-        pressure: t.pressure_kpa != null ? parseFloat(t.pressure_kpa) : null,
-        temperature: t.temp_celsius != null ? parseFloat(t.temp_celsius) : null,
-        battery: t.battery_level != null ? parseInt(t.battery_level) : null,
-        status: t.pressure_kpa != null ? (t.pressure_kpa > 1000 ? 'normal' : 'low') : 'unknown',
-        lastUpdated: t.changed_at,
-      }));
-
-    // Aggregate battery across tires
-    const batteryLevels = tires.map((t) => t.battery).filter((v) => typeof v === 'number');
-    const avgBattery = batteryLevels.length
-      ? Math.round(batteryLevels.reduce((s, v) => s + v, 0) / batteryLevels.length)
-      : null;
-
+    // Simplified formatter - return truck data with devices
     return {
       id: truck.id,
-      truckNumber: truck.name,
-      name: truck.name,
-      model: truck.model,
-      manufacturer: truck.fleet_group?.name || 'Unknown',
-      status: 'active',
-      location: {
-        type: 'Point',
-        coordinates: [0, 0],
-      },
-      speed: 0,
-      heading: 0,
-      fuel: latestFuel?.fuel_percent != null ? parseFloat(latestFuel.fuel_percent) : 0,
-      sensors: {
-        fuelPercent: latestFuel?.fuel_percent != null ? parseFloat(latestFuel.fuel_percent) : 0,
-        tires,
-        batteryAvg: avgBattery,
-        hubTemperature:
-          latestHubTemp?.temp_celsius != null ? parseFloat(latestHubTemp.temp_celsius) : null,
-      },
-      payload: 0,
-      driver: null,
-      engineHours: 0,
-      odometer: 0,
-      lastMaintenance: null,
-      lastUpdate: truck.createdAt,
-      alerts: truck.alert_event || [],
-      alertCount: truck._count?.alert_event || 0,
+      plate: truck.plate,
+      type: truck.type,
+      status: truck.status,
+      driver_id: truck.driver_id,
+      image: truck.image,
+      vendor: truck.vendor
+        ? {
+            id: truck.vendor.id,
+            name: truck.vendor.name_vendor,
+          }
+        : null,
+      driver: truck.driver
+        ? {
+            id: truck.driver.id,
+            name: truck.driver.name,
+            license_number: truck.driver.license_number,
+          }
+        : null,
+      devices: truck.devices
+        ? truck.devices.map((device) => ({
+            id: device.id,
+            deviceId: device.deviceId,
+            bat1: device.bat1,
+            bat2: device.bat2,
+            bat3: device.bat3,
+            lock: device.lock,
+            status: device.status,
+          }))
+        : [],
+      created_at: truck.created_at,
+      updated_at: truck.updated_at,
     };
   }
 
   formatTruckDetailResponse(truck) {
-    return {
-      id: truck.id,
-      truckNumber: truck.name,
-      name: truck.name,
-      model: truck.model,
-      manufacturer: truck.fleet_group?.name || 'Unknown',
-      capacity: null,
-      fuelTank: null,
-      status: 'active',
-      location: {
-        type: 'Point',
-        coordinates: [0, 0],
-      },
-      speed: 0,
-      heading: 0,
-      fuel: 75,
-      payload: 0,
-      driver: null,
-      engineHours: 0,
-      odometer: 0,
-      lastMaintenance: null,
-      lastUpdate: truck.createdAt,
-      tires: (truck.tire_pressure_event || []).map((tire) => ({
-        position: `Tire ${tire.tire_no}`,
-        tireNumber: tire.tire_no,
-        pressure: tire.pressure_kpa,
-        status: tire.pressure_kpa > 1000 ? 'normal' : 'low',
-        temperature: tire.temp_celsius || 45,
-        lastUpdated: tire.changed_at,
-      })),
-      alerts: (truck.alert_event || []).map((alert) => ({
-        type: alert.type,
-        severity: alert.severity || 'medium',
-        message: `${alert.type} alert`,
-        isResolved: alert.acknowledged,
-        createdAt: alert.occurred_at,
-      })),
-    };
+    // Format detailed truck response with sensors and locations
+    const formatted = this.formatTruckResponse(truck);
+
+    // Add sensor data from devices if available
+    if (truck.devices) {
+      formatted.devices = truck.devices.map((device) => ({
+        id: device.id,
+        deviceId: device.deviceId,
+        bat1: device.bat1,
+        bat2: device.bat2,
+        bat3: device.bat3,
+        lock: device.lock,
+        status: device.status,
+        sensors: device.sensors
+          ? device.sensors.map((sensor) => ({
+              id: sensor.id,
+              tireNo: sensor.tireNo,
+              simNumber: sensor.simNumber,
+              sensorNo: sensor.sensorNo,
+              sensor_lock: sensor.sensor_lock,
+              lastData:
+                sensor.sensor_data && sensor.sensor_data[0]
+                  ? {
+                      pressure: sensor.sensor_data[0].tiprValue,
+                      temperature: sensor.sensor_data[0].tempValue,
+                      battery: sensor.sensor_data[0].bat,
+                      timestamp: sensor.sensor_data[0].created_at,
+                    }
+                  : null,
+            }))
+          : [],
+        lastLocation:
+          device.locations && device.locations[0]
+            ? {
+                lat: device.locations[0].lat,
+                long: device.locations[0].long,
+                speed: device.locations[0].speed,
+                heading: device.locations[0].heading,
+                timestamp: device.locations[0].created_at,
+              }
+            : null,
+      }));
+    }
+
+    // Add active alerts from alert_events
+    formatted.alerts = truck.alert_events
+      ? truck.alert_events
+          .filter((alert) => alert.status === 'active')
+          .map((alert) => ({
+            id: alert.id,
+            type: alert.type,
+            severity: alert.severity,
+            message: alert.message,
+            created_at: alert.created_at,
+          }))
+      : [];
+
+    return formatted;
   }
 
   // ==========================================
@@ -618,8 +660,8 @@ class SimplePrismaService {
 
   async optimizeDatabase() {
     try {
-      // Analyze tables for better query planning
-      await this.prisma.$executeRaw`ANALYZE truck, tire_pressure_event, alert_event, gps_position`;
+      // Analyze tables for better query planning - updated to new table names
+      await this.prisma.$executeRaw`ANALYZE truck, sensor_data, alert_events, location`;
 
       return { message: 'Database optimization completed' };
     } catch (error) {
