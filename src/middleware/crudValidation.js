@@ -102,10 +102,7 @@ const validateTruckCreate = [
     .optional()
     .isLength({ max: 255 })
     .withMessage('Model must not exceed 255 characters'),
-  body('type')
-    .optional()
-    .isLength({ max: 100 })
-    .withMessage('Type must not exceed 100 characters'),
+  body('type').optional().isLength({ max: 100 }).withMessage('Type must not exceed 100 characters'),
   body('year')
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() + 1 })
@@ -139,10 +136,7 @@ const validateTruckUpdate = [
     .optional()
     .isLength({ max: 255 })
     .withMessage('Model must not exceed 255 characters'),
-  body('type')
-    .optional()
-    .isLength({ max: 100 })
-    .withMessage('Type must not exceed 100 characters'),
+  body('type').optional().isLength({ max: 100 }).withMessage('Type must not exceed 100 characters'),
   body('year')
     .optional()
     .isInt({ min: 1900, max: new Date().getFullYear() + 1 })

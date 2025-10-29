@@ -14,13 +14,13 @@ const prisma = new PrismaClient();
 // Normalize incoming driver payload to accept both snake_case and camelCase
 const normalizeDriverPayload = (req, res, next) => {
   const b = req.body || {};
-  
+
   // Map license_number (from validation) to database field
   if (b.license_number && !b.licenseNumber) b.licenseNumber = b.license_number;
-  
+
   // Map telephone to phone (database uses 'phone')
   if (b.telephone && !b.phone) b.phone = b.telephone;
-  
+
   next();
 };
 
