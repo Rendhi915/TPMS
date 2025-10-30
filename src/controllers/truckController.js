@@ -1,4 +1,5 @@
 const prismaService = require('../services/simplePrismaService');
+const { deleteImage } = require('../middleware/uploadImage');
 
 // ==========================================
 // TRUCK CONTROLLER - PRISMA VERSION
@@ -589,7 +590,14 @@ const getTruckLocationsByName = async (req, res) => {
 
 const createTruck = async (req, res) => {
   try {
-    const { name, plate, type, status, driver_id, vendor_id, image, model, year, vin } = req.body;
+    const { name, plate, type, status, driver_id, vendor_id, model, year, vin } = req.body;
+
+    // Handle uploaded image
+    let imageUrl = null;
+    if (req.file) {
+      // Store relative path: /uploads/trucks/filename.jpg
+      imageUrl = `/uploads/trucks/${req.file.filename}`;
+    }
 
     // Validate required fields
     if (!plate) {
@@ -608,6 +616,10 @@ const createTruck = async (req, res) => {
     });
 
     if (existingTruck) {
+      // Delete uploaded file if truck already exists
+      if (req.file) {
+        deleteImage(imageUrl);
+      }
       return res.status(409).json({
         success: false,
         message: 'Truck with this plate already exists',
@@ -617,9 +629,10 @@ const createTruck = async (req, res) => {
     // Validate vendor_id if provided
     if (vendor_id) {
       const vendor = await prismaService.prisma.vendors.findUnique({
-        where: { id: vendor_id },
+        where: { id: parseInt(vendor_id) },
       });
       if (!vendor) {
+        if (req.file) deleteImage(imageUrl);
         return res.status(400).json({
           success: false,
           message: 'Invalid vendor_id: vendor not found',
@@ -630,9 +643,10 @@ const createTruck = async (req, res) => {
     // Validate driver_id if provided
     if (driver_id) {
       const driver = await prismaService.prisma.drivers.findUnique({
-        where: { id: driver_id },
+        where: { id: parseInt(driver_id) },
       });
       if (!driver) {
+        if (req.file) deleteImage(imageUrl);
         return res.status(400).json({
           success: false,
           message: 'Invalid driver_id: driver not found',
@@ -644,6 +658,7 @@ const createTruck = async (req, res) => {
     const validStatuses = ['active', 'inactive', 'maintenance'];
     const truckStatus = status || 'active';
     if (!validStatuses.includes(truckStatus)) {
+      if (req.file) deleteImage(imageUrl);
       return res.status(400).json({
         success: false,
         message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
@@ -659,9 +674,9 @@ const createTruck = async (req, res) => {
         year: year ? parseInt(year) : null,
         vin,
         status: truckStatus,
-        driver_id,
-        vendor_id,
-        image,
+        driver_id: driver_id ? parseInt(driver_id) : null,
+        vendor_id: vendor_id ? parseInt(vendor_id) : null,
+        image: imageUrl,
       },
       include: {
         vendor: {
@@ -686,6 +701,10 @@ const createTruck = async (req, res) => {
       message: 'Truck created successfully',
     });
   } catch (error) {
+    // Delete uploaded file if error occurs
+    if (req.file) {
+      deleteImage(`/uploads/trucks/${req.file.filename}`);
+    }
     console.error('Error creating truck:', error);
     res.status(500).json({
       success: false,
@@ -698,7 +717,7 @@ const createTruck = async (req, res) => {
 const updateTruck = async (req, res) => {
   try {
     const { id } = req.params;
-    const { plate, type, status, driver_id, vendor_id, image } = req.body;
+    const { name, plate, type, status, driver_id, vendor_id, model, year, vin } = req.body;
 
     // Check if truck exists
     const existingTruck = await prismaService.prisma.truck.findUnique({
@@ -706,6 +725,10 @@ const updateTruck = async (req, res) => {
     });
 
     if (!existingTruck) {
+      // Delete uploaded file if truck not found
+      if (req.file) {
+        deleteImage(`/uploads/trucks/${req.file.filename}`);
+      }
       return res.status(404).json({
         success: false,
         message: 'Truck not found',
@@ -723,6 +746,7 @@ const updateTruck = async (req, res) => {
       });
 
       if (conflictTruck) {
+        if (req.file) deleteImage(`/uploads/trucks/${req.file.filename}`);
         return res.status(409).json({
           success: false,
           message: 'Another truck with this plate already exists',
@@ -733,9 +757,10 @@ const updateTruck = async (req, res) => {
     // Validate vendor_id if provided
     if (vendor_id && vendor_id !== existingTruck.vendor_id) {
       const vendor = await prismaService.prisma.vendors.findUnique({
-        where: { id: vendor_id },
+        where: { id: parseInt(vendor_id) },
       });
       if (!vendor) {
+        if (req.file) deleteImage(`/uploads/trucks/${req.file.filename}`);
         return res.status(400).json({
           success: false,
           message: 'Invalid vendor_id: vendor not found',
@@ -746,9 +771,10 @@ const updateTruck = async (req, res) => {
     // Validate driver_id if provided
     if (driver_id && driver_id !== existingTruck.driver_id) {
       const driver = await prismaService.prisma.drivers.findUnique({
-        where: { id: driver_id },
+        where: { id: parseInt(driver_id) },
       });
       if (!driver) {
+        if (req.file) deleteImage(`/uploads/trucks/${req.file.filename}`);
         return res.status(400).json({
           success: false,
           message: 'Invalid driver_id: driver not found',
@@ -760,6 +786,7 @@ const updateTruck = async (req, res) => {
     if (status) {
       const validStatuses = ['active', 'inactive', 'maintenance'];
       if (!validStatuses.includes(status)) {
+        if (req.file) deleteImage(`/uploads/trucks/${req.file.filename}`);
         return res.status(400).json({
           success: false,
           message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
@@ -768,12 +795,28 @@ const updateTruck = async (req, res) => {
     }
 
     const updateData = {};
+    if (name !== undefined) updateData.name = name;
     if (plate !== undefined) updateData.plate = plate;
     if (type !== undefined) updateData.type = type;
+    if (model !== undefined) updateData.model = model;
+    if (year !== undefined) updateData.year = year ? parseInt(year) : null;
+    if (vin !== undefined) updateData.vin = vin;
     if (status !== undefined) updateData.status = status;
-    if (driver_id !== undefined) updateData.driver_id = driver_id;
-    if (vendor_id !== undefined) updateData.vendor_id = vendor_id;
-    if (image !== undefined) updateData.image = image;
+    if (driver_id !== undefined) updateData.driver_id = driver_id ? parseInt(driver_id) : null;
+    if (vendor_id !== undefined) updateData.vendor_id = vendor_id ? parseInt(vendor_id) : null;
+    
+    // Handle image upload
+    if (req.file) {
+      const newImageUrl = `/uploads/trucks/${req.file.filename}`;
+      updateData.image = newImageUrl;
+      
+      // Delete old image if exists
+      if (existingTruck.image) {
+        deleteImage(existingTruck.image);
+      }
+    }
+
+    updateData.updated_at = new Date();
 
     const truck = await prismaService.prisma.truck.update({
       where: { id: id },
@@ -801,6 +844,10 @@ const updateTruck = async (req, res) => {
       message: 'Truck updated successfully',
     });
   } catch (error) {
+    // Delete uploaded file if error occurs
+    if (req.file) {
+      deleteImage(`/uploads/trucks/${req.file.filename}`);
+    }
     console.error('Error updating truck:', error);
     res.status(500).json({
       success: false,
@@ -852,6 +899,11 @@ const deleteTruck = async (req, res) => {
         deleted_at: new Date(),
       },
     });
+
+    // Delete associated image file
+    if (truck.image) {
+      deleteImage(truck.image);
+    }
 
     res.status(200).json({
       success: true,

@@ -661,12 +661,14 @@ class SimplePrismaService {
   async optimizeDatabase() {
     try {
       // Analyze tables for better query planning - updated to new table names
-      await this.prisma.$executeRaw`ANALYZE truck, sensor_data, alert_events, location`;
+      // Skip if tables don't exist yet
+      await this.prisma.$executeRaw`ANALYZE truck, alert_events, location`;
 
       return { message: 'Database optimization completed' };
     } catch (error) {
       console.error('Error optimizing database:', error);
-      throw error;
+      // Don't throw error, just log it - optimization is not critical
+      return { message: 'Database optimization failed (non-critical)', error: error.message };
     }
   }
 }

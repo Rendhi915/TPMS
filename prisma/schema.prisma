@@ -135,29 +135,23 @@ model sensor {
   sensorNo    Int?
   sensor_lock Int           @default(0) @db.SmallInt
   status      String        @default("active") @db.VarChar(20)
+  
+  // Sensor data fields - stored directly in sensor table for live tracking
+  tempValue   Float?        @db.Real // Temperature value in Celsius
+  tirepValue  Float?        @db.Real // Tire pressure value in PSI
+  exType      String?       @db.VarChar(50) // Exception type: normal, warning, critical
+  bat         Int?          @db.SmallInt // Battery level percentage (0-100)
+  
   created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime      @default(now()) @db.Timestamptz(6)
   deleted_at  DateTime?     @db.Timestamptz(6)
   device      device        @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  sensor_data sensor_data[]
   alert_events alert_events[]
 
   @@index([sn], map: "idx_sensor_sn")
   @@index([tireNo], map: "idx_sensor_tireNo")
   @@index([device_id], map: "idx_sensor_device_id")
-}
-
-model sensor_data {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sensor_id   String   @db.Uuid
-  tempValue   Float?   @db.Real
-  tirepValue  Float?   @db.Real
-  exType      String?  @db.VarChar(50)
-  bat         Int?     @db.SmallInt
-  recorded_at DateTime @default(now()) @db.Timestamptz(6)
-  sensor      sensor   @relation(fields: [sensor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([sensor_id], map: "idx_sensor_data_sensor_id")
-  @@index([recorded_at], map: "idx_sensor_data_recorded_at")
+  @@index([updated_at], map: "idx_sensor_updated_at")
 }
 
 // ==========================================

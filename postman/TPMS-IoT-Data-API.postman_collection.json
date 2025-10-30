@@ -1,0 +1,502 @@
+{
+  "info": {
+    "name": "TPMS Backend - IoT Data API",
+    "description": "Collection untuk testing IoT Data API endpoint dengan 4 command types: tpdata, hubdata, state, lock",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('token', jsonData.data.token);",
+                  "    console.log('Token saved:', jsonData.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@tpms.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "IoT Data API - Valid Requests",
+      "item": [
+        {
+          "name": "TPDATA - Full Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"tpdata\",\n  \"sn\": \"{{test_sensor_sn}}\",\n  \"tempValue\": 85.5,\n  \"tirepValue\": 32.5,\n  \"exType\": \"normal\",\n  \"bat\": 85\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "TPDATA - Temperature Only",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"tpdata\",\n  \"sn\": \"{{test_sensor_sn}}\",\n  \"tempValue\": 88.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "TPDATA - High Temperature Warning",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"tpdata\",\n  \"sn\": \"{{test_sensor_sn}}\",\n  \"tempValue\": 95.0,\n  \"tirepValue\": 33.0,\n  \"exType\": \"high_temp\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "HUBDATA - Full Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"hubdata\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"bat1\": 85,\n  \"bat2\": 90,\n  \"bat3\": 88,\n  \"sim_number\": \"081234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "HUBDATA - Battery Only",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"hubdata\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"bat1\": 80\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "STATE - Active",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"state\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "STATE - Maintenance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"state\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"status\": \"maintenance\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "LOCK - Lock Device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"lock\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"lock\": 1,\n  \"type\": \"device\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "LOCK - Unlock Device",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"lock\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"lock\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "LOCK - Lock Sensor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"lock\",\n  \"sn\": \"{{test_sensor_sn}}\",\n  \"lock\": 1,\n  \"type\": \"sensor\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "IoT Data API - Error Tests",
+      "item": [
+        {
+          "name": "Error - Missing CMD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sn\": \"{{test_device_sn}}\",\n  \"bat1\": 85\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "Error - Invalid CMD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"invalid_command\",\n  \"sn\": \"{{test_device_sn}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "Error - Missing SN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"tpdata\",\n  \"tempValue\": 85.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "Error - Invalid SN (Not Found)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"tpdata\",\n  \"sn\": \"INVALID_SENSOR_SN\",\n  \"tempValue\": 85.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "Error - Invalid Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"state\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"status\": \"invalid_status\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "Error - Invalid Lock Value",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"lock\",\n  \"sn\": \"{{test_device_sn}}\",\n  \"lock\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        },
+        {
+          "name": "Error - No Auth Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cmd\": \"tpdata\",\n  \"sn\": \"{{test_sensor_sn}}\",\n  \"tempValue\": 85.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/iot/data",
+              "host": ["{{base_url}}"],
+              "path": ["api", "iot", "data"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5009",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "test_sensor_sn",
+      "value": "SENSOR001",
+      "type": "string"
+    },
+    {
+      "key": "test_device_sn",
+      "value": "DEVICE001",
+      "type": "string"
+    }
+  ]
+}
