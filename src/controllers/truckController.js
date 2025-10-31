@@ -804,12 +804,12 @@ const updateTruck = async (req, res) => {
     if (status !== undefined) updateData.status = status;
     if (driver_id !== undefined) updateData.driver_id = driver_id ? parseInt(driver_id) : null;
     if (vendor_id !== undefined) updateData.vendor_id = vendor_id ? parseInt(vendor_id) : null;
-    
+
     // Handle image upload
     if (req.file) {
       const newImageUrl = `/uploads/trucks/${req.file.filename}`;
       updateData.image = newImageUrl;
-      
+
       // Delete old image if exists
       if (existingTruck.image) {
         deleteImage(existingTruck.image);

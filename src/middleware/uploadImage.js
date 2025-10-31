@@ -42,14 +42,11 @@ const driverStorage = multer.diskStorage({
 // File filter for images only
 const imageFileFilter = (req, file, cb) => {
   const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-  
+
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(
-      new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'),
-      false
-    );
+    cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'), false);
   }
 };
 
@@ -102,7 +99,7 @@ const deleteImage = (imagePath) => {
   if (!imagePath) return;
 
   const fullPath = path.join(__dirname, '../../', imagePath);
-  
+
   if (fs.existsSync(fullPath)) {
     try {
       fs.unlinkSync(fullPath);

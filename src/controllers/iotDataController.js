@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 /**
  * Single endpoint to handle multiple data types based on 'cmd' field
- * 
+ *
  * CMD Types:
  * - tpdata: Temperature & Pressure data (updates sensor_data table)
  * - hubdata: Hub/Device data (updates device table)
@@ -33,16 +33,16 @@ const handleIoTData = async (req, res) => {
     switch (cmd.toLowerCase()) {
       case 'tpdata':
         return await handleTPData(req, res);
-      
+
       case 'hubdata':
         return await handleHubData(req, res);
-      
+
       case 'state':
         return await handleStateData(req, res);
-      
+
       case 'lock':
         return await handleLockData(req, res);
-      
+
       default:
         return res.status(400).json({
           success: false,
@@ -75,7 +75,7 @@ const handleIoTData = async (req, res) => {
  *   "exType": "normal",          // Exception type (optional)
  *   "bat": 85                    // Battery level (optional)
  * }
- * 
+ *
  * Note: Data is updated directly in sensor table
  * - For live dashboard: Get latest by `ORDER BY updated_at DESC LIMIT 1`
  * - For history: Get all records with `WHERE created_at BETWEEN ... ORDER BY created_at`
@@ -378,7 +378,7 @@ const handleLockData = async (req, res) => {
           updated_at: new Date(),
         },
       });
-      
+
       result = {
         type: 'device',
         device_id: device.id,
@@ -394,7 +394,7 @@ const handleLockData = async (req, res) => {
           sensor_lock: lockValue,
         },
       });
-      
+
       result = {
         type: 'sensor',
         sensor_id: sensor.id,
@@ -412,7 +412,7 @@ const handleLockData = async (req, res) => {
             updated_at: new Date(),
           },
         });
-        
+
         result = {
           type: 'device',
           device_id: device.id,
@@ -430,7 +430,7 @@ const handleLockData = async (req, res) => {
               sensor_lock: lockValue,
             },
           });
-          
+
           result = {
             type: 'sensor',
             sensor_id: sensor.id,
@@ -464,14 +464,14 @@ const handleLockData = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error in handleLockData:', error);
-    
+
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
         message: `Device or Sensor not found: ${req.body.sn}`,
       });
     }
-    
+
     throw error;
   }
 };

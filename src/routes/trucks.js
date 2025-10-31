@@ -51,10 +51,22 @@ router.put('/:id/alerts/:alertId/resolve', authMiddleware, truckController.resol
 router.put('/bulk/status', authMiddleware, truckController.bulkUpdateTruckStatus);
 
 // POST /api/trucks - Create new truck (protected)
-router.post('/', authMiddleware, uploadTruckImage, validateTruckCreate, truckController.createTruck);
+router.post(
+  '/',
+  authMiddleware,
+  uploadTruckImage,
+  validateTruckCreate,
+  truckController.createTruck
+);
 
 // PUT /api/trucks/:id - Update truck (protected)
-router.put('/:id', authMiddleware, uploadTruckImage, validateTruckUpdate, truckController.updateTruck);
+router.put(
+  '/:id',
+  authMiddleware,
+  uploadTruckImage,
+  validateTruckUpdate,
+  truckController.updateTruck
+);
 
 // DELETE /api/trucks/:id - Delete truck (protected)
 router.delete('/:id', authMiddleware, validateUUIDParam('id'), truckController.deleteTruck);
