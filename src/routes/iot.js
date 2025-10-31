@@ -14,7 +14,7 @@ const authMiddleware = require('../middleware/auth');
  * - state: Device state (updates device status)
  * - lock: Lock status (updates device or sensor)
  *
- * Authentication: Required
+ * Authentication: Required (JWT Bearer Token)
  */
 router.post('/data', authMiddleware, iotDataController.handleIoTData);
 
