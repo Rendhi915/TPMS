@@ -85,3 +85,6 @@ backup_*.sql
 config.local.js
 config.local.json
 .pm2/
+
+#docs
+IOT_CMD_TESTING.md

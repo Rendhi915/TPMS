@@ -202,18 +202,13 @@ exports.Prisma.SensorScalarFieldEnum = {
   sensorNo: 'sensorNo',
   sensor_lock: 'sensor_lock',
   status: 'status',
-  created_at: 'created_at',
-  deleted_at: 'deleted_at',
-};
-
-exports.Prisma.Sensor_dataScalarFieldEnum = {
-  id: 'id',
-  sensor_id: 'sensor_id',
   tempValue: 'tempValue',
   tirepValue: 'tirepValue',
   exType: 'exType',
   bat: 'bat',
-  recorded_at: 'recorded_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  deleted_at: 'deleted_at',
 };
 
 exports.Prisma.LocationScalarFieldEnum = {
@@ -282,7 +277,6 @@ exports.Prisma.ModelName = {
   user_admin: 'user_admin',
   device: 'device',
   sensor: 'sensor',
-  sensor_data: 'sensor_data',
   location: 'location',
   location_history: 'location_history',
   alert: 'alert',

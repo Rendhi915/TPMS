@@ -9,6 +9,7 @@ const fleetRoutes = require('./fleet');
 const vendorRoutes = require('./vendors');
 const driverRoutes = require('./drivers');
 const deviceRoutes = require('./devices');
+const iotRoutes = require('./iot');
 
 const router = express.Router();
 
@@ -22,6 +23,7 @@ router.use('/vendors', vendorRoutes);
 router.use('/drivers', driverRoutes);
 router.use('/devices', deviceRoutes);
 router.use('/fleet', fleetRoutes);
+router.use('/iot', iotRoutes);
 
 // Additional routes for frontend compatibility
 // Use dedicated history router to avoid path duplication like /location-history/location-history/:plateNumber
