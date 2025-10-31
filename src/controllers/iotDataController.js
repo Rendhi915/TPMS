@@ -17,9 +17,14 @@ const prisma = new PrismaClient();
  */
 const handleIoTData = async (req, res) => {
   try {
+    // Debug: Log incoming request
+    console.log('📥 [IoT Data] Incoming request body:', JSON.stringify(req.body, null, 2));
+    console.log('📥 [IoT Data] Content-Type:', req.get('Content-Type'));
+
     const { cmd } = req.body;
 
     if (!cmd) {
+      console.error('❌ [IoT Data] Missing cmd field. Body received:', req.body);
       return res.status(400).json({
         success: false,
         message: 'Missing required field: cmd',
