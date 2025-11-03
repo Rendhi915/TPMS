@@ -2,11 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sensorController = require('../controllers/sensorController');
 const { validateSensorData, handleValidationErrors } = require('../middleware/validation');
-const {
-  validateIntParam,
-  validatePagination,
-  validateUUIDParam,
-} = require('../middleware/crudValidation');
+const { validatePagination, validateUUIDParam } = require('../middleware/crudValidation');
 const authMiddleware = require('../middleware/auth');
 const rateLimiter = require('../middleware/rateLimiter');
 

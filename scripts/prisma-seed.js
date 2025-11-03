@@ -19,7 +19,7 @@ async function main() {
       console.log('✅ Admin user already exists');
     } else {
       // Buat user admin default
-      const admin = await prisma.user_admin.create({
+      await prisma.user_admin.create({
         data: {
           name: 'admin',
           email: 'admin@tpms.com',
