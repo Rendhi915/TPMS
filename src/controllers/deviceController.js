@@ -372,7 +372,7 @@ const deleteDevice = async (req, res) => {
 
 const getAllSensors = async (req, res) => {
   try {
-    const { page = 1, limit = 50, device_id, status } = req.query;
+    const { page = 1, limit = 50, device_id } = req.query;
     const skip = (page - 1) * limit;
 
     const where = {};

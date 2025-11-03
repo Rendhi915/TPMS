@@ -118,117 +118,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable',
 });
 
-exports.Prisma.VendorsScalarFieldEnum = {
-  id: 'id',
-  name_vendor: 'name_vendor',
-  address: 'address',
-  telephone: 'telephone',
-  email: 'email',
-  contact_person: 'contact_person',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  deleted_at: 'deleted_at',
-};
-
-exports.Prisma.DriversScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  phone: 'phone',
-  email: 'email',
-  license_number: 'license_number',
-  license_type: 'license_type',
-  license_expiry: 'license_expiry',
-  vendor_id: 'vendor_id',
-  status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  deleted_at: 'deleted_at',
-};
-
-exports.Prisma.TruckScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  image: 'image',
-  year: 'year',
-  model: 'model',
-  type: 'type',
-  vendor_id: 'vendor_id',
-  status: 'status',
-  vin: 'vin',
-  plate: 'plate',
-  driver_id: 'driver_id',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  deleted_at: 'deleted_at',
-  created_by: 'created_by',
-  updated_by: 'updated_by',
-};
-
-exports.Prisma.User_adminScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  email: 'email',
-  password: 'password',
-  role: 'role',
-  last_login: 'last_login',
-  status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  deleted_at: 'deleted_at',
-};
-
-exports.Prisma.DeviceScalarFieldEnum = {
-  id: 'id',
-  truck_id: 'truck_id',
-  sn: 'sn',
-  bat1: 'bat1',
-  bat2: 'bat2',
-  bat3: 'bat3',
-  lock: 'lock',
-  sim_number: 'sim_number',
-  installed_at: 'installed_at',
-  status: 'status',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  deleted_at: 'deleted_at',
-};
-
-exports.Prisma.SensorScalarFieldEnum = {
-  id: 'id',
-  sn: 'sn',
-  device_id: 'device_id',
-  tireNo: 'tireNo',
-  simNumber: 'simNumber',
-  sensorNo: 'sensorNo',
-  sensor_lock: 'sensor_lock',
-  status: 'status',
-  tempValue: 'tempValue',
-  tirepValue: 'tirepValue',
-  exType: 'exType',
-  bat: 'bat',
-  created_at: 'created_at',
-  updated_at: 'updated_at',
-  deleted_at: 'deleted_at',
-};
-
-exports.Prisma.LocationScalarFieldEnum = {
-  id: 'id',
-  device_id: 'device_id',
-  lat: 'lat',
-  long: 'long',
-  recorded_at: 'recorded_at',
-  created_at: 'created_at',
-};
-
-exports.Prisma.Location_historyScalarFieldEnum = {
-  id: 'id',
-  location_id: 'location_id',
-  device_id: 'device_id',
-  lat: 'lat',
-  long: 'long',
-  recorded_at: 'recorded_at',
-};
-
 exports.Prisma.AlertScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -255,6 +144,108 @@ exports.Prisma.Alert_eventsScalarFieldEnum = {
   resolved_at: 'resolved_at',
 };
 
+exports.Prisma.DeviceScalarFieldEnum = {
+  id: 'id',
+  truck_id: 'truck_id',
+  sn: 'sn',
+  sim_number: 'sim_number',
+  installed_at: 'installed_at',
+  bat1: 'bat1',
+  bat2: 'bat2',
+  bat3: 'bat3',
+  created_at: 'created_at',
+  deleted_at: 'deleted_at',
+  lock: 'lock',
+  status: 'status',
+  updated_at: 'updated_at',
+};
+
+exports.Prisma.DriversScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  license_number: 'license_number',
+  license_type: 'license_type',
+  license_expiry: 'license_expiry',
+  vendor_id: 'vendor_id',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  deleted_at: 'deleted_at',
+};
+
+exports.Prisma.LocationScalarFieldEnum = {
+  id: 'id',
+  device_id: 'device_id',
+  lat: 'lat',
+  long: 'long',
+  created_at: 'created_at',
+  recorded_at: 'recorded_at',
+};
+
+exports.Prisma.SensorScalarFieldEnum = {
+  id: 'id',
+  device_id: 'device_id',
+  sn: 'sn',
+  tireNo: 'tireNo',
+  simNumber: 'simNumber',
+  sensorNo: 'sensorNo',
+  sensor_lock: 'sensor_lock',
+  status: 'status',
+  tempValue: 'tempValue',
+  tirepValue: 'tirepValue',
+  exType: 'exType',
+  bat: 'bat',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  deleted_at: 'deleted_at',
+};
+
+exports.Prisma.TruckScalarFieldEnum = {
+  id: 'id',
+  vin: 'vin',
+  name: 'name',
+  model: 'model',
+  year: 'year',
+  vendor_id: 'vendor_id',
+  created_at: 'created_at',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  deleted_at: 'deleted_at',
+  driver_id: 'driver_id',
+  image: 'image',
+  plate: 'plate',
+  status: 'status',
+  type: 'type',
+  updated_at: 'updated_at',
+};
+
+exports.Prisma.User_adminScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  last_login: 'last_login',
+  status: 'status',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  deleted_at: 'deleted_at',
+};
+
+exports.Prisma.VendorsScalarFieldEnum = {
+  id: 'id',
+  address: 'address',
+  email: 'email',
+  contact_person: 'contact_person',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  deleted_at: 'deleted_at',
+  name_vendor: 'name_vendor',
+  telephone: 'telephone',
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc',
@@ -271,16 +262,15 @@ exports.Prisma.NullsOrder = {
 };
 
 exports.Prisma.ModelName = {
-  vendors: 'vendors',
-  drivers: 'drivers',
-  truck: 'truck',
-  user_admin: 'user_admin',
-  device: 'device',
-  sensor: 'sensor',
-  location: 'location',
-  location_history: 'location_history',
   alert: 'alert',
   alert_events: 'alert_events',
+  device: 'device',
+  drivers: 'drivers',
+  location: 'location',
+  sensor: 'sensor',
+  truck: 'truck',
+  user_admin: 'user_admin',
+  vendors: 'vendors',
 };
 
 /**
