@@ -83,7 +83,7 @@ class SimplePrismaService {
     if (vendorId) {
       where.vendor_id = parseInt(vendorId);
     } else if (vendor) {
-      where.vendor = { name_vendor: { equals: vendor, mode: 'insensitive' } };
+      where.vendors = { name_vendor: { equals: vendor, mode: 'insensitive' } };
     }
 
     console.log('📋 Query where clause:', JSON.stringify(where, null, 2));
@@ -95,7 +95,7 @@ class SimplePrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          vendor: {
+          vendors: {
             select: {
               id: true,
               name_vendor: true,
@@ -103,7 +103,7 @@ class SimplePrismaService {
               email: true,
             },
           },
-          driver: {
+          drivers: {
             select: {
               id: true,
               name: true,
@@ -111,7 +111,7 @@ class SimplePrismaService {
               license_number: true,
             },
           },
-          devices: {
+          device: {
             where: { deleted_at: null },
             select: {
               id: true,
@@ -183,7 +183,7 @@ class SimplePrismaService {
       const truck = await this.prisma.truck.findUnique({
         where: { id: truckId },
         include: {
-          vendor: {
+          vendors: {
             select: {
               id: true,
               name_vendor: true,
@@ -191,7 +191,7 @@ class SimplePrismaService {
               email: true,
             },
           },
-          driver: {
+          drivers: {
             select: {
               id: true,
               name: true,
@@ -200,19 +200,13 @@ class SimplePrismaService {
               license_type: true,
             },
           },
-          devices: {
+          device: {
             where: { deleted_at: null },
             include: {
-              sensors: {
+              sensor: {
                 where: { deleted_at: null },
-                include: {
-                  sensor_data: {
-                    orderBy: { recorded_at: 'desc' },
-                    take: 1,
-                  },
-                },
               },
-              locations: {
+              location: {
                 orderBy: { created_at: 'desc' },
                 take: 1,
               },
@@ -309,22 +303,22 @@ class SimplePrismaService {
       const trucks = await this.prisma.truck.findMany({
         where,
         include: {
-          vendor: {
+          vendors: {
             select: {
               id: true,
               name_vendor: true,
             },
           },
-          driver: {
+          drivers: {
             select: {
               id: true,
               name: true,
             },
           },
-          devices: {
+          device: {
             where: { deleted_at: null },
             include: {
-              locations: {
+              location: {
                 orderBy: { created_at: 'desc' },
                 take: 1,
               },
@@ -346,9 +340,9 @@ class SimplePrismaService {
       const geoJsonData = {
         type: 'FeatureCollection',
         features: trucks
-          .filter((truck) => truck.devices.length > 0 && truck.devices[0].locations.length > 0)
+          .filter((truck) => truck.device.length > 0 && truck.device[0].location.length > 0)
           .map((truck) => {
-            const latestLocation = truck.devices[0].locations[0];
+            const latestLocation = truck.device[0].location[0];
             return {
               type: 'Feature',
               properties: {
@@ -358,8 +352,8 @@ class SimplePrismaService {
                 model: truck.model,
                 plate: truck.plate,
                 status: truck.status || 'active',
-                driver: truck.driver?.name || null,
-                vendor: truck.vendor?.name_vendor || null,
+                driver: truck.drivers?.name || null,
+                vendor: truck.vendors?.name_vendor || null,
                 lastUpdate: latestLocation.created_at,
                 alertCount: truck._count.alert_events,
               },
@@ -546,21 +540,21 @@ class SimplePrismaService {
       status: truck.status,
       driver_id: truck.driver_id,
       image: truck.image,
-      vendor: truck.vendor
+      vendor: truck.vendors
         ? {
-            id: truck.vendor.id,
-            name: truck.vendor.name_vendor,
+            id: truck.vendors.id,
+            name: truck.vendors.name_vendor,
           }
         : null,
-      driver: truck.driver
+      driver: truck.drivers
         ? {
-            id: truck.driver.id,
-            name: truck.driver.name,
-            license_number: truck.driver.license_number,
+            id: truck.drivers.id,
+            name: truck.drivers.name,
+            license_number: truck.drivers.license_number,
           }
         : null,
-      devices: truck.devices
-        ? truck.devices.map((device) => ({
+      devices: truck.device
+        ? truck.device.map((device) => ({
             id: device.id,
             deviceId: device.deviceId,
             bat1: device.bat1,
@@ -580,41 +574,35 @@ class SimplePrismaService {
     const formatted = this.formatTruckResponse(truck);
 
     // Add sensor data from devices if available
-    if (truck.devices) {
-      formatted.devices = truck.devices.map((device) => ({
+    if (truck.device) {
+      formatted.devices = truck.device.map((device) => ({
         id: device.id,
-        deviceId: device.deviceId,
+        deviceId: device.sn,
         bat1: device.bat1,
         bat2: device.bat2,
         bat3: device.bat3,
         lock: device.lock,
         status: device.status,
-        sensors: device.sensors
-          ? device.sensors.map((sensor) => ({
+        sensors: device.sensor
+          ? device.sensor.map((sensor) => ({
               id: sensor.id,
+              sensorId: sensor.sn,
               tireNo: sensor.tireNo,
               simNumber: sensor.simNumber,
               sensorNo: sensor.sensorNo,
               sensor_lock: sensor.sensor_lock,
-              lastData:
-                sensor.sensor_data && sensor.sensor_data[0]
-                  ? {
-                      pressure: sensor.sensor_data[0].tiprValue,
-                      temperature: sensor.sensor_data[0].tempValue,
-                      battery: sensor.sensor_data[0].bat,
-                      timestamp: sensor.sensor_data[0].created_at,
-                    }
-                  : null,
+              temperature: sensor.tempValue,
+              pressure: sensor.tirepValue,
+              battery: sensor.bat,
+              status: sensor.status,
             }))
           : [],
         lastLocation:
-          device.locations && device.locations[0]
+          device.location && device.location[0]
             ? {
-                lat: device.locations[0].lat,
-                long: device.locations[0].long,
-                speed: device.locations[0].speed,
-                heading: device.locations[0].heading,
-                timestamp: device.locations[0].created_at,
+                lat: device.location[0].lat,
+                long: device.location[0].long,
+                timestamp: device.location[0].created_at,
               }
             : null,
       }));

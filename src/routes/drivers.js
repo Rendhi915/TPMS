@@ -40,7 +40,7 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
       prisma.drivers.findMany({
         where,
         include: {
-          vendor: {
+          vendors: {
             select: {
               id: true,
               name_vendor: true,
@@ -68,11 +68,11 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
       license_type: driver.license_type,
       license_expiry: driver.license_expiry,
       status: driver.status,
-      vendor: driver.vendor
+      vendor: driver.vendors
         ? {
-            id: driver.vendor.id,
-            name: driver.vendor.name_vendor,
-            telephone: driver.vendor.telephone,
+            id: driver.vendors.id,
+            name: driver.vendors.name_vendor,
+            telephone: driver.vendors.telephone,
           }
         : null,
       created_at: driver.created_at,
@@ -115,7 +115,7 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
         deleted_at: null,
       },
       include: {
-        vendor: {
+        vendors: {
           select: {
             id: true,
             name_vendor: true,
@@ -142,12 +142,12 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
       license_type: driver.license_type,
       license_expiry: driver.license_expiry,
       status: driver.status,
-      vendor: driver.vendor
+      vendor: driver.vendors
         ? {
-            id: driver.vendor.id,
-            name: driver.vendor.name_vendor,
-            address: driver.vendor.address,
-            telephone: driver.vendor.telephone,
+            id: driver.vendors.id,
+            name: driver.vendors.name_vendor,
+            address: driver.vendors.address,
+            telephone: driver.vendors.telephone,
           }
         : null,
       created_at: driver.created_at,
@@ -199,7 +199,7 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
         status,
       },
       include: {
-        vendor: {
+        vendors: {
           select: {
             id: true,
             name_vendor: true,
@@ -219,10 +219,10 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
         license_type: driver.license_type,
         license_expiry: driver.license_expiry,
         status: driver.status,
-        vendor: driver.vendor
+        vendor: driver.vendors
           ? {
-              id: driver.vendor.id,
-              name: driver.vendor.name_vendor,
+              id: driver.vendors.id,
+              name: driver.vendors.name_vendor,
             }
           : null,
         created_at: driver.created_at,
@@ -277,7 +277,7 @@ router.put(
         },
         data: updateData,
         include: {
-          vendor: {
+          vendors: {
             select: {
               id: true,
               name_vendor: true,
@@ -297,10 +297,10 @@ router.put(
           license_type: driver.license_type,
           license_expiry: driver.license_expiry,
           status: driver.status,
-          vendor: driver.vendor
+          vendor: driver.vendors
             ? {
-                id: driver.vendor.id,
-                name: driver.vendor.name_vendor,
+                id: driver.vendors.id,
+                name: driver.vendors.name_vendor,
               }
             : null,
           updated_at: driver.updated_at,
@@ -391,7 +391,7 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
         deleted_at: null,
       },
       include: {
-        vendor: {
+        vendors: {
           select: {
             id: true,
             name_vendor: true,
@@ -411,10 +411,10 @@ router.get('/expiring-licenses', authMiddleware, async (req, res) => {
       license_type: driver.license_type,
       license_expiry: driver.license_expiry,
       status: driver.status,
-      vendor: driver.vendor
+      vendor: driver.vendors
         ? {
-            id: driver.vendor.id,
-            name: driver.vendor.name_vendor,
+            id: driver.vendors.id,
+            name: driver.vendors.name_vendor,
           }
         : null,
     }));
