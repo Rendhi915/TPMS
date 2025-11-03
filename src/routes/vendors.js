@@ -182,7 +182,7 @@ router.get(
             deleted_at: null,
           },
           include: {
-            vendor: {
+            vendors: {
               select: {
                 name_vendor: true,
               },
@@ -212,7 +212,7 @@ router.get(
         type: truck.type,
         status: truck.status,
         created_at: truck.created_at,
-        vendor_name: truck.vendor?.name_vendor,
+        vendor_name: truck.vendors?.name_vendor,
       }));
 
       res.status(200).json({

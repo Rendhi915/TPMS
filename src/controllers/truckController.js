@@ -679,13 +679,13 @@ const createTruck = async (req, res) => {
         image: imageUrl,
       },
       include: {
-        vendor: {
+        vendors: {
           select: {
             id: true,
             name_vendor: true,
           },
         },
-        driver: {
+        drivers: {
           select: {
             id: true,
             name: true,
@@ -695,9 +695,23 @@ const createTruck = async (req, res) => {
       },
     });
 
+    // Normalize response to keep backwards compatibility with frontend
+    const normalizedTruck = Object.assign({}, truck, {
+      vendor: truck.vendors
+        ? { id: truck.vendors.id, name_vendor: truck.vendors.name_vendor }
+        : null,
+      driver: truck.drivers
+        ? {
+            id: truck.drivers.id,
+            name: truck.drivers.name,
+            license_number: truck.drivers.license_number,
+          }
+        : null,
+    });
+
     res.status(201).json({
       success: true,
-      data: truck,
+      data: normalizedTruck,
       message: 'Truck created successfully',
     });
   } catch (error) {
@@ -822,13 +836,13 @@ const updateTruck = async (req, res) => {
       where: { id: id },
       data: updateData,
       include: {
-        vendor: {
+        vendors: {
           select: {
             id: true,
             name_vendor: true,
           },
         },
-        driver: {
+        drivers: {
           select: {
             id: true,
             name: true,
@@ -838,9 +852,23 @@ const updateTruck = async (req, res) => {
       },
     });
 
+    // Normalize response to keep backwards compatibility
+    const normalizedTruck = Object.assign({}, truck, {
+      vendor: truck.vendors
+        ? { id: truck.vendors.id, name_vendor: truck.vendors.name_vendor }
+        : null,
+      driver: truck.drivers
+        ? {
+            id: truck.drivers.id,
+            name: truck.drivers.name,
+            license_number: truck.drivers.license_number,
+          }
+        : null,
+    });
+
     res.status(200).json({
       success: true,
-      data: truck,
+      data: normalizedTruck,
       message: 'Truck updated successfully',
     });
   } catch (error) {
@@ -976,13 +1004,13 @@ const getTrucksByStatus = async (req, res) => {
           deleted_at: null,
         },
         include: {
-          vendor: {
+          vendors: {
             select: {
               id: true,
               name_vendor: true,
             },
           },
-          driver: {
+          drivers: {
             select: {
               id: true,
               name: true,
@@ -1015,13 +1043,13 @@ const getTrucksByStatus = async (req, res) => {
           model: truck.model,
           type: truck.type,
           status: truck.status,
-          vendor: truck.vendor
+          vendor: truck.vendors
             ? {
-                id: truck.vendor.id,
-                name: truck.vendor.name_vendor,
+                id: truck.vendors.id,
+                name: truck.vendors.name_vendor,
               }
             : null,
-          driver: truck.driver,
+          driver: truck.drivers,
           created_at: truck.created_at,
         })),
         pagination: {
