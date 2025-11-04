@@ -6,7 +6,7 @@ const { uploadTruckImage } = require('../middleware/uploadImage');
 const {
   validateTruckCreate,
   validateTruckUpdate,
-  validateUUIDParam,
+  validateIntParam,
   validatePagination,
 } = require('../middleware/crudValidation');
 
@@ -69,7 +69,7 @@ router.put(
 );
 
 // DELETE /api/trucks/:id - Delete truck (protected)
-router.delete('/:id', authMiddleware, validateUUIDParam('id'), truckController.deleteTruck);
+router.delete('/:id', authMiddleware, validateIntParam('id'), truckController.deleteTruck);
 
 // Compatibility routes moved to src/routes/history.js and mounted in routes/index.js
 

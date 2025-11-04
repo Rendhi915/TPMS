@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/auth');
 const {
   validateMiningZoneCreate,
   validateMiningZoneUpdate,
-  validateUUIDParam,
+  validateIntParam,
 } = require('../middleware/crudValidation');
 
 // GET /api/mining-area - Get all mining areas (GeoJSON) (protected)
@@ -41,7 +41,7 @@ router.put(
 router.delete(
   '/:zoneId',
   authMiddleware,
-  validateUUIDParam('zoneId'),
+  validateIntParam('zoneId'),
   miningAreaController.deleteMiningZone
 );
 
