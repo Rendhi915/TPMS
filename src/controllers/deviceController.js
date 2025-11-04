@@ -157,31 +157,31 @@ const getDeviceById = async (req, res) => {
 
 const createDevice = async (req, res) => {
   try {
-    const { truck_id, deviceId, simNumber, bat1, bat2, bat3, lock, status } = req.body;
+    const { truck_id, sn, sim_number, bat1, bat2, bat3, lock, status } = req.body;
 
     // Validate required fields
-    if (!truck_id || !deviceId) {
+    if (!truck_id || !sn) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: truck_id, deviceId',
+        message: 'Missing required fields: truck_id, sn',
       });
     }
 
-    // Check if device with same deviceId already exists
+    // Check if device with same sn already exists
     const existingDevice = await prisma.device.findUnique({
-      where: { deviceId: deviceId },
+      where: { sn: sn },
     });
 
     if (existingDevice) {
       return res.status(409).json({
         success: false,
-        message: 'Device with this deviceId already exists',
+        message: 'Device with this serial number already exists',
       });
     }
 
     // Validate truck exists
     const truck = await prisma.truck.findUnique({
-      where: { id: truck_id },
+      where: { id: parseInt(truck_id) },
     });
 
     if (!truck) {
@@ -193,9 +193,9 @@ const createDevice = async (req, res) => {
 
     const device = await prisma.device.create({
       data: {
-        truck_id,
-        deviceId,
-        simNumber,
+        truck_id: parseInt(truck_id),
+        sn,
+        sim_number,
         bat1: bat1 || 0,
         bat2: bat2 || 0,
         bat3: bat3 || 0,

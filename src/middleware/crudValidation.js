@@ -25,7 +25,7 @@ const handleValidationErrors = (req, res, next) => {
 // ==========================================
 
 const validateVendorCreate = [
-  body('name')
+  body('name_vendor')
     .notEmpty()
     .withMessage('Vendor name is required')
     .isLength({ min: 2, max: 255 })
@@ -53,7 +53,7 @@ const validateVendorCreate = [
 
 const validateVendorUpdate = [
   param('vendorId').isInt({ min: 1 }).withMessage('Invalid vendor ID'),
-  body('name')
+  body('name_vendor')
     .optional({ checkFalsy: true })
     .isLength({ min: 2, max: 255 })
     .withMessage('Vendor name must be between 2 and 255 characters'),

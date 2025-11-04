@@ -251,16 +251,19 @@ class SimplePrismaService {
         select: {
           id: true,
           name: true,
-          devices: {
+          device: {
             where: { deleted_at: null },
             include: {
-              sensors: {
+              sensor: {
                 where: { deleted_at: null },
-                include: {
-                  sensor_data: {
-                    orderBy: { recorded_at: 'desc' },
-                    take: 1,
-                  },
+                select: {
+                  id: true,
+                  tireNo: true,
+                  tempValue: true,
+                  tirepValue: true,
+                  bat: true,
+                  status: true,
+                  updated_at: true,
                 },
               },
             },
@@ -274,20 +277,17 @@ class SimplePrismaService {
 
       // Collect sensor data from all devices/sensors
       const tirePressures = [];
-      for (const device of truck.devices) {
-        for (const sensor of device.sensors) {
-          if (sensor.sensor_data.length > 0) {
-            const data = sensor.sensor_data[0];
-            tirePressures.push({
-              position: `Tire ${sensor.tireNo}`,
-              tireNumber: sensor.tireNo,
-              pressure: data.tiprValue ? parseFloat(data.tiprValue) : null,
-              status: data.tiprValue && data.tiprValue > 100 ? 'normal' : 'low',
-              temperature: data.tempValue ? parseFloat(data.tempValue) : null,
-              battery: data.bat || null,
-              lastUpdated: data.recorded_at,
-            });
-          }
+      for (const dev of truck.device) {
+        for (const sens of dev.sensor) {
+          tirePressures.push({
+            position: `Tire ${sens.tireNo}`,
+            tireNumber: sens.tireNo,
+            pressure: sens.tirepValue ? parseFloat(sens.tirepValue) : null,
+            status: sens.tirepValue && sens.tirepValue > 30 ? 'normal' : 'low',
+            temperature: sens.tempValue ? parseFloat(sens.tempValue) : null,
+            battery: sens.bat || null,
+            lastUpdated: sens.updated_at,
+          });
         }
       }
 
