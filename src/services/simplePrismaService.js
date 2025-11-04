@@ -557,8 +557,8 @@ class SimplePrismaService {
     return {
       id: truck.id,
       name: truck.name,
-      plate: truck.plate,
       vin: truck.vin,
+      plate: truck.plate,
       model: truck.model,
       year: truck.year,
       type: truck.type,
@@ -570,12 +570,15 @@ class SimplePrismaService {
         ? {
             id: truck.vendors.id,
             name: truck.vendors.name_vendor,
+            telephone: truck.vendors.telephone,
+            email: truck.vendors.email,
           }
         : null,
       driver: truck.drivers
         ? {
             id: truck.drivers.id,
             name: truck.drivers.name,
+            phone: truck.drivers.phone,
             license_number: truck.drivers.license_number,
           }
         : null,
