@@ -23,7 +23,7 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
           deleted_at: null,
         },
         include: {
-          trucks: {
+          truck: {
             where: { deleted_at: null },
             select: {
               id: true,
@@ -62,9 +62,9 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
       contact_person: vendor.contact_person,
       created_at: vendor.created_at,
       updated_at: vendor.updated_at,
-      trucks: vendor.trucks,
+      trucks: vendor.truck,
       drivers: vendor.drivers,
-      truckCount: vendor.trucks.length,
+      truckCount: vendor.truck.length,
       driverCount: vendor.drivers.length,
     }));
 
@@ -105,7 +105,7 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
         id: parseInt(vendorId),
       },
       include: {
-        trucks: {
+        truck: {
           where: { deleted_at: null },
           select: {
             id: true,
@@ -141,9 +141,9 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
       contact_person: vendor.contact_person,
       created_at: vendor.created_at,
       updated_at: vendor.updated_at,
-      trucks: vendor.trucks,
+      trucks: vendor.truck,
       drivers: vendor.drivers,
-      truck_count: vendor.trucks.length,
+      truck_count: vendor.truck.length,
       driver_count: vendor.drivers.length,
     };
 
@@ -354,7 +354,7 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
       where: { id: parseInt(vendorId) },
       data: updateData,
       include: {
-        trucks: {
+        truck: {
           where: { deleted_at: null },
           select: {
             id: true,
@@ -385,9 +385,9 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
         telephone: vendor.telephone,
         email: vendor.email,
         contact_person: vendor.contact_person,
-        trucks: vendor.trucks,
+        trucks: vendor.truck,
         drivers: vendor.drivers,
-        truck_count: vendor.trucks.length,
+        truck_count: vendor.truck.length,
         driver_count: vendor.drivers.length,
         updated_at: vendor.updated_at,
       },
@@ -421,7 +421,7 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
         deleted_at: null,
       },
       include: {
-        trucks: {
+        truck: {
           where: { deleted_at: null },
         },
         drivers: {
@@ -438,7 +438,7 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
     }
 
     // Check if vendor has active trucks or drivers
-    if (vendor.trucks.length > 0 || vendor.drivers.length > 0) {
+    if (vendor.truck.length > 0 || vendor.drivers.length > 0) {
       return res.status(400).json({
         success: false,
         message:

@@ -472,7 +472,15 @@ const getAllSensors = async (req, res) => {
  */
 const getSensorById = async (req, res) => {
   try {
-    const sensorId = req.params.id; // UUID, not parseInt
+    const sensorId = parseInt(req.params.id);
+
+    // Validate sensor ID
+    if (isNaN(sensorId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid sensor ID provided',
+      });
+    }
 
     const sensor = await prisma.sensor.findFirst({
       where: {
@@ -621,8 +629,16 @@ const createSensor = async (req, res) => {
  */
 const updateSensor = async (req, res) => {
   try {
-    const sensorId = req.params.id; // UUID
+    const sensorId = parseInt(req.params.id);
     const { sn, device_id, tireNo, simNumber, sensorNo, sensor_lock, status } = req.body;
+
+    // Validate sensor ID
+    if (isNaN(sensorId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid sensor ID provided',
+      });
+    }
 
     // Check if sensor exists
     const existingSensor = await prisma.sensor.findFirst({
@@ -641,8 +657,9 @@ const updateSensor = async (req, res) => {
 
     // Check if device_id is being updated and exists
     if (device_id && device_id !== existingSensor.device_id) {
+      const deviceIdInt = parseInt(device_id);
       const device = await prisma.device.findUnique({
-        where: { id: device_id }, // UUID
+        where: { id: deviceIdInt },
       });
 
       if (!device) {
@@ -743,7 +760,15 @@ const updateSensor = async (req, res) => {
  */
 const deleteSensor = async (req, res) => {
   try {
-    const sensorId = req.params.id; // UUID
+    const sensorId = parseInt(req.params.id);
+
+    // Validate sensor ID
+    if (isNaN(sensorId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid sensor ID provided',
+      });
+    }
 
     // Check if sensor exists
     const sensor = await prisma.sensor.findFirst({

@@ -180,8 +180,15 @@ class SimplePrismaService {
 
   async getTruckById(truckId) {
     try {
+      // Ensure truckId is an integer
+      const id = typeof truckId === 'string' ? parseInt(truckId) : truckId;
+
+      if (isNaN(id)) {
+        throw new Error('Invalid truck ID provided');
+      }
+
       const truck = await this.prisma.truck.findUnique({
-        where: { id: truckId },
+        where: { id: id },
         include: {
           vendors: {
             select: {
@@ -232,8 +239,15 @@ class SimplePrismaService {
 
   async getTruckTires(truckId) {
     try {
+      // Ensure truckId is an integer
+      const id = typeof truckId === 'string' ? parseInt(truckId) : truckId;
+
+      if (isNaN(id)) {
+        throw new Error('Invalid truck ID provided');
+      }
+
       const truck = await this.prisma.truck.findUnique({
-        where: { id: truckId },
+        where: { id: id },
         select: {
           id: true,
           name: true,
@@ -374,9 +388,16 @@ class SimplePrismaService {
 
   async updateTruckStatus(truckId, newStatus) {
     try {
+      // Ensure truckId is an integer
+      const id = typeof truckId === 'string' ? parseInt(truckId) : truckId;
+
+      if (isNaN(id)) {
+        throw new Error('Invalid truck ID provided');
+      }
+
       // Update truck status directly (no event table anymore)
       const truck = await this.prisma.truck.update({
-        where: { id: truckId },
+        where: { id: id },
         data: {
           status: newStatus,
           updated_at: new Date(),

@@ -7,7 +7,7 @@ const {
   validateDeviceUpdate,
   validateSensorCreate,
   validateSensorUpdate,
-  validateUUIDParam,
+  validateIntParam,
   validatePagination,
 } = require('../middleware/crudValidation');
 
@@ -22,7 +22,7 @@ router.get('/', authMiddleware, validatePagination, deviceController.getAllDevic
 router.get(
   '/:deviceId',
   authMiddleware,
-  validateUUIDParam('deviceId'),
+  validateIntParam('deviceId'),
   deviceController.getDeviceById
 );
 
@@ -39,7 +39,7 @@ router.put('/:deviceId', authMiddleware, validateDeviceUpdate, deviceController.
 router.delete(
   '/:deviceId',
   authMiddleware,
-  validateUUIDParam('deviceId'),
+  validateIntParam('deviceId'),
   deviceController.deleteDevice
 );
 
@@ -54,7 +54,7 @@ router.get('/sensors/all', authMiddleware, validatePagination, deviceController.
 router.get(
   '/sensors/:sensorId',
   authMiddleware,
-  validateUUIDParam('sensorId'),
+  validateIntParam('sensorId'),
   deviceController.getSensorById
 );
 
@@ -73,7 +73,7 @@ router.put(
 router.delete(
   '/sensors/:sensorId',
   authMiddleware,
-  validateUUIDParam('sensorId'),
+  validateIntParam('sensorId'),
   deviceController.deleteSensor
 );
 

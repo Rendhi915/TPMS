@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sensorController = require('../controllers/sensorController');
 const { validateSensorData, handleValidationErrors } = require('../middleware/validation');
-const { validatePagination, validateUUIDParam } = require('../middleware/crudValidation');
+const { validatePagination, validateIntParam } = require('../middleware/crudValidation');
 const authMiddleware = require('../middleware/auth');
 const rateLimiter = require('../middleware/rateLimiter');
 
@@ -48,12 +48,12 @@ router.post('/create', authMiddleware, sensorController.createSensor);
 router.get('/', authMiddleware, validatePagination, sensorController.getAllSensors);
 
 // GET /api/sensors/:id - Get sensor by ID
-router.get('/:id', authMiddleware, validateUUIDParam('id'), sensorController.getSensorById);
+router.get('/:id', authMiddleware, validateIntParam('id'), sensorController.getSensorById);
 
 // PUT /api/sensors/:id - Update sensor
-router.put('/:id', authMiddleware, validateUUIDParam('id'), sensorController.updateSensor);
+router.put('/:id', authMiddleware, validateIntParam('id'), sensorController.updateSensor);
 
 // DELETE /api/sensors/:id - Delete sensor (soft delete)
-router.delete('/:id', authMiddleware, validateUUIDParam('id'), sensorController.deleteSensor);
+router.delete('/:id', authMiddleware, validateIntParam('id'), sensorController.deleteSensor);
 
 module.exports = router;

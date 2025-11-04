@@ -38,7 +38,7 @@ const getAllDevices = async (req, res) => {
               status: true,
             },
           },
-          sensors: {
+          sensor: {
             where: { deleted_at: null },
             select: {
               id: true,
@@ -87,7 +87,15 @@ const getAllDevices = async (req, res) => {
 
 const getDeviceById = async (req, res) => {
   try {
-    const { deviceId } = req.params;
+    const deviceId = parseInt(req.params.deviceId);
+
+    // Validate device ID
+    if (isNaN(deviceId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid device ID provided',
+      });
+    }
 
     const device = await prisma.device.findUnique({
       where: { id: deviceId },
@@ -100,7 +108,7 @@ const getDeviceById = async (req, res) => {
             status: true,
           },
         },
-        sensors: {
+        sensor: {
           where: { deleted_at: null },
           select: {
             id: true,
@@ -112,15 +120,13 @@ const getDeviceById = async (req, res) => {
             deleted_at: true,
           },
         },
-        locations: {
+        location: {
           orderBy: { created_at: 'desc' },
           take: 10,
           select: {
             id: true,
             lat: true,
             long: true,
-            speed: true,
-            heading: true,
             created_at: true,
           },
         },
@@ -225,8 +231,16 @@ const createDevice = async (req, res) => {
 
 const updateDevice = async (req, res) => {
   try {
-    const { deviceId } = req.params;
+    const deviceId = parseInt(req.params.deviceId);
     const { truck_id, deviceId: newDeviceId, simNumber, bat1, bat2, bat3, lock, status } = req.body;
+
+    // Validate device ID
+    if (isNaN(deviceId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid device ID provided',
+      });
+    }
 
     // Check if device exists
     const existingDevice = await prisma.device.findUnique({
@@ -310,14 +324,22 @@ const updateDevice = async (req, res) => {
 
 const deleteDevice = async (req, res) => {
   try {
-    const { deviceId } = req.params;
+    const deviceId = parseInt(req.params.deviceId);
+
+    // Validate device ID
+    if (isNaN(deviceId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid device ID provided',
+      });
+    }
 
     // Check if device exists
     const device = await prisma.device.findUnique({
       where: { id: deviceId },
       include: {
-        sensors: { where: { deleted_at: null } },
-        locations: { take: 1 },
+        sensor: { where: { deleted_at: null } },
+        location: { take: 1 },
       },
     });
 
@@ -329,7 +351,7 @@ const deleteDevice = async (req, res) => {
     }
 
     // Check if device has associated data
-    const hasData = device.sensors.length > 0 || device.locations.length > 0;
+    const hasData = device.sensor.length > 0 || device.location.length > 0;
 
     if (hasData) {
       // Soft delete - mark as removed
@@ -900,7 +922,7 @@ const createDeviceWithSensors = async (req, res) => {
               status: true,
             },
           },
-          sensors: {
+          sensor: {
             where: { deleted_at: null },
             orderBy: { tireNo: 'asc' },
           },
@@ -913,7 +935,7 @@ const createDeviceWithSensors = async (req, res) => {
     res.status(201).json({
       success: true,
       data: result,
-      message: `Device created successfully with ${result.sensors.length} sensor(s)`,
+      message: `Device created successfully with ${result.sensor.length} sensor(s)`,
     });
   } catch (error) {
     console.error('Error creating device with sensors:', error);

@@ -71,7 +71,15 @@ const getAllTrucks = async (req, res) => {
 
 const getTruckById = async (req, res) => {
   try {
-    const truckId = req.params.id; // UUID expected
+    const truckId = parseInt(req.params.id); // Convert string to integer
+
+    // Validate truck ID
+    if (isNaN(truckId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     const truck = await prismaService.getTruckById(truckId);
 
@@ -100,7 +108,15 @@ const getTruckById = async (req, res) => {
 
 const getTruckTires = async (req, res) => {
   try {
-    const truckId = req.params.id; // UUID string accepted
+    const truckId = parseInt(req.params.id); // Convert string to integer
+
+    // Validate truck ID
+    if (isNaN(truckId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     const tireData = await prismaService.getTruckTires(truckId);
 
@@ -159,11 +175,11 @@ const getRealtimeLocations = async (req, res) => {
 
 const updateTruckStatus = async (req, res) => {
   try {
-    const truckId = req.params.id;
+    const truckId = parseInt(req.params.id); // Convert string to integer
     const { status } = req.body;
 
     // Validate truck ID
-    if (!truckId || isNaN(parseInt(truckId))) {
+    if (!truckId || isNaN(truckId)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid truck ID provided',
@@ -223,8 +239,16 @@ const updateTruckStatus = async (req, res) => {
 
 const getTruckLocationHistory = async (req, res) => {
   try {
-    const truckId = req.params.id;
+    const truckId = parseInt(req.params.id); // Convert string to integer
     const { hours = 24, limit = 100 } = req.query;
+
+    // Validate truck ID
+    if (isNaN(truckId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     // Calculate time range
     const since = new Date();
@@ -234,10 +258,10 @@ const getTruckLocationHistory = async (req, res) => {
     const truck = await prismaService.prisma.truck.findUnique({
       where: { id: truckId },
       include: {
-        devices: {
+        device: {
           where: { deleted_at: null },
           include: {
-            locations: {
+            location: {
               where: {
                 created_at: { gte: since },
               },
@@ -257,7 +281,7 @@ const getTruckLocationHistory = async (req, res) => {
     }
 
     // Flatten locations from all devices
-    const locationHistory = truck.devices.flatMap((device) => device.locations);
+    const locationHistory = truck.device.flatMap((device) => device.location);
 
     // Sort by timestamp
     locationHistory.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -307,8 +331,16 @@ const getTruckLocationHistory = async (req, res) => {
 
 const getTruckAlerts = async (req, res) => {
   try {
-    const truckId = req.params.id;
+    const truckId = parseInt(req.params.id); // Convert string to integer
     const { resolved = false, limit = 50 } = req.query;
+
+    // Validate truck ID
+    if (isNaN(truckId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     const alerts = await prismaService.prisma.alert_events.findMany({
       where: {
@@ -364,10 +396,22 @@ const resolveAlert = async (req, res) => {
   try {
     const { truckId, alertId } = req.params;
 
+    // Convert to integers
+    const truckIdInt = parseInt(truckId);
+    const alertIdInt = parseInt(alertId);
+
+    // Validate IDs
+    if (isNaN(truckIdInt) || isNaN(alertIdInt)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID or alert ID provided',
+      });
+    }
+
     const resolvedAlert = await prismaService.prisma.alert_events.updateMany({
       where: {
-        id: alertId,
-        truck_id: truckId,
+        id: alertIdInt,
+        truck_id: truckIdInt,
         status: 'active',
         deleted_at: null,
       },
@@ -730,8 +774,19 @@ const createTruck = async (req, res) => {
 
 const updateTruck = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id); // Convert string to integer
     const { name, plate, type, status, driver_id, vendor_id, model, year, vin } = req.body;
+
+    // Validate truck ID
+    if (isNaN(id)) {
+      if (req.file) {
+        deleteImage(`/uploads/trucks/${req.file.filename}`);
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     // Check if truck exists
     const existingTruck = await prismaService.prisma.truck.findUnique({
@@ -887,13 +942,21 @@ const updateTruck = async (req, res) => {
 
 const deleteTruck = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id); // Convert string to integer
+
+    // Validate truck ID
+    if (isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     // Check if truck exists and get related data
     const truck = await prismaService.prisma.truck.findUnique({
       where: { id: id },
       include: {
-        devices: { take: 1 },
+        device: { take: 1 },
         alert_events: { take: 1 },
       },
     });
@@ -906,7 +969,7 @@ const deleteTruck = async (req, res) => {
     }
 
     // Check if truck has associated data that would prevent deletion
-    const hasData = truck.devices.length > 0 || truck.alert_events.length > 0;
+    const hasData = truck.device.length > 0 || truck.alert_events.length > 0;
 
     if (hasData) {
       return res.status(400).json({
@@ -914,7 +977,7 @@ const deleteTruck = async (req, res) => {
         message:
           'Cannot delete truck with associated devices or alerts. Consider soft-deleting by setting deleted_at instead.',
         data: {
-          device_count: truck.devices.length,
+          device_count: truck.device.length,
           has_alerts: truck.alert_events.length > 0,
         },
       });
@@ -1076,8 +1139,16 @@ const getTrucksByStatus = async (req, res) => {
 // GET TRUCK LOCATION HISTORY (alternative endpoint)
 const getTruckLocationHistoryAlt = async (req, res) => {
   try {
-    const truckId = req.params.id;
+    const truckId = parseInt(req.params.id); // Convert string to integer
     const { limit = 50, startDate, endDate } = req.query;
+
+    // Validate truck ID
+    if (isNaN(truckId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid truck ID provided',
+      });
+    }
 
     // Get device for this truck
     const device = await prismaService.prisma.device.findFirst({
@@ -1105,7 +1176,7 @@ const getTruckLocationHistoryAlt = async (req, res) => {
       if (endDate) where.recorded_at.lte = new Date(endDate);
     }
 
-    const locations = await prismaService.prisma.location_history.findMany({
+    const locations = await prismaService.prisma.location.findMany({
       where,
       orderBy: {
         recorded_at: 'desc',

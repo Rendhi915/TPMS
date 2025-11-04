@@ -117,7 +117,7 @@ const validateTruckCreate = [
 ];
 
 const validateTruckUpdate = [
-  param('id').isUUID().withMessage('Invalid truck ID'),
+  param('id').isInt({ min: 1 }).withMessage('Invalid truck ID - must be a positive integer'),
   body('name')
     .optional()
     .isLength({ min: 1, max: 255 })
@@ -158,8 +158,8 @@ const validateDeviceCreate = [
   body('truck_id')
     .notEmpty()
     .withMessage('Truck ID is required')
-    .isUUID()
-    .withMessage('Invalid truck ID format'),
+    .isInt({ min: 1 })
+    .withMessage('Invalid truck ID format - must be a positive integer'),
   body('sn')
     .notEmpty()
     .withMessage('Serial number is required')
@@ -177,8 +177,11 @@ const validateDeviceCreate = [
 ];
 
 const validateDeviceUpdate = [
-  param('deviceId').isUUID().withMessage('Invalid device ID'),
-  body('truck_id').optional().isUUID().withMessage('Invalid truck ID format'),
+  param('deviceId').isInt({ min: 1 }).withMessage('Invalid device ID - must be a positive integer'),
+  body('truck_id')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Invalid truck ID format - must be a positive integer'),
   body('sn')
     .optional()
     .isLength({ min: 1, max: 255 })
@@ -202,8 +205,8 @@ const validateSensorCreate = [
   body('device_id')
     .notEmpty()
     .withMessage('Device ID is required')
-    .isUUID()
-    .withMessage('Invalid device ID format'),
+    .isInt({ min: 1 })
+    .withMessage('Invalid device ID format - must be a positive integer'),
   body('position_no')
     .notEmpty()
     .withMessage('Position number is required')
@@ -225,8 +228,11 @@ const validateSensorCreate = [
 ];
 
 const validateSensorUpdate = [
-  param('sensorId').isUUID().withMessage('Invalid sensor ID'),
-  body('device_id').optional().isUUID().withMessage('Invalid device ID format'),
+  param('sensorId').isInt({ min: 1 }).withMessage('Invalid sensor ID - must be a positive integer'),
+  body('device_id')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Invalid device ID format - must be a positive integer'),
   body('position_no')
     .optional()
     .isInt({ min: 1, max: 50 })
@@ -356,7 +362,7 @@ const validateMiningZoneCreate = [
 ];
 
 const validateMiningZoneUpdate = [
-  param('zoneId').isUUID().withMessage('Invalid zone ID'),
+  param('zoneId').isInt({ min: 1 }).withMessage('Invalid zone ID - must be a positive integer'),
   body('name')
     .optional()
     .isLength({ min: 2, max: 255 })
