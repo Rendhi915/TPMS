@@ -12,11 +12,11 @@ const getAllDevices = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const where = {};
-    if (truck_id) where.truck_id = truck_id;
+    if (truck_id) where.truck_id = parseInt(truck_id);
     if (search) {
       where.OR = [
-        { deviceId: { contains: search, mode: 'insensitive' } },
-        { simNumber: { contains: search, mode: 'insensitive' } },
+        { sn: { contains: search, mode: 'insensitive' } },
+        { sim_number: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -232,7 +232,7 @@ const createDevice = async (req, res) => {
 const updateDevice = async (req, res) => {
   try {
     const deviceId = parseInt(req.params.deviceId);
-    const { truck_id, deviceId: newDeviceId, simNumber, bat1, bat2, bat3, lock, status } = req.body;
+    const { truck_id, sn, sim_number, bat1, bat2, bat3, lock, status } = req.body;
 
     // Validate device ID
     if (isNaN(deviceId)) {
@@ -254,24 +254,24 @@ const updateDevice = async (req, res) => {
       });
     }
 
-    // Check if deviceId is being changed and if new deviceId already exists
-    if (newDeviceId && newDeviceId !== existingDevice.deviceId) {
+    // Check if sn is being changed and if new sn already exists
+    if (sn && sn !== existingDevice.sn) {
       const duplicateDevice = await prisma.device.findUnique({
-        where: { deviceId: newDeviceId },
+        where: { sn: sn },
       });
 
       if (duplicateDevice) {
         return res.status(409).json({
           success: false,
-          message: 'Device with this deviceId already exists',
+          message: 'Device with this serial number already exists',
         });
       }
     }
 
     // Validate truck if being changed
-    if (truck_id && truck_id !== existingDevice.truck_id) {
+    if (truck_id && parseInt(truck_id) !== existingDevice.truck_id) {
       const truck = await prisma.truck.findUnique({
-        where: { id: truck_id },
+        where: { id: parseInt(truck_id) },
       });
 
       if (!truck) {
@@ -283,9 +283,9 @@ const updateDevice = async (req, res) => {
     }
 
     const updateData = {};
-    if (truck_id !== undefined) updateData.truck_id = truck_id;
-    if (newDeviceId !== undefined) updateData.deviceId = newDeviceId;
-    if (simNumber !== undefined) updateData.simNumber = simNumber;
+    if (truck_id !== undefined) updateData.truck_id = parseInt(truck_id);
+    if (sn !== undefined) updateData.sn = sn;
+    if (sim_number !== undefined) updateData.sim_number = sim_number;
     if (bat1 !== undefined) updateData.bat1 = bat1;
     if (bat2 !== undefined) updateData.bat2 = bat2;
     if (bat3 !== undefined) updateData.bat3 = bat3;
@@ -485,7 +485,7 @@ const getSensorById = async (req, res) => {
         device: {
           select: {
             id: true,
-            deviceId: true,
+            sn: true,
             truck: {
               select: {
                 id: true,

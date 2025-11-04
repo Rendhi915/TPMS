@@ -556,9 +556,14 @@ class SimplePrismaService {
     // Simplified formatter - return truck data with devices
     return {
       id: truck.id,
+      name: truck.name,
       plate: truck.plate,
+      vin: truck.vin,
+      model: truck.model,
+      year: truck.year,
       type: truck.type,
       status: truck.status,
+      vendor_id: truck.vendor_id,
       driver_id: truck.driver_id,
       image: truck.image,
       vendor: truck.vendors
@@ -577,7 +582,8 @@ class SimplePrismaService {
       devices: truck.device
         ? truck.device.map((device) => ({
             id: device.id,
-            deviceId: device.deviceId,
+            sn: device.sn,
+            sim_number: device.sim_number,
             bat1: device.bat1,
             bat2: device.bat2,
             bat3: device.bat3,

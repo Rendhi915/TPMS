@@ -541,7 +541,7 @@ const createSensor = async (req, res) => {
 
     // Check if device exists
     const device = await prisma.device.findUnique({
-      where: { id: device_id }, // UUID
+      where: { id: parseInt(device_id) }, // Integer ID
     });
 
     if (!device) {
@@ -587,7 +587,7 @@ const createSensor = async (req, res) => {
     const sensor = await prisma.sensor.create({
       data: {
         sn,
-        device_id: device_id, // UUID
+        device_id: parseInt(device_id), // Integer ID
         tireNo: parseInt(tireNo),
         simNumber: simNumber || null,
         sensorNo: sensorNo || null,
@@ -714,7 +714,7 @@ const updateSensor = async (req, res) => {
     const updateData = {};
 
     if (sn !== undefined) updateData.sn = sn;
-    if (device_id !== undefined) updateData.device_id = device_id; // UUID
+    if (device_id !== undefined) updateData.device_id = parseInt(device_id); // Integer ID
     if (tireNo !== undefined) updateData.tireNo = parseInt(tireNo);
     if (simNumber !== undefined) updateData.simNumber = simNumber;
     if (sensorNo !== undefined) updateData.sensorNo = sensorNo;
