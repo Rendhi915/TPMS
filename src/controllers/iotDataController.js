@@ -1,5 +1,6 @@
 const { PrismaClient } = require('../../prisma/generated/client');
 const prisma = new PrismaClient();
+const { broadcastSensorUpdate, broadcastDeviceUpdate } = require('../services/websocketService');
 
 // ==========================================
 // IOT DATA CONTROLLER - UNIFIED ENDPOINT
@@ -139,6 +140,21 @@ const handleTPData = async (sn, data, res) => {
 
     console.log(`✅ [TPDATA] Sensor ${sn} - Temp:${tempValue}°C Press:${tiprValue}kPa`);
 
+    // Broadcast real-time update to WebSocket clients
+    broadcastSensorUpdate({
+      sensor_id: updated.id,
+      sensor_sn: sn,
+      tireNo: updated.tireNo,
+      device_id: sensor.device_id,
+      truck_id: sensor.device.truck_id,
+      truck_plate: sensor.device.truck?.plate,
+      tempValue: updated.tempValue,
+      tirepValue: updated.tirepValue,
+      exType: updated.exType,
+      bat: updated.bat,
+      updated_at: updated.updated_at,
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -201,6 +217,20 @@ const handleHubData = async (sn, data, res) => {
     });
 
     console.log(`✅ [HUBDATA] Sensor ${sn} - Hub Temp:${tempValue}°C`);
+
+    // Broadcast real-time update to WebSocket clients
+    broadcastSensorUpdate({
+      sensor_id: updated.id,
+      sensor_sn: sn,
+      tireNo: updated.tireNo,
+      device_id: sensor.device_id,
+      truck_id: sensor.device.truck_id,
+      truck_plate: sensor.device.truck?.plate,
+      tempValue: updated.tempValue,
+      exType: updated.exType,
+      bat: updated.bat,
+      updated_at: updated.updated_at,
+    });
 
     res.status(200).json({
       success: true,
@@ -273,6 +303,27 @@ const handleDeviceData = async (sn, data, res) => {
 
     console.log(`✅ [DEVICE] Device ${sn} - GPS:${lat},${lng} Battery:${bat1}/${bat2}/${bat3}`);
 
+    // Broadcast real-time update to WebSocket clients
+    broadcastDeviceUpdate({
+      device_id: updatedDevice.id,
+      device_sn: sn,
+      truck_id: device.truck_id,
+      truck_plate: device.truck?.plate,
+      bat1: updatedDevice.bat1,
+      bat2: updatedDevice.bat2,
+      bat3: updatedDevice.bat3,
+      lock: updatedDevice.lock,
+      location: newLocation
+        ? {
+            location_id: newLocation.id,
+            lat: newLocation.lat,
+            lng: newLocation.long,
+            recorded_at: newLocation.recorded_at,
+          }
+        : null,
+      updated_at: updatedDevice.updated_at,
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -337,6 +388,14 @@ const handleStateData = async (sn, data, res) => {
     });
 
     console.log(`✅ [STATE] Device ${sn} - Lock:${is_lock}`);
+
+    // Broadcast real-time update to WebSocket clients
+    broadcastDeviceUpdate({
+      device_id: updated.id,
+      device_sn: sn,
+      lock: updated.lock,
+      updated_at: updated.updated_at,
+    });
 
     res.status(200).json({
       success: true,
