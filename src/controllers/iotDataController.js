@@ -1,5 +1,6 @@
 const { PrismaClient } = require('../../prisma/generated/client');
 const prisma = new PrismaClient();
+const { broadcastSensorUpdate, broadcastDeviceUpdate } = require('../services/websocketService');
 
 // ==========================================
 // IOT DATA CONTROLLER - UNIFIED ENDPOINT
@@ -139,6 +140,21 @@ const handleTPData = async (sn, data, res) => {
 
     console.log(`✅ [TPDATA] Sensor ${sn} - Temp:${tempValue}°C Press:${tiprValue}kPa`);
 
+    // Broadcast real-time update to WebSocket clients
+    broadcastSensorUpdate({
+      sensor_id: updated.id,
+      sensor_sn: sn,
+      tireNo: updated.tireNo,
+      device_id: sensor.device_id,
+      truck_id: sensor.device.truck_id,
+      truck_plate: sensor.device.truck?.plate,
+      tempValue: updated.tempValue,
+      tirepValue: updated.tirepValue,
+      exType: updated.exType,
+      bat: updated.bat,
+      updated_at: updated.updated_at,
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -201,6 +217,20 @@ const handleHubData = async (sn, data, res) => {
     });
 
     console.log(`✅ [HUBDATA] Sensor ${sn} - Hub Temp:${tempValue}°C`);
+
+    // Broadcast real-time update to WebSocket clients
+    broadcastSensorUpdate({
+      sensor_id: updated.id,
+      sensor_sn: sn,
+      tireNo: updated.tireNo,
+      device_id: sensor.device_id,
+      truck_id: sensor.device.truck_id,
+      truck_plate: sensor.device.truck?.plate,
+      tempValue: updated.tempValue,
+      exType: updated.exType,
+      bat: updated.bat,
+      updated_at: updated.updated_at,
+    });
 
     res.status(200).json({
       success: true,
@@ -273,6 +303,27 @@ const handleDeviceData = async (sn, data, res) => {
 
     console.log(`✅ [DEVICE] Device ${sn} - GPS:${lat},${lng} Battery:${bat1}/${bat2}/${bat3}`);
 
+    // Broadcast real-time update to WebSocket clients
+    broadcastDeviceUpdate({
+      device_id: updatedDevice.id,
+      device_sn: sn,
+      truck_id: device.truck_id,
+      truck_plate: device.truck?.plate,
+      bat1: updatedDevice.bat1,
+      bat2: updatedDevice.bat2,
+      bat3: updatedDevice.bat3,
+      lock: updatedDevice.lock,
+      location: newLocation
+        ? {
+            location_id: newLocation.id,
+            lat: newLocation.lat,
+            lng: newLocation.long,
+            recorded_at: newLocation.recorded_at,
+          }
+        : null,
+      updated_at: updatedDevice.updated_at,
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -337,6 +388,14 @@ const handleStateData = async (sn, data, res) => {
     });
 
     console.log(`✅ [STATE] Device ${sn} - Lock:${is_lock}`);
+
+    // Broadcast real-time update to WebSocket clients
+    broadcastDeviceUpdate({
+      device_id: updated.id,
+      device_sn: sn,
+      lock: updated.lock,
+      updated_at: updated.updated_at,
+    });
 
     res.status(200).json({
       success: true,
@@ -611,6 +670,9 @@ const deviceUpdate = async (data, res) => {
     if (sn !== undefined) updateData.sn = sn;
     if (sim_number !== undefined) updateData.sim_number = sim_number;
     if (status !== undefined) updateData.status = status;
+    // if (bat1 !== undefined) updateData.bat1 = parseInt(bat1);
+    // if (bat2 !== undefined) updateData.bat2 = parseInt(bat2);
+    // if (bat3 !== undefined) updateData.bat3 = parseInt(bat3);
 
     const device = await prisma.device.update({
       where: { id: parseInt(id) },
@@ -968,6 +1030,173 @@ const sensorDelete = async (data, res) => {
   }
 };
 
+// ==========================================
+// RESTful ENDPOINT HANDLERS
+// ==========================================
+
+// GET /iot/devices - List all devices
+const getDevices = async (req, res) => {
+  try {
+    const { page = 1, limit = 50, truck_id, status, search } = req.query;
+    await deviceRead({ page, limit, truck_id, status, search }, res);
+  } catch (error) {
+    console.error('❌ Error in getDevices:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get devices',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET /iot/devices/:id - Get single device
+const getDevice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deviceRead({ id }, res);
+  } catch (error) {
+    console.error('❌ Error in getDevice:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get device',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// POST /iot/devices - Create device
+const createDevice = async (req, res) => {
+  try {
+    await deviceCreate(req.body, res);
+  } catch (error) {
+    console.error('❌ Error in createDevice:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create device',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// PUT /iot/devices/:id - Update device
+const updateDevice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deviceUpdate({ ...req.body, id }, res);
+  } catch (error) {
+    console.error('❌ Error in updateDevice:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update device',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// DELETE /iot/devices/:id - Delete device
+const deleteDevice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deviceDelete({ id }, res);
+  } catch (error) {
+    console.error('❌ Error in deleteDevice:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete device',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET /iot/sensors - List all sensors
+const getSensors = async (req, res) => {
+  try {
+    const { page = 1, limit = 50, device_id, status } = req.query;
+    await sensorRead({ page, limit, device_id, status }, res);
+  } catch (error) {
+    console.error('❌ Error in getSensors:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get sensors',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET /iot/sensors/:id - Get single sensor
+const getSensor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await sensorRead({ id }, res);
+  } catch (error) {
+    console.error('❌ Error in getSensor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get sensor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// POST /iot/sensors - Create sensor
+const createSensor = async (req, res) => {
+  try {
+    await sensorCreate(req.body, res);
+  } catch (error) {
+    console.error('❌ Error in createSensor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create sensor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// PUT /iot/sensors/:id - Update sensor
+const updateSensor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await sensorUpdate({ ...req.body, id }, res);
+  } catch (error) {
+    console.error('❌ Error in updateSensor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update sensor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// DELETE /iot/sensors/:id - Delete sensor
+const deleteSensor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await sensorDelete({ id }, res);
+  } catch (error) {
+    console.error('❌ Error in deleteSensor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete sensor',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
 module.exports = {
+  // Unified endpoint (legacy & IoT hardware)
   handleIoTData,
+
+  // RESTful endpoints - Devices
+  getDevices,
+  getDevice,
+  createDevice,
+  updateDevice,
+  deleteDevice,
+
+  // RESTful endpoints - Sensors
+  getSensors,
+  getSensor,
+  createSensor,
+  updateSensor,
+  deleteSensor,
 };

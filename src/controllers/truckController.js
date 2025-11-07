@@ -527,10 +527,10 @@ const getTruckLocationsByName = async (req, res) => {
         id: true,
         plate: true,
         type: true,
-        devices: {
+        device: {
           where: { deleted_at: null },
           select: {
-            locations: {
+            location: {
               where: {
                 created_at: { gte: since },
                 speed: { gte: parseFloat(minSpeed) },
@@ -559,8 +559,8 @@ const getTruckLocationsByName = async (req, res) => {
     }
 
     // Flatten locations from all devices
-    const locations = truck.devices
-      .flatMap((device) => device.locations)
+    const locations = truck.device
+      .flatMap((device) => device.location)
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       .map((pos) => ({
         id: pos.id,

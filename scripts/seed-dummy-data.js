@@ -105,7 +105,7 @@ async function main() {
         const sensorNumber = truckIndex * 10 + wheelIndex + 1;
         const tireNo = wheelIndex + 1; // 1-10
 
-        const sensor = await prisma.sensor.create({
+        await prisma.sensor.create({
           data: {
             sn: `SN-${String(sensorNumber).padStart(4, '0')}`, // SN-0001 sampai SN-0100
             tireNo: tireNo,

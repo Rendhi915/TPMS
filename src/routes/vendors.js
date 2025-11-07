@@ -244,20 +244,20 @@ router.get(
 // POST /api/vendors - Create new vendor
 router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
   try {
-    const { name, address, telephone, email, contact_person } = req.body;
+    const { name_vendor, address, telephone, email, contact_person } = req.body;
 
     // Validate required fields
-    if (!name) {
+    if (!name_vendor) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required field: name',
+        message: 'Missing required field: name_vendor',
       });
     }
 
     // Check if vendor with same name already exists
     const existingVendor = await prisma.vendors.findFirst({
       where: {
-        name_vendor: name,
+        name_vendor: name_vendor,
         deleted_at: null,
       },
     });
@@ -271,7 +271,7 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 
     const vendor = await prisma.vendors.create({
       data: {
-        name_vendor: name,
+        name_vendor: name_vendor,
         address: address || null,
         telephone: telephone || null,
         email: email || null,
@@ -306,7 +306,7 @@ router.post('/', authMiddleware, validateVendorCreate, async (req, res) => {
 router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) => {
   try {
     const { vendorId } = req.params;
-    const { name, address, telephone, email, contact_person } = req.body;
+    const { name_vendor, address, telephone, email, contact_person } = req.body;
 
     // Check if vendor exists
     const existingVendor = await prisma.vendors.findUnique({
@@ -324,10 +324,10 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
     }
 
     // Check if name is being changed and if new name already exists
-    if (name && name !== existingVendor.name_vendor) {
+    if (name_vendor && name_vendor !== existingVendor.name_vendor) {
       const duplicateVendor = await prisma.vendors.findFirst({
         where: {
-          name_vendor: name,
+          name_vendor: name_vendor,
           id: { not: parseInt(vendorId) },
           deleted_at: null,
         },
@@ -343,7 +343,7 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
 
     // Build update data - only include fields that are provided
     const updateData = {};
-    if (name !== undefined && name !== null) updateData.name_vendor = name;
+    if (name_vendor !== undefined && name_vendor !== null) updateData.name_vendor = name_vendor;
     if (address !== undefined) updateData.address = address;
     if (telephone !== undefined) updateData.telephone = telephone;
     if (email !== undefined) updateData.email = email;
@@ -444,7 +444,7 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
         message:
           'Cannot delete vendor with active trucks or drivers. Please reassign or remove them first.',
         data: {
-          truck_count: vendor.trucks.length,
+          truck_count: vendor.truck.length,
           driver_count: vendor.drivers.length,
         },
       });
