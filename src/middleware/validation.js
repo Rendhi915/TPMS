@@ -25,7 +25,7 @@ const validateSensorData = (sensorType) => {
         body('data').isObject().withMessage('Data must be an object'),
         body('data.tireNo')
           .optional()
-          .isInt({ min: 1, max: 12 })
+          .isInt({ min: 1, max: 10 })
           .withMessage('Tire number must be between 1-10'),
         body('data.tiprValue')
           .optional()

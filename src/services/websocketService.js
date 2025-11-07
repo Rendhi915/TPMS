@@ -142,6 +142,19 @@ const broadcastSensorUpdate = (data) => {
   });
 };
 
+const broadcastDeviceUpdate = (data) => {
+  if (!wsServer) {
+    console.warn('WebSocket server not initialized');
+    return;
+  }
+
+  broadcastToSubscription(subscriptions.truckUpdates, {
+    type: 'device_update',
+    data: data,
+    timestamp: new Date().toISOString(),
+  });
+};
+
 const getSubscriptions = () => {
   return {
     truckUpdates: subscriptions.truckUpdates.size,
@@ -211,6 +224,7 @@ module.exports = {
   broadcastTruckUpdate,
   broadcastDashboardUpdate,
   broadcastSensorUpdate,
+  broadcastDeviceUpdate,
   getConnectedClients,
   getSubscriptions,
   addClient,

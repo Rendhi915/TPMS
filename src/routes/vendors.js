@@ -444,7 +444,7 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
         message:
           'Cannot delete vendor with active trucks or drivers. Please reassign or remove them first.',
         data: {
-          truck_count: vendor.trucks.length,
+          truck_count: vendor.truck.length,
           driver_count: vendor.drivers.length,
         },
       });

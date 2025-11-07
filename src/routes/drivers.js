@@ -104,6 +104,66 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
   }
 });
 
+// GET /api/drivers/expiring-licenses - Get drivers with expiring licenses
+// IMPORTANT: This route MUST be defined BEFORE /:driverId to avoid being caught as a driverId param
+router.get('/expiring-licenses', authMiddleware, async (req, res) => {
+  try {
+    const { days = 30 } = req.query;
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + parseInt(days));
+
+    const drivers = await prisma.drivers.findMany({
+      where: {
+        license_expiry: {
+          lte: futureDate,
+        },
+        status: 'aktif',
+        deleted_at: null,
+      },
+      include: {
+        vendors: {
+          select: {
+            id: true,
+            name_vendor: true,
+          },
+        },
+      },
+      orderBy: {
+        license_expiry: 'asc',
+      },
+    });
+
+    const driversData = drivers.map((driver) => ({
+      id: driver.id,
+      name: driver.name,
+      telephone: driver.phone, // Map phone to telephone for frontend
+      license_number: driver.license_number,
+      license_type: driver.license_type,
+      license_expiry: driver.license_expiry,
+      status: driver.status,
+      vendor: driver.vendors
+        ? {
+            id: driver.vendors.id,
+            name: driver.vendors.name_vendor,
+          }
+        : null,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: driversData,
+      message: `Drivers with licenses expiring in ${days} days retrieved successfully`,
+    });
+  } catch (error) {
+    console.error('Error getting drivers with expiring licenses:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get drivers with expiring licenses',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+});
+
 // GET /api/drivers/:driverId - Get specific driver details
 router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (req, res) => {
   try {
@@ -370,65 +430,6 @@ router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async 
     res.status(500).json({
       success: false,
       message: 'Failed to delete driver',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-    });
-  }
-});
-
-// GET /api/drivers/expiring-licenses - Get drivers with expiring licenses
-router.get('/expiring-licenses', authMiddleware, async (req, res) => {
-  try {
-    const { days = 30 } = req.query;
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + parseInt(days));
-
-    const drivers = await prisma.drivers.findMany({
-      where: {
-        license_expiry: {
-          lte: futureDate,
-        },
-        status: 'aktif',
-        deleted_at: null,
-      },
-      include: {
-        vendors: {
-          select: {
-            id: true,
-            name_vendor: true,
-          },
-        },
-      },
-      orderBy: {
-        license_expiry: 'asc',
-      },
-    });
-
-    const driversData = drivers.map((driver) => ({
-      id: driver.id,
-      name: driver.name,
-      telephone: driver.phone, // Map phone to telephone for frontend
-      license_number: driver.license_number,
-      license_type: driver.license_type,
-      license_expiry: driver.license_expiry,
-      status: driver.status,
-      vendor: driver.vendors
-        ? {
-            id: driver.vendors.id,
-            name: driver.vendors.name_vendor,
-          }
-        : null,
-    }));
-
-    res.status(200).json({
-      success: true,
-      data: driversData,
-      message: `Drivers with licenses expiring in ${days} days retrieved successfully`,
-    });
-  } catch (error) {
-    console.error('Error getting drivers with expiring licenses:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get drivers with expiring licenses',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
     });
   }

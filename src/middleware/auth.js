@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-fleet-management-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'fleet-management-secret-key-change-in-production';
 
 const authMiddleware = (req, res, next) => {
   try {
