@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('../../prisma/generated/client');
+const { prisma } = require('../config/prisma');
 const authMiddleware = require('../middleware/auth');
 const {
   validateVendorCreate,
@@ -8,8 +8,6 @@ const {
   validateIntParam,
   validatePagination,
 } = require('../middleware/crudValidation');
-
-const prisma = new PrismaClient();
 
 // GET /api/vendors - Get all vendors
 router.get('/', authMiddleware, validatePagination, async (req, res) => {
@@ -100,9 +98,10 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
   try {
     const { vendorId } = req.params;
 
-    const vendor = await prisma.vendors.findUnique({
+    const vendor = await prisma.vendors.findFirst({
       where: {
         id: parseInt(vendorId),
+        deleted_at: null,
       },
       include: {
         truck: {
@@ -125,7 +124,7 @@ router.get('/:vendorId', authMiddleware, validateIntParam('vendorId'), async (re
       },
     });
 
-    if (!vendor) {
+    if (!vendor || vendor.deleted_at !== null) {
       return res.status(404).json({
         success: false,
         message: 'Vendor not found',
@@ -309,7 +308,7 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
     const { name_vendor, address, telephone, email, contact_person } = req.body;
 
     // Check if vendor exists
-    const existingVendor = await prisma.vendors.findUnique({
+    const existingVendor = await prisma.vendors.findFirst({
       where: {
         id: parseInt(vendorId),
         deleted_at: null,
@@ -369,7 +368,7 @@ router.put('/:vendorId', authMiddleware, validateVendorUpdate, async (req, res) 
           select: {
             id: true,
             name: true,
-            telephone: true,
+            phone: true,
             status: true,
           },
         },
@@ -415,7 +414,7 @@ router.delete('/:vendorId', authMiddleware, validateIntParam('vendorId'), async 
     const { vendorId } = req.params;
 
     // Check if vendor exists
-    const vendor = await prisma.vendors.findUnique({
+    const vendor = await prisma.vendors.findFirst({
       where: {
         id: parseInt(vendorId),
         deleted_at: null,

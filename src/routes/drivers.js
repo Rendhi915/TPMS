@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('../../prisma/generated/client');
+const { prisma } = require('../config/prisma');
 const authMiddleware = require('../middleware/auth');
 const {
   validateDriverCreate,
@@ -8,8 +8,6 @@ const {
   validateIntParam,
   validatePagination,
 } = require('../middleware/crudValidation');
-
-const prisma = new PrismaClient();
 
 // Normalize incoming driver payload to accept both snake_case and camelCase
 const normalizeDriverPayload = (req, res, next) => {
@@ -169,7 +167,7 @@ router.get('/:driverId', authMiddleware, validateIntParam('driverId'), async (re
   try {
     const { driverId } = req.params;
 
-    const driver = await prisma.drivers.findUnique({
+    const driver = await prisma.drivers.findFirst({
       where: {
         id: parseInt(driverId),
         deleted_at: null,
@@ -390,7 +388,7 @@ router.delete('/:driverId', authMiddleware, validateIntParam('driverId'), async 
     const { driverId } = req.params;
 
     // Check if driver exists and not already deleted
-    const existingDriver = await prisma.drivers.findUnique({
+    const existingDriver = await prisma.drivers.findFirst({
       where: {
         id: parseInt(driverId),
         deleted_at: null,
