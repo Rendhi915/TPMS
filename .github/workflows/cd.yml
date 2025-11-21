@@ -37,10 +37,10 @@ jobs:
           password: ${{ secrets.AZURE_PASSWORD }}
           port: ${{ secrets.AZURE_PORT }}
           script: |
-            cd /var/www/project-azure/
+            cd /var/www/tpms-backend/
             git reset --hard HEAD
             git pull origin main
             npm install --omit=dev
             npx prisma migrate deploy
-            pm2 restart project-azure || pm2 start server.js --name "project-azure"
+            pm2 restart project-azure || pm2 start server.js --name "tpms-backend"
             pm2 save
