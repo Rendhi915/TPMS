@@ -536,21 +536,36 @@ const deviceCreate = async (data, res) => {
 
 const deviceRead = async (data, res) => {
   try {
-    const { id, page = 1, limit = 50, truck_id, status, search } = data;
+    const { id, sn, page = 1, limit = 50, truck_id, status, search, realtime } = data;
 
-    // Read single device by ID
-    if (id) {
+    // Read single device by ID or SN
+    if (id || sn) {
+      const whereClause = id ? { id: parseInt(id) } : { sn: sn };
+
+      // Untuk realtime locations, ambil semua data lokasi
+      const locationTake = realtime === 'locations' ? undefined : 10;
+
       const device = await prisma.device.findUnique({
-        where: { id: parseInt(id) },
+        where: whereClause,
         include: {
           truck: { select: { id: true, plate: true, name: true, type: true } },
           sensor: {
             where: { deleted_at: null },
-            select: { id: true, sn: true, tireNo: true, sensorNo: true, status: true },
+            select: {
+              id: true,
+              sn: true,
+              tireNo: true,
+              sensorNo: true,
+              status: true,
+              tempValue: true,
+              tirepValue: true,
+              updated_at: true,
+            },
+            orderBy: { tireNo: 'asc' },
           },
           location: {
             orderBy: { recorded_at: 'desc' },
-            take: 10,
+            take: locationTake,
           },
         },
       });
@@ -558,10 +573,54 @@ const deviceRead = async (data, res) => {
       if (!device) {
         return res.status(404).json({
           success: false,
-          message: `Device not found: ${id}`,
+          message: `Device not found: ${id || sn}`,
         });
       }
 
+      // Format for realtime tracking
+      if (realtime === 'tires') {
+        const latestLocation = device.location[0];
+        const formattedData = {
+          sn: device.sn,
+          location: latestLocation
+            ? {
+                lat_lng: `${latestLocation.lat}, ${latestLocation.long}`,
+                createdAt: latestLocation.created_at,
+              }
+            : null,
+          tire: device.sensor.map((sensor) => ({
+            tireNo: sensor.tireNo,
+            tiprValue: sensor.tirepValue,
+            tempValue: sensor.tempValue,
+            createdAt: sensor.updated_at,
+          })),
+        };
+
+        return res.status(200).json({
+          message: 'Realtime data retrieved successfully',
+          count: 1,
+          data: [formattedData],
+        });
+      }
+
+      // Format for location tracking
+      if (realtime === 'locations') {
+        const formattedData = {
+          sn: device.sn,
+          location: device.location.map((loc) => ({
+            createdAt: loc.created_at,
+            lat_lng: `${loc.lat}, ${loc.long}`,
+          })),
+        };
+
+        return res.status(200).json({
+          message: 'Location data retrieved successfully',
+          count: 1,
+          data: [formattedData],
+        });
+      }
+
+      // Default format
       return res.status(200).json({
         success: true,
         data: device,
@@ -1063,6 +1122,36 @@ const getDevice = async (req, res) => {
   }
 };
 
+// GET /iot/realtime/tires/:sn - Get realtime tire data
+const getRealtimeTires = async (req, res) => {
+  try {
+    const { sn } = req.params;
+    await deviceRead({ sn, realtime: 'tires' }, res);
+  } catch (error) {
+    console.error('❌ Error in getRealtimeTires:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get realtime tire data',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
+// GET /iot/realtime/locations/:sn - Get realtime location data
+const getRealtimeLocations = async (req, res) => {
+  try {
+    const { sn } = req.params;
+    await deviceRead({ sn, realtime: 'locations' }, res);
+  } catch (error) {
+    console.error('❌ Error in getRealtimeLocations:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get realtime location data',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+    });
+  }
+};
+
 // POST /iot/devices - Create device
 const createDevice = async (req, res) => {
   try {
@@ -1198,4 +1287,8 @@ module.exports = {
   createSensor,
   updateSensor,
   deleteSensor,
+
+  // Realtime tracking endpoints
+  getRealtimeTires,
+  getRealtimeLocations,
 };

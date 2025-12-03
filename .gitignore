@@ -89,3 +89,7 @@ config.local.json
 #docs
 IOT_API_TESTING_GUIDE.md
 IOT_CONTROLLER_ARCHITECTURE.md
+POSTMAN_DOCUMENTATION.md
+
+#postman
+TPMS.postman_collection.json

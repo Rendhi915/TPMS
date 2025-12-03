@@ -110,6 +110,30 @@ tpms-backend/
 
 ---
 
+## API Documentation
+
+### Real-Time Tracking Endpoints
+
+**Get Realtime Tire Data:**
+```bash
+GET /api/iot/realtime/tires/:sn
+```
+Returns tire pressure & temperature with latest location.
+
+**Get Realtime Location History:**
+```bash
+GET /api/iot/realtime/locations/:sn
+```
+Returns location tracking history for a device.
+
+📖 **Full Documentation:**
+- [Real-Time Tracking API](docs/REALTIME_TRACKING_API.md)
+- [Implementation Guide](docs/REALTIME_TRACKING_IMPLEMENTATION.md)
+- [IoT API Testing Guide](docs/IOT_API_TESTING_GUIDE.md)
+- [Postman Collection](docs/POSTMAN_DOCUMENTATION.md)
+
+---
+
 ## Development
 
 ```bash
@@ -123,6 +147,9 @@ npm run format
 # Database
 npx prisma studio       # GUI for database
 npx prisma migrate dev  # Create migration
+
+# Test realtime endpoints
+node scripts/test-realtime-endpoints.js
 ```
 
 ---

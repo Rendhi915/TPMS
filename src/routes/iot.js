@@ -50,6 +50,22 @@ router.get(
   iotDataController.getDevice
 );
 
+// GET /iot/realtime/tires/:sn - Get realtime tire data by device SN
+router.get(
+  '/realtime/tires/:sn',
+  authMiddleware,
+  adminCrudRateLimit,
+  iotDataController.getRealtimeTires
+);
+
+// GET /iot/realtime/locations/:sn - Get realtime location data by device SN
+router.get(
+  '/realtime/locations/:sn',
+  authMiddleware,
+  adminCrudRateLimit,
+  iotDataController.getRealtimeLocations
+);
+
 // POST /iot/devices - Create new device
 router.post(
   '/devices',
