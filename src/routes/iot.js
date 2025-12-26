@@ -15,12 +15,6 @@ const {
   validateSensorId,
 } = require('../middleware/iotValidation');
 
-// ==========================================
-// UNIFIED ENDPOINT - Untuk IoT Hardware
-// ==========================================
-// Endpoint ini digunakan untuk:
-// 1. IoT Hardware mengirim data sensor (tpdata, hubdata, device, state)
-// 2. Admin CRUD operations (legacy support)
 router.post(
   '/data',
   authMiddleware,
@@ -29,10 +23,6 @@ router.post(
   iotDataController.handleIoTData
 );
 
-// ==========================================
-// RESTful ENDPOINTS - Device Management
-// ==========================================
-// GET /iot/devices - List all devices (with filters & pagination)
 router.get(
   '/devices',
   authMiddleware,
@@ -93,10 +83,6 @@ router.delete(
   iotDataController.deleteDevice
 );
 
-// ==========================================
-// RESTful ENDPOINTS - Sensor Management
-// ==========================================
-// GET /iot/sensors - List all sensors (with filters & pagination)
 router.get(
   '/sensors',
   authMiddleware,

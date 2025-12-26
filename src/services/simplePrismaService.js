@@ -336,8 +336,37 @@ class SimplePrismaService {
                 orderBy: { created_at: 'desc' },
                 take: 1,
               },
+              sensor: {
+                where: { 
+                  status: 'active'
+                  // REMOVED: tempValue/tirepValue not null filter
+                  // Allow sensors without data - will show as 0 in frontend
+                },
+                select: {
+                  id: true,
+                  tireNo: true,
+                  sensorNo: true,
+                  tempValue: true,
+                  tirepValue: true,
+                  exType: true,
+                  updated_at: true,
+                },
+                orderBy: { tireNo: 'asc' },
+              },
             },
             take: 1,
+          },
+          alert_events: {
+            where: { status: 'active' },
+            select: {
+              id: true,
+              message: true,
+              value: true,
+              created_at: true,
+              alert_id: true,
+            },
+            orderBy: { created_at: 'desc' },
+            take: 5, // Last 5 active alerts
           },
           _count: {
             select: {
@@ -357,6 +386,38 @@ class SimplePrismaService {
           .filter((truck) => truck.device.length > 0 && truck.device[0].location.length > 0)
           .map((truck) => {
             const latestLocation = truck.device[0].location[0];
+            const sensors = truck.device[0].sensor || [];
+            
+            // Debug logging for tire data
+            if (sensors.length === 0) {
+              console.warn(`⚠️  No sensors found for truck ${truck.plate} (device: ${truck.device[0]?.id})`);
+            }
+            
+            // ALWAYS include tire data - even if sensors are empty, return empty array
+            const tireData = sensors.map(sensor => ({
+              tireNo: sensor.tireNo || 0,
+              sensorNo: sensor.sensorNo || 'N/A',
+              temperature: sensor.tempValue !== null && sensor.tempValue !== undefined ? sensor.tempValue : 0,
+              pressure: sensor.tirepValue !== null && sensor.tirepValue !== undefined ? sensor.tirepValue : 0,
+              status: sensor.exType || 'unknown',
+              lastUpdate: sensor.updated_at || new Date(),
+            }));
+            
+            // Format active alerts
+            const alerts = (truck.alert_events || []).map(alert => ({
+              id: alert.id,
+              message: alert.message,
+              value: alert.value,
+              createdAt: alert.created_at,
+            }));
+            
+            // Log tire data for debugging
+            if (tireData.length > 0) {
+              console.log(`✅ ${truck.plate}: ${tireData.length} tires with data`);
+            } else {
+              console.error(`❌ ${truck.plate}: NO TIRE DATA!`);
+            }
+            
             return {
               type: 'Feature',
               properties: {
@@ -370,6 +431,9 @@ class SimplePrismaService {
                 vendor: truck.vendors?.name_vendor || null,
                 lastUpdate: latestLocation.created_at,
                 alertCount: truck._count.alert_events,
+                alerts: alerts, // Active alerts
+                tireData: tireData, // Tire sensor data - ALWAYS INCLUDED
+                tireCount: tireData.length,
               },
               geometry: {
                 type: 'Point',

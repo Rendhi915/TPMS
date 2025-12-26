@@ -184,6 +184,10 @@ exports.Prisma.LocationScalarFieldEnum = {
   device_id: 'device_id',
   lat: 'lat',
   long: 'long',
+  speed: 'speed',
+  heading: 'heading',
+  altitude: 'altitude',
+  accuracy: 'accuracy',
   created_at: 'created_at',
   recorded_at: 'recorded_at'
 };
@@ -204,6 +208,22 @@ exports.Prisma.SensorScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   deleted_at: 'deleted_at'
+};
+
+exports.Prisma.Sensor_historyScalarFieldEnum = {
+  id: 'id',
+  location_id: 'location_id',
+  sensor_id: 'sensor_id',
+  device_id: 'device_id',
+  truck_id: 'truck_id',
+  tireNo: 'tireNo',
+  sensorNo: 'sensorNo',
+  tempValue: 'tempValue',
+  tirepValue: 'tirepValue',
+  exType: 'exType',
+  bat: 'bat',
+  recorded_at: 'recorded_at',
+  created_at: 'created_at'
 };
 
 exports.Prisma.TruckScalarFieldEnum = {
@@ -231,6 +251,11 @@ exports.Prisma.User_adminScalarFieldEnum = {
   email: 'email',
   password: 'password',
   role: 'role',
+  phone: 'phone',
+  department: 'department',
+  bio: 'bio',
+  avatar: 'avatar',
+  two_factor_enabled: 'two_factor_enabled',
   last_login: 'last_login',
   status: 'status',
   created_at: 'created_at',
@@ -273,6 +298,7 @@ exports.Prisma.ModelName = {
   drivers: 'drivers',
   location: 'location',
   sensor: 'sensor',
+  sensor_history: 'sensor_history',
   truck: 'truck',
   user_admin: 'user_admin',
   vendors: 'vendors'

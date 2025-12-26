@@ -2,9 +2,32 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fleet-management-secret-key-change-in-production';
+const TESTING_MODE = process.env.TESTING_MODE === 'true';
 
 const authMiddleware = (req, res, next) => {
   try {
+    // ==========================================
+    // TESTING MODE BYPASS
+    // ==========================================
+    // Skip JWT authentication when TESTING_MODE=true in .env
+    // This allows frontend developers to test APIs without token management
+    // 🚨 SECURITY: Only allow in development environment
+    if (TESTING_MODE && process.env.NODE_ENV !== 'production') {
+      console.log('⚠️  [TESTING MODE] JWT authentication bypassed');
+      req.user = {
+        userId: 1,
+        username: 'admin',
+        role: 'admin',
+      };
+      return next();
+    }
+    
+    // Force disable TESTING_MODE in production
+    if (TESTING_MODE && process.env.NODE_ENV === 'production') {
+      console.error('🚨 SECURITY ALERT: TESTING_MODE is enabled in PRODUCTION! Disabling...');
+      // Fall through to normal JWT validation
+    }
+
     // Get token from header
     const authHeader = req.headers.authorization;
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const truckController = require('../controllers/truckController');
+const liveTrackingController = require('../controllers/liveTrackingController');
 const authMiddleware = require('../middleware/auth');
 const { uploadTruckImage } = require('../middleware/uploadImage');
 const {
@@ -9,6 +10,8 @@ const {
   validateIntParam,
   validatePagination,
 } = require('../middleware/crudValidation');
+
+router.get('/live-tracking', authMiddleware, liveTrackingController.getLiveTracking);
 
 // GET /api/trucks - Get all trucks with filters
 router.get('/', authMiddleware, validatePagination, truckController.getAllTrucks);
@@ -25,6 +28,9 @@ router.get('/realtime/locations', authMiddleware, truckController.getRealtimeLoc
 // Place truckName route BEFORE generic :id to avoid conflicts
 // GET /api/trucks/:truckName/locations - Get truck location history by truck name
 router.get('/:truckName/locations', authMiddleware, truckController.getTruckLocationsByName);
+
+// GET /api/trucks/:id/tracking - Get single truck live tracking with history
+router.get('/:id/tracking', authMiddleware, liveTrackingController.getTruckTracking);
 
 // GET /api/trucks/:id - Get specific truck details (protected)
 router.get('/:id', authMiddleware, truckController.getTruckById);
@@ -70,7 +76,5 @@ router.put(
 
 // DELETE /api/trucks/:id - Delete truck (protected)
 router.delete('/:id', authMiddleware, validateIntParam('id'), truckController.deleteTruck);
-
-// Compatibility routes moved to src/routes/history.js and mounted in routes/index.js
 
 module.exports = router;

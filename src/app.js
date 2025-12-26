@@ -23,23 +23,37 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
+      // Log semua request origin untuk debugging
+      console.log('[CORS] Request from origin:', origin);
+      
       // Allow requests with no origin (like mobile apps, curl, Postman)
       if (!origin) return callback(null, true);
 
+      // Allow ngrok domains (*.ngrok-free.app, *.ngrok.io, *.ngrok.app)
+      if (origin && (origin.includes('.ngrok-free.app') || origin.includes('.ngrok.io') || origin.includes('.ngrok.app'))) {
+        console.log('[CORS] ✅ Ngrok origin allowed:', origin);
+        return callback(null, true);
+      }
+
       if (allowedOrigins.indexOf(origin) !== -1) {
+        console.log('[CORS] ✅ Whitelisted origin allowed:', origin);
         callback(null, true);
       } else {
         // In development, allow all origins
         if (process.env.NODE_ENV === 'development') {
+          console.log('[CORS] ✅ Development mode - allowing origin:', origin);
           callback(null, true);
         } else {
+          console.log('[CORS] ❌ Origin blocked:', origin);
           callback(new Error('Not allowed by CORS'));
         }
       }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 
@@ -54,14 +68,50 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use(requestLogger);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Fleet Management Server is running',
-    timestamp: new Date().toISOString(),
-    server_ip: req.socket.localAddress,
-    client_ip: req.ip,
-  });
+app.get('/health', async (req, res) => {
+  try {
+    const { prisma } = require('./config/prisma');
+    
+    // Check database connection
+    let dbStatus = 'unknown';
+    let dbLatency = 0;
+    try {
+      const start = Date.now();
+      await prisma.$queryRaw`SELECT 1`;
+      dbLatency = Date.now() - start;
+      dbStatus = 'healthy';
+    } catch (error) {
+      dbStatus = 'unhealthy';
+    }
+
+    const health = {
+      status: dbStatus === 'healthy' ? 'healthy' : 'degraded',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      version: '2.0.0',
+      checks: {
+        database: {
+          status: dbStatus,
+          latency_ms: dbLatency,
+        },
+        memory: {
+          used_mb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+          total_mb: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+          status: process.memoryUsage().heapUsed / process.memoryUsage().heapTotal < 0.9 ? 'healthy' : 'warning',
+        },
+      },
+    };
+
+    const statusCode = health.status === 'healthy' ? 200 : 503;
+    res.status(statusCode).json(health);
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Health check failed',
+    });
+  }
 });
 
 // Root endpoint

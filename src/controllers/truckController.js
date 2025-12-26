@@ -1,10 +1,5 @@
 const prismaService = require('../services/simplePrismaService');
 const { deleteImage } = require('../middleware/uploadImage');
-
-// ==========================================
-// TRUCK CONTROLLER - PRISMA VERSION
-// ==========================================
-
 const getAllTrucks = async (req, res) => {
   try {
     console.log('🚛 getAllTrucks called with query:', req.query);
@@ -232,10 +227,6 @@ const updateTruckStatus = async (req, res) => {
     });
   }
 };
-
-// ==========================================
-// ADVANCED TRUCK OPERATIONS
-// ==========================================
 
 const getTruckLocationHistory = async (req, res) => {
   try {

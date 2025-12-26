@@ -1,10 +1,5 @@
-const prismaService = require('../services/prismaService');
+const prismaService = require('../services/simplePrismaService');
 const miningAreaService = require('../services/miningAreaService');
-
-// ==========================================
-// MINING AREA CONTROLLER - PRISMA VERSION
-// ==========================================
-
 const getMiningAreas = async (req, res) => {
   try {
     // Use static GeoJSON data since mining_zones table doesn't exist
@@ -24,10 +19,6 @@ const getMiningAreas = async (req, res) => {
     });
   }
 };
-
-// ==========================================
-// ADVANCED MINING AREA OPERATIONS
-// ==========================================
 
 const getTrucksInZone = async (req, res) => {
   try {
@@ -300,10 +291,6 @@ const getNearbyTrucks = async (req, res) => {
   }
 };
 
-// ==========================================
-// ZONE MANAGEMENT OPERATIONS
-// ==========================================
-
 const createMiningZone = async (req, res) => {
   try {
     const { name, zoneType, boundary } = req.body;
@@ -503,20 +490,12 @@ const deleteMiningZone = async (req, res) => {
   }
 };
 
-// ==========================================
-// HELPER FUNCTIONS
-// ==========================================
-
 function getActivityLevel(recordCount) {
   if (recordCount > 100) return 'high';
   if (recordCount > 50) return 'medium';
   if (recordCount > 10) return 'low';
   return 'minimal';
 }
-
-// ==========================================
-// EXPORT FUNCTIONS
-// ==========================================
 
 module.exports = {
   getMiningAreas,

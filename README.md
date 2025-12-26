@@ -6,7 +6,43 @@
 
 **Enterprise REST API for Tire Pressure Monitoring System**
 
-Real-time monitoring and management system for mining fleet tire pressure sensors. Handles IoT data processing, automated alerts, fleet management, and analytics dashboards.
+Real-time monitoring and management system for mining fleet tire pressure sensors. Handles IoT data processing, automated alerts, fleet management, historical analytics, and location tracking.
+
+---
+
+## 📖 Documentation
+
+### **🚀 Quick Start**
+- [Quick Start Workflow](./docs/QUICK_START_WORKFLOW.md) - Understand system in 5 minutes
+
+### **📊 System Architecture**
+- [System Workflow Diagram](./docs/SYSTEM_WORKFLOW_DIAGRAM.md) - Complete workflow & architecture
+- [Visual Diagrams (Mermaid)](./docs/VISUAL_WORKFLOW_DIAGRAMS.md) - Interactive flowcharts
+
+### **👥 User Management**
+- [Frontend Integration Guide](./docs/USER_MANAGEMENT_FRONTEND_GUIDE.md) - User management API
+
+### **📍 Location & Sensor Tracking**
+- [Sensor Location History](./docs/FRONTEND_SENSOR_LOCATION_HISTORY_GUIDE.md) - GPS + Sensor timeline
+
+### **🚨 Alert System**
+- [Alert API Documentation](./docs/ALERT_API_DOCUMENTATION.md) - Alert management
+
+### **🔧 Testing & Deployment**
+- [Testing Guide](./TESTING_GUIDE.md) - How to test endpoints
+- [Ngrok Troubleshooting](./NGROK_TROUBLESHOOTING.md) - Remote access setup
+
+---
+
+## ✨ Key Features
+
+- 🚛 **Fleet Management** - Complete truck, device, and sensor management
+- 📍 **Location Tracking** - GPS tracking with historical timeline
+- 📊 **Sensor History** - Historical snapshots of tire conditions ⭐ **NEW**
+- 🚨 **Alert System** - Automated anomaly detection and notifications
+- 📈 **Analytics** - Statistics and trends for tire performance
+- 🔄 **Real-time Updates** - WebSocket support for live data
+- 🔐 **Security** - JWT authentication and role-based access
 
 ---
 
@@ -35,11 +71,57 @@ cp .env.example .env
 npx prisma migrate dev
 npx prisma generate
 
+# Seed data (optional)
+npm run seed
+
 # Start server
 npm run dev
 ```
 
-Server runs at `http://localhost:5000`
+Server runs at `http://localhost:3000`  
+WebSocket at `ws://localhost:3001`
+
+---
+
+## 🆕 What's New - Sensor History (v2.0)
+
+### Historical Data Tracking
+Track tire sensor readings over time with GPS location linkage:
+
+```bash
+# Get location history with tire data
+GET /api/v1/history/trucks/:truckId
+
+# Get sensor statistics
+GET /api/v1/history/trucks/:truckId/stats
+```
+
+**Response Example:**
+```json
+{
+  "timestamp": "2025-12-18T07:31:12.097Z",
+  "location": { "lat": -3.429668, "lng": 115.559287 },
+  "tires": [
+    {
+      "tireNo": 1,
+      "position": "Front Left Outer",
+      "temperature": 55.49,
+      "pressure": 92.08,
+      "status": "normal",
+      "battery": 99
+    }
+    // ... 9 more tires
+  ]
+}
+```
+
+**Use Cases:**
+- Timeline playback of truck routes
+- Temperature/pressure trend analysis
+- Alert investigation
+- Maintenance planning
+
+📚 **Full Documentation:** [Frontend Integration Guide](./docs/FRONTEND_SENSOR_LOCATION_HISTORY_GUIDE.md)
 
 ---
 

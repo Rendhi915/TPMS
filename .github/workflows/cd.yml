@@ -5,25 +5,25 @@ on:
     branches: ['main']
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  # deploy:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd /var/www/tpms-backend/
-            git reset --hard HEAD
-            git pull origin main
-            npm install --omit=dev
-            npx prisma migrate deploy
-            pm2 restart tpms-backend || pm2 start server.js --name "tpms-backend"
-            pm2 save
+  #   steps:
+  #     - name: Deploy to VPS via SSH
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.HOST }}
+  #         username: ${{ secrets.USERNAME }}
+  #         password: ${{ secrets.PASSWORD }}
+  #         port: ${{ secrets.PORT }}
+  #         script: |
+  #           cd /var/www/tpms-backend/
+  #           git reset --hard HEAD
+  #           git pull origin main
+  #           npm install --omit=dev
+  #           npx prisma migrate deploy
+  #           pm2 restart tpms-backend || pm2 start server.js --name "tpms-backend"
+  #           pm2 save
 
   deploy-to-azure-vm:
     runs-on: ubuntu-latest

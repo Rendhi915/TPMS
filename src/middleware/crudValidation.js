@@ -94,10 +94,10 @@ const validateTruckCreate = [
     .withMessage('Plate must be between 1 and 50 characters'),
   body('vin')
     .optional()
-    .isLength({ min: 17, max: 17 })
-    .withMessage('VIN must be exactly 17 characters')
-    .matches(/^[A-HJ-NPR-Z0-9]+$/)
-    .withMessage('Invalid VIN format'),
+    .isLength({ min: 5, max: 5 })
+    .withMessage('VIN must be exactly 5 characters')
+    .matches(/^[A-Z0-9]+$/)
+    .withMessage('VIN must contain only uppercase letters and numbers'),
   body('model')
     .optional()
     .isLength({ max: 255 })
@@ -128,10 +128,10 @@ const validateTruckUpdate = [
     .withMessage('Plate must be between 1 and 50 characters'),
   body('vin')
     .optional()
-    .isLength({ min: 17, max: 17 })
-    .withMessage('VIN must be exactly 17 characters')
-    .matches(/^[A-HJ-NPR-Z0-9]+$/)
-    .withMessage('Invalid VIN format'),
+    .isLength({ min: 5, max: 5 })
+    .withMessage('VIN must be exactly 5 characters')
+    .matches(/^[A-Z0-9]+$/)
+    .withMessage('VIN must contain only uppercase letters and numbers'),
   body('model')
     .optional()
     .isLength({ max: 255 })

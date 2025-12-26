@@ -44,6 +44,11 @@ export type location = $Result.DefaultSelection<Prisma.$locationPayload>
  */
 export type sensor = $Result.DefaultSelection<Prisma.$sensorPayload>
 /**
+ * Model sensor_history
+ * 
+ */
+export type sensor_history = $Result.DefaultSelection<Prisma.$sensor_historyPayload>
+/**
  * Model truck
  * 
  */
@@ -241,6 +246,16 @@ export class PrismaClient<
     * ```
     */
   get sensor(): Prisma.sensorDelegate<ExtArgs>;
+
+  /**
+   * `prisma.sensor_history`: Exposes CRUD operations for the **sensor_history** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sensor_histories
+    * const sensor_histories = await prisma.sensor_history.findMany()
+    * ```
+    */
+  get sensor_history(): Prisma.sensor_historyDelegate<ExtArgs>;
 
   /**
    * `prisma.truck`: Exposes CRUD operations for the **truck** model.
@@ -718,6 +733,7 @@ export namespace Prisma {
     drivers: 'drivers',
     location: 'location',
     sensor: 'sensor',
+    sensor_history: 'sensor_history',
     truck: 'truck',
     user_admin: 'user_admin',
     vendors: 'vendors'
@@ -736,7 +752,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "alert" | "alert_events" | "device" | "drivers" | "location" | "sensor" | "truck" | "user_admin" | "vendors"
+      modelProps: "alert" | "alert_events" | "device" | "drivers" | "location" | "sensor" | "sensor_history" | "truck" | "user_admin" | "vendors"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1160,6 +1176,76 @@ export namespace Prisma {
           }
         }
       }
+      sensor_history: {
+        payload: Prisma.$sensor_historyPayload<ExtArgs>
+        fields: Prisma.sensor_historyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.sensor_historyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.sensor_historyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>
+          }
+          findFirst: {
+            args: Prisma.sensor_historyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.sensor_historyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>
+          }
+          findMany: {
+            args: Prisma.sensor_historyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>[]
+          }
+          create: {
+            args: Prisma.sensor_historyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>
+          }
+          createMany: {
+            args: Prisma.sensor_historyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.sensor_historyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>[]
+          }
+          delete: {
+            args: Prisma.sensor_historyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>
+          }
+          update: {
+            args: Prisma.sensor_historyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>
+          }
+          deleteMany: {
+            args: Prisma.sensor_historyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.sensor_historyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.sensor_historyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$sensor_historyPayload>
+          }
+          aggregate: {
+            args: Prisma.Sensor_historyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSensor_history>
+          }
+          groupBy: {
+            args: Prisma.sensor_historyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Sensor_historyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.sensor_historyCountArgs<ExtArgs>
+            result: $Utils.Optional<Sensor_historyCountAggregateOutputType> | number
+          }
+        }
+      }
       truck: {
         payload: Prisma.$truckPayload<ExtArgs>
         fields: Prisma.truckFieldRefs
@@ -1565,12 +1651,14 @@ export namespace Prisma {
     alert_events: number
     location: number
     sensor: number
+    sensor_history: number
   }
 
   export type DeviceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | DeviceCountOutputTypeCountAlert_eventsArgs
     location?: boolean | DeviceCountOutputTypeCountLocationArgs
     sensor?: boolean | DeviceCountOutputTypeCountSensorArgs
+    sensor_history?: boolean | DeviceCountOutputTypeCountSensor_historyArgs
   }
 
   // Custom InputTypes
@@ -1603,6 +1691,13 @@ export namespace Prisma {
    */
   export type DeviceCountOutputTypeCountSensorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: sensorWhereInput
+  }
+
+  /**
+   * DeviceCountOutputType without action
+   */
+  export type DeviceCountOutputTypeCountSensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sensor_historyWhereInput
   }
 
 
@@ -1638,15 +1733,48 @@ export namespace Prisma {
 
 
   /**
+   * Count Type LocationCountOutputType
+   */
+
+  export type LocationCountOutputType = {
+    sensor_history: number
+  }
+
+  export type LocationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sensor_history?: boolean | LocationCountOutputTypeCountSensor_historyArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LocationCountOutputType
+     */
+    select?: LocationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LocationCountOutputType without action
+   */
+  export type LocationCountOutputTypeCountSensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sensor_historyWhereInput
+  }
+
+
+  /**
    * Count Type SensorCountOutputType
    */
 
   export type SensorCountOutputType = {
     alert_events: number
+    sensor_history: number
   }
 
   export type SensorCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | SensorCountOutputTypeCountAlert_eventsArgs
+    sensor_history?: boolean | SensorCountOutputTypeCountSensor_historyArgs
   }
 
   // Custom InputTypes
@@ -1667,6 +1795,13 @@ export namespace Prisma {
     where?: alert_eventsWhereInput
   }
 
+  /**
+   * SensorCountOutputType without action
+   */
+  export type SensorCountOutputTypeCountSensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sensor_historyWhereInput
+  }
+
 
   /**
    * Count Type TruckCountOutputType
@@ -1675,11 +1810,13 @@ export namespace Prisma {
   export type TruckCountOutputType = {
     alert_events: number
     device: number
+    sensor_history: number
   }
 
   export type TruckCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | TruckCountOutputTypeCountAlert_eventsArgs
     device?: boolean | TruckCountOutputTypeCountDeviceArgs
+    sensor_history?: boolean | TruckCountOutputTypeCountSensor_historyArgs
   }
 
   // Custom InputTypes
@@ -1705,6 +1842,13 @@ export namespace Prisma {
    */
   export type TruckCountOutputTypeCountDeviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: deviceWhereInput
+  }
+
+  /**
+   * TruckCountOutputType without action
+   */
+  export type TruckCountOutputTypeCountSensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sensor_historyWhereInput
   }
 
 
@@ -4198,6 +4342,7 @@ export namespace Prisma {
     truck?: boolean | truckDefaultArgs<ExtArgs>
     location?: boolean | device$locationArgs<ExtArgs>
     sensor?: boolean | device$sensorArgs<ExtArgs>
+    sensor_history?: boolean | device$sensor_historyArgs<ExtArgs>
     _count?: boolean | DeviceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["device"]>
 
@@ -4239,6 +4384,7 @@ export namespace Prisma {
     truck?: boolean | truckDefaultArgs<ExtArgs>
     location?: boolean | device$locationArgs<ExtArgs>
     sensor?: boolean | device$sensorArgs<ExtArgs>
+    sensor_history?: boolean | device$sensor_historyArgs<ExtArgs>
     _count?: boolean | DeviceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type deviceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4252,6 +4398,7 @@ export namespace Prisma {
       truck: Prisma.$truckPayload<ExtArgs>
       location: Prisma.$locationPayload<ExtArgs>[]
       sensor: Prisma.$sensorPayload<ExtArgs>[]
+      sensor_history: Prisma.$sensor_historyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4635,6 +4782,7 @@ export namespace Prisma {
     truck<T extends truckDefaultArgs<ExtArgs> = {}>(args?: Subset<T, truckDefaultArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     location<T extends device$locationArgs<ExtArgs> = {}>(args?: Subset<T, device$locationArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findMany"> | Null>
     sensor<T extends device$sensorArgs<ExtArgs> = {}>(args?: Subset<T, device$sensorArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensorPayload<ExtArgs>, T, "findMany"> | Null>
+    sensor_history<T extends device$sensor_historyArgs<ExtArgs> = {}>(args?: Subset<T, device$sensor_historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5052,6 +5200,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SensorScalarFieldEnum | SensorScalarFieldEnum[]
+  }
+
+  /**
+   * device.sensor_history
+   */
+  export type device$sensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    where?: sensor_historyWhereInput
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    cursor?: sensor_historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
   }
 
   /**
@@ -6182,6 +6350,10 @@ export namespace Prisma {
     device_id: number | null
     lat: number | null
     long: number | null
+    speed: number | null
+    heading: number | null
+    altitude: number | null
+    accuracy: number | null
   }
 
   export type LocationSumAggregateOutputType = {
@@ -6189,6 +6361,10 @@ export namespace Prisma {
     device_id: number | null
     lat: number | null
     long: number | null
+    speed: number | null
+    heading: number | null
+    altitude: number | null
+    accuracy: number | null
   }
 
   export type LocationMinAggregateOutputType = {
@@ -6196,6 +6372,10 @@ export namespace Prisma {
     device_id: number | null
     lat: number | null
     long: number | null
+    speed: number | null
+    heading: number | null
+    altitude: number | null
+    accuracy: number | null
     created_at: Date | null
     recorded_at: Date | null
   }
@@ -6205,6 +6385,10 @@ export namespace Prisma {
     device_id: number | null
     lat: number | null
     long: number | null
+    speed: number | null
+    heading: number | null
+    altitude: number | null
+    accuracy: number | null
     created_at: Date | null
     recorded_at: Date | null
   }
@@ -6214,6 +6398,10 @@ export namespace Prisma {
     device_id: number
     lat: number
     long: number
+    speed: number
+    heading: number
+    altitude: number
+    accuracy: number
     created_at: number
     recorded_at: number
     _all: number
@@ -6225,6 +6413,10 @@ export namespace Prisma {
     device_id?: true
     lat?: true
     long?: true
+    speed?: true
+    heading?: true
+    altitude?: true
+    accuracy?: true
   }
 
   export type LocationSumAggregateInputType = {
@@ -6232,6 +6424,10 @@ export namespace Prisma {
     device_id?: true
     lat?: true
     long?: true
+    speed?: true
+    heading?: true
+    altitude?: true
+    accuracy?: true
   }
 
   export type LocationMinAggregateInputType = {
@@ -6239,6 +6435,10 @@ export namespace Prisma {
     device_id?: true
     lat?: true
     long?: true
+    speed?: true
+    heading?: true
+    altitude?: true
+    accuracy?: true
     created_at?: true
     recorded_at?: true
   }
@@ -6248,6 +6448,10 @@ export namespace Prisma {
     device_id?: true
     lat?: true
     long?: true
+    speed?: true
+    heading?: true
+    altitude?: true
+    accuracy?: true
     created_at?: true
     recorded_at?: true
   }
@@ -6257,6 +6461,10 @@ export namespace Prisma {
     device_id?: true
     lat?: true
     long?: true
+    speed?: true
+    heading?: true
+    altitude?: true
+    accuracy?: true
     created_at?: true
     recorded_at?: true
     _all?: true
@@ -6353,6 +6561,10 @@ export namespace Prisma {
     device_id: number
     lat: number
     long: number
+    speed: number | null
+    heading: number | null
+    altitude: number | null
+    accuracy: number | null
     created_at: Date
     recorded_at: Date
     _count: LocationCountAggregateOutputType | null
@@ -6381,9 +6593,15 @@ export namespace Prisma {
     device_id?: boolean
     lat?: boolean
     long?: boolean
+    speed?: boolean
+    heading?: boolean
+    altitude?: boolean
+    accuracy?: boolean
     created_at?: boolean
     recorded_at?: boolean
     device?: boolean | deviceDefaultArgs<ExtArgs>
+    sensor_history?: boolean | location$sensor_historyArgs<ExtArgs>
+    _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["location"]>
 
   export type locationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6391,6 +6609,10 @@ export namespace Prisma {
     device_id?: boolean
     lat?: boolean
     long?: boolean
+    speed?: boolean
+    heading?: boolean
+    altitude?: boolean
+    accuracy?: boolean
     created_at?: boolean
     recorded_at?: boolean
     device?: boolean | deviceDefaultArgs<ExtArgs>
@@ -6401,12 +6623,18 @@ export namespace Prisma {
     device_id?: boolean
     lat?: boolean
     long?: boolean
+    speed?: boolean
+    heading?: boolean
+    altitude?: boolean
+    accuracy?: boolean
     created_at?: boolean
     recorded_at?: boolean
   }
 
   export type locationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     device?: boolean | deviceDefaultArgs<ExtArgs>
+    sensor_history?: boolean | location$sensor_historyArgs<ExtArgs>
+    _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type locationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     device?: boolean | deviceDefaultArgs<ExtArgs>
@@ -6416,12 +6644,17 @@ export namespace Prisma {
     name: "location"
     objects: {
       device: Prisma.$devicePayload<ExtArgs>
+      sensor_history: Prisma.$sensor_historyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       device_id: number
       lat: number
       long: number
+      speed: number | null
+      heading: number | null
+      altitude: number | null
+      accuracy: number | null
       created_at: Date
       recorded_at: Date
     }, ExtArgs["result"]["location"]>
@@ -6789,6 +7022,7 @@ export namespace Prisma {
   export interface Prisma__locationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     device<T extends deviceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, deviceDefaultArgs<ExtArgs>>): Prisma__deviceClient<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    sensor_history<T extends location$sensor_historyArgs<ExtArgs> = {}>(args?: Subset<T, location$sensor_historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6822,6 +7056,10 @@ export namespace Prisma {
     readonly device_id: FieldRef<"location", 'Int'>
     readonly lat: FieldRef<"location", 'Float'>
     readonly long: FieldRef<"location", 'Float'>
+    readonly speed: FieldRef<"location", 'Float'>
+    readonly heading: FieldRef<"location", 'Float'>
+    readonly altitude: FieldRef<"location", 'Float'>
+    readonly accuracy: FieldRef<"location", 'Float'>
     readonly created_at: FieldRef<"location", 'DateTime'>
     readonly recorded_at: FieldRef<"location", 'DateTime'>
   }
@@ -7139,6 +7377,26 @@ export namespace Prisma {
      * Filter which locations to delete
      */
     where?: locationWhereInput
+  }
+
+  /**
+   * location.sensor_history
+   */
+  export type location$sensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    where?: sensor_historyWhereInput
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    cursor?: sensor_historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
   }
 
   /**
@@ -7463,6 +7721,7 @@ export namespace Prisma {
     updated_at?: boolean
     deleted_at?: boolean
     alert_events?: boolean | sensor$alert_eventsArgs<ExtArgs>
+    sensor_history?: boolean | sensor$sensor_historyArgs<ExtArgs>
     device?: boolean | deviceDefaultArgs<ExtArgs>
     _count?: boolean | SensorCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sensor"]>
@@ -7506,6 +7765,7 @@ export namespace Prisma {
 
   export type sensorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | sensor$alert_eventsArgs<ExtArgs>
+    sensor_history?: boolean | sensor$sensor_historyArgs<ExtArgs>
     device?: boolean | deviceDefaultArgs<ExtArgs>
     _count?: boolean | SensorCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -7517,6 +7777,7 @@ export namespace Prisma {
     name: "sensor"
     objects: {
       alert_events: Prisma.$alert_eventsPayload<ExtArgs>[]
+      sensor_history: Prisma.$sensor_historyPayload<ExtArgs>[]
       device: Prisma.$devicePayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -7900,6 +8161,7 @@ export namespace Prisma {
   export interface Prisma__sensorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     alert_events<T extends sensor$alert_eventsArgs<ExtArgs> = {}>(args?: Subset<T, sensor$alert_eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$alert_eventsPayload<ExtArgs>, T, "findMany"> | Null>
+    sensor_history<T extends sensor$sensor_historyArgs<ExtArgs> = {}>(args?: Subset<T, sensor$sensor_historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany"> | Null>
     device<T extends deviceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, deviceDefaultArgs<ExtArgs>>): Prisma__deviceClient<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8283,6 +8545,26 @@ export namespace Prisma {
   }
 
   /**
+   * sensor.sensor_history
+   */
+  export type sensor$sensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    where?: sensor_historyWhereInput
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    cursor?: sensor_historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
+  }
+
+  /**
    * sensor without action
    */
   export type sensorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8294,6 +8576,1123 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: sensorInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model sensor_history
+   */
+
+  export type AggregateSensor_history = {
+    _count: Sensor_historyCountAggregateOutputType | null
+    _avg: Sensor_historyAvgAggregateOutputType | null
+    _sum: Sensor_historySumAggregateOutputType | null
+    _min: Sensor_historyMinAggregateOutputType | null
+    _max: Sensor_historyMaxAggregateOutputType | null
+  }
+
+  export type Sensor_historyAvgAggregateOutputType = {
+    id: number | null
+    location_id: number | null
+    sensor_id: number | null
+    device_id: number | null
+    truck_id: number | null
+    tireNo: number | null
+    sensorNo: number | null
+    tempValue: number | null
+    tirepValue: number | null
+    bat: number | null
+  }
+
+  export type Sensor_historySumAggregateOutputType = {
+    id: number | null
+    location_id: number | null
+    sensor_id: number | null
+    device_id: number | null
+    truck_id: number | null
+    tireNo: number | null
+    sensorNo: number | null
+    tempValue: number | null
+    tirepValue: number | null
+    bat: number | null
+  }
+
+  export type Sensor_historyMinAggregateOutputType = {
+    id: number | null
+    location_id: number | null
+    sensor_id: number | null
+    device_id: number | null
+    truck_id: number | null
+    tireNo: number | null
+    sensorNo: number | null
+    tempValue: number | null
+    tirepValue: number | null
+    exType: string | null
+    bat: number | null
+    recorded_at: Date | null
+    created_at: Date | null
+  }
+
+  export type Sensor_historyMaxAggregateOutputType = {
+    id: number | null
+    location_id: number | null
+    sensor_id: number | null
+    device_id: number | null
+    truck_id: number | null
+    tireNo: number | null
+    sensorNo: number | null
+    tempValue: number | null
+    tirepValue: number | null
+    exType: string | null
+    bat: number | null
+    recorded_at: Date | null
+    created_at: Date | null
+  }
+
+  export type Sensor_historyCountAggregateOutputType = {
+    id: number
+    location_id: number
+    sensor_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo: number
+    tempValue: number
+    tirepValue: number
+    exType: number
+    bat: number
+    recorded_at: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Sensor_historyAvgAggregateInputType = {
+    id?: true
+    location_id?: true
+    sensor_id?: true
+    device_id?: true
+    truck_id?: true
+    tireNo?: true
+    sensorNo?: true
+    tempValue?: true
+    tirepValue?: true
+    bat?: true
+  }
+
+  export type Sensor_historySumAggregateInputType = {
+    id?: true
+    location_id?: true
+    sensor_id?: true
+    device_id?: true
+    truck_id?: true
+    tireNo?: true
+    sensorNo?: true
+    tempValue?: true
+    tirepValue?: true
+    bat?: true
+  }
+
+  export type Sensor_historyMinAggregateInputType = {
+    id?: true
+    location_id?: true
+    sensor_id?: true
+    device_id?: true
+    truck_id?: true
+    tireNo?: true
+    sensorNo?: true
+    tempValue?: true
+    tirepValue?: true
+    exType?: true
+    bat?: true
+    recorded_at?: true
+    created_at?: true
+  }
+
+  export type Sensor_historyMaxAggregateInputType = {
+    id?: true
+    location_id?: true
+    sensor_id?: true
+    device_id?: true
+    truck_id?: true
+    tireNo?: true
+    sensorNo?: true
+    tempValue?: true
+    tirepValue?: true
+    exType?: true
+    bat?: true
+    recorded_at?: true
+    created_at?: true
+  }
+
+  export type Sensor_historyCountAggregateInputType = {
+    id?: true
+    location_id?: true
+    sensor_id?: true
+    device_id?: true
+    truck_id?: true
+    tireNo?: true
+    sensorNo?: true
+    tempValue?: true
+    tirepValue?: true
+    exType?: true
+    bat?: true
+    recorded_at?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Sensor_historyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sensor_history to aggregate.
+     */
+    where?: sensor_historyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sensor_histories to fetch.
+     */
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: sensor_historyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sensor_histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sensor_histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned sensor_histories
+    **/
+    _count?: true | Sensor_historyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Sensor_historyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Sensor_historySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Sensor_historyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Sensor_historyMaxAggregateInputType
+  }
+
+  export type GetSensor_historyAggregateType<T extends Sensor_historyAggregateArgs> = {
+        [P in keyof T & keyof AggregateSensor_history]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSensor_history[P]>
+      : GetScalarType<T[P], AggregateSensor_history[P]>
+  }
+
+
+
+
+  export type sensor_historyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: sensor_historyWhereInput
+    orderBy?: sensor_historyOrderByWithAggregationInput | sensor_historyOrderByWithAggregationInput[]
+    by: Sensor_historyScalarFieldEnum[] | Sensor_historyScalarFieldEnum
+    having?: sensor_historyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Sensor_historyCountAggregateInputType | true
+    _avg?: Sensor_historyAvgAggregateInputType
+    _sum?: Sensor_historySumAggregateInputType
+    _min?: Sensor_historyMinAggregateInputType
+    _max?: Sensor_historyMaxAggregateInputType
+  }
+
+  export type Sensor_historyGroupByOutputType = {
+    id: number
+    location_id: number
+    sensor_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo: number | null
+    tempValue: number
+    tirepValue: number
+    exType: string
+    bat: number | null
+    recorded_at: Date
+    created_at: Date
+    _count: Sensor_historyCountAggregateOutputType | null
+    _avg: Sensor_historyAvgAggregateOutputType | null
+    _sum: Sensor_historySumAggregateOutputType | null
+    _min: Sensor_historyMinAggregateOutputType | null
+    _max: Sensor_historyMaxAggregateOutputType | null
+  }
+
+  type GetSensor_historyGroupByPayload<T extends sensor_historyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Sensor_historyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Sensor_historyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Sensor_historyGroupByOutputType[P]>
+            : GetScalarType<T[P], Sensor_historyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type sensor_historySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    location_id?: boolean
+    sensor_id?: boolean
+    device_id?: boolean
+    truck_id?: boolean
+    tireNo?: boolean
+    sensorNo?: boolean
+    tempValue?: boolean
+    tirepValue?: boolean
+    exType?: boolean
+    bat?: boolean
+    recorded_at?: boolean
+    created_at?: boolean
+    location?: boolean | locationDefaultArgs<ExtArgs>
+    sensor?: boolean | sensorDefaultArgs<ExtArgs>
+    device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | truckDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sensor_history"]>
+
+  export type sensor_historySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    location_id?: boolean
+    sensor_id?: boolean
+    device_id?: boolean
+    truck_id?: boolean
+    tireNo?: boolean
+    sensorNo?: boolean
+    tempValue?: boolean
+    tirepValue?: boolean
+    exType?: boolean
+    bat?: boolean
+    recorded_at?: boolean
+    created_at?: boolean
+    location?: boolean | locationDefaultArgs<ExtArgs>
+    sensor?: boolean | sensorDefaultArgs<ExtArgs>
+    device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | truckDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sensor_history"]>
+
+  export type sensor_historySelectScalar = {
+    id?: boolean
+    location_id?: boolean
+    sensor_id?: boolean
+    device_id?: boolean
+    truck_id?: boolean
+    tireNo?: boolean
+    sensorNo?: boolean
+    tempValue?: boolean
+    tirepValue?: boolean
+    exType?: boolean
+    bat?: boolean
+    recorded_at?: boolean
+    created_at?: boolean
+  }
+
+  export type sensor_historyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    location?: boolean | locationDefaultArgs<ExtArgs>
+    sensor?: boolean | sensorDefaultArgs<ExtArgs>
+    device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | truckDefaultArgs<ExtArgs>
+  }
+  export type sensor_historyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    location?: boolean | locationDefaultArgs<ExtArgs>
+    sensor?: boolean | sensorDefaultArgs<ExtArgs>
+    device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | truckDefaultArgs<ExtArgs>
+  }
+
+  export type $sensor_historyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "sensor_history"
+    objects: {
+      location: Prisma.$locationPayload<ExtArgs>
+      sensor: Prisma.$sensorPayload<ExtArgs>
+      device: Prisma.$devicePayload<ExtArgs>
+      truck: Prisma.$truckPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      location_id: number
+      sensor_id: number
+      device_id: number
+      truck_id: number
+      tireNo: number
+      sensorNo: number | null
+      tempValue: number
+      tirepValue: number
+      exType: string
+      bat: number | null
+      recorded_at: Date
+      created_at: Date
+    }, ExtArgs["result"]["sensor_history"]>
+    composites: {}
+  }
+
+  type sensor_historyGetPayload<S extends boolean | null | undefined | sensor_historyDefaultArgs> = $Result.GetResult<Prisma.$sensor_historyPayload, S>
+
+  type sensor_historyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<sensor_historyFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: Sensor_historyCountAggregateInputType | true
+    }
+
+  export interface sensor_historyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['sensor_history'], meta: { name: 'sensor_history' } }
+    /**
+     * Find zero or one Sensor_history that matches the filter.
+     * @param {sensor_historyFindUniqueArgs} args - Arguments to find a Sensor_history
+     * @example
+     * // Get one Sensor_history
+     * const sensor_history = await prisma.sensor_history.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends sensor_historyFindUniqueArgs>(args: SelectSubset<T, sensor_historyFindUniqueArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Sensor_history that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {sensor_historyFindUniqueOrThrowArgs} args - Arguments to find a Sensor_history
+     * @example
+     * // Get one Sensor_history
+     * const sensor_history = await prisma.sensor_history.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends sensor_historyFindUniqueOrThrowArgs>(args: SelectSubset<T, sensor_historyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Sensor_history that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sensor_historyFindFirstArgs} args - Arguments to find a Sensor_history
+     * @example
+     * // Get one Sensor_history
+     * const sensor_history = await prisma.sensor_history.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends sensor_historyFindFirstArgs>(args?: SelectSubset<T, sensor_historyFindFirstArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Sensor_history that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sensor_historyFindFirstOrThrowArgs} args - Arguments to find a Sensor_history
+     * @example
+     * // Get one Sensor_history
+     * const sensor_history = await prisma.sensor_history.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends sensor_historyFindFirstOrThrowArgs>(args?: SelectSubset<T, sensor_historyFindFirstOrThrowArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Sensor_histories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sensor_historyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sensor_histories
+     * const sensor_histories = await prisma.sensor_history.findMany()
+     * 
+     * // Get first 10 Sensor_histories
+     * const sensor_histories = await prisma.sensor_history.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sensor_historyWithIdOnly = await prisma.sensor_history.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends sensor_historyFindManyArgs>(args?: SelectSubset<T, sensor_historyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Sensor_history.
+     * @param {sensor_historyCreateArgs} args - Arguments to create a Sensor_history.
+     * @example
+     * // Create one Sensor_history
+     * const Sensor_history = await prisma.sensor_history.create({
+     *   data: {
+     *     // ... data to create a Sensor_history
+     *   }
+     * })
+     * 
+     */
+    create<T extends sensor_historyCreateArgs>(args: SelectSubset<T, sensor_historyCreateArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Sensor_histories.
+     * @param {sensor_historyCreateManyArgs} args - Arguments to create many Sensor_histories.
+     * @example
+     * // Create many Sensor_histories
+     * const sensor_history = await prisma.sensor_history.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends sensor_historyCreateManyArgs>(args?: SelectSubset<T, sensor_historyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sensor_histories and returns the data saved in the database.
+     * @param {sensor_historyCreateManyAndReturnArgs} args - Arguments to create many Sensor_histories.
+     * @example
+     * // Create many Sensor_histories
+     * const sensor_history = await prisma.sensor_history.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sensor_histories and only return the `id`
+     * const sensor_historyWithIdOnly = await prisma.sensor_history.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends sensor_historyCreateManyAndReturnArgs>(args?: SelectSubset<T, sensor_historyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Sensor_history.
+     * @param {sensor_historyDeleteArgs} args - Arguments to delete one Sensor_history.
+     * @example
+     * // Delete one Sensor_history
+     * const Sensor_history = await prisma.sensor_history.delete({
+     *   where: {
+     *     // ... filter to delete one Sensor_history
+     *   }
+     * })
+     * 
+     */
+    delete<T extends sensor_historyDeleteArgs>(args: SelectSubset<T, sensor_historyDeleteArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Sensor_history.
+     * @param {sensor_historyUpdateArgs} args - Arguments to update one Sensor_history.
+     * @example
+     * // Update one Sensor_history
+     * const sensor_history = await prisma.sensor_history.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends sensor_historyUpdateArgs>(args: SelectSubset<T, sensor_historyUpdateArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Sensor_histories.
+     * @param {sensor_historyDeleteManyArgs} args - Arguments to filter Sensor_histories to delete.
+     * @example
+     * // Delete a few Sensor_histories
+     * const { count } = await prisma.sensor_history.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends sensor_historyDeleteManyArgs>(args?: SelectSubset<T, sensor_historyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sensor_histories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sensor_historyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sensor_histories
+     * const sensor_history = await prisma.sensor_history.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends sensor_historyUpdateManyArgs>(args: SelectSubset<T, sensor_historyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Sensor_history.
+     * @param {sensor_historyUpsertArgs} args - Arguments to update or create a Sensor_history.
+     * @example
+     * // Update or create a Sensor_history
+     * const sensor_history = await prisma.sensor_history.upsert({
+     *   create: {
+     *     // ... data to create a Sensor_history
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Sensor_history we want to update
+     *   }
+     * })
+     */
+    upsert<T extends sensor_historyUpsertArgs>(args: SelectSubset<T, sensor_historyUpsertArgs<ExtArgs>>): Prisma__sensor_historyClient<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Sensor_histories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sensor_historyCountArgs} args - Arguments to filter Sensor_histories to count.
+     * @example
+     * // Count the number of Sensor_histories
+     * const count = await prisma.sensor_history.count({
+     *   where: {
+     *     // ... the filter for the Sensor_histories we want to count
+     *   }
+     * })
+    **/
+    count<T extends sensor_historyCountArgs>(
+      args?: Subset<T, sensor_historyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Sensor_historyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Sensor_history.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Sensor_historyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Sensor_historyAggregateArgs>(args: Subset<T, Sensor_historyAggregateArgs>): Prisma.PrismaPromise<GetSensor_historyAggregateType<T>>
+
+    /**
+     * Group by Sensor_history.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {sensor_historyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends sensor_historyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: sensor_historyGroupByArgs['orderBy'] }
+        : { orderBy?: sensor_historyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, sensor_historyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSensor_historyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the sensor_history model
+   */
+  readonly fields: sensor_historyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for sensor_history.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__sensor_historyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    location<T extends locationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, locationDefaultArgs<ExtArgs>>): Prisma__locationClient<$Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    sensor<T extends sensorDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sensorDefaultArgs<ExtArgs>>): Prisma__sensorClient<$Result.GetResult<Prisma.$sensorPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    device<T extends deviceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, deviceDefaultArgs<ExtArgs>>): Prisma__deviceClient<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    truck<T extends truckDefaultArgs<ExtArgs> = {}>(args?: Subset<T, truckDefaultArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the sensor_history model
+   */ 
+  interface sensor_historyFieldRefs {
+    readonly id: FieldRef<"sensor_history", 'Int'>
+    readonly location_id: FieldRef<"sensor_history", 'Int'>
+    readonly sensor_id: FieldRef<"sensor_history", 'Int'>
+    readonly device_id: FieldRef<"sensor_history", 'Int'>
+    readonly truck_id: FieldRef<"sensor_history", 'Int'>
+    readonly tireNo: FieldRef<"sensor_history", 'Int'>
+    readonly sensorNo: FieldRef<"sensor_history", 'Int'>
+    readonly tempValue: FieldRef<"sensor_history", 'Float'>
+    readonly tirepValue: FieldRef<"sensor_history", 'Float'>
+    readonly exType: FieldRef<"sensor_history", 'String'>
+    readonly bat: FieldRef<"sensor_history", 'Int'>
+    readonly recorded_at: FieldRef<"sensor_history", 'DateTime'>
+    readonly created_at: FieldRef<"sensor_history", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * sensor_history findUnique
+   */
+  export type sensor_historyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * Filter, which sensor_history to fetch.
+     */
+    where: sensor_historyWhereUniqueInput
+  }
+
+  /**
+   * sensor_history findUniqueOrThrow
+   */
+  export type sensor_historyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * Filter, which sensor_history to fetch.
+     */
+    where: sensor_historyWhereUniqueInput
+  }
+
+  /**
+   * sensor_history findFirst
+   */
+  export type sensor_historyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * Filter, which sensor_history to fetch.
+     */
+    where?: sensor_historyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sensor_histories to fetch.
+     */
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sensor_histories.
+     */
+    cursor?: sensor_historyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sensor_histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sensor_histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sensor_histories.
+     */
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
+  }
+
+  /**
+   * sensor_history findFirstOrThrow
+   */
+  export type sensor_historyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * Filter, which sensor_history to fetch.
+     */
+    where?: sensor_historyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sensor_histories to fetch.
+     */
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for sensor_histories.
+     */
+    cursor?: sensor_historyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sensor_histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sensor_histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of sensor_histories.
+     */
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
+  }
+
+  /**
+   * sensor_history findMany
+   */
+  export type sensor_historyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * Filter, which sensor_histories to fetch.
+     */
+    where?: sensor_historyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of sensor_histories to fetch.
+     */
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing sensor_histories.
+     */
+    cursor?: sensor_historyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` sensor_histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` sensor_histories.
+     */
+    skip?: number
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
+  }
+
+  /**
+   * sensor_history create
+   */
+  export type sensor_historyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a sensor_history.
+     */
+    data: XOR<sensor_historyCreateInput, sensor_historyUncheckedCreateInput>
+  }
+
+  /**
+   * sensor_history createMany
+   */
+  export type sensor_historyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many sensor_histories.
+     */
+    data: sensor_historyCreateManyInput | sensor_historyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * sensor_history createManyAndReturn
+   */
+  export type sensor_historyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many sensor_histories.
+     */
+    data: sensor_historyCreateManyInput | sensor_historyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * sensor_history update
+   */
+  export type sensor_historyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a sensor_history.
+     */
+    data: XOR<sensor_historyUpdateInput, sensor_historyUncheckedUpdateInput>
+    /**
+     * Choose, which sensor_history to update.
+     */
+    where: sensor_historyWhereUniqueInput
+  }
+
+  /**
+   * sensor_history updateMany
+   */
+  export type sensor_historyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update sensor_histories.
+     */
+    data: XOR<sensor_historyUpdateManyMutationInput, sensor_historyUncheckedUpdateManyInput>
+    /**
+     * Filter which sensor_histories to update
+     */
+    where?: sensor_historyWhereInput
+  }
+
+  /**
+   * sensor_history upsert
+   */
+  export type sensor_historyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the sensor_history to update in case it exists.
+     */
+    where: sensor_historyWhereUniqueInput
+    /**
+     * In case the sensor_history found by the `where` argument doesn't exist, create a new sensor_history with this data.
+     */
+    create: XOR<sensor_historyCreateInput, sensor_historyUncheckedCreateInput>
+    /**
+     * In case the sensor_history was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<sensor_historyUpdateInput, sensor_historyUncheckedUpdateInput>
+  }
+
+  /**
+   * sensor_history delete
+   */
+  export type sensor_historyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    /**
+     * Filter which sensor_history to delete.
+     */
+    where: sensor_historyWhereUniqueInput
+  }
+
+  /**
+   * sensor_history deleteMany
+   */
+  export type sensor_historyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which sensor_histories to delete
+     */
+    where?: sensor_historyWhereInput
+  }
+
+  /**
+   * sensor_history without action
+   */
+  export type sensor_historyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
   }
 
 
@@ -8605,6 +10004,7 @@ export namespace Prisma {
     updated_at?: boolean
     alert_events?: boolean | truck$alert_eventsArgs<ExtArgs>
     device?: boolean | truck$deviceArgs<ExtArgs>
+    sensor_history?: boolean | truck$sensor_historyArgs<ExtArgs>
     drivers?: boolean | truck$driversArgs<ExtArgs>
     vendors?: boolean | truck$vendorsArgs<ExtArgs>
     _count?: boolean | TruckCountOutputTypeDefaultArgs<ExtArgs>
@@ -8653,6 +10053,7 @@ export namespace Prisma {
   export type truckInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | truck$alert_eventsArgs<ExtArgs>
     device?: boolean | truck$deviceArgs<ExtArgs>
+    sensor_history?: boolean | truck$sensor_historyArgs<ExtArgs>
     drivers?: boolean | truck$driversArgs<ExtArgs>
     vendors?: boolean | truck$vendorsArgs<ExtArgs>
     _count?: boolean | TruckCountOutputTypeDefaultArgs<ExtArgs>
@@ -8667,6 +10068,7 @@ export namespace Prisma {
     objects: {
       alert_events: Prisma.$alert_eventsPayload<ExtArgs>[]
       device: Prisma.$devicePayload<ExtArgs>[]
+      sensor_history: Prisma.$sensor_historyPayload<ExtArgs>[]
       drivers: Prisma.$driversPayload<ExtArgs> | null
       vendors: Prisma.$vendorsPayload<ExtArgs> | null
     }
@@ -9053,6 +10455,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     alert_events<T extends truck$alert_eventsArgs<ExtArgs> = {}>(args?: Subset<T, truck$alert_eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$alert_eventsPayload<ExtArgs>, T, "findMany"> | Null>
     device<T extends truck$deviceArgs<ExtArgs> = {}>(args?: Subset<T, truck$deviceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findMany"> | Null>
+    sensor_history<T extends truck$sensor_historyArgs<ExtArgs> = {}>(args?: Subset<T, truck$sensor_historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany"> | Null>
     drivers<T extends truck$driversArgs<ExtArgs> = {}>(args?: Subset<T, truck$driversArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     vendors<T extends truck$vendorsArgs<ExtArgs> = {}>(args?: Subset<T, truck$vendorsArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
@@ -9458,6 +10861,26 @@ export namespace Prisma {
   }
 
   /**
+   * truck.sensor_history
+   */
+  export type truck$sensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor_history
+     */
+    select?: sensor_historySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensor_historyInclude<ExtArgs> | null
+    where?: sensor_historyWhereInput
+    orderBy?: sensor_historyOrderByWithRelationInput | sensor_historyOrderByWithRelationInput[]
+    cursor?: sensor_historyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Sensor_historyScalarFieldEnum | Sensor_historyScalarFieldEnum[]
+  }
+
+  /**
    * truck.drivers
    */
   export type truck$driversArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9528,6 +10951,11 @@ export namespace Prisma {
     email: string | null
     password: string | null
     role: string | null
+    phone: string | null
+    department: string | null
+    bio: string | null
+    avatar: string | null
+    two_factor_enabled: boolean | null
     last_login: Date | null
     status: string | null
     created_at: Date | null
@@ -9541,6 +10969,11 @@ export namespace Prisma {
     email: string | null
     password: string | null
     role: string | null
+    phone: string | null
+    department: string | null
+    bio: string | null
+    avatar: string | null
+    two_factor_enabled: boolean | null
     last_login: Date | null
     status: string | null
     created_at: Date | null
@@ -9554,6 +10987,11 @@ export namespace Prisma {
     email: number
     password: number
     role: number
+    phone: number
+    department: number
+    bio: number
+    avatar: number
+    two_factor_enabled: number
     last_login: number
     status: number
     created_at: number
@@ -9577,6 +11015,11 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    phone?: true
+    department?: true
+    bio?: true
+    avatar?: true
+    two_factor_enabled?: true
     last_login?: true
     status?: true
     created_at?: true
@@ -9590,6 +11033,11 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    phone?: true
+    department?: true
+    bio?: true
+    avatar?: true
+    two_factor_enabled?: true
     last_login?: true
     status?: true
     created_at?: true
@@ -9603,6 +11051,11 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    phone?: true
+    department?: true
+    bio?: true
+    avatar?: true
+    two_factor_enabled?: true
     last_login?: true
     status?: true
     created_at?: true
@@ -9703,6 +11156,11 @@ export namespace Prisma {
     email: string
     password: string
     role: string
+    phone: string | null
+    department: string | null
+    bio: string | null
+    avatar: string | null
+    two_factor_enabled: boolean
     last_login: Date | null
     status: string
     created_at: Date
@@ -9735,6 +11193,11 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    phone?: boolean
+    department?: boolean
+    bio?: boolean
+    avatar?: boolean
+    two_factor_enabled?: boolean
     last_login?: boolean
     status?: boolean
     created_at?: boolean
@@ -9748,6 +11211,11 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    phone?: boolean
+    department?: boolean
+    bio?: boolean
+    avatar?: boolean
+    two_factor_enabled?: boolean
     last_login?: boolean
     status?: boolean
     created_at?: boolean
@@ -9761,6 +11229,11 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    phone?: boolean
+    department?: boolean
+    bio?: boolean
+    avatar?: boolean
+    two_factor_enabled?: boolean
     last_login?: boolean
     status?: boolean
     created_at?: boolean
@@ -9778,6 +11251,11 @@ export namespace Prisma {
       email: string
       password: string
       role: string
+      phone: string | null
+      department: string | null
+      bio: string | null
+      avatar: string | null
+      two_factor_enabled: boolean
       last_login: Date | null
       status: string
       created_at: Date
@@ -10181,6 +11659,11 @@ export namespace Prisma {
     readonly email: FieldRef<"user_admin", 'String'>
     readonly password: FieldRef<"user_admin", 'String'>
     readonly role: FieldRef<"user_admin", 'String'>
+    readonly phone: FieldRef<"user_admin", 'String'>
+    readonly department: FieldRef<"user_admin", 'String'>
+    readonly bio: FieldRef<"user_admin", 'String'>
+    readonly avatar: FieldRef<"user_admin", 'String'>
+    readonly two_factor_enabled: FieldRef<"user_admin", 'Boolean'>
     readonly last_login: FieldRef<"user_admin", 'DateTime'>
     readonly status: FieldRef<"user_admin", 'String'>
     readonly created_at: FieldRef<"user_admin", 'DateTime'>
@@ -11616,6 +13099,10 @@ export namespace Prisma {
     device_id: 'device_id',
     lat: 'lat',
     long: 'long',
+    speed: 'speed',
+    heading: 'heading',
+    altitude: 'altitude',
+    accuracy: 'accuracy',
     created_at: 'created_at',
     recorded_at: 'recorded_at'
   };
@@ -11642,6 +13129,25 @@ export namespace Prisma {
   };
 
   export type SensorScalarFieldEnum = (typeof SensorScalarFieldEnum)[keyof typeof SensorScalarFieldEnum]
+
+
+  export const Sensor_historyScalarFieldEnum: {
+    id: 'id',
+    location_id: 'location_id',
+    sensor_id: 'sensor_id',
+    device_id: 'device_id',
+    truck_id: 'truck_id',
+    tireNo: 'tireNo',
+    sensorNo: 'sensorNo',
+    tempValue: 'tempValue',
+    tirepValue: 'tirepValue',
+    exType: 'exType',
+    bat: 'bat',
+    recorded_at: 'recorded_at',
+    created_at: 'created_at'
+  };
+
+  export type Sensor_historyScalarFieldEnum = (typeof Sensor_historyScalarFieldEnum)[keyof typeof Sensor_historyScalarFieldEnum]
 
 
   export const TruckScalarFieldEnum: {
@@ -11672,6 +13178,11 @@ export namespace Prisma {
     email: 'email',
     password: 'password',
     role: 'role',
+    phone: 'phone',
+    department: 'department',
+    bio: 'bio',
+    avatar: 'avatar',
+    two_factor_enabled: 'two_factor_enabled',
     last_login: 'last_login',
     status: 'status',
     created_at: 'created_at',
@@ -11779,6 +13290,13 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
   /**
    * Deep Input Types
@@ -11979,6 +13497,7 @@ export namespace Prisma {
     truck?: XOR<TruckRelationFilter, truckWhereInput>
     location?: LocationListRelationFilter
     sensor?: SensorListRelationFilter
+    sensor_history?: Sensor_historyListRelationFilter
   }
 
   export type deviceOrderByWithRelationInput = {
@@ -11999,6 +13518,7 @@ export namespace Prisma {
     truck?: truckOrderByWithRelationInput
     location?: locationOrderByRelationAggregateInput
     sensor?: sensorOrderByRelationAggregateInput
+    sensor_history?: sensor_historyOrderByRelationAggregateInput
   }
 
   export type deviceWhereUniqueInput = Prisma.AtLeast<{
@@ -12022,6 +13542,7 @@ export namespace Prisma {
     truck?: XOR<TruckRelationFilter, truckWhereInput>
     location?: LocationListRelationFilter
     sensor?: SensorListRelationFilter
+    sensor_history?: Sensor_historyListRelationFilter
   }, "id" | "sn">
 
   export type deviceOrderByWithAggregationInput = {
@@ -12167,9 +13688,14 @@ export namespace Prisma {
     device_id?: IntFilter<"location"> | number
     lat?: FloatFilter<"location"> | number
     long?: FloatFilter<"location"> | number
+    speed?: FloatNullableFilter<"location"> | number | null
+    heading?: FloatNullableFilter<"location"> | number | null
+    altitude?: FloatNullableFilter<"location"> | number | null
+    accuracy?: FloatNullableFilter<"location"> | number | null
     created_at?: DateTimeFilter<"location"> | Date | string
     recorded_at?: DateTimeFilter<"location"> | Date | string
     device?: XOR<DeviceRelationFilter, deviceWhereInput>
+    sensor_history?: Sensor_historyListRelationFilter
   }
 
   export type locationOrderByWithRelationInput = {
@@ -12177,9 +13703,14 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrderInput | SortOrder
+    heading?: SortOrderInput | SortOrder
+    altitude?: SortOrderInput | SortOrder
+    accuracy?: SortOrderInput | SortOrder
     created_at?: SortOrder
     recorded_at?: SortOrder
     device?: deviceOrderByWithRelationInput
+    sensor_history?: sensor_historyOrderByRelationAggregateInput
   }
 
   export type locationWhereUniqueInput = Prisma.AtLeast<{
@@ -12190,9 +13721,14 @@ export namespace Prisma {
     device_id?: IntFilter<"location"> | number
     lat?: FloatFilter<"location"> | number
     long?: FloatFilter<"location"> | number
+    speed?: FloatNullableFilter<"location"> | number | null
+    heading?: FloatNullableFilter<"location"> | number | null
+    altitude?: FloatNullableFilter<"location"> | number | null
+    accuracy?: FloatNullableFilter<"location"> | number | null
     created_at?: DateTimeFilter<"location"> | Date | string
     recorded_at?: DateTimeFilter<"location"> | Date | string
     device?: XOR<DeviceRelationFilter, deviceWhereInput>
+    sensor_history?: Sensor_historyListRelationFilter
   }, "id">
 
   export type locationOrderByWithAggregationInput = {
@@ -12200,6 +13736,10 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrderInput | SortOrder
+    heading?: SortOrderInput | SortOrder
+    altitude?: SortOrderInput | SortOrder
+    accuracy?: SortOrderInput | SortOrder
     created_at?: SortOrder
     recorded_at?: SortOrder
     _count?: locationCountOrderByAggregateInput
@@ -12217,6 +13757,10 @@ export namespace Prisma {
     device_id?: IntWithAggregatesFilter<"location"> | number
     lat?: FloatWithAggregatesFilter<"location"> | number
     long?: FloatWithAggregatesFilter<"location"> | number
+    speed?: FloatNullableWithAggregatesFilter<"location"> | number | null
+    heading?: FloatNullableWithAggregatesFilter<"location"> | number | null
+    altitude?: FloatNullableWithAggregatesFilter<"location"> | number | null
+    accuracy?: FloatNullableWithAggregatesFilter<"location"> | number | null
     created_at?: DateTimeWithAggregatesFilter<"location"> | Date | string
     recorded_at?: DateTimeWithAggregatesFilter<"location"> | Date | string
   }
@@ -12241,6 +13785,7 @@ export namespace Prisma {
     updated_at?: DateTimeNullableFilter<"sensor"> | Date | string | null
     deleted_at?: DateTimeNullableFilter<"sensor"> | Date | string | null
     alert_events?: Alert_eventsListRelationFilter
+    sensor_history?: Sensor_historyListRelationFilter
     device?: XOR<DeviceRelationFilter, deviceWhereInput>
   }
 
@@ -12261,6 +13806,7 @@ export namespace Prisma {
     updated_at?: SortOrderInput | SortOrder
     deleted_at?: SortOrderInput | SortOrder
     alert_events?: alert_eventsOrderByRelationAggregateInput
+    sensor_history?: sensor_historyOrderByRelationAggregateInput
     device?: deviceOrderByWithRelationInput
   }
 
@@ -12284,6 +13830,7 @@ export namespace Prisma {
     updated_at?: DateTimeNullableFilter<"sensor"> | Date | string | null
     deleted_at?: DateTimeNullableFilter<"sensor"> | Date | string | null
     alert_events?: Alert_eventsListRelationFilter
+    sensor_history?: Sensor_historyListRelationFilter
     device?: XOR<DeviceRelationFilter, deviceWhereInput>
   }, "id" | "sn">
 
@@ -12331,6 +13878,112 @@ export namespace Prisma {
     deleted_at?: DateTimeNullableWithAggregatesFilter<"sensor"> | Date | string | null
   }
 
+  export type sensor_historyWhereInput = {
+    AND?: sensor_historyWhereInput | sensor_historyWhereInput[]
+    OR?: sensor_historyWhereInput[]
+    NOT?: sensor_historyWhereInput | sensor_historyWhereInput[]
+    id?: IntFilter<"sensor_history"> | number
+    location_id?: IntFilter<"sensor_history"> | number
+    sensor_id?: IntFilter<"sensor_history"> | number
+    device_id?: IntFilter<"sensor_history"> | number
+    truck_id?: IntFilter<"sensor_history"> | number
+    tireNo?: IntFilter<"sensor_history"> | number
+    sensorNo?: IntNullableFilter<"sensor_history"> | number | null
+    tempValue?: FloatFilter<"sensor_history"> | number
+    tirepValue?: FloatFilter<"sensor_history"> | number
+    exType?: StringFilter<"sensor_history"> | string
+    bat?: IntNullableFilter<"sensor_history"> | number | null
+    recorded_at?: DateTimeFilter<"sensor_history"> | Date | string
+    created_at?: DateTimeFilter<"sensor_history"> | Date | string
+    location?: XOR<LocationRelationFilter, locationWhereInput>
+    sensor?: XOR<SensorRelationFilter, sensorWhereInput>
+    device?: XOR<DeviceRelationFilter, deviceWhereInput>
+    truck?: XOR<TruckRelationFilter, truckWhereInput>
+  }
+
+  export type sensor_historyOrderByWithRelationInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrderInput | SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    exType?: SortOrder
+    bat?: SortOrderInput | SortOrder
+    recorded_at?: SortOrder
+    created_at?: SortOrder
+    location?: locationOrderByWithRelationInput
+    sensor?: sensorOrderByWithRelationInput
+    device?: deviceOrderByWithRelationInput
+    truck?: truckOrderByWithRelationInput
+  }
+
+  export type sensor_historyWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: sensor_historyWhereInput | sensor_historyWhereInput[]
+    OR?: sensor_historyWhereInput[]
+    NOT?: sensor_historyWhereInput | sensor_historyWhereInput[]
+    location_id?: IntFilter<"sensor_history"> | number
+    sensor_id?: IntFilter<"sensor_history"> | number
+    device_id?: IntFilter<"sensor_history"> | number
+    truck_id?: IntFilter<"sensor_history"> | number
+    tireNo?: IntFilter<"sensor_history"> | number
+    sensorNo?: IntNullableFilter<"sensor_history"> | number | null
+    tempValue?: FloatFilter<"sensor_history"> | number
+    tirepValue?: FloatFilter<"sensor_history"> | number
+    exType?: StringFilter<"sensor_history"> | string
+    bat?: IntNullableFilter<"sensor_history"> | number | null
+    recorded_at?: DateTimeFilter<"sensor_history"> | Date | string
+    created_at?: DateTimeFilter<"sensor_history"> | Date | string
+    location?: XOR<LocationRelationFilter, locationWhereInput>
+    sensor?: XOR<SensorRelationFilter, sensorWhereInput>
+    device?: XOR<DeviceRelationFilter, deviceWhereInput>
+    truck?: XOR<TruckRelationFilter, truckWhereInput>
+  }, "id">
+
+  export type sensor_historyOrderByWithAggregationInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrderInput | SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    exType?: SortOrder
+    bat?: SortOrderInput | SortOrder
+    recorded_at?: SortOrder
+    created_at?: SortOrder
+    _count?: sensor_historyCountOrderByAggregateInput
+    _avg?: sensor_historyAvgOrderByAggregateInput
+    _max?: sensor_historyMaxOrderByAggregateInput
+    _min?: sensor_historyMinOrderByAggregateInput
+    _sum?: sensor_historySumOrderByAggregateInput
+  }
+
+  export type sensor_historyScalarWhereWithAggregatesInput = {
+    AND?: sensor_historyScalarWhereWithAggregatesInput | sensor_historyScalarWhereWithAggregatesInput[]
+    OR?: sensor_historyScalarWhereWithAggregatesInput[]
+    NOT?: sensor_historyScalarWhereWithAggregatesInput | sensor_historyScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"sensor_history"> | number
+    location_id?: IntWithAggregatesFilter<"sensor_history"> | number
+    sensor_id?: IntWithAggregatesFilter<"sensor_history"> | number
+    device_id?: IntWithAggregatesFilter<"sensor_history"> | number
+    truck_id?: IntWithAggregatesFilter<"sensor_history"> | number
+    tireNo?: IntWithAggregatesFilter<"sensor_history"> | number
+    sensorNo?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    tempValue?: FloatWithAggregatesFilter<"sensor_history"> | number
+    tirepValue?: FloatWithAggregatesFilter<"sensor_history"> | number
+    exType?: StringWithAggregatesFilter<"sensor_history"> | string
+    bat?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    recorded_at?: DateTimeWithAggregatesFilter<"sensor_history"> | Date | string
+    created_at?: DateTimeWithAggregatesFilter<"sensor_history"> | Date | string
+  }
+
   export type truckWhereInput = {
     AND?: truckWhereInput | truckWhereInput[]
     OR?: truckWhereInput[]
@@ -12353,6 +14006,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"truck"> | Date | string
     alert_events?: Alert_eventsListRelationFilter
     device?: DeviceListRelationFilter
+    sensor_history?: Sensor_historyListRelationFilter
     drivers?: XOR<DriversNullableRelationFilter, driversWhereInput> | null
     vendors?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
   }
@@ -12376,6 +14030,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     alert_events?: alert_eventsOrderByRelationAggregateInput
     device?: deviceOrderByRelationAggregateInput
+    sensor_history?: sensor_historyOrderByRelationAggregateInput
     drivers?: driversOrderByWithRelationInput
     vendors?: vendorsOrderByWithRelationInput
   }
@@ -12402,6 +14057,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"truck"> | Date | string
     alert_events?: Alert_eventsListRelationFilter
     device?: DeviceListRelationFilter
+    sensor_history?: Sensor_historyListRelationFilter
     drivers?: XOR<DriversNullableRelationFilter, driversWhereInput> | null
     vendors?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
   }, "id" | "vin" | "plate">
@@ -12461,6 +14117,11 @@ export namespace Prisma {
     email?: StringFilter<"user_admin"> | string
     password?: StringFilter<"user_admin"> | string
     role?: StringFilter<"user_admin"> | string
+    phone?: StringNullableFilter<"user_admin"> | string | null
+    department?: StringNullableFilter<"user_admin"> | string | null
+    bio?: StringNullableFilter<"user_admin"> | string | null
+    avatar?: StringNullableFilter<"user_admin"> | string | null
+    two_factor_enabled?: BoolFilter<"user_admin"> | boolean
     last_login?: DateTimeNullableFilter<"user_admin"> | Date | string | null
     status?: StringFilter<"user_admin"> | string
     created_at?: DateTimeFilter<"user_admin"> | Date | string
@@ -12474,6 +14135,11 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    department?: SortOrderInput | SortOrder
+    bio?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
+    two_factor_enabled?: SortOrder
     last_login?: SortOrderInput | SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -12490,6 +14156,11 @@ export namespace Prisma {
     name?: StringFilter<"user_admin"> | string
     password?: StringFilter<"user_admin"> | string
     role?: StringFilter<"user_admin"> | string
+    phone?: StringNullableFilter<"user_admin"> | string | null
+    department?: StringNullableFilter<"user_admin"> | string | null
+    bio?: StringNullableFilter<"user_admin"> | string | null
+    avatar?: StringNullableFilter<"user_admin"> | string | null
+    two_factor_enabled?: BoolFilter<"user_admin"> | boolean
     last_login?: DateTimeNullableFilter<"user_admin"> | Date | string | null
     status?: StringFilter<"user_admin"> | string
     created_at?: DateTimeFilter<"user_admin"> | Date | string
@@ -12503,6 +14174,11 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    department?: SortOrderInput | SortOrder
+    bio?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
+    two_factor_enabled?: SortOrder
     last_login?: SortOrderInput | SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -12524,6 +14200,11 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"user_admin"> | string
     password?: StringWithAggregatesFilter<"user_admin"> | string
     role?: StringWithAggregatesFilter<"user_admin"> | string
+    phone?: StringNullableWithAggregatesFilter<"user_admin"> | string | null
+    department?: StringNullableWithAggregatesFilter<"user_admin"> | string | null
+    bio?: StringNullableWithAggregatesFilter<"user_admin"> | string | null
+    avatar?: StringNullableWithAggregatesFilter<"user_admin"> | string | null
+    two_factor_enabled?: BoolWithAggregatesFilter<"user_admin"> | boolean
     last_login?: DateTimeNullableWithAggregatesFilter<"user_admin"> | Date | string | null
     status?: StringWithAggregatesFilter<"user_admin"> | string
     created_at?: DateTimeWithAggregatesFilter<"user_admin"> | Date | string
@@ -12803,6 +14484,7 @@ export namespace Prisma {
     truck: truckCreateNestedOneWithoutDeviceInput
     location?: locationCreateNestedManyWithoutDeviceInput
     sensor?: sensorCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceUncheckedCreateInput = {
@@ -12822,6 +14504,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutDeviceInput
     location?: locationUncheckedCreateNestedManyWithoutDeviceInput
     sensor?: sensorUncheckedCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceUpdateInput = {
@@ -12840,6 +14523,7 @@ export namespace Prisma {
     truck?: truckUpdateOneRequiredWithoutDeviceNestedInput
     location?: locationUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceUncheckedUpdateInput = {
@@ -12859,6 +14543,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUncheckedUpdateManyWithoutDeviceNestedInput
     location?: locationUncheckedUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUncheckedUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceCreateManyInput = {
@@ -13015,9 +14700,14 @@ export namespace Prisma {
   export type locationCreateInput = {
     lat: number
     long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
     device: deviceCreateNestedOneWithoutLocationInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutLocationInput
   }
 
   export type locationUncheckedCreateInput = {
@@ -13025,16 +14715,26 @@ export namespace Prisma {
     device_id: number
     lat: number
     long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutLocationInput
   }
 
   export type locationUpdateInput = {
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUpdateOneRequiredWithoutLocationNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutLocationNestedInput
   }
 
   export type locationUncheckedUpdateInput = {
@@ -13042,8 +14742,13 @@ export namespace Prisma {
     device_id?: IntFieldUpdateOperationsInput | number
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutLocationNestedInput
   }
 
   export type locationCreateManyInput = {
@@ -13051,6 +14756,10 @@ export namespace Prisma {
     device_id: number
     lat: number
     long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
   }
@@ -13058,6 +14767,10 @@ export namespace Prisma {
   export type locationUpdateManyMutationInput = {
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13067,6 +14780,10 @@ export namespace Prisma {
     device_id?: IntFieldUpdateOperationsInput | number
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13086,6 +14803,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
     alert_events?: alert_eventsCreateNestedManyWithoutSensorInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutSensorInput
     device: deviceCreateNestedOneWithoutSensorInput
   }
 
@@ -13106,6 +14824,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutSensorInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutSensorInput
   }
 
   export type sensorUpdateInput = {
@@ -13123,6 +14842,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert_events?: alert_eventsUpdateManyWithoutSensorNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutSensorNestedInput
     device?: deviceUpdateOneRequiredWithoutSensorNestedInput
   }
 
@@ -13143,6 +14863,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert_events?: alert_eventsUncheckedUpdateManyWithoutSensorNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutSensorNestedInput
   }
 
   export type sensorCreateManyInput = {
@@ -13197,6 +14918,111 @@ export namespace Prisma {
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type sensor_historyCreateInput = {
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+    location: locationCreateNestedOneWithoutSensor_historyInput
+    sensor: sensorCreateNestedOneWithoutSensor_historyInput
+    device: deviceCreateNestedOneWithoutSensor_historyInput
+    truck: truckCreateNestedOneWithoutSensor_historyInput
+  }
+
+  export type sensor_historyUncheckedCreateInput = {
+    id?: number
+    location_id: number
+    sensor_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyUpdateInput = {
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+  }
+
+  export type sensor_historyUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyCreateManyInput = {
+    id?: number
+    location_id: number
+    sensor_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyUpdateManyMutationInput = {
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type truckCreateInput = {
     vin?: string | null
     name: string
@@ -13213,6 +15039,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
   }
@@ -13236,6 +15063,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
   export type truckUpdateInput = {
@@ -13254,6 +15082,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
   }
@@ -13277,6 +15106,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type truckCreateManyInput = {
@@ -13338,6 +15168,11 @@ export namespace Prisma {
     email: string
     password: string
     role?: string
+    phone?: string | null
+    department?: string | null
+    bio?: string | null
+    avatar?: string | null
+    two_factor_enabled?: boolean
     last_login?: Date | string | null
     status?: string
     created_at?: Date | string
@@ -13351,6 +15186,11 @@ export namespace Prisma {
     email: string
     password: string
     role?: string
+    phone?: string | null
+    department?: string | null
+    bio?: string | null
+    avatar?: string | null
+    two_factor_enabled?: boolean
     last_login?: Date | string | null
     status?: string
     created_at?: Date | string
@@ -13363,6 +15203,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    two_factor_enabled?: BoolFieldUpdateOperationsInput | boolean
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13376,6 +15221,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    two_factor_enabled?: BoolFieldUpdateOperationsInput | boolean
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13389,6 +15239,11 @@ export namespace Prisma {
     email: string
     password: string
     role?: string
+    phone?: string | null
+    department?: string | null
+    bio?: string | null
+    avatar?: string | null
+    two_factor_enabled?: boolean
     last_login?: Date | string | null
     status?: string
     created_at?: Date | string
@@ -13401,6 +15256,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    two_factor_enabled?: BoolFieldUpdateOperationsInput | boolean
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13414,6 +15274,11 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    two_factor_enabled?: BoolFieldUpdateOperationsInput | boolean
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13867,11 +15732,21 @@ export namespace Prisma {
     none?: sensorWhereInput
   }
 
+  export type Sensor_historyListRelationFilter = {
+    every?: sensor_historyWhereInput
+    some?: sensor_historyWhereInput
+    none?: sensor_historyWhereInput
+  }
+
   export type locationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type sensorOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type sensor_historyOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14032,6 +15907,10 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrder
+    heading?: SortOrder
+    altitude?: SortOrder
+    accuracy?: SortOrder
     created_at?: SortOrder
     recorded_at?: SortOrder
   }
@@ -14041,6 +15920,10 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrder
+    heading?: SortOrder
+    altitude?: SortOrder
+    accuracy?: SortOrder
   }
 
   export type locationMaxOrderByAggregateInput = {
@@ -14048,6 +15931,10 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrder
+    heading?: SortOrder
+    altitude?: SortOrder
+    accuracy?: SortOrder
     created_at?: SortOrder
     recorded_at?: SortOrder
   }
@@ -14057,6 +15944,10 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrder
+    heading?: SortOrder
+    altitude?: SortOrder
+    accuracy?: SortOrder
     created_at?: SortOrder
     recorded_at?: SortOrder
   }
@@ -14066,6 +15957,10 @@ export namespace Prisma {
     device_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
+    speed?: SortOrder
+    heading?: SortOrder
+    altitude?: SortOrder
+    accuracy?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -14155,6 +16050,90 @@ export namespace Prisma {
     tireNo?: SortOrder
     sensorNo?: SortOrder
     sensor_lock?: SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    bat?: SortOrder
+  }
+
+  export type LocationRelationFilter = {
+    is?: locationWhereInput
+    isNot?: locationWhereInput
+  }
+
+  export type SensorRelationFilter = {
+    is?: sensorWhereInput
+    isNot?: sensorWhereInput
+  }
+
+  export type sensor_historyCountOrderByAggregateInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    exType?: SortOrder
+    bat?: SortOrder
+    recorded_at?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sensor_historyAvgOrderByAggregateInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    bat?: SortOrder
+  }
+
+  export type sensor_historyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    exType?: SortOrder
+    bat?: SortOrder
+    recorded_at?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sensor_historyMinOrderByAggregateInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrder
+    tempValue?: SortOrder
+    tirepValue?: SortOrder
+    exType?: SortOrder
+    bat?: SortOrder
+    recorded_at?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type sensor_historySumOrderByAggregateInput = {
+    id?: SortOrder
+    location_id?: SortOrder
+    sensor_id?: SortOrder
+    device_id?: SortOrder
+    truck_id?: SortOrder
+    tireNo?: SortOrder
+    sensorNo?: SortOrder
     tempValue?: SortOrder
     tirepValue?: SortOrder
     bat?: SortOrder
@@ -14250,12 +16229,22 @@ export namespace Prisma {
     driver_id?: SortOrder
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type user_adminCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    phone?: SortOrder
+    department?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    two_factor_enabled?: SortOrder
     last_login?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -14273,6 +16262,11 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    phone?: SortOrder
+    department?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    two_factor_enabled?: SortOrder
     last_login?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -14286,6 +16280,11 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    phone?: SortOrder
+    department?: SortOrder
+    bio?: SortOrder
+    avatar?: SortOrder
+    two_factor_enabled?: SortOrder
     last_login?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
@@ -14295,6 +16294,14 @@ export namespace Prisma {
 
   export type user_adminSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type DriversListRelationFilter = {
@@ -14522,6 +16529,13 @@ export namespace Prisma {
     connect?: sensorWhereUniqueInput | sensorWhereUniqueInput[]
   }
 
+  export type sensor_historyCreateNestedManyWithoutDeviceInput = {
+    create?: XOR<sensor_historyCreateWithoutDeviceInput, sensor_historyUncheckedCreateWithoutDeviceInput> | sensor_historyCreateWithoutDeviceInput[] | sensor_historyUncheckedCreateWithoutDeviceInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutDeviceInput | sensor_historyCreateOrConnectWithoutDeviceInput[]
+    createMany?: sensor_historyCreateManyDeviceInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+  }
+
   export type alert_eventsUncheckedCreateNestedManyWithoutDeviceInput = {
     create?: XOR<alert_eventsCreateWithoutDeviceInput, alert_eventsUncheckedCreateWithoutDeviceInput> | alert_eventsCreateWithoutDeviceInput[] | alert_eventsUncheckedCreateWithoutDeviceInput[]
     connectOrCreate?: alert_eventsCreateOrConnectWithoutDeviceInput | alert_eventsCreateOrConnectWithoutDeviceInput[]
@@ -14541,6 +16555,13 @@ export namespace Prisma {
     connectOrCreate?: sensorCreateOrConnectWithoutDeviceInput | sensorCreateOrConnectWithoutDeviceInput[]
     createMany?: sensorCreateManyDeviceInputEnvelope
     connect?: sensorWhereUniqueInput | sensorWhereUniqueInput[]
+  }
+
+  export type sensor_historyUncheckedCreateNestedManyWithoutDeviceInput = {
+    create?: XOR<sensor_historyCreateWithoutDeviceInput, sensor_historyUncheckedCreateWithoutDeviceInput> | sensor_historyCreateWithoutDeviceInput[] | sensor_historyUncheckedCreateWithoutDeviceInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutDeviceInput | sensor_historyCreateOrConnectWithoutDeviceInput[]
+    createMany?: sensor_historyCreateManyDeviceInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
   }
 
   export type alert_eventsUpdateManyWithoutDeviceNestedInput = {
@@ -14593,6 +16614,20 @@ export namespace Prisma {
     deleteMany?: sensorScalarWhereInput | sensorScalarWhereInput[]
   }
 
+  export type sensor_historyUpdateManyWithoutDeviceNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutDeviceInput, sensor_historyUncheckedCreateWithoutDeviceInput> | sensor_historyCreateWithoutDeviceInput[] | sensor_historyUncheckedCreateWithoutDeviceInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutDeviceInput | sensor_historyCreateOrConnectWithoutDeviceInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutDeviceInput | sensor_historyUpsertWithWhereUniqueWithoutDeviceInput[]
+    createMany?: sensor_historyCreateManyDeviceInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutDeviceInput | sensor_historyUpdateWithWhereUniqueWithoutDeviceInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutDeviceInput | sensor_historyUpdateManyWithWhereWithoutDeviceInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+  }
+
   export type alert_eventsUncheckedUpdateManyWithoutDeviceNestedInput = {
     create?: XOR<alert_eventsCreateWithoutDeviceInput, alert_eventsUncheckedCreateWithoutDeviceInput> | alert_eventsCreateWithoutDeviceInput[] | alert_eventsUncheckedCreateWithoutDeviceInput[]
     connectOrCreate?: alert_eventsCreateOrConnectWithoutDeviceInput | alert_eventsCreateOrConnectWithoutDeviceInput[]
@@ -14633,6 +16668,20 @@ export namespace Prisma {
     update?: sensorUpdateWithWhereUniqueWithoutDeviceInput | sensorUpdateWithWhereUniqueWithoutDeviceInput[]
     updateMany?: sensorUpdateManyWithWhereWithoutDeviceInput | sensorUpdateManyWithWhereWithoutDeviceInput[]
     deleteMany?: sensorScalarWhereInput | sensorScalarWhereInput[]
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutDeviceInput, sensor_historyUncheckedCreateWithoutDeviceInput> | sensor_historyCreateWithoutDeviceInput[] | sensor_historyUncheckedCreateWithoutDeviceInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutDeviceInput | sensor_historyCreateOrConnectWithoutDeviceInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutDeviceInput | sensor_historyUpsertWithWhereUniqueWithoutDeviceInput[]
+    createMany?: sensor_historyCreateManyDeviceInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutDeviceInput | sensor_historyUpdateWithWhereUniqueWithoutDeviceInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutDeviceInput | sensor_historyUpdateManyWithWhereWithoutDeviceInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
   }
 
   export type vendorsCreateNestedOneWithoutDriversInput = {
@@ -14699,6 +16748,20 @@ export namespace Prisma {
     connect?: deviceWhereUniqueInput
   }
 
+  export type sensor_historyCreateNestedManyWithoutLocationInput = {
+    create?: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput> | sensor_historyCreateWithoutLocationInput[] | sensor_historyUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutLocationInput | sensor_historyCreateOrConnectWithoutLocationInput[]
+    createMany?: sensor_historyCreateManyLocationInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+  }
+
+  export type sensor_historyUncheckedCreateNestedManyWithoutLocationInput = {
+    create?: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput> | sensor_historyCreateWithoutLocationInput[] | sensor_historyUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutLocationInput | sensor_historyCreateOrConnectWithoutLocationInput[]
+    createMany?: sensor_historyCreateManyLocationInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -14715,11 +16778,46 @@ export namespace Prisma {
     update?: XOR<XOR<deviceUpdateToOneWithWhereWithoutLocationInput, deviceUpdateWithoutLocationInput>, deviceUncheckedUpdateWithoutLocationInput>
   }
 
+  export type sensor_historyUpdateManyWithoutLocationNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput> | sensor_historyCreateWithoutLocationInput[] | sensor_historyUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutLocationInput | sensor_historyCreateOrConnectWithoutLocationInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutLocationInput | sensor_historyUpsertWithWhereUniqueWithoutLocationInput[]
+    createMany?: sensor_historyCreateManyLocationInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutLocationInput | sensor_historyUpdateWithWhereUniqueWithoutLocationInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutLocationInput | sensor_historyUpdateManyWithWhereWithoutLocationInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutLocationNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput> | sensor_historyCreateWithoutLocationInput[] | sensor_historyUncheckedCreateWithoutLocationInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutLocationInput | sensor_historyCreateOrConnectWithoutLocationInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutLocationInput | sensor_historyUpsertWithWhereUniqueWithoutLocationInput[]
+    createMany?: sensor_historyCreateManyLocationInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutLocationInput | sensor_historyUpdateWithWhereUniqueWithoutLocationInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutLocationInput | sensor_historyUpdateManyWithWhereWithoutLocationInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+  }
+
   export type alert_eventsCreateNestedManyWithoutSensorInput = {
     create?: XOR<alert_eventsCreateWithoutSensorInput, alert_eventsUncheckedCreateWithoutSensorInput> | alert_eventsCreateWithoutSensorInput[] | alert_eventsUncheckedCreateWithoutSensorInput[]
     connectOrCreate?: alert_eventsCreateOrConnectWithoutSensorInput | alert_eventsCreateOrConnectWithoutSensorInput[]
     createMany?: alert_eventsCreateManySensorInputEnvelope
     connect?: alert_eventsWhereUniqueInput | alert_eventsWhereUniqueInput[]
+  }
+
+  export type sensor_historyCreateNestedManyWithoutSensorInput = {
+    create?: XOR<sensor_historyCreateWithoutSensorInput, sensor_historyUncheckedCreateWithoutSensorInput> | sensor_historyCreateWithoutSensorInput[] | sensor_historyUncheckedCreateWithoutSensorInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutSensorInput | sensor_historyCreateOrConnectWithoutSensorInput[]
+    createMany?: sensor_historyCreateManySensorInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
   }
 
   export type deviceCreateNestedOneWithoutSensorInput = {
@@ -14735,6 +16833,13 @@ export namespace Prisma {
     connect?: alert_eventsWhereUniqueInput | alert_eventsWhereUniqueInput[]
   }
 
+  export type sensor_historyUncheckedCreateNestedManyWithoutSensorInput = {
+    create?: XOR<sensor_historyCreateWithoutSensorInput, sensor_historyUncheckedCreateWithoutSensorInput> | sensor_historyCreateWithoutSensorInput[] | sensor_historyUncheckedCreateWithoutSensorInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutSensorInput | sensor_historyCreateOrConnectWithoutSensorInput[]
+    createMany?: sensor_historyCreateManySensorInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+  }
+
   export type alert_eventsUpdateManyWithoutSensorNestedInput = {
     create?: XOR<alert_eventsCreateWithoutSensorInput, alert_eventsUncheckedCreateWithoutSensorInput> | alert_eventsCreateWithoutSensorInput[] | alert_eventsUncheckedCreateWithoutSensorInput[]
     connectOrCreate?: alert_eventsCreateOrConnectWithoutSensorInput | alert_eventsCreateOrConnectWithoutSensorInput[]
@@ -14747,6 +16852,20 @@ export namespace Prisma {
     update?: alert_eventsUpdateWithWhereUniqueWithoutSensorInput | alert_eventsUpdateWithWhereUniqueWithoutSensorInput[]
     updateMany?: alert_eventsUpdateManyWithWhereWithoutSensorInput | alert_eventsUpdateManyWithWhereWithoutSensorInput[]
     deleteMany?: alert_eventsScalarWhereInput | alert_eventsScalarWhereInput[]
+  }
+
+  export type sensor_historyUpdateManyWithoutSensorNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutSensorInput, sensor_historyUncheckedCreateWithoutSensorInput> | sensor_historyCreateWithoutSensorInput[] | sensor_historyUncheckedCreateWithoutSensorInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutSensorInput | sensor_historyCreateOrConnectWithoutSensorInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutSensorInput | sensor_historyUpsertWithWhereUniqueWithoutSensorInput[]
+    createMany?: sensor_historyCreateManySensorInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutSensorInput | sensor_historyUpdateWithWhereUniqueWithoutSensorInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutSensorInput | sensor_historyUpdateManyWithWhereWithoutSensorInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
   }
 
   export type deviceUpdateOneRequiredWithoutSensorNestedInput = {
@@ -14771,6 +16890,76 @@ export namespace Prisma {
     deleteMany?: alert_eventsScalarWhereInput | alert_eventsScalarWhereInput[]
   }
 
+  export type sensor_historyUncheckedUpdateManyWithoutSensorNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutSensorInput, sensor_historyUncheckedCreateWithoutSensorInput> | sensor_historyCreateWithoutSensorInput[] | sensor_historyUncheckedCreateWithoutSensorInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutSensorInput | sensor_historyCreateOrConnectWithoutSensorInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutSensorInput | sensor_historyUpsertWithWhereUniqueWithoutSensorInput[]
+    createMany?: sensor_historyCreateManySensorInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutSensorInput | sensor_historyUpdateWithWhereUniqueWithoutSensorInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutSensorInput | sensor_historyUpdateManyWithWhereWithoutSensorInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+  }
+
+  export type locationCreateNestedOneWithoutSensor_historyInput = {
+    create?: XOR<locationCreateWithoutSensor_historyInput, locationUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: locationCreateOrConnectWithoutSensor_historyInput
+    connect?: locationWhereUniqueInput
+  }
+
+  export type sensorCreateNestedOneWithoutSensor_historyInput = {
+    create?: XOR<sensorCreateWithoutSensor_historyInput, sensorUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: sensorCreateOrConnectWithoutSensor_historyInput
+    connect?: sensorWhereUniqueInput
+  }
+
+  export type deviceCreateNestedOneWithoutSensor_historyInput = {
+    create?: XOR<deviceCreateWithoutSensor_historyInput, deviceUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: deviceCreateOrConnectWithoutSensor_historyInput
+    connect?: deviceWhereUniqueInput
+  }
+
+  export type truckCreateNestedOneWithoutSensor_historyInput = {
+    create?: XOR<truckCreateWithoutSensor_historyInput, truckUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: truckCreateOrConnectWithoutSensor_historyInput
+    connect?: truckWhereUniqueInput
+  }
+
+  export type locationUpdateOneRequiredWithoutSensor_historyNestedInput = {
+    create?: XOR<locationCreateWithoutSensor_historyInput, locationUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: locationCreateOrConnectWithoutSensor_historyInput
+    upsert?: locationUpsertWithoutSensor_historyInput
+    connect?: locationWhereUniqueInput
+    update?: XOR<XOR<locationUpdateToOneWithWhereWithoutSensor_historyInput, locationUpdateWithoutSensor_historyInput>, locationUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type sensorUpdateOneRequiredWithoutSensor_historyNestedInput = {
+    create?: XOR<sensorCreateWithoutSensor_historyInput, sensorUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: sensorCreateOrConnectWithoutSensor_historyInput
+    upsert?: sensorUpsertWithoutSensor_historyInput
+    connect?: sensorWhereUniqueInput
+    update?: XOR<XOR<sensorUpdateToOneWithWhereWithoutSensor_historyInput, sensorUpdateWithoutSensor_historyInput>, sensorUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type deviceUpdateOneRequiredWithoutSensor_historyNestedInput = {
+    create?: XOR<deviceCreateWithoutSensor_historyInput, deviceUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: deviceCreateOrConnectWithoutSensor_historyInput
+    upsert?: deviceUpsertWithoutSensor_historyInput
+    connect?: deviceWhereUniqueInput
+    update?: XOR<XOR<deviceUpdateToOneWithWhereWithoutSensor_historyInput, deviceUpdateWithoutSensor_historyInput>, deviceUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type truckUpdateOneRequiredWithoutSensor_historyNestedInput = {
+    create?: XOR<truckCreateWithoutSensor_historyInput, truckUncheckedCreateWithoutSensor_historyInput>
+    connectOrCreate?: truckCreateOrConnectWithoutSensor_historyInput
+    upsert?: truckUpsertWithoutSensor_historyInput
+    connect?: truckWhereUniqueInput
+    update?: XOR<XOR<truckUpdateToOneWithWhereWithoutSensor_historyInput, truckUpdateWithoutSensor_historyInput>, truckUncheckedUpdateWithoutSensor_historyInput>
+  }
+
   export type alert_eventsCreateNestedManyWithoutTruckInput = {
     create?: XOR<alert_eventsCreateWithoutTruckInput, alert_eventsUncheckedCreateWithoutTruckInput> | alert_eventsCreateWithoutTruckInput[] | alert_eventsUncheckedCreateWithoutTruckInput[]
     connectOrCreate?: alert_eventsCreateOrConnectWithoutTruckInput | alert_eventsCreateOrConnectWithoutTruckInput[]
@@ -14783,6 +16972,13 @@ export namespace Prisma {
     connectOrCreate?: deviceCreateOrConnectWithoutTruckInput | deviceCreateOrConnectWithoutTruckInput[]
     createMany?: deviceCreateManyTruckInputEnvelope
     connect?: deviceWhereUniqueInput | deviceWhereUniqueInput[]
+  }
+
+  export type sensor_historyCreateNestedManyWithoutTruckInput = {
+    create?: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput> | sensor_historyCreateWithoutTruckInput[] | sensor_historyUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutTruckInput | sensor_historyCreateOrConnectWithoutTruckInput[]
+    createMany?: sensor_historyCreateManyTruckInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
   }
 
   export type driversCreateNestedOneWithoutTruckInput = {
@@ -14811,6 +17007,13 @@ export namespace Prisma {
     connect?: deviceWhereUniqueInput | deviceWhereUniqueInput[]
   }
 
+  export type sensor_historyUncheckedCreateNestedManyWithoutTruckInput = {
+    create?: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput> | sensor_historyCreateWithoutTruckInput[] | sensor_historyUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutTruckInput | sensor_historyCreateOrConnectWithoutTruckInput[]
+    createMany?: sensor_historyCreateManyTruckInputEnvelope
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+  }
+
   export type alert_eventsUpdateManyWithoutTruckNestedInput = {
     create?: XOR<alert_eventsCreateWithoutTruckInput, alert_eventsUncheckedCreateWithoutTruckInput> | alert_eventsCreateWithoutTruckInput[] | alert_eventsUncheckedCreateWithoutTruckInput[]
     connectOrCreate?: alert_eventsCreateOrConnectWithoutTruckInput | alert_eventsCreateOrConnectWithoutTruckInput[]
@@ -14837,6 +17040,20 @@ export namespace Prisma {
     update?: deviceUpdateWithWhereUniqueWithoutTruckInput | deviceUpdateWithWhereUniqueWithoutTruckInput[]
     updateMany?: deviceUpdateManyWithWhereWithoutTruckInput | deviceUpdateManyWithWhereWithoutTruckInput[]
     deleteMany?: deviceScalarWhereInput | deviceScalarWhereInput[]
+  }
+
+  export type sensor_historyUpdateManyWithoutTruckNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput> | sensor_historyCreateWithoutTruckInput[] | sensor_historyUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutTruckInput | sensor_historyCreateOrConnectWithoutTruckInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutTruckInput | sensor_historyUpsertWithWhereUniqueWithoutTruckInput[]
+    createMany?: sensor_historyCreateManyTruckInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutTruckInput | sensor_historyUpdateWithWhereUniqueWithoutTruckInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutTruckInput | sensor_historyUpdateManyWithWhereWithoutTruckInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
   }
 
   export type driversUpdateOneWithoutTruckNestedInput = {
@@ -14885,6 +17102,24 @@ export namespace Prisma {
     update?: deviceUpdateWithWhereUniqueWithoutTruckInput | deviceUpdateWithWhereUniqueWithoutTruckInput[]
     updateMany?: deviceUpdateManyWithWhereWithoutTruckInput | deviceUpdateManyWithWhereWithoutTruckInput[]
     deleteMany?: deviceScalarWhereInput | deviceScalarWhereInput[]
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutTruckNestedInput = {
+    create?: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput> | sensor_historyCreateWithoutTruckInput[] | sensor_historyUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: sensor_historyCreateOrConnectWithoutTruckInput | sensor_historyCreateOrConnectWithoutTruckInput[]
+    upsert?: sensor_historyUpsertWithWhereUniqueWithoutTruckInput | sensor_historyUpsertWithWhereUniqueWithoutTruckInput[]
+    createMany?: sensor_historyCreateManyTruckInputEnvelope
+    set?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    disconnect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    delete?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    connect?: sensor_historyWhereUniqueInput | sensor_historyWhereUniqueInput[]
+    update?: sensor_historyUpdateWithWhereUniqueWithoutTruckInput | sensor_historyUpdateWithWhereUniqueWithoutTruckInput[]
+    updateMany?: sensor_historyUpdateManyWithWhereWithoutTruckInput | sensor_historyUpdateManyWithWhereWithoutTruckInput[]
+    deleteMany?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type driversCreateNestedManyWithoutVendorsInput = {
@@ -15191,6 +17426,19 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type alert_eventsCreateWithoutAlertInput = {
     value?: number | null
     message?: string | null
@@ -15301,6 +17549,7 @@ export namespace Prisma {
     truck: truckCreateNestedOneWithoutDeviceInput
     location?: locationCreateNestedManyWithoutDeviceInput
     sensor?: sensorCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceUncheckedCreateWithoutAlert_eventsInput = {
@@ -15319,6 +17568,7 @@ export namespace Prisma {
     updated_at?: Date | string
     location?: locationUncheckedCreateNestedManyWithoutDeviceInput
     sensor?: sensorUncheckedCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceCreateOrConnectWithoutAlert_eventsInput = {
@@ -15340,6 +17590,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
+    sensor_history?: sensor_historyCreateNestedManyWithoutSensorInput
     device: deviceCreateNestedOneWithoutSensorInput
   }
 
@@ -15359,6 +17610,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutSensorInput
   }
 
   export type sensorCreateOrConnectWithoutAlert_eventsInput = {
@@ -15381,6 +17633,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     device?: deviceCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
   }
@@ -15403,6 +17656,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
   export type truckCreateOrConnectWithoutAlert_eventsInput = {
@@ -15472,6 +17726,7 @@ export namespace Prisma {
     truck?: truckUpdateOneRequiredWithoutDeviceNestedInput
     location?: locationUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceUncheckedUpdateWithoutAlert_eventsInput = {
@@ -15490,6 +17745,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: locationUncheckedUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUncheckedUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput
   }
 
   export type sensorUpsertWithoutAlert_eventsInput = {
@@ -15517,6 +17773,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sensor_history?: sensor_historyUpdateManyWithoutSensorNestedInput
     device?: deviceUpdateOneRequiredWithoutSensorNestedInput
   }
 
@@ -15536,6 +17793,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutSensorNestedInput
   }
 
   export type truckUpsertWithoutAlert_eventsInput = {
@@ -15564,6 +17822,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
   }
@@ -15586,6 +17845,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type alert_eventsCreateWithoutDeviceInput = {
@@ -15636,6 +17896,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
   }
@@ -15658,6 +17919,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
   export type truckCreateOrConnectWithoutDeviceInput = {
@@ -15668,16 +17930,26 @@ export namespace Prisma {
   export type locationCreateWithoutDeviceInput = {
     lat: number
     long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
+    sensor_history?: sensor_historyCreateNestedManyWithoutLocationInput
   }
 
   export type locationUncheckedCreateWithoutDeviceInput = {
     id?: number
     lat: number
     long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutLocationInput
   }
 
   export type locationCreateOrConnectWithoutDeviceInput = {
@@ -15705,6 +17977,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
     alert_events?: alert_eventsCreateNestedManyWithoutSensorInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutSensorInput
   }
 
   export type sensorUncheckedCreateWithoutDeviceInput = {
@@ -15723,6 +17996,7 @@ export namespace Prisma {
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutSensorInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutSensorInput
   }
 
   export type sensorCreateOrConnectWithoutDeviceInput = {
@@ -15732,6 +18006,45 @@ export namespace Prisma {
 
   export type sensorCreateManyDeviceInputEnvelope = {
     data: sensorCreateManyDeviceInput | sensorCreateManyDeviceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sensor_historyCreateWithoutDeviceInput = {
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+    location: locationCreateNestedOneWithoutSensor_historyInput
+    sensor: sensorCreateNestedOneWithoutSensor_historyInput
+    truck: truckCreateNestedOneWithoutSensor_historyInput
+  }
+
+  export type sensor_historyUncheckedCreateWithoutDeviceInput = {
+    id?: number
+    location_id: number
+    sensor_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyCreateOrConnectWithoutDeviceInput = {
+    where: sensor_historyWhereUniqueInput
+    create: XOR<sensor_historyCreateWithoutDeviceInput, sensor_historyUncheckedCreateWithoutDeviceInput>
+  }
+
+  export type sensor_historyCreateManyDeviceInputEnvelope = {
+    data: sensor_historyCreateManyDeviceInput | sensor_historyCreateManyDeviceInput[]
     skipDuplicates?: boolean
   }
 
@@ -15777,6 +18090,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
   }
@@ -15799,6 +18113,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type locationUpsertWithWhereUniqueWithoutDeviceInput = {
@@ -15825,6 +18140,10 @@ export namespace Prisma {
     device_id?: IntFilter<"location"> | number
     lat?: FloatFilter<"location"> | number
     long?: FloatFilter<"location"> | number
+    speed?: FloatNullableFilter<"location"> | number | null
+    heading?: FloatNullableFilter<"location"> | number | null
+    altitude?: FloatNullableFilter<"location"> | number | null
+    accuracy?: FloatNullableFilter<"location"> | number | null
     created_at?: DateTimeFilter<"location"> | Date | string
     recorded_at?: DateTimeFilter<"location"> | Date | string
   }
@@ -15864,6 +18183,41 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"sensor"> | Date | string
     updated_at?: DateTimeNullableFilter<"sensor"> | Date | string | null
     deleted_at?: DateTimeNullableFilter<"sensor"> | Date | string | null
+  }
+
+  export type sensor_historyUpsertWithWhereUniqueWithoutDeviceInput = {
+    where: sensor_historyWhereUniqueInput
+    update: XOR<sensor_historyUpdateWithoutDeviceInput, sensor_historyUncheckedUpdateWithoutDeviceInput>
+    create: XOR<sensor_historyCreateWithoutDeviceInput, sensor_historyUncheckedCreateWithoutDeviceInput>
+  }
+
+  export type sensor_historyUpdateWithWhereUniqueWithoutDeviceInput = {
+    where: sensor_historyWhereUniqueInput
+    data: XOR<sensor_historyUpdateWithoutDeviceInput, sensor_historyUncheckedUpdateWithoutDeviceInput>
+  }
+
+  export type sensor_historyUpdateManyWithWhereWithoutDeviceInput = {
+    where: sensor_historyScalarWhereInput
+    data: XOR<sensor_historyUpdateManyMutationInput, sensor_historyUncheckedUpdateManyWithoutDeviceInput>
+  }
+
+  export type sensor_historyScalarWhereInput = {
+    AND?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+    OR?: sensor_historyScalarWhereInput[]
+    NOT?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
+    id?: IntFilter<"sensor_history"> | number
+    location_id?: IntFilter<"sensor_history"> | number
+    sensor_id?: IntFilter<"sensor_history"> | number
+    device_id?: IntFilter<"sensor_history"> | number
+    truck_id?: IntFilter<"sensor_history"> | number
+    tireNo?: IntFilter<"sensor_history"> | number
+    sensorNo?: IntNullableFilter<"sensor_history"> | number | null
+    tempValue?: FloatFilter<"sensor_history"> | number
+    tirepValue?: FloatFilter<"sensor_history"> | number
+    exType?: StringFilter<"sensor_history"> | string
+    bat?: IntNullableFilter<"sensor_history"> | number | null
+    recorded_at?: DateTimeFilter<"sensor_history"> | Date | string
+    created_at?: DateTimeFilter<"sensor_history"> | Date | string
   }
 
   export type vendorsCreateWithoutDriversInput = {
@@ -15912,6 +18266,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
   }
 
@@ -15933,6 +18288,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
   export type truckCreateOrConnectWithoutDriversInput = {
@@ -16034,6 +18390,7 @@ export namespace Prisma {
     alert_events?: alert_eventsCreateNestedManyWithoutDeviceInput
     truck: truckCreateNestedOneWithoutDeviceInput
     sensor?: sensorCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceUncheckedCreateWithoutLocationInput = {
@@ -16052,11 +18409,51 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutDeviceInput
     sensor?: sensorUncheckedCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceCreateOrConnectWithoutLocationInput = {
     where: deviceWhereUniqueInput
     create: XOR<deviceCreateWithoutLocationInput, deviceUncheckedCreateWithoutLocationInput>
+  }
+
+  export type sensor_historyCreateWithoutLocationInput = {
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+    sensor: sensorCreateNestedOneWithoutSensor_historyInput
+    device: deviceCreateNestedOneWithoutSensor_historyInput
+    truck: truckCreateNestedOneWithoutSensor_historyInput
+  }
+
+  export type sensor_historyUncheckedCreateWithoutLocationInput = {
+    id?: number
+    sensor_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyCreateOrConnectWithoutLocationInput = {
+    where: sensor_historyWhereUniqueInput
+    create: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput>
+  }
+
+  export type sensor_historyCreateManyLocationInputEnvelope = {
+    data: sensor_historyCreateManyLocationInput | sensor_historyCreateManyLocationInput[]
+    skipDuplicates?: boolean
   }
 
   export type deviceUpsertWithoutLocationInput = {
@@ -16085,6 +18482,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUpdateManyWithoutDeviceNestedInput
     truck?: truckUpdateOneRequiredWithoutDeviceNestedInput
     sensor?: sensorUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceUncheckedUpdateWithoutLocationInput = {
@@ -16103,6 +18501,23 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUncheckedUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput
+  }
+
+  export type sensor_historyUpsertWithWhereUniqueWithoutLocationInput = {
+    where: sensor_historyWhereUniqueInput
+    update: XOR<sensor_historyUpdateWithoutLocationInput, sensor_historyUncheckedUpdateWithoutLocationInput>
+    create: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput>
+  }
+
+  export type sensor_historyUpdateWithWhereUniqueWithoutLocationInput = {
+    where: sensor_historyWhereUniqueInput
+    data: XOR<sensor_historyUpdateWithoutLocationInput, sensor_historyUncheckedUpdateWithoutLocationInput>
+  }
+
+  export type sensor_historyUpdateManyWithWhereWithoutLocationInput = {
+    where: sensor_historyScalarWhereInput
+    data: XOR<sensor_historyUpdateManyMutationInput, sensor_historyUncheckedUpdateManyWithoutLocationInput>
   }
 
   export type alert_eventsCreateWithoutSensorInput = {
@@ -16138,6 +18553,45 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type sensor_historyCreateWithoutSensorInput = {
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+    location: locationCreateNestedOneWithoutSensor_historyInput
+    device: deviceCreateNestedOneWithoutSensor_historyInput
+    truck: truckCreateNestedOneWithoutSensor_historyInput
+  }
+
+  export type sensor_historyUncheckedCreateWithoutSensorInput = {
+    id?: number
+    location_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyCreateOrConnectWithoutSensorInput = {
+    where: sensor_historyWhereUniqueInput
+    create: XOR<sensor_historyCreateWithoutSensorInput, sensor_historyUncheckedCreateWithoutSensorInput>
+  }
+
+  export type sensor_historyCreateManySensorInputEnvelope = {
+    data: sensor_historyCreateManySensorInput | sensor_historyCreateManySensorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type deviceCreateWithoutSensorInput = {
     sn: string
     sim_number?: string | null
@@ -16153,6 +18607,7 @@ export namespace Prisma {
     alert_events?: alert_eventsCreateNestedManyWithoutDeviceInput
     truck: truckCreateNestedOneWithoutDeviceInput
     location?: locationCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceUncheckedCreateWithoutSensorInput = {
@@ -16171,6 +18626,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutDeviceInput
     location?: locationUncheckedCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceCreateOrConnectWithoutSensorInput = {
@@ -16192,6 +18648,22 @@ export namespace Prisma {
   export type alert_eventsUpdateManyWithWhereWithoutSensorInput = {
     where: alert_eventsScalarWhereInput
     data: XOR<alert_eventsUpdateManyMutationInput, alert_eventsUncheckedUpdateManyWithoutSensorInput>
+  }
+
+  export type sensor_historyUpsertWithWhereUniqueWithoutSensorInput = {
+    where: sensor_historyWhereUniqueInput
+    update: XOR<sensor_historyUpdateWithoutSensorInput, sensor_historyUncheckedUpdateWithoutSensorInput>
+    create: XOR<sensor_historyCreateWithoutSensorInput, sensor_historyUncheckedCreateWithoutSensorInput>
+  }
+
+  export type sensor_historyUpdateWithWhereUniqueWithoutSensorInput = {
+    where: sensor_historyWhereUniqueInput
+    data: XOR<sensor_historyUpdateWithoutSensorInput, sensor_historyUncheckedUpdateWithoutSensorInput>
+  }
+
+  export type sensor_historyUpdateManyWithWhereWithoutSensorInput = {
+    where: sensor_historyScalarWhereInput
+    data: XOR<sensor_historyUpdateManyMutationInput, sensor_historyUncheckedUpdateManyWithoutSensorInput>
   }
 
   export type deviceUpsertWithoutSensorInput = {
@@ -16220,6 +18692,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUpdateManyWithoutDeviceNestedInput
     truck?: truckUpdateOneRequiredWithoutDeviceNestedInput
     location?: locationUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceUncheckedUpdateWithoutSensorInput = {
@@ -16238,6 +18711,351 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutDeviceNestedInput
     location?: locationUncheckedUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput
+  }
+
+  export type locationCreateWithoutSensor_historyInput = {
+    lat: number
+    long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
+    created_at?: Date | string
+    recorded_at?: Date | string
+    device: deviceCreateNestedOneWithoutLocationInput
+  }
+
+  export type locationUncheckedCreateWithoutSensor_historyInput = {
+    id?: number
+    device_id: number
+    lat: number
+    long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
+    created_at?: Date | string
+    recorded_at?: Date | string
+  }
+
+  export type locationCreateOrConnectWithoutSensor_historyInput = {
+    where: locationWhereUniqueInput
+    create: XOR<locationCreateWithoutSensor_historyInput, locationUncheckedCreateWithoutSensor_historyInput>
+  }
+
+  export type sensorCreateWithoutSensor_historyInput = {
+    sn: string
+    tireNo: number
+    simNumber?: string | null
+    sensorNo?: number | null
+    sensor_lock?: number
+    status?: string
+    tempValue?: number | null
+    tirepValue?: number | null
+    exType?: string | null
+    bat?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string | null
+    deleted_at?: Date | string | null
+    alert_events?: alert_eventsCreateNestedManyWithoutSensorInput
+    device: deviceCreateNestedOneWithoutSensorInput
+  }
+
+  export type sensorUncheckedCreateWithoutSensor_historyInput = {
+    id?: number
+    device_id: number
+    sn: string
+    tireNo: number
+    simNumber?: string | null
+    sensorNo?: number | null
+    sensor_lock?: number
+    status?: string
+    tempValue?: number | null
+    tirepValue?: number | null
+    exType?: string | null
+    bat?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string | null
+    deleted_at?: Date | string | null
+    alert_events?: alert_eventsUncheckedCreateNestedManyWithoutSensorInput
+  }
+
+  export type sensorCreateOrConnectWithoutSensor_historyInput = {
+    where: sensorWhereUniqueInput
+    create: XOR<sensorCreateWithoutSensor_historyInput, sensorUncheckedCreateWithoutSensor_historyInput>
+  }
+
+  export type deviceCreateWithoutSensor_historyInput = {
+    sn: string
+    sim_number?: string | null
+    installed_at?: Date | string
+    bat1?: number | null
+    bat2?: number | null
+    bat3?: number | null
+    created_at?: Date | string
+    deleted_at?: Date | string | null
+    lock?: number
+    status?: string
+    updated_at?: Date | string
+    alert_events?: alert_eventsCreateNestedManyWithoutDeviceInput
+    truck: truckCreateNestedOneWithoutDeviceInput
+    location?: locationCreateNestedManyWithoutDeviceInput
+    sensor?: sensorCreateNestedManyWithoutDeviceInput
+  }
+
+  export type deviceUncheckedCreateWithoutSensor_historyInput = {
+    id?: number
+    truck_id: number
+    sn: string
+    sim_number?: string | null
+    installed_at?: Date | string
+    bat1?: number | null
+    bat2?: number | null
+    bat3?: number | null
+    created_at?: Date | string
+    deleted_at?: Date | string | null
+    lock?: number
+    status?: string
+    updated_at?: Date | string
+    alert_events?: alert_eventsUncheckedCreateNestedManyWithoutDeviceInput
+    location?: locationUncheckedCreateNestedManyWithoutDeviceInput
+    sensor?: sensorUncheckedCreateNestedManyWithoutDeviceInput
+  }
+
+  export type deviceCreateOrConnectWithoutSensor_historyInput = {
+    where: deviceWhereUniqueInput
+    create: XOR<deviceCreateWithoutSensor_historyInput, deviceUncheckedCreateWithoutSensor_historyInput>
+  }
+
+  export type truckCreateWithoutSensor_historyInput = {
+    vin?: string | null
+    name: string
+    model?: string | null
+    year?: number | null
+    created_at?: Date | string
+    created_by?: number | null
+    updated_by?: number | null
+    deleted_at?: Date | string | null
+    image?: string | null
+    plate?: string | null
+    status?: string
+    type?: string | null
+    updated_at?: Date | string
+    alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
+    device?: deviceCreateNestedManyWithoutTruckInput
+    drivers?: driversCreateNestedOneWithoutTruckInput
+    vendors?: vendorsCreateNestedOneWithoutTruckInput
+  }
+
+  export type truckUncheckedCreateWithoutSensor_historyInput = {
+    id?: number
+    vin?: string | null
+    name: string
+    model?: string | null
+    year?: number | null
+    vendor_id?: number | null
+    created_at?: Date | string
+    created_by?: number | null
+    updated_by?: number | null
+    deleted_at?: Date | string | null
+    driver_id?: number | null
+    image?: string | null
+    plate?: string | null
+    status?: string
+    type?: string | null
+    updated_at?: Date | string
+    alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
+    device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+  }
+
+  export type truckCreateOrConnectWithoutSensor_historyInput = {
+    where: truckWhereUniqueInput
+    create: XOR<truckCreateWithoutSensor_historyInput, truckUncheckedCreateWithoutSensor_historyInput>
+  }
+
+  export type locationUpsertWithoutSensor_historyInput = {
+    update: XOR<locationUpdateWithoutSensor_historyInput, locationUncheckedUpdateWithoutSensor_historyInput>
+    create: XOR<locationCreateWithoutSensor_historyInput, locationUncheckedCreateWithoutSensor_historyInput>
+    where?: locationWhereInput
+  }
+
+  export type locationUpdateToOneWithWhereWithoutSensor_historyInput = {
+    where?: locationWhereInput
+    data: XOR<locationUpdateWithoutSensor_historyInput, locationUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type locationUpdateWithoutSensor_historyInput = {
+    lat?: FloatFieldUpdateOperationsInput | number
+    long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    device?: deviceUpdateOneRequiredWithoutLocationNestedInput
+  }
+
+  export type locationUncheckedUpdateWithoutSensor_historyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    lat?: FloatFieldUpdateOperationsInput | number
+    long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensorUpsertWithoutSensor_historyInput = {
+    update: XOR<sensorUpdateWithoutSensor_historyInput, sensorUncheckedUpdateWithoutSensor_historyInput>
+    create: XOR<sensorCreateWithoutSensor_historyInput, sensorUncheckedCreateWithoutSensor_historyInput>
+    where?: sensorWhereInput
+  }
+
+  export type sensorUpdateToOneWithWhereWithoutSensor_historyInput = {
+    where?: sensorWhereInput
+    data: XOR<sensorUpdateWithoutSensor_historyInput, sensorUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type sensorUpdateWithoutSensor_historyInput = {
+    sn?: StringFieldUpdateOperationsInput | string
+    tireNo?: IntFieldUpdateOperationsInput | number
+    simNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_lock?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    tempValue?: NullableFloatFieldUpdateOperationsInput | number | null
+    tirepValue?: NullableFloatFieldUpdateOperationsInput | number | null
+    exType?: NullableStringFieldUpdateOperationsInput | string | null
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alert_events?: alert_eventsUpdateManyWithoutSensorNestedInput
+    device?: deviceUpdateOneRequiredWithoutSensorNestedInput
+  }
+
+  export type sensorUncheckedUpdateWithoutSensor_historyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    sn?: StringFieldUpdateOperationsInput | string
+    tireNo?: IntFieldUpdateOperationsInput | number
+    simNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_lock?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    tempValue?: NullableFloatFieldUpdateOperationsInput | number | null
+    tirepValue?: NullableFloatFieldUpdateOperationsInput | number | null
+    exType?: NullableStringFieldUpdateOperationsInput | string | null
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alert_events?: alert_eventsUncheckedUpdateManyWithoutSensorNestedInput
+  }
+
+  export type deviceUpsertWithoutSensor_historyInput = {
+    update: XOR<deviceUpdateWithoutSensor_historyInput, deviceUncheckedUpdateWithoutSensor_historyInput>
+    create: XOR<deviceCreateWithoutSensor_historyInput, deviceUncheckedCreateWithoutSensor_historyInput>
+    where?: deviceWhereInput
+  }
+
+  export type deviceUpdateToOneWithWhereWithoutSensor_historyInput = {
+    where?: deviceWhereInput
+    data: XOR<deviceUpdateWithoutSensor_historyInput, deviceUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type deviceUpdateWithoutSensor_historyInput = {
+    sn?: StringFieldUpdateOperationsInput | string
+    sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    installed_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lock?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    alert_events?: alert_eventsUpdateManyWithoutDeviceNestedInput
+    truck?: truckUpdateOneRequiredWithoutDeviceNestedInput
+    location?: locationUpdateManyWithoutDeviceNestedInput
+    sensor?: sensorUpdateManyWithoutDeviceNestedInput
+  }
+
+  export type deviceUncheckedUpdateWithoutSensor_historyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    sn?: StringFieldUpdateOperationsInput | string
+    sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    installed_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lock?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    alert_events?: alert_eventsUncheckedUpdateManyWithoutDeviceNestedInput
+    location?: locationUncheckedUpdateManyWithoutDeviceNestedInput
+    sensor?: sensorUncheckedUpdateManyWithoutDeviceNestedInput
+  }
+
+  export type truckUpsertWithoutSensor_historyInput = {
+    update: XOR<truckUpdateWithoutSensor_historyInput, truckUncheckedUpdateWithoutSensor_historyInput>
+    create: XOR<truckCreateWithoutSensor_historyInput, truckUncheckedCreateWithoutSensor_historyInput>
+    where?: truckWhereInput
+  }
+
+  export type truckUpdateToOneWithWhereWithoutSensor_historyInput = {
+    where?: truckWhereInput
+    data: XOR<truckUpdateWithoutSensor_historyInput, truckUncheckedUpdateWithoutSensor_historyInput>
+  }
+
+  export type truckUpdateWithoutSensor_historyInput = {
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableIntFieldUpdateOperationsInput | number | null
+    updated_by?: NullableIntFieldUpdateOperationsInput | number | null
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    plate?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
+    device?: deviceUpdateManyWithoutTruckNestedInput
+    drivers?: driversUpdateOneWithoutTruckNestedInput
+    vendors?: vendorsUpdateOneWithoutTruckNestedInput
+  }
+
+  export type truckUncheckedUpdateWithoutSensor_historyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableIntFieldUpdateOperationsInput | number | null
+    updated_by?: NullableIntFieldUpdateOperationsInput | number | null
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    plate?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
+    device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type alert_eventsCreateWithoutTruckInput = {
@@ -16288,6 +19106,7 @@ export namespace Prisma {
     alert_events?: alert_eventsCreateNestedManyWithoutDeviceInput
     location?: locationCreateNestedManyWithoutDeviceInput
     sensor?: sensorCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceUncheckedCreateWithoutTruckInput = {
@@ -16306,6 +19125,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutDeviceInput
     location?: locationUncheckedCreateNestedManyWithoutDeviceInput
     sensor?: sensorUncheckedCreateNestedManyWithoutDeviceInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutDeviceInput
   }
 
   export type deviceCreateOrConnectWithoutTruckInput = {
@@ -16315,6 +19135,45 @@ export namespace Prisma {
 
   export type deviceCreateManyTruckInputEnvelope = {
     data: deviceCreateManyTruckInput | deviceCreateManyTruckInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type sensor_historyCreateWithoutTruckInput = {
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+    location: locationCreateNestedOneWithoutSensor_historyInput
+    sensor: sensorCreateNestedOneWithoutSensor_historyInput
+    device: deviceCreateNestedOneWithoutSensor_historyInput
+  }
+
+  export type sensor_historyUncheckedCreateWithoutTruckInput = {
+    id?: number
+    location_id: number
+    sensor_id: number
+    device_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyCreateOrConnectWithoutTruckInput = {
+    where: sensor_historyWhereUniqueInput
+    create: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput>
+  }
+
+  export type sensor_historyCreateManyTruckInputEnvelope = {
+    data: sensor_historyCreateManyTruckInput | sensor_historyCreateManyTruckInput[]
     skipDuplicates?: boolean
   }
 
@@ -16431,6 +19290,22 @@ export namespace Prisma {
     lock?: IntFilter<"device"> | number
     status?: StringFilter<"device"> | string
     updated_at?: DateTimeFilter<"device"> | Date | string
+  }
+
+  export type sensor_historyUpsertWithWhereUniqueWithoutTruckInput = {
+    where: sensor_historyWhereUniqueInput
+    update: XOR<sensor_historyUpdateWithoutTruckInput, sensor_historyUncheckedUpdateWithoutTruckInput>
+    create: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput>
+  }
+
+  export type sensor_historyUpdateWithWhereUniqueWithoutTruckInput = {
+    where: sensor_historyWhereUniqueInput
+    data: XOR<sensor_historyUpdateWithoutTruckInput, sensor_historyUncheckedUpdateWithoutTruckInput>
+  }
+
+  export type sensor_historyUpdateManyWithWhereWithoutTruckInput = {
+    where: sensor_historyScalarWhereInput
+    data: XOR<sensor_historyUpdateManyMutationInput, sensor_historyUncheckedUpdateManyWithoutTruckInput>
   }
 
   export type driversUpsertWithoutTruckInput = {
@@ -16564,6 +19439,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
   }
 
@@ -16585,6 +19461,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
   export type truckCreateOrConnectWithoutVendorsInput = {
@@ -16710,6 +19587,10 @@ export namespace Prisma {
     id?: number
     lat: number
     long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
   }
@@ -16729,6 +19610,21 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string | null
     deleted_at?: Date | string | null
+  }
+
+  export type sensor_historyCreateManyDeviceInput = {
+    id?: number
+    location_id: number
+    sensor_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
   }
 
   export type alert_eventsUpdateWithoutDeviceInput = {
@@ -16769,22 +19665,36 @@ export namespace Prisma {
   export type locationUpdateWithoutDeviceInput = {
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    sensor_history?: sensor_historyUpdateManyWithoutLocationNestedInput
   }
 
   export type locationUncheckedUpdateWithoutDeviceInput = {
     id?: IntFieldUpdateOperationsInput | number
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutLocationNestedInput
   }
 
   export type locationUncheckedUpdateManyWithoutDeviceInput = {
     id?: IntFieldUpdateOperationsInput | number
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16804,6 +19714,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert_events?: alert_eventsUpdateManyWithoutSensorNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutSensorNestedInput
   }
 
   export type sensorUncheckedUpdateWithoutDeviceInput = {
@@ -16822,6 +19733,7 @@ export namespace Prisma {
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert_events?: alert_eventsUncheckedUpdateManyWithoutSensorNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutSensorNestedInput
   }
 
   export type sensorUncheckedUpdateManyWithoutDeviceInput = {
@@ -16839,6 +19751,50 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type sensor_historyUpdateWithoutDeviceInput = {
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+  }
+
+  export type sensor_historyUncheckedUpdateWithoutDeviceInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutDeviceInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type truckCreateManyDriversInput = {
@@ -16875,6 +19831,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
   }
 
@@ -16896,6 +19853,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type truckUncheckedUpdateManyWithoutDriversInput = {
@@ -16916,6 +19874,65 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type sensor_historyCreateManyLocationInput = {
+    id?: number
+    sensor_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
+  }
+
+  export type sensor_historyUpdateWithoutLocationInput = {
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+  }
+
+  export type sensor_historyUncheckedUpdateWithoutLocationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutLocationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type alert_eventsCreateManySensorInput = {
     id?: number
     alert_id: number
@@ -16926,6 +19943,21 @@ export namespace Prisma {
     status?: string
     created_at?: Date | string
     resolved_at?: Date | string | null
+  }
+
+  export type sensor_historyCreateManySensorInput = {
+    id?: number
+    location_id: number
+    device_id: number
+    truck_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
   }
 
   export type alert_eventsUpdateWithoutSensorInput = {
@@ -16963,6 +19995,50 @@ export namespace Prisma {
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type sensor_historyUpdateWithoutSensorInput = {
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+  }
+
+  export type sensor_historyUncheckedUpdateWithoutSensorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutSensorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type alert_eventsCreateManyTruckInput = {
     id?: number
     alert_id: number
@@ -16988,6 +20064,21 @@ export namespace Prisma {
     lock?: number
     status?: string
     updated_at?: Date | string
+  }
+
+  export type sensor_historyCreateManyTruckInput = {
+    id?: number
+    location_id: number
+    sensor_id: number
+    device_id: number
+    tireNo: number
+    sensorNo?: number | null
+    tempValue: number
+    tirepValue: number
+    exType?: string
+    bat?: number | null
+    recorded_at: Date | string
+    created_at?: Date | string
   }
 
   export type alert_eventsUpdateWithoutTruckInput = {
@@ -17040,6 +20131,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUpdateManyWithoutDeviceNestedInput
     location?: locationUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceUncheckedUpdateWithoutTruckInput = {
@@ -17058,6 +20150,7 @@ export namespace Prisma {
     alert_events?: alert_eventsUncheckedUpdateManyWithoutDeviceNestedInput
     location?: locationUncheckedUpdateManyWithoutDeviceNestedInput
     sensor?: sensorUncheckedUpdateManyWithoutDeviceNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput
   }
 
   export type deviceUncheckedUpdateManyWithoutTruckInput = {
@@ -17073,6 +20166,50 @@ export namespace Prisma {
     lock?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyUpdateWithoutTruckInput = {
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
+  }
+
+  export type sensor_historyUncheckedUpdateWithoutTruckInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type sensor_historyUncheckedUpdateManyWithoutTruckInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    location_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    tireNo?: IntFieldUpdateOperationsInput | number
+    sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
+    tempValue?: FloatFieldUpdateOperationsInput | number
+    tirepValue?: FloatFieldUpdateOperationsInput | number
+    exType?: StringFieldUpdateOperationsInput | string
+    bat?: NullableIntFieldUpdateOperationsInput | number | null
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type driversCreateManyVendorsInput = {
@@ -17166,6 +20303,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
   }
 
@@ -17187,6 +20325,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type truckUncheckedUpdateManyWithoutVendorsInput = {
@@ -17225,6 +20364,10 @@ export namespace Prisma {
      */
     export type DriversCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = DriversCountOutputTypeDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use LocationCountOutputTypeDefaultArgs instead
+     */
+    export type LocationCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LocationCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use SensorCountOutputTypeDefaultArgs instead
      */
     export type SensorCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SensorCountOutputTypeDefaultArgs<ExtArgs>
@@ -17260,6 +20403,10 @@ export namespace Prisma {
      * @deprecated Use sensorDefaultArgs instead
      */
     export type sensorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = sensorDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use sensor_historyDefaultArgs instead
+     */
+    export type sensor_historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = sensor_historyDefaultArgs<ExtArgs>
     /**
      * @deprecated Use truckDefaultArgs instead
      */

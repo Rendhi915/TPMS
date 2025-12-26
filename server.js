@@ -3,6 +3,7 @@ const http = require('http');
 const url = require('url');
 const crypto = require('crypto');
 const express = require('express');
+const { spawn } = require('child_process');
 const app = require('./src/app');
 require('dotenv').config();
 
@@ -30,6 +31,33 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://be-tpms.connectis.my.id';
 // Derive WebSocket base URL from PUBLIC_BASE_URL with correct scheme
 const WS_BASE_URL = `${PUBLIC_BASE_URL.startsWith('https') ? 'wss' : 'ws'}://${PUBLIC_BASE_URL.replace(/^https?:\/\//, '')}`;
+
+// ==========================================
+// REALISTIC LIVE SIMULATOR (NEW)
+// ==========================================
+let realisticSimulator = null;
+
+async function startRealisticSimulator() {
+  if (NODE_ENV === 'development' && process.env.AUTO_START_SIMULATOR === 'true') {
+    console.log('🚀 Starting realistic live simulator (3-second interval)...\n');
+    
+    try {
+      const { startSimulator } = require('./scripts/realistic-live-simulator');
+      await startSimulator();
+      realisticSimulator = true;
+      console.log('✅ Realistic simulator is running\n');
+    } catch (error) {
+      console.error('❌ Failed to start realistic simulator:', error);
+    }
+  }
+}
+
+function stopRealisticSimulator() {
+  if (realisticSimulator) {
+    console.log('📴 Stopping realistic simulator...');
+    realisticSimulator = null;
+  }
+}
 
 // ==========================================
 // WEBSOCKET MESSAGE HANDLERS
@@ -477,7 +505,7 @@ class WebSocketServer {
 
   // Start real-time data broadcasting
   startRealtimeBroadcast() {
-    // Truck location updates
+    // Truck location updates (sync with simulator - every 3 seconds)
     setInterval(async () => {
       if (!this.isReady || this.subscriptions.truckUpdates.size === 0) return;
 
@@ -491,7 +519,7 @@ class WebSocketServer {
       } catch (error) {
         console.error('❌ Error broadcasting truck locations:', error);
       }
-    }, 30000); // Every 30 seconds
+    }, 3000); // Every 3 seconds - sync with simulator
 
     // Alert monitoring
     setInterval(async () => {
@@ -501,7 +529,6 @@ class WebSocketServer {
         const recentAlerts = await prismaService.prisma.alert_events.findMany({
           where: {
             status: 'active',
-            deleted_at: null,
             created_at: {
               gte: new Date(Date.now() - 60000), // Last minute
             },
@@ -618,7 +645,7 @@ class WebSocketServer {
     // Determine active trucks from recent locations (last 30 minutes)
     const recentPositions = await prismaService.prisma.location.findMany({
       where: {
-        timestamp: { gte: new Date(Date.now() - 30 * 60 * 1000) },
+        recorded_at: { gte: new Date(Date.now() - 30 * 60 * 1000) },
       },
       include: {
         device: {
@@ -629,7 +656,8 @@ class WebSocketServer {
       },
       distinct: ['device_id'],
     });
-    const activeTrucks = recentPositions.filter((p) => (p.speed || 0) > 5).length;
+    // Count active trucks (trucks with recent location data)
+    const activeTrucks = recentPositions.length;
 
     // Unresolved alerts
     const unresolvedAlerts = await prismaService.prisma.alert_events.count({
@@ -762,7 +790,7 @@ const startServer = async () => {
   try {
     const server = await wsServer.initialize();
 
-    server.listen(PORT, '0.0.0.0', () => {
+    server.listen(PORT, '0.0.0.0', async () => {
       const bootTime = Date.now() - startTime;
 
       console.log('🚀 ================================');
@@ -797,6 +825,9 @@ const startServer = async () => {
         console.log(`   • Admin logs: log/admin-activity.log`);
         console.log('🚀 ================================');
       }
+
+      // Start realistic simulator in background (if enabled)
+      await startRealisticSimulator();
     });
   } catch (error) {
     console.error('❌ Server startup failed:', error);
@@ -820,6 +851,9 @@ const gracefulShutdown = async (signal) => {
   logServerShutdown(signal);
 
   try {
+    // Stop realistic simulator first
+    stopRealisticSimulator();
+    
     await wsServer.shutdown();
     console.log('✅ Graceful shutdown completed');
     process.exit(0);

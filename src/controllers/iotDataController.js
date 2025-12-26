@@ -137,6 +137,38 @@ const handleTPData = async (sn, data, res) => {
       data: updateData,
     });
 
+    // Save to sensor_history with latest location
+    try {
+      // Get the latest location for this device
+      const latestLocation = await prisma.location.findFirst({
+        where: { device_id: sensor.device_id },
+        orderBy: { recorded_at: 'desc' },
+        select: { id: true, recorded_at: true }
+      });
+
+      if (latestLocation) {
+        await prisma.sensor_history.create({
+          data: {
+            location_id: latestLocation.id,
+            sensor_id: updated.id,
+            device_id: sensor.device_id,
+            truck_id: sensor.device.truck_id,
+            tireNo: updated.tireNo,
+            sensorNo: updated.sensorNo,
+            tempValue: updated.tempValue || 0,
+            tirepValue: updated.tirepValue || 0,
+            exType: updated.exType || 'normal',
+            bat: updated.bat,
+            recorded_at: latestLocation.recorded_at
+          }
+        });
+        console.log(`✅ [SENSOR_HISTORY] Saved for sensor ${sn} at location ${latestLocation.id}`);
+      }
+    } catch (historyError) {
+      console.error(`⚠️ [SENSOR_HISTORY] Failed to save: ${historyError.message}`);
+      // Don't fail the whole request if history save fails
+    }
+
     console.log(`✅ [TPDATA] Sensor ${sn} - Temp:${tempValue}°C Press:${tiprValue}kPa`);
 
     // Broadcast real-time update to WebSocket clients
@@ -215,6 +247,38 @@ const handleHubData = async (sn, data, res) => {
       data: updateData,
     });
 
+    // Save to sensor_history with latest location
+    try {
+      // Get the latest location for this device
+      const latestLocation = await prisma.location.findFirst({
+        where: { device_id: sensor.device_id },
+        orderBy: { recorded_at: 'desc' },
+        select: { id: true, recorded_at: true }
+      });
+
+      if (latestLocation) {
+        await prisma.sensor_history.create({
+          data: {
+            location_id: latestLocation.id,
+            sensor_id: updated.id,
+            device_id: sensor.device_id,
+            truck_id: sensor.device.truck_id,
+            tireNo: updated.tireNo,
+            sensorNo: updated.sensorNo,
+            tempValue: updated.tempValue || 0,
+            tirepValue: updated.tirepValue || 0,
+            exType: updated.exType || 'normal',
+            bat: updated.bat,
+            recorded_at: latestLocation.recorded_at
+          }
+        });
+        console.log(`✅ [SENSOR_HISTORY] Saved hub data for sensor ${sn} at location ${latestLocation.id}`);
+      }
+    } catch (historyError) {
+      console.error(`⚠️ [SENSOR_HISTORY] Failed to save hub data: ${historyError.message}`);
+      // Don't fail the whole request if history save fails
+    }
+
     console.log(`✅ [HUBDATA] Sensor ${sn} - Hub Temp:${tempValue}°C`);
 
     // Broadcast real-time update to WebSocket clients
@@ -290,14 +354,62 @@ const handleDeviceData = async (sn, data, res) => {
     // Create new location record if GPS data provided
     let newLocation = null;
     if (lng !== undefined && lat !== undefined) {
-      newLocation = await prisma.location.create({
-        data: {
-          device_id: device.id,
-          lat: parseFloat(lat),
-          long: parseFloat(lng),
-          recorded_at: new Date(),
-        },
+      // Use transaction to save location + sensor history snapshots
+      const result = await prisma.$transaction(async (tx) => {
+        // 1. Create location record
+        const location = await tx.location.create({
+          data: {
+            device_id: device.id,
+            lat: parseFloat(lat),
+            long: parseFloat(lng),
+            recorded_at: new Date(),
+          },
+        });
+
+        // 2. Get all current sensor data for this device
+        const sensors = await tx.sensor.findMany({
+          where: {
+            device_id: device.id,
+            deleted_at: null
+          },
+          select: {
+            id: true,
+            tireNo: true,
+            sensorNo: true,
+            tempValue: true,
+            tirepValue: true,
+            exType: true,
+            bat: true
+          }
+        });
+
+        // 3. Save sensor history snapshots for all sensors
+        if (sensors.length > 0) {
+          const sensorHistoryData = sensors.map(sensor => ({
+            location_id: location.id,
+            sensor_id: sensor.id,
+            device_id: device.id,
+            truck_id: device.truck_id,
+            tireNo: sensor.tireNo,
+            sensorNo: sensor.sensorNo,
+            tempValue: sensor.tempValue || 0,
+            tirepValue: sensor.tirepValue || 0,
+            exType: sensor.exType || 'normal',
+            bat: sensor.bat,
+            recorded_at: location.recorded_at
+          }));
+
+          await tx.sensor_history.createMany({
+            data: sensorHistoryData
+          });
+
+          console.log(`✅ [SENSOR_HISTORY] Saved ${sensors.length} sensor snapshots for location ${location.id}`);
+        }
+
+        return location;
       });
+
+      newLocation = result;
     }
 
     console.log(`✅ [DEVICE] Device ${sn} - GPS:${lat},${lng} Battery:${bat1}/${bat2}/${bat3}`);
