@@ -6,14 +6,18 @@ const TESTING_MODE = process.env.TESTING_MODE === 'true';
 
 const authMiddleware = (req, res, next) => {
   try {
+    // Get token from header first
+    const authHeader = req.headers.authorization;
+    const hasToken = authHeader && authHeader.startsWith('Bearer ');
+    
     // ==========================================
-    // TESTING MODE BYPASS
+    // TESTING MODE BYPASS (only if no token provided)
     // ==========================================
-    // Skip JWT authentication when TESTING_MODE=true in .env
-    // This allows frontend developers to test APIs without token management
+    // Skip JWT authentication when TESTING_MODE=true AND no token is provided
+    // If token IS provided, validate it normally
     // 🚨 SECURITY: Only allow in development environment
-    if (TESTING_MODE && process.env.NODE_ENV !== 'production') {
-      console.log('⚠️  [TESTING MODE] JWT authentication bypassed');
+    if (TESTING_MODE && process.env.NODE_ENV !== 'production' && !hasToken) {
+      console.log('⚠️  [TESTING MODE] JWT authentication bypassed - using default admin user');
       req.user = {
         userId: 1,
         username: 'admin',
@@ -28,9 +32,7 @@ const authMiddleware = (req, res, next) => {
       // Fall through to normal JWT validation
     }
 
-    // Get token from header
-    const authHeader = req.headers.authorization;
-
+    // Normal JWT validation
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
