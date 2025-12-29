@@ -9,6 +9,7 @@ const getAllTrucks = async (req, res) => {
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 50,
       search: req.query.search,
+      plate: req.query.plate,
       minFuel: req.query.minFuel ? parseFloat(req.query.minFuel) : undefined,
       maxFuel: req.query.maxFuel ? parseFloat(req.query.maxFuel) : undefined,
       hasAlerts: req.query.hasAlerts,

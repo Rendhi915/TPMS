@@ -18,6 +18,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL || 'https://connectis.my.id',
   'http://localhost:3000',
   'http://localhost:5173', // Vite default
+  'http://127.0.0.1:5173',
+  'http://192.168.43.40:5173', // Network IP
 ];
 
 app.use(
@@ -32,6 +34,18 @@ app.use(
       // Allow ngrok domains (*.ngrok-free.app, *.ngrok.io, *.ngrok.app)
       if (origin && (origin.includes('.ngrok-free.app') || origin.includes('.ngrok.io') || origin.includes('.ngrok.app'))) {
         console.log('[CORS] ✅ Ngrok origin allowed:', origin);
+        return callback(null, true);
+      }
+
+      // Allow any localhost/127.0.0.1 with any port in development
+      if (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+        console.log('[CORS] ✅ Localhost origin allowed:', origin);
+        return callback(null, true);
+      }
+
+      // Allow any 192.168.x.x network in development
+      if (origin && origin.match(/http:\/\/192\.168\.\d+\.\d+:\d+/)) {
+        console.log('[CORS] ✅ Local network origin allowed:', origin);
         return callback(null, true);
       }
 
@@ -50,19 +64,46 @@ app.use(
       }
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Pragma', 'Expires'],
+    exposedHeaders: ['Content-Length', 'Content-Type'],
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 204,
+    maxAge: 86400, // 24 hours
   })
 );
+
+// Add additional CORS headers middleware for extra safety
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma, Expires');
+  }
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  
+  next();
+});
 
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files for uploaded images
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Serve static files for uploaded images with CORS headers
+app.use('/uploads', (req, res, next) => {
+  // Add CORS headers for images to prevent ERR_BLOCKED_BY_RESPONSE
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, '../uploads')));
 
 // Request logging middleware
 app.use(requestLogger);

@@ -25,22 +25,22 @@ jobs:
   #           pm2 restart tpms-backend || pm2 start server.js --name "tpms-backend"
   #           pm2 save
 
-  deploy-to-azure-vm:
-    runs-on: ubuntu-latest
+  # deploy-to-azure-vm:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy to Azure VM via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AZURE_HOST }}
-          username: ${{ secrets.AZURE_USERNAME }}
-          password: ${{ secrets.AZURE_PASSWORD }}
-          port: ${{ secrets.AZURE_PORT }}
-          script: |
-            cd /var/www/tpms-backend/
-            git reset --hard HEAD
-            git pull origin main
-            npm install --omit=dev
-            npx prisma migrate deploy
-            pm2 restart project-azure || pm2 start server.js --name "tpms-backend"
-            pm2 save
+  #   steps:
+  #     - name: Deploy to Azure VM via SSH
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.AZURE_HOST }}
+  #         username: ${{ secrets.AZURE_USERNAME }}
+  #         password: ${{ secrets.AZURE_PASSWORD }}
+  #         port: ${{ secrets.AZURE_PORT }}
+  #         script: |
+  #           cd /var/www/tpms-backend/
+  #           git reset --hard HEAD
+  #           git pull origin main
+  #           npm install --omit=dev
+  #           npx prisma migrate deploy
+  #           pm2 restart project-azure || pm2 start server.js --name "tpms-backend"
+  #           pm2 save

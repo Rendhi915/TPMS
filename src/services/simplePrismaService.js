@@ -65,10 +65,15 @@ class SimplePrismaService {
   async getAllTrucks(filters = {}) {
     console.log('🔍 SimplePrismaService.getAllTrucks called with filters:', filters);
 
-    const { page = 1, limit = 50, search, vendor, vendorId } = filters;
+    const { page = 1, limit = 50, search, plate, vendor, vendorId } = filters;
 
     const offset = (page - 1) * limit;
     const where = { deleted_at: null }; // Only non-deleted trucks
+
+    // Exact plate match (for duplicate checking)
+    if (plate && !search) {
+      where.plate = { equals: plate, mode: 'insensitive' };
+    }
 
     // Search filter
     if (search) {

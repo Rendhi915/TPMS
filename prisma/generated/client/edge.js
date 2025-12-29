@@ -282,7 +282,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\tpms-backend\\prisma\\generated\\client",
+      "value": "D:\\dokumen\\SEMESTER 7\\SOLONET\\PT BORNEO INDOBARA\\TPMS\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -298,7 +298,7 @@ const config = {
     "previewFeatures": [
       "postgresqlExtensions"
     ],
-    "sourceFilePath": "C:\\tpms-backend\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\dokumen\\SEMESTER 7\\SOLONET\\PT BORNEO INDOBARA\\TPMS\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

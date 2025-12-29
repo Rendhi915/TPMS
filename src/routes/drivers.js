@@ -25,7 +25,7 @@ const normalizeDriverPayload = (req, res, next) => {
 // GET /api/drivers - Get all drivers with filters and pagination
 router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
-    const { page = 1, limit = 50, status, vendorId } = req.query;
+    const { page = 1, limit = 50, status, vendorId, search, name } = req.query;
     const skip = (page - 1) * limit;
 
     const where = {
@@ -33,6 +33,20 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
     };
     if (status) where.status = status;
     if (vendorId) where.vendor_id = parseInt(vendorId);
+    
+    // Search filter - search by name, phone, license_number
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+        { license_number: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    
+    // Exact name match (for duplicate checking)
+    if (name && !search) {
+      where.name = { equals: name, mode: 'insensitive' };
+    }
 
     const [drivers, total] = await Promise.all([
       prisma.drivers.findMany({
@@ -241,6 +255,21 @@ router.post('/', authMiddleware, normalizeDriverPayload, validateDriverCreate, a
       vendor_id,
       status = 'aktif',
     } = req.body;
+
+    // Check if driver with same name already exists
+    const existingDriver = await prisma.drivers.findFirst({
+      where: {
+        name: { equals: name, mode: 'insensitive' },
+        deleted_at: null,
+      },
+    });
+
+    if (existingDriver) {
+      return res.status(409).json({
+        success: false,
+        message: `Driver with name "${name}" already exists`,
+      });
+    }
 
     // Parse license_expiry if provided, otherwise use far future
     const licenseExpiryDate = license_expiry ? new Date(license_expiry) : new Date('2099-12-31');
