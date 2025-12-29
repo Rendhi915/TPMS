@@ -102,8 +102,8 @@ const CONFIG = {
   // Alert/Anomali Configuration - REALISTIC TIMING
   // Truck 1 (B 9001 SIM): Alert every 30 minutes
   // Other trucks: Alert every 20 minutes
-  TRUCK_1_ALERT_INTERVAL: 30, // minutes
-  OTHER_TRUCKS_ALERT_INTERVAL: 20, // minutes
+  TRUCK_1_ALERT_INTERVAL: 1, // minutes
+  OTHER_TRUCKS_ALERT_INTERVAL: 2, // minutes
   CRITICAL_ANOMALY_CHANCE: 0.15, // 15% dari anomali akan critical
 };
 

@@ -12,14 +12,31 @@ const {
 // GET /api/vendors - Get all vendors
 router.get('/', authMiddleware, validatePagination, async (req, res) => {
   try {
-    const { page = 1, limit = 50 } = req.query;
+    const { page = 1, limit = 50, search, name_vendor } = req.query;
     const skip = (page - 1) * limit;
+
+    const where = {
+      deleted_at: null,
+    };
+
+    // Search filter - search by name, address, telephone, email
+    if (search) {
+      where.OR = [
+        { name_vendor: { contains: search, mode: 'insensitive' } },
+        { address: { contains: search, mode: 'insensitive' } },
+        { telephone: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    // Exact name match (for duplicate checking)
+    if (name_vendor && !search) {
+      where.name_vendor = { equals: name_vendor, mode: 'insensitive' };
+    }
 
     const [vendors, total] = await Promise.all([
       prisma.vendors.findMany({
-        where: {
-          deleted_at: null,
-        },
+        where,
         include: {
           truck: {
             where: { deleted_at: null },
@@ -46,9 +63,7 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
         skip: skip,
         take: parseInt(limit),
       }),
-      prisma.vendors.count({
-        where: { deleted_at: null },
-      }),
+      prisma.vendors.count({ where }),
     ]);
 
     const vendorsWithCounts = vendors.map((vendor) => ({
