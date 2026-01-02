@@ -65,10 +65,14 @@ class SimplePrismaService {
   async getAllTrucks(filters = {}) {
     console.log('🔍 SimplePrismaService.getAllTrucks called with filters:', filters);
 
-    const { page = 1, limit = 50, search, plate, vendor, vendorId } = filters;
+    const { page = 1, limit = 50, search, plate, vendor, vendorId, includeDeleted } = filters;
 
     const offset = (page - 1) * limit;
-    const where = { deleted_at: null }; // Only non-deleted trucks
+    
+    // 🔥 CRITICAL FIX: Allow including deleted trucks for history tracking
+    // Default behavior: only non-deleted trucks
+    // With includeDeleted=true: get all trucks (including deleted)
+    const where = includeDeleted ? {} : { deleted_at: null };
 
     // Exact plate match (for duplicate checking)
     if (plate && !search) {
@@ -632,6 +636,8 @@ class SimplePrismaService {
       year: truck.year,
       type: truck.type,
       status: truck.status,
+      deleted_at: truck.deleted_at || null,
+      deletedAt: truck.deleted_at || null,
       vendor_id: truck.vendor_id,
       driver_id: truck.driver_id,
       image: truck.image,

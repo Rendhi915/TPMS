@@ -1,5 +1,6 @@
 const { prisma } = require('../config/prisma');
 const { broadcastSensorUpdate, broadcastDeviceUpdate } = require('../services/websocketService');
+const { createSensorHistorySnapshot, fetchSnapshotRelatedData } = require('../utils/snapshotHelper');
 
 // ==========================================
 // IOT DATA CONTROLLER - UNIFIED ENDPOINT
@@ -147,6 +148,18 @@ const handleTPData = async (sn, data, res) => {
       });
 
       if (latestLocation) {
+        // Fetch related data for snapshot
+        const relatedData = await fetchSnapshotRelatedData(prisma, sensor.device_id);
+        
+        // Create snapshot
+        const snapshot = createSensorHistorySnapshot(
+          sensor,
+          relatedData?.device,
+          relatedData?.truck,
+          relatedData?.driver,
+          relatedData?.vendor
+        );
+        
         await prisma.sensor_history.create({
           data: {
             location_id: latestLocation.id,
@@ -159,7 +172,9 @@ const handleTPData = async (sn, data, res) => {
             tirepValue: updated.tirepValue || 0,
             exType: updated.exType || 'normal',
             bat: updated.bat,
-            recorded_at: latestLocation.recorded_at
+            recorded_at: latestLocation.recorded_at,
+            // Add snapshot data
+            ...snapshot
           }
         });
         console.log(`✅ [SENSOR_HISTORY] Saved for sensor ${sn} at location ${latestLocation.id}`);
@@ -257,6 +272,18 @@ const handleHubData = async (sn, data, res) => {
       });
 
       if (latestLocation) {
+        // Fetch related data for snapshot
+        const relatedData = await fetchSnapshotRelatedData(prisma, sensor.device_id);
+        
+        // Create snapshot
+        const snapshot = createSensorHistorySnapshot(
+          sensor,
+          relatedData?.device,
+          relatedData?.truck,
+          relatedData?.driver,
+          relatedData?.vendor
+        );
+        
         await prisma.sensor_history.create({
           data: {
             location_id: latestLocation.id,
@@ -269,7 +296,9 @@ const handleHubData = async (sn, data, res) => {
             tirepValue: updated.tirepValue || 0,
             exType: updated.exType || 'normal',
             bat: updated.bat,
-            recorded_at: latestLocation.recorded_at
+            recorded_at: latestLocation.recorded_at,
+            // Add snapshot data
+            ...snapshot
           }
         });
         console.log(`✅ [SENSOR_HISTORY] Saved hub data for sensor ${sn} at location ${latestLocation.id}`);
@@ -366,7 +395,10 @@ const handleDeviceData = async (sn, data, res) => {
           },
         });
 
-        // 2. Get all current sensor data for this device
+        // 2. Fetch related data for snapshot (driver, vendor info)
+        const relatedData = await fetchSnapshotRelatedData(tx, device.id);
+        
+        // 3. Get all current sensor data for this device
         const sensors = await tx.sensor.findMany({
           where: {
             device_id: device.id,
@@ -374,6 +406,8 @@ const handleDeviceData = async (sn, data, res) => {
           },
           select: {
             id: true,
+            sn: true,
+            status: true,
             tireNo: true,
             sensorNo: true,
             tempValue: true,
@@ -383,27 +417,40 @@ const handleDeviceData = async (sn, data, res) => {
           }
         });
 
-        // 3. Save sensor history snapshots for all sensors
+        // 4. Save sensor history snapshots for all sensors with complete snapshot data
         if (sensors.length > 0) {
-          const sensorHistoryData = sensors.map(sensor => ({
-            location_id: location.id,
-            sensor_id: sensor.id,
-            device_id: device.id,
-            truck_id: device.truck_id,
-            tireNo: sensor.tireNo,
-            sensorNo: sensor.sensorNo,
-            tempValue: sensor.tempValue || 0,
-            tirepValue: sensor.tirepValue || 0,
-            exType: sensor.exType || 'normal',
-            bat: sensor.bat,
-            recorded_at: location.recorded_at
-          }));
+          const sensorHistoryData = sensors.map(sensor => {
+            // Create snapshot for each sensor
+            const snapshot = createSensorHistorySnapshot(
+              sensor,
+              relatedData?.device,
+              relatedData?.truck,
+              relatedData?.driver,
+              relatedData?.vendor
+            );
+            
+            return {
+              location_id: location.id,
+              sensor_id: sensor.id,
+              device_id: device.id,
+              truck_id: device.truck_id,
+              tireNo: sensor.tireNo,
+              sensorNo: sensor.sensorNo,
+              tempValue: sensor.tempValue || 0,
+              tirepValue: sensor.tirepValue || 0,
+              exType: sensor.exType || 'normal',
+              bat: sensor.bat,
+              recorded_at: location.recorded_at,
+              // Add complete snapshot data
+              ...snapshot
+            };
+          });
 
           await tx.sensor_history.createMany({
             data: sensorHistoryData
           });
 
-          console.log(`✅ [SENSOR_HISTORY] Saved ${sensors.length} sensor snapshots for location ${location.id}`);
+          console.log(`✅ [SENSOR_HISTORY] Saved ${sensors.length} sensor snapshots with full details for location ${location.id}`);
         }
 
         return location;

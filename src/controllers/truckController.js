@@ -15,13 +15,14 @@ const getAllTrucks = async (req, res) => {
       hasAlerts: req.query.hasAlerts,
       vendor: req.query.vendor,
       vendorId: req.query.vendorId,
+      includeDeleted: req.query.includeDeleted === 'true', // 🔥 KEY FIX: Pass includeDeleted to service
     };
 
     console.log('🔍 Filters applied:', filters);
 
     // Validate limit (prevent excessive queries)
-    if (filters.limit > 200) {
-      filters.limit = 200;
+    if (filters.limit > 1000) {
+      filters.limit = 1000;
     }
 
     console.log('📊 Calling prismaService.getAllTrucks...');
@@ -81,7 +82,11 @@ const getTruckById = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      // keep original payload for backward compatibility
       data: truck,
+      // expose deletion info at top-level to help frontend display deleted badge on history
+      deleted_at: truck?.deleted_at || null,
+      deletedAt: truck?.deletedAt || truck?.deleted_at || null,
       message: 'Truck details retrieved successfully',
     });
   } catch (error) {
@@ -265,18 +270,43 @@ const getTruckLocationHistory = async (req, res) => {
       },
     });
 
-    if (!truck) {
-      return res.status(404).json({
-        success: false,
-        message: 'Truck not found',
-      });
+    let locationHistory = [];
+    if (truck) {
+      locationHistory = truck.device.flatMap((device) => device.location);
     }
 
-    // Flatten locations from all devices
-    const locationHistory = truck.device.flatMap((device) => device.location);
+    // Fallback: if no locations collected from active devices or truck not found, fetch by sensor_history snapshots
+    if (!truck || locationHistory.length === 0) {
+      const fallbackLocations = await prismaService.prisma.location.findMany({
+        where: {
+          ...(since ? { recorded_at: { gte: since } } : {}),
+          sensor_history: {
+            some: { truck_id: truckId },
+          },
+        },
+        orderBy: { recorded_at: 'desc' },
+        take: parseInt(limit),
+        select: {
+          lat: true,
+          long: true,
+          speed: true,
+          heading: true,
+          created_at: true,
+          recorded_at: true,
+        },
+      });
+      locationHistory = fallbackLocations.map((l) => ({
+        lat: l.lat,
+        long: l.long,
+        speed: l.speed,
+        heading: l.heading,
+        created_at: l.created_at,
+        recorded_at: l.recorded_at,
+      }));
+    }
 
     // Sort by timestamp
-    locationHistory.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    locationHistory.sort((a, b) => new Date(b.created_at || b.recorded_at) - new Date(a.created_at || a.recorded_at));
 
     // Format as GeoJSON LineString for tracking
     const coordinates = locationHistory
@@ -306,7 +336,7 @@ const getTruckLocationHistory = async (req, res) => {
           longitude: parseFloat(point.long),
           speed: parseFloat(point.speed || 0),
           heading: point.heading,
-          timestamp: point.created_at,
+          timestamp: point.created_at || point.recorded_at,
         })),
       },
       message: `Retrieved ${locationHistory.length} location points for the last ${hours} hours`,
@@ -509,11 +539,10 @@ const getTruckLocationsByName = async (req, res) => {
     const since = new Date();
     since.setHours(since.getHours() - hoursBack);
 
-    // Find truck by plate with locations from devices
+    // Find truck by plate (include soft-deleted)
     const truck = await prismaService.prisma.truck.findFirst({
       where: {
         plate: truckPlate,
-        deleted_at: null,
       },
       select: {
         id: true,
@@ -551,7 +580,7 @@ const getTruckLocationsByName = async (req, res) => {
     }
 
     // Flatten locations from all devices
-    const locations = truck.device
+    let locations = truck.device
       .flatMap((device) => device.location)
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       .map((pos) => ({
@@ -562,6 +591,37 @@ const getTruckLocationsByName = async (req, res) => {
         heading: parseFloat(pos.heading) || 0,
         timestamp: pos.created_at,
       }));
+
+    // Fallback via sensor_history snapshots if device locations are empty
+    if (!locations.length) {
+      const fallback = await prismaService.prisma.location.findMany({
+        where: {
+          ...(since ? { recorded_at: { gte: since } } : {}),
+          speed: { gte: parseFloat(minSpeed) },
+          sensor_history: {
+            some: { truck_id: truck.id },
+          },
+        },
+        orderBy: { recorded_at: 'desc' },
+        take: parseInt(limit),
+        select: {
+          id: true,
+          lat: true,
+          long: true,
+          speed: true,
+          heading: true,
+          recorded_at: true,
+        },
+      });
+      locations = fallback.map((pos) => ({
+        id: pos.id,
+        latitude: parseFloat(pos.lat),
+        longitude: parseFloat(pos.long),
+        speed: parseFloat(pos.speed) || 0,
+        heading: parseFloat(pos.heading) || 0,
+        timestamp: pos.recorded_at,
+      }));
+    }
 
     // Create GeoJSON track
     const coordinates = locations
@@ -944,13 +1004,9 @@ const deleteTruck = async (req, res) => {
       });
     }
 
-    // Check if truck exists and get related data
+    // Check if truck exists
     const truck = await prismaService.prisma.truck.findUnique({
       where: { id: id },
-      include: {
-        device: { take: 1 },
-        alert_events: { take: 1 },
-      },
     });
 
     if (!truck) {
@@ -960,22 +1016,25 @@ const deleteTruck = async (req, res) => {
       });
     }
 
-    // Check if truck has associated data that would prevent deletion
-    const hasData = truck.device.length > 0 || truck.alert_events.length > 0;
-
-    if (hasData) {
+    // Check if already deleted
+    if (truck.deleted_at) {
       return res.status(400).json({
         success: false,
-        message:
-          'Cannot delete truck with associated devices or alerts. Consider soft-deleting by setting deleted_at instead.',
-        data: {
-          device_count: truck.device.length,
-          has_alerts: truck.alert_events.length > 0,
-        },
+        message: 'Truck already deleted',
       });
     }
 
-    // Soft delete truck (set deleted_at)
+    /**
+     * SOFT DELETE - History Safe
+     * 
+     * Dengan schema baru yang menggunakan snapshot data di sensor_history,
+     * kita bisa langsung soft delete truck tanpa kehilangan history data.
+     * 
+     * History data tetap aman karena:
+     * 1. sensor_history.truck_id menggunakan onDelete: SetNull (bukan Cascade)
+     * 2. Semua informasi truck disimpan di snapshot fields (truck_name, truck_plate, dll)
+     * 3. Query history menggunakan snapshot data, bukan relasi ke truck
+     */
     await prismaService.prisma.truck.update({
       where: { id: id },
       data: {
@@ -990,7 +1049,13 @@ const deleteTruck = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Truck deleted successfully',
+      message: 'Truck deleted successfully. History data preserved.',
+      data: {
+        truck_id: id,
+        truck_name: truck.name,
+        truck_plate: truck.plate,
+        note: 'All tracking history for this truck remains accessible via history endpoints'
+      }
     });
   } catch (error) {
     console.error('Error deleting truck:', error);

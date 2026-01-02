@@ -1810,12 +1810,14 @@ export namespace Prisma {
   export type TruckCountOutputType = {
     alert_events: number
     device: number
+    location: number
     sensor_history: number
   }
 
   export type TruckCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | TruckCountOutputTypeCountAlert_eventsArgs
     device?: boolean | TruckCountOutputTypeCountDeviceArgs
+    location?: boolean | TruckCountOutputTypeCountLocationArgs
     sensor_history?: boolean | TruckCountOutputTypeCountSensor_historyArgs
   }
 
@@ -1842,6 +1844,13 @@ export namespace Prisma {
    */
   export type TruckCountOutputTypeCountDeviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: deviceWhereInput
+  }
+
+  /**
+   * TruckCountOutputType without action
+   */
+  export type TruckCountOutputTypeCountLocationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: locationWhereInput
   }
 
   /**
@@ -2965,6 +2974,7 @@ export namespace Prisma {
     sensor_id: number | null
     truck_id: number | null
     value: number | null
+    sensor_tire_no: number | null
   }
 
   export type Alert_eventsSumAggregateOutputType = {
@@ -2974,6 +2984,7 @@ export namespace Prisma {
     sensor_id: number | null
     truck_id: number | null
     value: number | null
+    sensor_tire_no: number | null
   }
 
   export type Alert_eventsMinAggregateOutputType = {
@@ -2985,6 +2996,17 @@ export namespace Prisma {
     value: number | null
     message: string | null
     status: string | null
+    alert_code: string | null
+    alert_name: string | null
+    alert_severity: string | null
+    truck_plate: string | null
+    truck_name: string | null
+    truck_vin: string | null
+    device_sn: string | null
+    sensor_sn: string | null
+    sensor_tire_no: number | null
+    driver_name: string | null
+    vendor_name: string | null
     created_at: Date | null
     resolved_at: Date | null
   }
@@ -2998,6 +3020,17 @@ export namespace Prisma {
     value: number | null
     message: string | null
     status: string | null
+    alert_code: string | null
+    alert_name: string | null
+    alert_severity: string | null
+    truck_plate: string | null
+    truck_name: string | null
+    truck_vin: string | null
+    device_sn: string | null
+    sensor_sn: string | null
+    sensor_tire_no: number | null
+    driver_name: string | null
+    vendor_name: string | null
     created_at: Date | null
     resolved_at: Date | null
   }
@@ -3011,6 +3044,17 @@ export namespace Prisma {
     value: number
     message: number
     status: number
+    alert_code: number
+    alert_name: number
+    alert_severity: number
+    truck_plate: number
+    truck_name: number
+    truck_vin: number
+    device_sn: number
+    sensor_sn: number
+    sensor_tire_no: number
+    driver_name: number
+    vendor_name: number
     created_at: number
     resolved_at: number
     _all: number
@@ -3024,6 +3068,7 @@ export namespace Prisma {
     sensor_id?: true
     truck_id?: true
     value?: true
+    sensor_tire_no?: true
   }
 
   export type Alert_eventsSumAggregateInputType = {
@@ -3033,6 +3078,7 @@ export namespace Prisma {
     sensor_id?: true
     truck_id?: true
     value?: true
+    sensor_tire_no?: true
   }
 
   export type Alert_eventsMinAggregateInputType = {
@@ -3044,6 +3090,17 @@ export namespace Prisma {
     value?: true
     message?: true
     status?: true
+    alert_code?: true
+    alert_name?: true
+    alert_severity?: true
+    truck_plate?: true
+    truck_name?: true
+    truck_vin?: true
+    device_sn?: true
+    sensor_sn?: true
+    sensor_tire_no?: true
+    driver_name?: true
+    vendor_name?: true
     created_at?: true
     resolved_at?: true
   }
@@ -3057,6 +3114,17 @@ export namespace Prisma {
     value?: true
     message?: true
     status?: true
+    alert_code?: true
+    alert_name?: true
+    alert_severity?: true
+    truck_plate?: true
+    truck_name?: true
+    truck_vin?: true
+    device_sn?: true
+    sensor_sn?: true
+    sensor_tire_no?: true
+    driver_name?: true
+    vendor_name?: true
     created_at?: true
     resolved_at?: true
   }
@@ -3070,6 +3138,17 @@ export namespace Prisma {
     value?: true
     message?: true
     status?: true
+    alert_code?: true
+    alert_name?: true
+    alert_severity?: true
+    truck_plate?: true
+    truck_name?: true
+    truck_vin?: true
+    device_sn?: true
+    sensor_sn?: true
+    sensor_tire_no?: true
+    driver_name?: true
+    vendor_name?: true
     created_at?: true
     resolved_at?: true
     _all?: true
@@ -3170,6 +3249,17 @@ export namespace Prisma {
     value: number | null
     message: string | null
     status: string
+    alert_code: string | null
+    alert_name: string | null
+    alert_severity: string | null
+    truck_plate: string | null
+    truck_name: string | null
+    truck_vin: string | null
+    device_sn: string | null
+    sensor_sn: string | null
+    sensor_tire_no: number | null
+    driver_name: string | null
+    vendor_name: string | null
     created_at: Date
     resolved_at: Date | null
     _count: Alert_eventsCountAggregateOutputType | null
@@ -3202,6 +3292,17 @@ export namespace Prisma {
     value?: boolean
     message?: boolean
     status?: boolean
+    alert_code?: boolean
+    alert_name?: boolean
+    alert_severity?: boolean
+    truck_plate?: boolean
+    truck_name?: boolean
+    truck_vin?: boolean
+    device_sn?: boolean
+    sensor_sn?: boolean
+    sensor_tire_no?: boolean
+    driver_name?: boolean
+    vendor_name?: boolean
     created_at?: boolean
     resolved_at?: boolean
     alert?: boolean | alertDefaultArgs<ExtArgs>
@@ -3219,6 +3320,17 @@ export namespace Prisma {
     value?: boolean
     message?: boolean
     status?: boolean
+    alert_code?: boolean
+    alert_name?: boolean
+    alert_severity?: boolean
+    truck_plate?: boolean
+    truck_name?: boolean
+    truck_vin?: boolean
+    device_sn?: boolean
+    sensor_sn?: boolean
+    sensor_tire_no?: boolean
+    driver_name?: boolean
+    vendor_name?: boolean
     created_at?: boolean
     resolved_at?: boolean
     alert?: boolean | alertDefaultArgs<ExtArgs>
@@ -3236,6 +3348,17 @@ export namespace Prisma {
     value?: boolean
     message?: boolean
     status?: boolean
+    alert_code?: boolean
+    alert_name?: boolean
+    alert_severity?: boolean
+    truck_plate?: boolean
+    truck_name?: boolean
+    truck_vin?: boolean
+    device_sn?: boolean
+    sensor_sn?: boolean
+    sensor_tire_no?: boolean
+    driver_name?: boolean
+    vendor_name?: boolean
     created_at?: boolean
     resolved_at?: boolean
   }
@@ -3270,6 +3393,17 @@ export namespace Prisma {
       value: number | null
       message: string | null
       status: string
+      alert_code: string | null
+      alert_name: string | null
+      alert_severity: string | null
+      truck_plate: string | null
+      truck_name: string | null
+      truck_vin: string | null
+      device_sn: string | null
+      sensor_sn: string | null
+      sensor_tire_no: number | null
+      driver_name: string | null
+      vendor_name: string | null
       created_at: Date
       resolved_at: Date | null
     }, ExtArgs["result"]["alert_events"]>
@@ -3677,6 +3811,17 @@ export namespace Prisma {
     readonly value: FieldRef<"alert_events", 'Float'>
     readonly message: FieldRef<"alert_events", 'String'>
     readonly status: FieldRef<"alert_events", 'String'>
+    readonly alert_code: FieldRef<"alert_events", 'String'>
+    readonly alert_name: FieldRef<"alert_events", 'String'>
+    readonly alert_severity: FieldRef<"alert_events", 'String'>
+    readonly truck_plate: FieldRef<"alert_events", 'String'>
+    readonly truck_name: FieldRef<"alert_events", 'String'>
+    readonly truck_vin: FieldRef<"alert_events", 'String'>
+    readonly device_sn: FieldRef<"alert_events", 'String'>
+    readonly sensor_sn: FieldRef<"alert_events", 'String'>
+    readonly sensor_tire_no: FieldRef<"alert_events", 'Int'>
+    readonly driver_name: FieldRef<"alert_events", 'String'>
+    readonly vendor_name: FieldRef<"alert_events", 'String'>
     readonly created_at: FieldRef<"alert_events", 'DateTime'>
     readonly resolved_at: FieldRef<"alert_events", 'DateTime'>
   }
@@ -6348,6 +6493,7 @@ export namespace Prisma {
   export type LocationAvgAggregateOutputType = {
     id: number | null
     device_id: number | null
+    truck_id: number | null
     lat: number | null
     long: number | null
     speed: number | null
@@ -6359,6 +6505,7 @@ export namespace Prisma {
   export type LocationSumAggregateOutputType = {
     id: number | null
     device_id: number | null
+    truck_id: number | null
     lat: number | null
     long: number | null
     speed: number | null
@@ -6370,6 +6517,7 @@ export namespace Prisma {
   export type LocationMinAggregateOutputType = {
     id: number | null
     device_id: number | null
+    truck_id: number | null
     lat: number | null
     long: number | null
     speed: number | null
@@ -6383,6 +6531,7 @@ export namespace Prisma {
   export type LocationMaxAggregateOutputType = {
     id: number | null
     device_id: number | null
+    truck_id: number | null
     lat: number | null
     long: number | null
     speed: number | null
@@ -6396,6 +6545,7 @@ export namespace Prisma {
   export type LocationCountAggregateOutputType = {
     id: number
     device_id: number
+    truck_id: number
     lat: number
     long: number
     speed: number
@@ -6411,6 +6561,7 @@ export namespace Prisma {
   export type LocationAvgAggregateInputType = {
     id?: true
     device_id?: true
+    truck_id?: true
     lat?: true
     long?: true
     speed?: true
@@ -6422,6 +6573,7 @@ export namespace Prisma {
   export type LocationSumAggregateInputType = {
     id?: true
     device_id?: true
+    truck_id?: true
     lat?: true
     long?: true
     speed?: true
@@ -6433,6 +6585,7 @@ export namespace Prisma {
   export type LocationMinAggregateInputType = {
     id?: true
     device_id?: true
+    truck_id?: true
     lat?: true
     long?: true
     speed?: true
@@ -6446,6 +6599,7 @@ export namespace Prisma {
   export type LocationMaxAggregateInputType = {
     id?: true
     device_id?: true
+    truck_id?: true
     lat?: true
     long?: true
     speed?: true
@@ -6459,6 +6613,7 @@ export namespace Prisma {
   export type LocationCountAggregateInputType = {
     id?: true
     device_id?: true
+    truck_id?: true
     lat?: true
     long?: true
     speed?: true
@@ -6559,6 +6714,7 @@ export namespace Prisma {
   export type LocationGroupByOutputType = {
     id: number
     device_id: number
+    truck_id: number | null
     lat: number
     long: number
     speed: number | null
@@ -6591,6 +6747,7 @@ export namespace Prisma {
   export type locationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     device_id?: boolean
+    truck_id?: boolean
     lat?: boolean
     long?: boolean
     speed?: boolean
@@ -6600,6 +6757,7 @@ export namespace Prisma {
     created_at?: boolean
     recorded_at?: boolean
     device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | location$truckArgs<ExtArgs>
     sensor_history?: boolean | location$sensor_historyArgs<ExtArgs>
     _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["location"]>
@@ -6607,6 +6765,7 @@ export namespace Prisma {
   export type locationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     device_id?: boolean
+    truck_id?: boolean
     lat?: boolean
     long?: boolean
     speed?: boolean
@@ -6616,11 +6775,13 @@ export namespace Prisma {
     created_at?: boolean
     recorded_at?: boolean
     device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | location$truckArgs<ExtArgs>
   }, ExtArgs["result"]["location"]>
 
   export type locationSelectScalar = {
     id?: boolean
     device_id?: boolean
+    truck_id?: boolean
     lat?: boolean
     long?: boolean
     speed?: boolean
@@ -6633,22 +6794,26 @@ export namespace Prisma {
 
   export type locationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | location$truckArgs<ExtArgs>
     sensor_history?: boolean | location$sensor_historyArgs<ExtArgs>
     _count?: boolean | LocationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type locationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     device?: boolean | deviceDefaultArgs<ExtArgs>
+    truck?: boolean | location$truckArgs<ExtArgs>
   }
 
   export type $locationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "location"
     objects: {
       device: Prisma.$devicePayload<ExtArgs>
+      truck: Prisma.$truckPayload<ExtArgs> | null
       sensor_history: Prisma.$sensor_historyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       device_id: number
+      truck_id: number | null
       lat: number
       long: number
       speed: number | null
@@ -7022,6 +7187,7 @@ export namespace Prisma {
   export interface Prisma__locationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     device<T extends deviceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, deviceDefaultArgs<ExtArgs>>): Prisma__deviceClient<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    truck<T extends location$truckArgs<ExtArgs> = {}>(args?: Subset<T, location$truckArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     sensor_history<T extends location$sensor_historyArgs<ExtArgs> = {}>(args?: Subset<T, location$sensor_historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7054,6 +7220,7 @@ export namespace Prisma {
   interface locationFieldRefs {
     readonly id: FieldRef<"location", 'Int'>
     readonly device_id: FieldRef<"location", 'Int'>
+    readonly truck_id: FieldRef<"location", 'Int'>
     readonly lat: FieldRef<"location", 'Float'>
     readonly long: FieldRef<"location", 'Float'>
     readonly speed: FieldRef<"location", 'Float'>
@@ -7377,6 +7544,21 @@ export namespace Prisma {
      * Filter which locations to delete
      */
     where?: locationWhereInput
+  }
+
+  /**
+   * location.truck
+   */
+  export type location$truckArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the truck
+     */
+    select?: truckSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: truckInclude<ExtArgs> | null
+    where?: truckWhereInput
   }
 
   /**
@@ -8602,6 +8784,12 @@ export namespace Prisma {
     tempValue: number | null
     tirepValue: number | null
     bat: number | null
+    device_bat1: number | null
+    device_bat2: number | null
+    device_bat3: number | null
+    truck_year: number | null
+    driver_id: number | null
+    vendor_id: number | null
   }
 
   export type Sensor_historySumAggregateOutputType = {
@@ -8615,6 +8803,12 @@ export namespace Prisma {
     tempValue: number | null
     tirepValue: number | null
     bat: number | null
+    device_bat1: number | null
+    device_bat2: number | null
+    device_bat3: number | null
+    truck_year: number | null
+    driver_id: number | null
+    vendor_id: number | null
   }
 
   export type Sensor_historyMinAggregateOutputType = {
@@ -8629,6 +8823,28 @@ export namespace Prisma {
     tirepValue: number | null
     exType: string | null
     bat: number | null
+    sensor_sn: string | null
+    sensor_status: string | null
+    device_sn: string | null
+    device_sim_number: string | null
+    device_status: string | null
+    device_bat1: number | null
+    device_bat2: number | null
+    device_bat3: number | null
+    truck_vin: string | null
+    truck_name: string | null
+    truck_plate: string | null
+    truck_model: string | null
+    truck_year: number | null
+    truck_type: string | null
+    truck_status: string | null
+    driver_id: number | null
+    driver_name: string | null
+    driver_phone: string | null
+    driver_license: string | null
+    vendor_id: number | null
+    vendor_name: string | null
+    vendor_contact: string | null
     recorded_at: Date | null
     created_at: Date | null
   }
@@ -8645,6 +8861,28 @@ export namespace Prisma {
     tirepValue: number | null
     exType: string | null
     bat: number | null
+    sensor_sn: string | null
+    sensor_status: string | null
+    device_sn: string | null
+    device_sim_number: string | null
+    device_status: string | null
+    device_bat1: number | null
+    device_bat2: number | null
+    device_bat3: number | null
+    truck_vin: string | null
+    truck_name: string | null
+    truck_plate: string | null
+    truck_model: string | null
+    truck_year: number | null
+    truck_type: string | null
+    truck_status: string | null
+    driver_id: number | null
+    driver_name: string | null
+    driver_phone: string | null
+    driver_license: string | null
+    vendor_id: number | null
+    vendor_name: string | null
+    vendor_contact: string | null
     recorded_at: Date | null
     created_at: Date | null
   }
@@ -8661,6 +8899,28 @@ export namespace Prisma {
     tirepValue: number
     exType: number
     bat: number
+    sensor_sn: number
+    sensor_status: number
+    device_sn: number
+    device_sim_number: number
+    device_status: number
+    device_bat1: number
+    device_bat2: number
+    device_bat3: number
+    truck_vin: number
+    truck_name: number
+    truck_plate: number
+    truck_model: number
+    truck_year: number
+    truck_type: number
+    truck_status: number
+    driver_id: number
+    driver_name: number
+    driver_phone: number
+    driver_license: number
+    vendor_id: number
+    vendor_name: number
+    vendor_contact: number
     recorded_at: number
     created_at: number
     _all: number
@@ -8678,6 +8938,12 @@ export namespace Prisma {
     tempValue?: true
     tirepValue?: true
     bat?: true
+    device_bat1?: true
+    device_bat2?: true
+    device_bat3?: true
+    truck_year?: true
+    driver_id?: true
+    vendor_id?: true
   }
 
   export type Sensor_historySumAggregateInputType = {
@@ -8691,6 +8957,12 @@ export namespace Prisma {
     tempValue?: true
     tirepValue?: true
     bat?: true
+    device_bat1?: true
+    device_bat2?: true
+    device_bat3?: true
+    truck_year?: true
+    driver_id?: true
+    vendor_id?: true
   }
 
   export type Sensor_historyMinAggregateInputType = {
@@ -8705,6 +8977,28 @@ export namespace Prisma {
     tirepValue?: true
     exType?: true
     bat?: true
+    sensor_sn?: true
+    sensor_status?: true
+    device_sn?: true
+    device_sim_number?: true
+    device_status?: true
+    device_bat1?: true
+    device_bat2?: true
+    device_bat3?: true
+    truck_vin?: true
+    truck_name?: true
+    truck_plate?: true
+    truck_model?: true
+    truck_year?: true
+    truck_type?: true
+    truck_status?: true
+    driver_id?: true
+    driver_name?: true
+    driver_phone?: true
+    driver_license?: true
+    vendor_id?: true
+    vendor_name?: true
+    vendor_contact?: true
     recorded_at?: true
     created_at?: true
   }
@@ -8721,6 +9015,28 @@ export namespace Prisma {
     tirepValue?: true
     exType?: true
     bat?: true
+    sensor_sn?: true
+    sensor_status?: true
+    device_sn?: true
+    device_sim_number?: true
+    device_status?: true
+    device_bat1?: true
+    device_bat2?: true
+    device_bat3?: true
+    truck_vin?: true
+    truck_name?: true
+    truck_plate?: true
+    truck_model?: true
+    truck_year?: true
+    truck_type?: true
+    truck_status?: true
+    driver_id?: true
+    driver_name?: true
+    driver_phone?: true
+    driver_license?: true
+    vendor_id?: true
+    vendor_name?: true
+    vendor_contact?: true
     recorded_at?: true
     created_at?: true
   }
@@ -8737,6 +9053,28 @@ export namespace Prisma {
     tirepValue?: true
     exType?: true
     bat?: true
+    sensor_sn?: true
+    sensor_status?: true
+    device_sn?: true
+    device_sim_number?: true
+    device_status?: true
+    device_bat1?: true
+    device_bat2?: true
+    device_bat3?: true
+    truck_vin?: true
+    truck_name?: true
+    truck_plate?: true
+    truck_model?: true
+    truck_year?: true
+    truck_type?: true
+    truck_status?: true
+    driver_id?: true
+    driver_name?: true
+    driver_phone?: true
+    driver_license?: true
+    vendor_id?: true
+    vendor_name?: true
+    vendor_contact?: true
     recorded_at?: true
     created_at?: true
     _all?: true
@@ -8831,15 +9169,37 @@ export namespace Prisma {
   export type Sensor_historyGroupByOutputType = {
     id: number
     location_id: number
-    sensor_id: number
-    device_id: number
-    truck_id: number
+    sensor_id: number | null
+    device_id: number | null
+    truck_id: number | null
     tireNo: number
     sensorNo: number | null
     tempValue: number
     tirepValue: number
     exType: string
     bat: number | null
+    sensor_sn: string | null
+    sensor_status: string | null
+    device_sn: string | null
+    device_sim_number: string | null
+    device_status: string | null
+    device_bat1: number | null
+    device_bat2: number | null
+    device_bat3: number | null
+    truck_vin: string | null
+    truck_name: string | null
+    truck_plate: string | null
+    truck_model: string | null
+    truck_year: number | null
+    truck_type: string | null
+    truck_status: string | null
+    driver_id: number | null
+    driver_name: string | null
+    driver_phone: string | null
+    driver_license: string | null
+    vendor_id: number | null
+    vendor_name: string | null
+    vendor_contact: string | null
     recorded_at: Date
     created_at: Date
     _count: Sensor_historyCountAggregateOutputType | null
@@ -8875,12 +9235,34 @@ export namespace Prisma {
     tirepValue?: boolean
     exType?: boolean
     bat?: boolean
+    sensor_sn?: boolean
+    sensor_status?: boolean
+    device_sn?: boolean
+    device_sim_number?: boolean
+    device_status?: boolean
+    device_bat1?: boolean
+    device_bat2?: boolean
+    device_bat3?: boolean
+    truck_vin?: boolean
+    truck_name?: boolean
+    truck_plate?: boolean
+    truck_model?: boolean
+    truck_year?: boolean
+    truck_type?: boolean
+    truck_status?: boolean
+    driver_id?: boolean
+    driver_name?: boolean
+    driver_phone?: boolean
+    driver_license?: boolean
+    vendor_id?: boolean
+    vendor_name?: boolean
+    vendor_contact?: boolean
     recorded_at?: boolean
     created_at?: boolean
     location?: boolean | locationDefaultArgs<ExtArgs>
-    sensor?: boolean | sensorDefaultArgs<ExtArgs>
-    device?: boolean | deviceDefaultArgs<ExtArgs>
-    truck?: boolean | truckDefaultArgs<ExtArgs>
+    sensor?: boolean | sensor_history$sensorArgs<ExtArgs>
+    device?: boolean | sensor_history$deviceArgs<ExtArgs>
+    truck?: boolean | sensor_history$truckArgs<ExtArgs>
   }, ExtArgs["result"]["sensor_history"]>
 
   export type sensor_historySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8895,12 +9277,34 @@ export namespace Prisma {
     tirepValue?: boolean
     exType?: boolean
     bat?: boolean
+    sensor_sn?: boolean
+    sensor_status?: boolean
+    device_sn?: boolean
+    device_sim_number?: boolean
+    device_status?: boolean
+    device_bat1?: boolean
+    device_bat2?: boolean
+    device_bat3?: boolean
+    truck_vin?: boolean
+    truck_name?: boolean
+    truck_plate?: boolean
+    truck_model?: boolean
+    truck_year?: boolean
+    truck_type?: boolean
+    truck_status?: boolean
+    driver_id?: boolean
+    driver_name?: boolean
+    driver_phone?: boolean
+    driver_license?: boolean
+    vendor_id?: boolean
+    vendor_name?: boolean
+    vendor_contact?: boolean
     recorded_at?: boolean
     created_at?: boolean
     location?: boolean | locationDefaultArgs<ExtArgs>
-    sensor?: boolean | sensorDefaultArgs<ExtArgs>
-    device?: boolean | deviceDefaultArgs<ExtArgs>
-    truck?: boolean | truckDefaultArgs<ExtArgs>
+    sensor?: boolean | sensor_history$sensorArgs<ExtArgs>
+    device?: boolean | sensor_history$deviceArgs<ExtArgs>
+    truck?: boolean | sensor_history$truckArgs<ExtArgs>
   }, ExtArgs["result"]["sensor_history"]>
 
   export type sensor_historySelectScalar = {
@@ -8915,43 +9319,87 @@ export namespace Prisma {
     tirepValue?: boolean
     exType?: boolean
     bat?: boolean
+    sensor_sn?: boolean
+    sensor_status?: boolean
+    device_sn?: boolean
+    device_sim_number?: boolean
+    device_status?: boolean
+    device_bat1?: boolean
+    device_bat2?: boolean
+    device_bat3?: boolean
+    truck_vin?: boolean
+    truck_name?: boolean
+    truck_plate?: boolean
+    truck_model?: boolean
+    truck_year?: boolean
+    truck_type?: boolean
+    truck_status?: boolean
+    driver_id?: boolean
+    driver_name?: boolean
+    driver_phone?: boolean
+    driver_license?: boolean
+    vendor_id?: boolean
+    vendor_name?: boolean
+    vendor_contact?: boolean
     recorded_at?: boolean
     created_at?: boolean
   }
 
   export type sensor_historyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     location?: boolean | locationDefaultArgs<ExtArgs>
-    sensor?: boolean | sensorDefaultArgs<ExtArgs>
-    device?: boolean | deviceDefaultArgs<ExtArgs>
-    truck?: boolean | truckDefaultArgs<ExtArgs>
+    sensor?: boolean | sensor_history$sensorArgs<ExtArgs>
+    device?: boolean | sensor_history$deviceArgs<ExtArgs>
+    truck?: boolean | sensor_history$truckArgs<ExtArgs>
   }
   export type sensor_historyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     location?: boolean | locationDefaultArgs<ExtArgs>
-    sensor?: boolean | sensorDefaultArgs<ExtArgs>
-    device?: boolean | deviceDefaultArgs<ExtArgs>
-    truck?: boolean | truckDefaultArgs<ExtArgs>
+    sensor?: boolean | sensor_history$sensorArgs<ExtArgs>
+    device?: boolean | sensor_history$deviceArgs<ExtArgs>
+    truck?: boolean | sensor_history$truckArgs<ExtArgs>
   }
 
   export type $sensor_historyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "sensor_history"
     objects: {
       location: Prisma.$locationPayload<ExtArgs>
-      sensor: Prisma.$sensorPayload<ExtArgs>
-      device: Prisma.$devicePayload<ExtArgs>
-      truck: Prisma.$truckPayload<ExtArgs>
+      sensor: Prisma.$sensorPayload<ExtArgs> | null
+      device: Prisma.$devicePayload<ExtArgs> | null
+      truck: Prisma.$truckPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       location_id: number
-      sensor_id: number
-      device_id: number
-      truck_id: number
+      sensor_id: number | null
+      device_id: number | null
+      truck_id: number | null
       tireNo: number
       sensorNo: number | null
       tempValue: number
       tirepValue: number
       exType: string
       bat: number | null
+      sensor_sn: string | null
+      sensor_status: string | null
+      device_sn: string | null
+      device_sim_number: string | null
+      device_status: string | null
+      device_bat1: number | null
+      device_bat2: number | null
+      device_bat3: number | null
+      truck_vin: string | null
+      truck_name: string | null
+      truck_plate: string | null
+      truck_model: string | null
+      truck_year: number | null
+      truck_type: string | null
+      truck_status: string | null
+      driver_id: number | null
+      driver_name: string | null
+      driver_phone: string | null
+      driver_license: string | null
+      vendor_id: number | null
+      vendor_name: string | null
+      vendor_contact: string | null
       recorded_at: Date
       created_at: Date
     }, ExtArgs["result"]["sensor_history"]>
@@ -9319,9 +9767,9 @@ export namespace Prisma {
   export interface Prisma__sensor_historyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     location<T extends locationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, locationDefaultArgs<ExtArgs>>): Prisma__locationClient<$Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    sensor<T extends sensorDefaultArgs<ExtArgs> = {}>(args?: Subset<T, sensorDefaultArgs<ExtArgs>>): Prisma__sensorClient<$Result.GetResult<Prisma.$sensorPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    device<T extends deviceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, deviceDefaultArgs<ExtArgs>>): Prisma__deviceClient<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    truck<T extends truckDefaultArgs<ExtArgs> = {}>(args?: Subset<T, truckDefaultArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    sensor<T extends sensor_history$sensorArgs<ExtArgs> = {}>(args?: Subset<T, sensor_history$sensorArgs<ExtArgs>>): Prisma__sensorClient<$Result.GetResult<Prisma.$sensorPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    device<T extends sensor_history$deviceArgs<ExtArgs> = {}>(args?: Subset<T, sensor_history$deviceArgs<ExtArgs>>): Prisma__deviceClient<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    truck<T extends sensor_history$truckArgs<ExtArgs> = {}>(args?: Subset<T, sensor_history$truckArgs<ExtArgs>>): Prisma__truckClient<$Result.GetResult<Prisma.$truckPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9362,6 +9810,28 @@ export namespace Prisma {
     readonly tirepValue: FieldRef<"sensor_history", 'Float'>
     readonly exType: FieldRef<"sensor_history", 'String'>
     readonly bat: FieldRef<"sensor_history", 'Int'>
+    readonly sensor_sn: FieldRef<"sensor_history", 'String'>
+    readonly sensor_status: FieldRef<"sensor_history", 'String'>
+    readonly device_sn: FieldRef<"sensor_history", 'String'>
+    readonly device_sim_number: FieldRef<"sensor_history", 'String'>
+    readonly device_status: FieldRef<"sensor_history", 'String'>
+    readonly device_bat1: FieldRef<"sensor_history", 'Int'>
+    readonly device_bat2: FieldRef<"sensor_history", 'Int'>
+    readonly device_bat3: FieldRef<"sensor_history", 'Int'>
+    readonly truck_vin: FieldRef<"sensor_history", 'String'>
+    readonly truck_name: FieldRef<"sensor_history", 'String'>
+    readonly truck_plate: FieldRef<"sensor_history", 'String'>
+    readonly truck_model: FieldRef<"sensor_history", 'String'>
+    readonly truck_year: FieldRef<"sensor_history", 'Int'>
+    readonly truck_type: FieldRef<"sensor_history", 'String'>
+    readonly truck_status: FieldRef<"sensor_history", 'String'>
+    readonly driver_id: FieldRef<"sensor_history", 'Int'>
+    readonly driver_name: FieldRef<"sensor_history", 'String'>
+    readonly driver_phone: FieldRef<"sensor_history", 'String'>
+    readonly driver_license: FieldRef<"sensor_history", 'String'>
+    readonly vendor_id: FieldRef<"sensor_history", 'Int'>
+    readonly vendor_name: FieldRef<"sensor_history", 'String'>
+    readonly vendor_contact: FieldRef<"sensor_history", 'String'>
     readonly recorded_at: FieldRef<"sensor_history", 'DateTime'>
     readonly created_at: FieldRef<"sensor_history", 'DateTime'>
   }
@@ -9679,6 +10149,51 @@ export namespace Prisma {
      * Filter which sensor_histories to delete
      */
     where?: sensor_historyWhereInput
+  }
+
+  /**
+   * sensor_history.sensor
+   */
+  export type sensor_history$sensorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the sensor
+     */
+    select?: sensorSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: sensorInclude<ExtArgs> | null
+    where?: sensorWhereInput
+  }
+
+  /**
+   * sensor_history.device
+   */
+  export type sensor_history$deviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the device
+     */
+    select?: deviceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: deviceInclude<ExtArgs> | null
+    where?: deviceWhereInput
+  }
+
+  /**
+   * sensor_history.truck
+   */
+  export type sensor_history$truckArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the truck
+     */
+    select?: truckSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: truckInclude<ExtArgs> | null
+    where?: truckWhereInput
   }
 
   /**
@@ -10004,6 +10519,7 @@ export namespace Prisma {
     updated_at?: boolean
     alert_events?: boolean | truck$alert_eventsArgs<ExtArgs>
     device?: boolean | truck$deviceArgs<ExtArgs>
+    location?: boolean | truck$locationArgs<ExtArgs>
     sensor_history?: boolean | truck$sensor_historyArgs<ExtArgs>
     drivers?: boolean | truck$driversArgs<ExtArgs>
     vendors?: boolean | truck$vendorsArgs<ExtArgs>
@@ -10053,6 +10569,7 @@ export namespace Prisma {
   export type truckInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     alert_events?: boolean | truck$alert_eventsArgs<ExtArgs>
     device?: boolean | truck$deviceArgs<ExtArgs>
+    location?: boolean | truck$locationArgs<ExtArgs>
     sensor_history?: boolean | truck$sensor_historyArgs<ExtArgs>
     drivers?: boolean | truck$driversArgs<ExtArgs>
     vendors?: boolean | truck$vendorsArgs<ExtArgs>
@@ -10068,6 +10585,7 @@ export namespace Prisma {
     objects: {
       alert_events: Prisma.$alert_eventsPayload<ExtArgs>[]
       device: Prisma.$devicePayload<ExtArgs>[]
+      location: Prisma.$locationPayload<ExtArgs>[]
       sensor_history: Prisma.$sensor_historyPayload<ExtArgs>[]
       drivers: Prisma.$driversPayload<ExtArgs> | null
       vendors: Prisma.$vendorsPayload<ExtArgs> | null
@@ -10455,6 +10973,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     alert_events<T extends truck$alert_eventsArgs<ExtArgs> = {}>(args?: Subset<T, truck$alert_eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$alert_eventsPayload<ExtArgs>, T, "findMany"> | Null>
     device<T extends truck$deviceArgs<ExtArgs> = {}>(args?: Subset<T, truck$deviceArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$devicePayload<ExtArgs>, T, "findMany"> | Null>
+    location<T extends truck$locationArgs<ExtArgs> = {}>(args?: Subset<T, truck$locationArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$locationPayload<ExtArgs>, T, "findMany"> | Null>
     sensor_history<T extends truck$sensor_historyArgs<ExtArgs> = {}>(args?: Subset<T, truck$sensor_historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sensor_historyPayload<ExtArgs>, T, "findMany"> | Null>
     drivers<T extends truck$driversArgs<ExtArgs> = {}>(args?: Subset<T, truck$driversArgs<ExtArgs>>): Prisma__driversClient<$Result.GetResult<Prisma.$driversPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     vendors<T extends truck$vendorsArgs<ExtArgs> = {}>(args?: Subset<T, truck$vendorsArgs<ExtArgs>>): Prisma__vendorsClient<$Result.GetResult<Prisma.$vendorsPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
@@ -10858,6 +11377,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DeviceScalarFieldEnum | DeviceScalarFieldEnum[]
+  }
+
+  /**
+   * truck.location
+   */
+  export type truck$locationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the location
+     */
+    select?: locationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: locationInclude<ExtArgs> | null
+    where?: locationWhereInput
+    orderBy?: locationOrderByWithRelationInput | locationOrderByWithRelationInput[]
+    cursor?: locationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LocationScalarFieldEnum | LocationScalarFieldEnum[]
   }
 
   /**
@@ -13050,6 +13589,17 @@ export namespace Prisma {
     value: 'value',
     message: 'message',
     status: 'status',
+    alert_code: 'alert_code',
+    alert_name: 'alert_name',
+    alert_severity: 'alert_severity',
+    truck_plate: 'truck_plate',
+    truck_name: 'truck_name',
+    truck_vin: 'truck_vin',
+    device_sn: 'device_sn',
+    sensor_sn: 'sensor_sn',
+    sensor_tire_no: 'sensor_tire_no',
+    driver_name: 'driver_name',
+    vendor_name: 'vendor_name',
     created_at: 'created_at',
     resolved_at: 'resolved_at'
   };
@@ -13097,6 +13647,7 @@ export namespace Prisma {
   export const LocationScalarFieldEnum: {
     id: 'id',
     device_id: 'device_id',
+    truck_id: 'truck_id',
     lat: 'lat',
     long: 'long',
     speed: 'speed',
@@ -13143,6 +13694,28 @@ export namespace Prisma {
     tirepValue: 'tirepValue',
     exType: 'exType',
     bat: 'bat',
+    sensor_sn: 'sensor_sn',
+    sensor_status: 'sensor_status',
+    device_sn: 'device_sn',
+    device_sim_number: 'device_sim_number',
+    device_status: 'device_status',
+    device_bat1: 'device_bat1',
+    device_bat2: 'device_bat2',
+    device_bat3: 'device_bat3',
+    truck_vin: 'truck_vin',
+    truck_name: 'truck_name',
+    truck_plate: 'truck_plate',
+    truck_model: 'truck_model',
+    truck_year: 'truck_year',
+    truck_type: 'truck_type',
+    truck_status: 'truck_status',
+    driver_id: 'driver_id',
+    driver_name: 'driver_name',
+    driver_phone: 'driver_phone',
+    driver_license: 'driver_license',
+    vendor_id: 'vendor_id',
+    vendor_name: 'vendor_name',
+    vendor_contact: 'vendor_contact',
     recorded_at: 'recorded_at',
     created_at: 'created_at'
   };
@@ -13397,6 +13970,17 @@ export namespace Prisma {
     value?: FloatNullableFilter<"alert_events"> | number | null
     message?: StringNullableFilter<"alert_events"> | string | null
     status?: StringFilter<"alert_events"> | string
+    alert_code?: StringNullableFilter<"alert_events"> | string | null
+    alert_name?: StringNullableFilter<"alert_events"> | string | null
+    alert_severity?: StringNullableFilter<"alert_events"> | string | null
+    truck_plate?: StringNullableFilter<"alert_events"> | string | null
+    truck_name?: StringNullableFilter<"alert_events"> | string | null
+    truck_vin?: StringNullableFilter<"alert_events"> | string | null
+    device_sn?: StringNullableFilter<"alert_events"> | string | null
+    sensor_sn?: StringNullableFilter<"alert_events"> | string | null
+    sensor_tire_no?: IntNullableFilter<"alert_events"> | number | null
+    driver_name?: StringNullableFilter<"alert_events"> | string | null
+    vendor_name?: StringNullableFilter<"alert_events"> | string | null
     created_at?: DateTimeFilter<"alert_events"> | Date | string
     resolved_at?: DateTimeNullableFilter<"alert_events"> | Date | string | null
     alert?: XOR<AlertRelationFilter, alertWhereInput>
@@ -13414,6 +13998,17 @@ export namespace Prisma {
     value?: SortOrderInput | SortOrder
     message?: SortOrderInput | SortOrder
     status?: SortOrder
+    alert_code?: SortOrderInput | SortOrder
+    alert_name?: SortOrderInput | SortOrder
+    alert_severity?: SortOrderInput | SortOrder
+    truck_plate?: SortOrderInput | SortOrder
+    truck_name?: SortOrderInput | SortOrder
+    truck_vin?: SortOrderInput | SortOrder
+    device_sn?: SortOrderInput | SortOrder
+    sensor_sn?: SortOrderInput | SortOrder
+    sensor_tire_no?: SortOrderInput | SortOrder
+    driver_name?: SortOrderInput | SortOrder
+    vendor_name?: SortOrderInput | SortOrder
     created_at?: SortOrder
     resolved_at?: SortOrderInput | SortOrder
     alert?: alertOrderByWithRelationInput
@@ -13434,6 +14029,17 @@ export namespace Prisma {
     value?: FloatNullableFilter<"alert_events"> | number | null
     message?: StringNullableFilter<"alert_events"> | string | null
     status?: StringFilter<"alert_events"> | string
+    alert_code?: StringNullableFilter<"alert_events"> | string | null
+    alert_name?: StringNullableFilter<"alert_events"> | string | null
+    alert_severity?: StringNullableFilter<"alert_events"> | string | null
+    truck_plate?: StringNullableFilter<"alert_events"> | string | null
+    truck_name?: StringNullableFilter<"alert_events"> | string | null
+    truck_vin?: StringNullableFilter<"alert_events"> | string | null
+    device_sn?: StringNullableFilter<"alert_events"> | string | null
+    sensor_sn?: StringNullableFilter<"alert_events"> | string | null
+    sensor_tire_no?: IntNullableFilter<"alert_events"> | number | null
+    driver_name?: StringNullableFilter<"alert_events"> | string | null
+    vendor_name?: StringNullableFilter<"alert_events"> | string | null
     created_at?: DateTimeFilter<"alert_events"> | Date | string
     resolved_at?: DateTimeNullableFilter<"alert_events"> | Date | string | null
     alert?: XOR<AlertRelationFilter, alertWhereInput>
@@ -13451,6 +14057,17 @@ export namespace Prisma {
     value?: SortOrderInput | SortOrder
     message?: SortOrderInput | SortOrder
     status?: SortOrder
+    alert_code?: SortOrderInput | SortOrder
+    alert_name?: SortOrderInput | SortOrder
+    alert_severity?: SortOrderInput | SortOrder
+    truck_plate?: SortOrderInput | SortOrder
+    truck_name?: SortOrderInput | SortOrder
+    truck_vin?: SortOrderInput | SortOrder
+    device_sn?: SortOrderInput | SortOrder
+    sensor_sn?: SortOrderInput | SortOrder
+    sensor_tire_no?: SortOrderInput | SortOrder
+    driver_name?: SortOrderInput | SortOrder
+    vendor_name?: SortOrderInput | SortOrder
     created_at?: SortOrder
     resolved_at?: SortOrderInput | SortOrder
     _count?: alert_eventsCountOrderByAggregateInput
@@ -13472,6 +14089,17 @@ export namespace Prisma {
     value?: FloatNullableWithAggregatesFilter<"alert_events"> | number | null
     message?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
     status?: StringWithAggregatesFilter<"alert_events"> | string
+    alert_code?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    alert_name?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    alert_severity?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    truck_plate?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    truck_name?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    truck_vin?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    device_sn?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    sensor_sn?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    sensor_tire_no?: IntNullableWithAggregatesFilter<"alert_events"> | number | null
+    driver_name?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
+    vendor_name?: StringNullableWithAggregatesFilter<"alert_events"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"alert_events"> | Date | string
     resolved_at?: DateTimeNullableWithAggregatesFilter<"alert_events"> | Date | string | null
   }
@@ -13686,6 +14314,7 @@ export namespace Prisma {
     NOT?: locationWhereInput | locationWhereInput[]
     id?: IntFilter<"location"> | number
     device_id?: IntFilter<"location"> | number
+    truck_id?: IntNullableFilter<"location"> | number | null
     lat?: FloatFilter<"location"> | number
     long?: FloatFilter<"location"> | number
     speed?: FloatNullableFilter<"location"> | number | null
@@ -13695,12 +14324,14 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"location"> | Date | string
     recorded_at?: DateTimeFilter<"location"> | Date | string
     device?: XOR<DeviceRelationFilter, deviceWhereInput>
+    truck?: XOR<TruckNullableRelationFilter, truckWhereInput> | null
     sensor_history?: Sensor_historyListRelationFilter
   }
 
   export type locationOrderByWithRelationInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrderInput | SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrderInput | SortOrder
@@ -13710,6 +14341,7 @@ export namespace Prisma {
     created_at?: SortOrder
     recorded_at?: SortOrder
     device?: deviceOrderByWithRelationInput
+    truck?: truckOrderByWithRelationInput
     sensor_history?: sensor_historyOrderByRelationAggregateInput
   }
 
@@ -13719,6 +14351,7 @@ export namespace Prisma {
     OR?: locationWhereInput[]
     NOT?: locationWhereInput | locationWhereInput[]
     device_id?: IntFilter<"location"> | number
+    truck_id?: IntNullableFilter<"location"> | number | null
     lat?: FloatFilter<"location"> | number
     long?: FloatFilter<"location"> | number
     speed?: FloatNullableFilter<"location"> | number | null
@@ -13728,12 +14361,14 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"location"> | Date | string
     recorded_at?: DateTimeFilter<"location"> | Date | string
     device?: XOR<DeviceRelationFilter, deviceWhereInput>
+    truck?: XOR<TruckNullableRelationFilter, truckWhereInput> | null
     sensor_history?: Sensor_historyListRelationFilter
   }, "id">
 
   export type locationOrderByWithAggregationInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrderInput | SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrderInput | SortOrder
@@ -13755,6 +14390,7 @@ export namespace Prisma {
     NOT?: locationScalarWhereWithAggregatesInput | locationScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"location"> | number
     device_id?: IntWithAggregatesFilter<"location"> | number
+    truck_id?: IntNullableWithAggregatesFilter<"location"> | number | null
     lat?: FloatWithAggregatesFilter<"location"> | number
     long?: FloatWithAggregatesFilter<"location"> | number
     speed?: FloatNullableWithAggregatesFilter<"location"> | number | null
@@ -13884,35 +14520,79 @@ export namespace Prisma {
     NOT?: sensor_historyWhereInput | sensor_historyWhereInput[]
     id?: IntFilter<"sensor_history"> | number
     location_id?: IntFilter<"sensor_history"> | number
-    sensor_id?: IntFilter<"sensor_history"> | number
-    device_id?: IntFilter<"sensor_history"> | number
-    truck_id?: IntFilter<"sensor_history"> | number
+    sensor_id?: IntNullableFilter<"sensor_history"> | number | null
+    device_id?: IntNullableFilter<"sensor_history"> | number | null
+    truck_id?: IntNullableFilter<"sensor_history"> | number | null
     tireNo?: IntFilter<"sensor_history"> | number
     sensorNo?: IntNullableFilter<"sensor_history"> | number | null
     tempValue?: FloatFilter<"sensor_history"> | number
     tirepValue?: FloatFilter<"sensor_history"> | number
     exType?: StringFilter<"sensor_history"> | string
     bat?: IntNullableFilter<"sensor_history"> | number | null
+    sensor_sn?: StringNullableFilter<"sensor_history"> | string | null
+    sensor_status?: StringNullableFilter<"sensor_history"> | string | null
+    device_sn?: StringNullableFilter<"sensor_history"> | string | null
+    device_sim_number?: StringNullableFilter<"sensor_history"> | string | null
+    device_status?: StringNullableFilter<"sensor_history"> | string | null
+    device_bat1?: IntNullableFilter<"sensor_history"> | number | null
+    device_bat2?: IntNullableFilter<"sensor_history"> | number | null
+    device_bat3?: IntNullableFilter<"sensor_history"> | number | null
+    truck_vin?: StringNullableFilter<"sensor_history"> | string | null
+    truck_name?: StringNullableFilter<"sensor_history"> | string | null
+    truck_plate?: StringNullableFilter<"sensor_history"> | string | null
+    truck_model?: StringNullableFilter<"sensor_history"> | string | null
+    truck_year?: IntNullableFilter<"sensor_history"> | number | null
+    truck_type?: StringNullableFilter<"sensor_history"> | string | null
+    truck_status?: StringNullableFilter<"sensor_history"> | string | null
+    driver_id?: IntNullableFilter<"sensor_history"> | number | null
+    driver_name?: StringNullableFilter<"sensor_history"> | string | null
+    driver_phone?: StringNullableFilter<"sensor_history"> | string | null
+    driver_license?: StringNullableFilter<"sensor_history"> | string | null
+    vendor_id?: IntNullableFilter<"sensor_history"> | number | null
+    vendor_name?: StringNullableFilter<"sensor_history"> | string | null
+    vendor_contact?: StringNullableFilter<"sensor_history"> | string | null
     recorded_at?: DateTimeFilter<"sensor_history"> | Date | string
     created_at?: DateTimeFilter<"sensor_history"> | Date | string
     location?: XOR<LocationRelationFilter, locationWhereInput>
-    sensor?: XOR<SensorRelationFilter, sensorWhereInput>
-    device?: XOR<DeviceRelationFilter, deviceWhereInput>
-    truck?: XOR<TruckRelationFilter, truckWhereInput>
+    sensor?: XOR<SensorNullableRelationFilter, sensorWhereInput> | null
+    device?: XOR<DeviceNullableRelationFilter, deviceWhereInput> | null
+    truck?: XOR<TruckNullableRelationFilter, truckWhereInput> | null
   }
 
   export type sensor_historyOrderByWithRelationInput = {
     id?: SortOrder
     location_id?: SortOrder
-    sensor_id?: SortOrder
-    device_id?: SortOrder
-    truck_id?: SortOrder
+    sensor_id?: SortOrderInput | SortOrder
+    device_id?: SortOrderInput | SortOrder
+    truck_id?: SortOrderInput | SortOrder
     tireNo?: SortOrder
     sensorNo?: SortOrderInput | SortOrder
     tempValue?: SortOrder
     tirepValue?: SortOrder
     exType?: SortOrder
     bat?: SortOrderInput | SortOrder
+    sensor_sn?: SortOrderInput | SortOrder
+    sensor_status?: SortOrderInput | SortOrder
+    device_sn?: SortOrderInput | SortOrder
+    device_sim_number?: SortOrderInput | SortOrder
+    device_status?: SortOrderInput | SortOrder
+    device_bat1?: SortOrderInput | SortOrder
+    device_bat2?: SortOrderInput | SortOrder
+    device_bat3?: SortOrderInput | SortOrder
+    truck_vin?: SortOrderInput | SortOrder
+    truck_name?: SortOrderInput | SortOrder
+    truck_plate?: SortOrderInput | SortOrder
+    truck_model?: SortOrderInput | SortOrder
+    truck_year?: SortOrderInput | SortOrder
+    truck_type?: SortOrderInput | SortOrder
+    truck_status?: SortOrderInput | SortOrder
+    driver_id?: SortOrderInput | SortOrder
+    driver_name?: SortOrderInput | SortOrder
+    driver_phone?: SortOrderInput | SortOrder
+    driver_license?: SortOrderInput | SortOrder
+    vendor_id?: SortOrderInput | SortOrder
+    vendor_name?: SortOrderInput | SortOrder
+    vendor_contact?: SortOrderInput | SortOrder
     recorded_at?: SortOrder
     created_at?: SortOrder
     location?: locationOrderByWithRelationInput
@@ -13927,35 +14607,79 @@ export namespace Prisma {
     OR?: sensor_historyWhereInput[]
     NOT?: sensor_historyWhereInput | sensor_historyWhereInput[]
     location_id?: IntFilter<"sensor_history"> | number
-    sensor_id?: IntFilter<"sensor_history"> | number
-    device_id?: IntFilter<"sensor_history"> | number
-    truck_id?: IntFilter<"sensor_history"> | number
+    sensor_id?: IntNullableFilter<"sensor_history"> | number | null
+    device_id?: IntNullableFilter<"sensor_history"> | number | null
+    truck_id?: IntNullableFilter<"sensor_history"> | number | null
     tireNo?: IntFilter<"sensor_history"> | number
     sensorNo?: IntNullableFilter<"sensor_history"> | number | null
     tempValue?: FloatFilter<"sensor_history"> | number
     tirepValue?: FloatFilter<"sensor_history"> | number
     exType?: StringFilter<"sensor_history"> | string
     bat?: IntNullableFilter<"sensor_history"> | number | null
+    sensor_sn?: StringNullableFilter<"sensor_history"> | string | null
+    sensor_status?: StringNullableFilter<"sensor_history"> | string | null
+    device_sn?: StringNullableFilter<"sensor_history"> | string | null
+    device_sim_number?: StringNullableFilter<"sensor_history"> | string | null
+    device_status?: StringNullableFilter<"sensor_history"> | string | null
+    device_bat1?: IntNullableFilter<"sensor_history"> | number | null
+    device_bat2?: IntNullableFilter<"sensor_history"> | number | null
+    device_bat3?: IntNullableFilter<"sensor_history"> | number | null
+    truck_vin?: StringNullableFilter<"sensor_history"> | string | null
+    truck_name?: StringNullableFilter<"sensor_history"> | string | null
+    truck_plate?: StringNullableFilter<"sensor_history"> | string | null
+    truck_model?: StringNullableFilter<"sensor_history"> | string | null
+    truck_year?: IntNullableFilter<"sensor_history"> | number | null
+    truck_type?: StringNullableFilter<"sensor_history"> | string | null
+    truck_status?: StringNullableFilter<"sensor_history"> | string | null
+    driver_id?: IntNullableFilter<"sensor_history"> | number | null
+    driver_name?: StringNullableFilter<"sensor_history"> | string | null
+    driver_phone?: StringNullableFilter<"sensor_history"> | string | null
+    driver_license?: StringNullableFilter<"sensor_history"> | string | null
+    vendor_id?: IntNullableFilter<"sensor_history"> | number | null
+    vendor_name?: StringNullableFilter<"sensor_history"> | string | null
+    vendor_contact?: StringNullableFilter<"sensor_history"> | string | null
     recorded_at?: DateTimeFilter<"sensor_history"> | Date | string
     created_at?: DateTimeFilter<"sensor_history"> | Date | string
     location?: XOR<LocationRelationFilter, locationWhereInput>
-    sensor?: XOR<SensorRelationFilter, sensorWhereInput>
-    device?: XOR<DeviceRelationFilter, deviceWhereInput>
-    truck?: XOR<TruckRelationFilter, truckWhereInput>
+    sensor?: XOR<SensorNullableRelationFilter, sensorWhereInput> | null
+    device?: XOR<DeviceNullableRelationFilter, deviceWhereInput> | null
+    truck?: XOR<TruckNullableRelationFilter, truckWhereInput> | null
   }, "id">
 
   export type sensor_historyOrderByWithAggregationInput = {
     id?: SortOrder
     location_id?: SortOrder
-    sensor_id?: SortOrder
-    device_id?: SortOrder
-    truck_id?: SortOrder
+    sensor_id?: SortOrderInput | SortOrder
+    device_id?: SortOrderInput | SortOrder
+    truck_id?: SortOrderInput | SortOrder
     tireNo?: SortOrder
     sensorNo?: SortOrderInput | SortOrder
     tempValue?: SortOrder
     tirepValue?: SortOrder
     exType?: SortOrder
     bat?: SortOrderInput | SortOrder
+    sensor_sn?: SortOrderInput | SortOrder
+    sensor_status?: SortOrderInput | SortOrder
+    device_sn?: SortOrderInput | SortOrder
+    device_sim_number?: SortOrderInput | SortOrder
+    device_status?: SortOrderInput | SortOrder
+    device_bat1?: SortOrderInput | SortOrder
+    device_bat2?: SortOrderInput | SortOrder
+    device_bat3?: SortOrderInput | SortOrder
+    truck_vin?: SortOrderInput | SortOrder
+    truck_name?: SortOrderInput | SortOrder
+    truck_plate?: SortOrderInput | SortOrder
+    truck_model?: SortOrderInput | SortOrder
+    truck_year?: SortOrderInput | SortOrder
+    truck_type?: SortOrderInput | SortOrder
+    truck_status?: SortOrderInput | SortOrder
+    driver_id?: SortOrderInput | SortOrder
+    driver_name?: SortOrderInput | SortOrder
+    driver_phone?: SortOrderInput | SortOrder
+    driver_license?: SortOrderInput | SortOrder
+    vendor_id?: SortOrderInput | SortOrder
+    vendor_name?: SortOrderInput | SortOrder
+    vendor_contact?: SortOrderInput | SortOrder
     recorded_at?: SortOrder
     created_at?: SortOrder
     _count?: sensor_historyCountOrderByAggregateInput
@@ -13971,15 +14695,37 @@ export namespace Prisma {
     NOT?: sensor_historyScalarWhereWithAggregatesInput | sensor_historyScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"sensor_history"> | number
     location_id?: IntWithAggregatesFilter<"sensor_history"> | number
-    sensor_id?: IntWithAggregatesFilter<"sensor_history"> | number
-    device_id?: IntWithAggregatesFilter<"sensor_history"> | number
-    truck_id?: IntWithAggregatesFilter<"sensor_history"> | number
+    sensor_id?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    device_id?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    truck_id?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
     tireNo?: IntWithAggregatesFilter<"sensor_history"> | number
     sensorNo?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
     tempValue?: FloatWithAggregatesFilter<"sensor_history"> | number
     tirepValue?: FloatWithAggregatesFilter<"sensor_history"> | number
     exType?: StringWithAggregatesFilter<"sensor_history"> | string
     bat?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    sensor_sn?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    sensor_status?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    device_sn?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    device_sim_number?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    device_status?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    device_bat1?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    device_bat2?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    device_bat3?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    truck_vin?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    truck_name?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    truck_plate?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    truck_model?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    truck_year?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    truck_type?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    truck_status?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    driver_id?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    driver_name?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    driver_phone?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    driver_license?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    vendor_id?: IntNullableWithAggregatesFilter<"sensor_history"> | number | null
+    vendor_name?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
+    vendor_contact?: StringNullableWithAggregatesFilter<"sensor_history"> | string | null
     recorded_at?: DateTimeWithAggregatesFilter<"sensor_history"> | Date | string
     created_at?: DateTimeWithAggregatesFilter<"sensor_history"> | Date | string
   }
@@ -14006,6 +14752,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"truck"> | Date | string
     alert_events?: Alert_eventsListRelationFilter
     device?: DeviceListRelationFilter
+    location?: LocationListRelationFilter
     sensor_history?: Sensor_historyListRelationFilter
     drivers?: XOR<DriversNullableRelationFilter, driversWhereInput> | null
     vendors?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
@@ -14030,6 +14777,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     alert_events?: alert_eventsOrderByRelationAggregateInput
     device?: deviceOrderByRelationAggregateInput
+    location?: locationOrderByRelationAggregateInput
     sensor_history?: sensor_historyOrderByRelationAggregateInput
     drivers?: driversOrderByWithRelationInput
     vendors?: vendorsOrderByWithRelationInput
@@ -14057,6 +14805,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"truck"> | Date | string
     alert_events?: Alert_eventsListRelationFilter
     device?: DeviceListRelationFilter
+    location?: LocationListRelationFilter
     sensor_history?: Sensor_historyListRelationFilter
     drivers?: XOR<DriversNullableRelationFilter, driversWhereInput> | null
     vendors?: XOR<VendorsNullableRelationFilter, vendorsWhereInput> | null
@@ -14388,6 +15137,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
     alert: alertCreateNestedOneWithoutAlert_eventsInput
@@ -14405,6 +15165,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -14413,6 +15184,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert?: alertUpdateOneRequiredWithoutAlert_eventsNestedInput
@@ -14430,6 +15212,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -14443,6 +15236,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -14451,6 +15255,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -14464,6 +15279,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -14707,12 +15533,14 @@ export namespace Prisma {
     created_at?: Date | string
     recorded_at?: Date | string
     device: deviceCreateNestedOneWithoutLocationInput
+    truck?: truckCreateNestedOneWithoutLocationInput
     sensor_history?: sensor_historyCreateNestedManyWithoutLocationInput
   }
 
   export type locationUncheckedCreateInput = {
     id?: number
     device_id: number
+    truck_id?: number | null
     lat: number
     long: number
     speed?: number | null
@@ -14734,12 +15562,14 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUpdateOneRequiredWithoutLocationNestedInput
+    truck?: truckUpdateOneWithoutLocationNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutLocationNestedInput
   }
 
   export type locationUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
     speed?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -14754,6 +15584,7 @@ export namespace Prisma {
   export type locationCreateManyInput = {
     id?: number
     device_id: number
+    truck_id?: number | null
     lat: number
     long: number
     speed?: number | null
@@ -14778,6 +15609,7 @@ export namespace Prisma {
   export type locationUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
     speed?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -14925,26 +15757,70 @@ export namespace Prisma {
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
     location: locationCreateNestedOneWithoutSensor_historyInput
-    sensor: sensorCreateNestedOneWithoutSensor_historyInput
-    device: deviceCreateNestedOneWithoutSensor_historyInput
-    truck: truckCreateNestedOneWithoutSensor_historyInput
+    sensor?: sensorCreateNestedOneWithoutSensor_historyInput
+    device?: deviceCreateNestedOneWithoutSensor_historyInput
+    truck?: truckCreateNestedOneWithoutSensor_historyInput
   }
 
   export type sensor_historyUncheckedCreateInput = {
     id?: number
     location_id: number
-    sensor_id: number
-    device_id: number
-    truck_id: number
+    sensor_id?: number | null
+    device_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -14956,26 +15832,70 @@ export namespace Prisma {
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
-    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
-    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
-    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneWithoutSensor_historyNestedInput
   }
 
   export type sensor_historyUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -14983,15 +15903,37 @@ export namespace Prisma {
   export type sensor_historyCreateManyInput = {
     id?: number
     location_id: number
-    sensor_id: number
-    device_id: number
-    truck_id: number
+    sensor_id?: number | null
+    device_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -15003,6 +15945,28 @@ export namespace Prisma {
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15010,15 +15974,37 @@ export namespace Prisma {
   export type sensor_historyUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15039,6 +16025,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    location?: locationCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
@@ -15063,6 +16050,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    location?: locationUncheckedCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
@@ -15082,6 +16070,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    location?: locationUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
@@ -15106,6 +16095,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    location?: locationUncheckedUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
@@ -15651,6 +16641,17 @@ export namespace Prisma {
     value?: SortOrder
     message?: SortOrder
     status?: SortOrder
+    alert_code?: SortOrder
+    alert_name?: SortOrder
+    alert_severity?: SortOrder
+    truck_plate?: SortOrder
+    truck_name?: SortOrder
+    truck_vin?: SortOrder
+    device_sn?: SortOrder
+    sensor_sn?: SortOrder
+    sensor_tire_no?: SortOrder
+    driver_name?: SortOrder
+    vendor_name?: SortOrder
     created_at?: SortOrder
     resolved_at?: SortOrder
   }
@@ -15662,6 +16663,7 @@ export namespace Prisma {
     sensor_id?: SortOrder
     truck_id?: SortOrder
     value?: SortOrder
+    sensor_tire_no?: SortOrder
   }
 
   export type alert_eventsMaxOrderByAggregateInput = {
@@ -15673,6 +16675,17 @@ export namespace Prisma {
     value?: SortOrder
     message?: SortOrder
     status?: SortOrder
+    alert_code?: SortOrder
+    alert_name?: SortOrder
+    alert_severity?: SortOrder
+    truck_plate?: SortOrder
+    truck_name?: SortOrder
+    truck_vin?: SortOrder
+    device_sn?: SortOrder
+    sensor_sn?: SortOrder
+    sensor_tire_no?: SortOrder
+    driver_name?: SortOrder
+    vendor_name?: SortOrder
     created_at?: SortOrder
     resolved_at?: SortOrder
   }
@@ -15686,6 +16699,17 @@ export namespace Prisma {
     value?: SortOrder
     message?: SortOrder
     status?: SortOrder
+    alert_code?: SortOrder
+    alert_name?: SortOrder
+    alert_severity?: SortOrder
+    truck_plate?: SortOrder
+    truck_name?: SortOrder
+    truck_vin?: SortOrder
+    device_sn?: SortOrder
+    sensor_sn?: SortOrder
+    sensor_tire_no?: SortOrder
+    driver_name?: SortOrder
+    vendor_name?: SortOrder
     created_at?: SortOrder
     resolved_at?: SortOrder
   }
@@ -15697,6 +16721,7 @@ export namespace Prisma {
     sensor_id?: SortOrder
     truck_id?: SortOrder
     value?: SortOrder
+    sensor_tire_no?: SortOrder
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -15905,6 +16930,7 @@ export namespace Prisma {
   export type locationCountOrderByAggregateInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrder
@@ -15918,6 +16944,7 @@ export namespace Prisma {
   export type locationAvgOrderByAggregateInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrder
@@ -15929,6 +16956,7 @@ export namespace Prisma {
   export type locationMaxOrderByAggregateInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrder
@@ -15942,6 +16970,7 @@ export namespace Prisma {
   export type locationMinOrderByAggregateInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrder
@@ -15955,6 +16984,7 @@ export namespace Prisma {
   export type locationSumOrderByAggregateInput = {
     id?: SortOrder
     device_id?: SortOrder
+    truck_id?: SortOrder
     lat?: SortOrder
     long?: SortOrder
     speed?: SortOrder
@@ -16060,11 +17090,6 @@ export namespace Prisma {
     isNot?: locationWhereInput
   }
 
-  export type SensorRelationFilter = {
-    is?: sensorWhereInput
-    isNot?: sensorWhereInput
-  }
-
   export type sensor_historyCountOrderByAggregateInput = {
     id?: SortOrder
     location_id?: SortOrder
@@ -16077,6 +17102,28 @@ export namespace Prisma {
     tirepValue?: SortOrder
     exType?: SortOrder
     bat?: SortOrder
+    sensor_sn?: SortOrder
+    sensor_status?: SortOrder
+    device_sn?: SortOrder
+    device_sim_number?: SortOrder
+    device_status?: SortOrder
+    device_bat1?: SortOrder
+    device_bat2?: SortOrder
+    device_bat3?: SortOrder
+    truck_vin?: SortOrder
+    truck_name?: SortOrder
+    truck_plate?: SortOrder
+    truck_model?: SortOrder
+    truck_year?: SortOrder
+    truck_type?: SortOrder
+    truck_status?: SortOrder
+    driver_id?: SortOrder
+    driver_name?: SortOrder
+    driver_phone?: SortOrder
+    driver_license?: SortOrder
+    vendor_id?: SortOrder
+    vendor_name?: SortOrder
+    vendor_contact?: SortOrder
     recorded_at?: SortOrder
     created_at?: SortOrder
   }
@@ -16092,6 +17139,12 @@ export namespace Prisma {
     tempValue?: SortOrder
     tirepValue?: SortOrder
     bat?: SortOrder
+    device_bat1?: SortOrder
+    device_bat2?: SortOrder
+    device_bat3?: SortOrder
+    truck_year?: SortOrder
+    driver_id?: SortOrder
+    vendor_id?: SortOrder
   }
 
   export type sensor_historyMaxOrderByAggregateInput = {
@@ -16106,6 +17159,28 @@ export namespace Prisma {
     tirepValue?: SortOrder
     exType?: SortOrder
     bat?: SortOrder
+    sensor_sn?: SortOrder
+    sensor_status?: SortOrder
+    device_sn?: SortOrder
+    device_sim_number?: SortOrder
+    device_status?: SortOrder
+    device_bat1?: SortOrder
+    device_bat2?: SortOrder
+    device_bat3?: SortOrder
+    truck_vin?: SortOrder
+    truck_name?: SortOrder
+    truck_plate?: SortOrder
+    truck_model?: SortOrder
+    truck_year?: SortOrder
+    truck_type?: SortOrder
+    truck_status?: SortOrder
+    driver_id?: SortOrder
+    driver_name?: SortOrder
+    driver_phone?: SortOrder
+    driver_license?: SortOrder
+    vendor_id?: SortOrder
+    vendor_name?: SortOrder
+    vendor_contact?: SortOrder
     recorded_at?: SortOrder
     created_at?: SortOrder
   }
@@ -16122,6 +17197,28 @@ export namespace Prisma {
     tirepValue?: SortOrder
     exType?: SortOrder
     bat?: SortOrder
+    sensor_sn?: SortOrder
+    sensor_status?: SortOrder
+    device_sn?: SortOrder
+    device_sim_number?: SortOrder
+    device_status?: SortOrder
+    device_bat1?: SortOrder
+    device_bat2?: SortOrder
+    device_bat3?: SortOrder
+    truck_vin?: SortOrder
+    truck_name?: SortOrder
+    truck_plate?: SortOrder
+    truck_model?: SortOrder
+    truck_year?: SortOrder
+    truck_type?: SortOrder
+    truck_status?: SortOrder
+    driver_id?: SortOrder
+    driver_name?: SortOrder
+    driver_phone?: SortOrder
+    driver_license?: SortOrder
+    vendor_id?: SortOrder
+    vendor_name?: SortOrder
+    vendor_contact?: SortOrder
     recorded_at?: SortOrder
     created_at?: SortOrder
   }
@@ -16137,6 +17234,12 @@ export namespace Prisma {
     tempValue?: SortOrder
     tirepValue?: SortOrder
     bat?: SortOrder
+    device_bat1?: SortOrder
+    device_bat2?: SortOrder
+    device_bat3?: SortOrder
+    truck_year?: SortOrder
+    driver_id?: SortOrder
+    vendor_id?: SortOrder
   }
 
   export type DeviceListRelationFilter = {
@@ -16456,6 +17559,14 @@ export namespace Prisma {
     connect?: truckWhereUniqueInput
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type alertUpdateOneRequiredWithoutAlert_eventsNestedInput = {
     create?: XOR<alertCreateWithoutAlert_eventsInput, alertUncheckedCreateWithoutAlert_eventsInput>
     connectOrCreate?: alertCreateOrConnectWithoutAlert_eventsInput
@@ -16492,14 +17603,6 @@ export namespace Prisma {
     delete?: truckWhereInput | boolean
     connect?: truckWhereUniqueInput
     update?: XOR<XOR<truckUpdateToOneWithWhereWithoutAlert_eventsInput, truckUpdateWithoutAlert_eventsInput>, truckUncheckedUpdateWithoutAlert_eventsInput>
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type alert_eventsCreateNestedManyWithoutDeviceInput = {
@@ -16748,6 +17851,12 @@ export namespace Prisma {
     connect?: deviceWhereUniqueInput
   }
 
+  export type truckCreateNestedOneWithoutLocationInput = {
+    create?: XOR<truckCreateWithoutLocationInput, truckUncheckedCreateWithoutLocationInput>
+    connectOrCreate?: truckCreateOrConnectWithoutLocationInput
+    connect?: truckWhereUniqueInput
+  }
+
   export type sensor_historyCreateNestedManyWithoutLocationInput = {
     create?: XOR<sensor_historyCreateWithoutLocationInput, sensor_historyUncheckedCreateWithoutLocationInput> | sensor_historyCreateWithoutLocationInput[] | sensor_historyUncheckedCreateWithoutLocationInput[]
     connectOrCreate?: sensor_historyCreateOrConnectWithoutLocationInput | sensor_historyCreateOrConnectWithoutLocationInput[]
@@ -16776,6 +17885,16 @@ export namespace Prisma {
     upsert?: deviceUpsertWithoutLocationInput
     connect?: deviceWhereUniqueInput
     update?: XOR<XOR<deviceUpdateToOneWithWhereWithoutLocationInput, deviceUpdateWithoutLocationInput>, deviceUncheckedUpdateWithoutLocationInput>
+  }
+
+  export type truckUpdateOneWithoutLocationNestedInput = {
+    create?: XOR<truckCreateWithoutLocationInput, truckUncheckedCreateWithoutLocationInput>
+    connectOrCreate?: truckCreateOrConnectWithoutLocationInput
+    upsert?: truckUpsertWithoutLocationInput
+    disconnect?: truckWhereInput | boolean
+    delete?: truckWhereInput | boolean
+    connect?: truckWhereUniqueInput
+    update?: XOR<XOR<truckUpdateToOneWithWhereWithoutLocationInput, truckUpdateWithoutLocationInput>, truckUncheckedUpdateWithoutLocationInput>
   }
 
   export type sensor_historyUpdateManyWithoutLocationNestedInput = {
@@ -16936,26 +18055,32 @@ export namespace Prisma {
     update?: XOR<XOR<locationUpdateToOneWithWhereWithoutSensor_historyInput, locationUpdateWithoutSensor_historyInput>, locationUncheckedUpdateWithoutSensor_historyInput>
   }
 
-  export type sensorUpdateOneRequiredWithoutSensor_historyNestedInput = {
+  export type sensorUpdateOneWithoutSensor_historyNestedInput = {
     create?: XOR<sensorCreateWithoutSensor_historyInput, sensorUncheckedCreateWithoutSensor_historyInput>
     connectOrCreate?: sensorCreateOrConnectWithoutSensor_historyInput
     upsert?: sensorUpsertWithoutSensor_historyInput
+    disconnect?: sensorWhereInput | boolean
+    delete?: sensorWhereInput | boolean
     connect?: sensorWhereUniqueInput
     update?: XOR<XOR<sensorUpdateToOneWithWhereWithoutSensor_historyInput, sensorUpdateWithoutSensor_historyInput>, sensorUncheckedUpdateWithoutSensor_historyInput>
   }
 
-  export type deviceUpdateOneRequiredWithoutSensor_historyNestedInput = {
+  export type deviceUpdateOneWithoutSensor_historyNestedInput = {
     create?: XOR<deviceCreateWithoutSensor_historyInput, deviceUncheckedCreateWithoutSensor_historyInput>
     connectOrCreate?: deviceCreateOrConnectWithoutSensor_historyInput
     upsert?: deviceUpsertWithoutSensor_historyInput
+    disconnect?: deviceWhereInput | boolean
+    delete?: deviceWhereInput | boolean
     connect?: deviceWhereUniqueInput
     update?: XOR<XOR<deviceUpdateToOneWithWhereWithoutSensor_historyInput, deviceUpdateWithoutSensor_historyInput>, deviceUncheckedUpdateWithoutSensor_historyInput>
   }
 
-  export type truckUpdateOneRequiredWithoutSensor_historyNestedInput = {
+  export type truckUpdateOneWithoutSensor_historyNestedInput = {
     create?: XOR<truckCreateWithoutSensor_historyInput, truckUncheckedCreateWithoutSensor_historyInput>
     connectOrCreate?: truckCreateOrConnectWithoutSensor_historyInput
     upsert?: truckUpsertWithoutSensor_historyInput
+    disconnect?: truckWhereInput | boolean
+    delete?: truckWhereInput | boolean
     connect?: truckWhereUniqueInput
     update?: XOR<XOR<truckUpdateToOneWithWhereWithoutSensor_historyInput, truckUpdateWithoutSensor_historyInput>, truckUncheckedUpdateWithoutSensor_historyInput>
   }
@@ -16972,6 +18097,13 @@ export namespace Prisma {
     connectOrCreate?: deviceCreateOrConnectWithoutTruckInput | deviceCreateOrConnectWithoutTruckInput[]
     createMany?: deviceCreateManyTruckInputEnvelope
     connect?: deviceWhereUniqueInput | deviceWhereUniqueInput[]
+  }
+
+  export type locationCreateNestedManyWithoutTruckInput = {
+    create?: XOR<locationCreateWithoutTruckInput, locationUncheckedCreateWithoutTruckInput> | locationCreateWithoutTruckInput[] | locationUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: locationCreateOrConnectWithoutTruckInput | locationCreateOrConnectWithoutTruckInput[]
+    createMany?: locationCreateManyTruckInputEnvelope
+    connect?: locationWhereUniqueInput | locationWhereUniqueInput[]
   }
 
   export type sensor_historyCreateNestedManyWithoutTruckInput = {
@@ -17007,6 +18139,13 @@ export namespace Prisma {
     connect?: deviceWhereUniqueInput | deviceWhereUniqueInput[]
   }
 
+  export type locationUncheckedCreateNestedManyWithoutTruckInput = {
+    create?: XOR<locationCreateWithoutTruckInput, locationUncheckedCreateWithoutTruckInput> | locationCreateWithoutTruckInput[] | locationUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: locationCreateOrConnectWithoutTruckInput | locationCreateOrConnectWithoutTruckInput[]
+    createMany?: locationCreateManyTruckInputEnvelope
+    connect?: locationWhereUniqueInput | locationWhereUniqueInput[]
+  }
+
   export type sensor_historyUncheckedCreateNestedManyWithoutTruckInput = {
     create?: XOR<sensor_historyCreateWithoutTruckInput, sensor_historyUncheckedCreateWithoutTruckInput> | sensor_historyCreateWithoutTruckInput[] | sensor_historyUncheckedCreateWithoutTruckInput[]
     connectOrCreate?: sensor_historyCreateOrConnectWithoutTruckInput | sensor_historyCreateOrConnectWithoutTruckInput[]
@@ -17040,6 +18179,20 @@ export namespace Prisma {
     update?: deviceUpdateWithWhereUniqueWithoutTruckInput | deviceUpdateWithWhereUniqueWithoutTruckInput[]
     updateMany?: deviceUpdateManyWithWhereWithoutTruckInput | deviceUpdateManyWithWhereWithoutTruckInput[]
     deleteMany?: deviceScalarWhereInput | deviceScalarWhereInput[]
+  }
+
+  export type locationUpdateManyWithoutTruckNestedInput = {
+    create?: XOR<locationCreateWithoutTruckInput, locationUncheckedCreateWithoutTruckInput> | locationCreateWithoutTruckInput[] | locationUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: locationCreateOrConnectWithoutTruckInput | locationCreateOrConnectWithoutTruckInput[]
+    upsert?: locationUpsertWithWhereUniqueWithoutTruckInput | locationUpsertWithWhereUniqueWithoutTruckInput[]
+    createMany?: locationCreateManyTruckInputEnvelope
+    set?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    disconnect?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    delete?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    connect?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    update?: locationUpdateWithWhereUniqueWithoutTruckInput | locationUpdateWithWhereUniqueWithoutTruckInput[]
+    updateMany?: locationUpdateManyWithWhereWithoutTruckInput | locationUpdateManyWithWhereWithoutTruckInput[]
+    deleteMany?: locationScalarWhereInput | locationScalarWhereInput[]
   }
 
   export type sensor_historyUpdateManyWithoutTruckNestedInput = {
@@ -17102,6 +18255,20 @@ export namespace Prisma {
     update?: deviceUpdateWithWhereUniqueWithoutTruckInput | deviceUpdateWithWhereUniqueWithoutTruckInput[]
     updateMany?: deviceUpdateManyWithWhereWithoutTruckInput | deviceUpdateManyWithWhereWithoutTruckInput[]
     deleteMany?: deviceScalarWhereInput | deviceScalarWhereInput[]
+  }
+
+  export type locationUncheckedUpdateManyWithoutTruckNestedInput = {
+    create?: XOR<locationCreateWithoutTruckInput, locationUncheckedCreateWithoutTruckInput> | locationCreateWithoutTruckInput[] | locationUncheckedCreateWithoutTruckInput[]
+    connectOrCreate?: locationCreateOrConnectWithoutTruckInput | locationCreateOrConnectWithoutTruckInput[]
+    upsert?: locationUpsertWithWhereUniqueWithoutTruckInput | locationUpsertWithWhereUniqueWithoutTruckInput[]
+    createMany?: locationCreateManyTruckInputEnvelope
+    set?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    disconnect?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    delete?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    connect?: locationWhereUniqueInput | locationWhereUniqueInput[]
+    update?: locationUpdateWithWhereUniqueWithoutTruckInput | locationUpdateWithWhereUniqueWithoutTruckInput[]
+    updateMany?: locationUpdateManyWithWhereWithoutTruckInput | locationUpdateManyWithWhereWithoutTruckInput[]
+    deleteMany?: locationScalarWhereInput | locationScalarWhereInput[]
   }
 
   export type sensor_historyUncheckedUpdateManyWithoutTruckNestedInput = {
@@ -17443,6 +18610,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
     device?: deviceCreateNestedOneWithoutAlert_eventsInput
@@ -17458,6 +18636,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -17500,6 +18689,17 @@ export namespace Prisma {
     value?: FloatNullableFilter<"alert_events"> | number | null
     message?: StringNullableFilter<"alert_events"> | string | null
     status?: StringFilter<"alert_events"> | string
+    alert_code?: StringNullableFilter<"alert_events"> | string | null
+    alert_name?: StringNullableFilter<"alert_events"> | string | null
+    alert_severity?: StringNullableFilter<"alert_events"> | string | null
+    truck_plate?: StringNullableFilter<"alert_events"> | string | null
+    truck_name?: StringNullableFilter<"alert_events"> | string | null
+    truck_vin?: StringNullableFilter<"alert_events"> | string | null
+    device_sn?: StringNullableFilter<"alert_events"> | string | null
+    sensor_sn?: StringNullableFilter<"alert_events"> | string | null
+    sensor_tire_no?: IntNullableFilter<"alert_events"> | number | null
+    driver_name?: StringNullableFilter<"alert_events"> | string | null
+    vendor_name?: StringNullableFilter<"alert_events"> | string | null
     created_at?: DateTimeFilter<"alert_events"> | Date | string
     resolved_at?: DateTimeNullableFilter<"alert_events"> | Date | string | null
   }
@@ -17633,6 +18833,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     device?: deviceCreateNestedManyWithoutTruckInput
+    location?: locationCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
@@ -17656,6 +18857,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    location?: locationUncheckedCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
@@ -17822,6 +19024,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUpdateManyWithoutTruckNestedInput
+    location?: locationUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
@@ -17845,6 +19048,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    location?: locationUncheckedUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
@@ -17852,6 +19056,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
     alert: alertCreateNestedOneWithoutAlert_eventsInput
@@ -17867,6 +19082,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -17896,6 +19122,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
+    location?: locationCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
@@ -17919,6 +19146,7 @@ export namespace Prisma {
     type?: string | null
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
+    location?: locationUncheckedCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
@@ -17936,11 +19164,13 @@ export namespace Prisma {
     accuracy?: number | null
     created_at?: Date | string
     recorded_at?: Date | string
+    truck?: truckCreateNestedOneWithoutLocationInput
     sensor_history?: sensor_historyCreateNestedManyWithoutLocationInput
   }
 
   export type locationUncheckedCreateWithoutDeviceInput = {
     id?: number
+    truck_id?: number | null
     lat: number
     long: number
     speed?: number | null
@@ -18016,24 +19246,68 @@ export namespace Prisma {
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
     location: locationCreateNestedOneWithoutSensor_historyInput
-    sensor: sensorCreateNestedOneWithoutSensor_historyInput
-    truck: truckCreateNestedOneWithoutSensor_historyInput
+    sensor?: sensorCreateNestedOneWithoutSensor_historyInput
+    truck?: truckCreateNestedOneWithoutSensor_historyInput
   }
 
   export type sensor_historyUncheckedCreateWithoutDeviceInput = {
     id?: number
     location_id: number
-    sensor_id: number
-    truck_id: number
+    sensor_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -18090,6 +19364,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
+    location?: locationUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
@@ -18113,6 +19388,7 @@ export namespace Prisma {
     type?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
+    location?: locationUncheckedUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
@@ -18138,6 +19414,7 @@ export namespace Prisma {
     NOT?: locationScalarWhereInput | locationScalarWhereInput[]
     id?: IntFilter<"location"> | number
     device_id?: IntFilter<"location"> | number
+    truck_id?: IntNullableFilter<"location"> | number | null
     lat?: FloatFilter<"location"> | number
     long?: FloatFilter<"location"> | number
     speed?: FloatNullableFilter<"location"> | number | null
@@ -18207,15 +19484,37 @@ export namespace Prisma {
     NOT?: sensor_historyScalarWhereInput | sensor_historyScalarWhereInput[]
     id?: IntFilter<"sensor_history"> | number
     location_id?: IntFilter<"sensor_history"> | number
-    sensor_id?: IntFilter<"sensor_history"> | number
-    device_id?: IntFilter<"sensor_history"> | number
-    truck_id?: IntFilter<"sensor_history"> | number
+    sensor_id?: IntNullableFilter<"sensor_history"> | number | null
+    device_id?: IntNullableFilter<"sensor_history"> | number | null
+    truck_id?: IntNullableFilter<"sensor_history"> | number | null
     tireNo?: IntFilter<"sensor_history"> | number
     sensorNo?: IntNullableFilter<"sensor_history"> | number | null
     tempValue?: FloatFilter<"sensor_history"> | number
     tirepValue?: FloatFilter<"sensor_history"> | number
     exType?: StringFilter<"sensor_history"> | string
     bat?: IntNullableFilter<"sensor_history"> | number | null
+    sensor_sn?: StringNullableFilter<"sensor_history"> | string | null
+    sensor_status?: StringNullableFilter<"sensor_history"> | string | null
+    device_sn?: StringNullableFilter<"sensor_history"> | string | null
+    device_sim_number?: StringNullableFilter<"sensor_history"> | string | null
+    device_status?: StringNullableFilter<"sensor_history"> | string | null
+    device_bat1?: IntNullableFilter<"sensor_history"> | number | null
+    device_bat2?: IntNullableFilter<"sensor_history"> | number | null
+    device_bat3?: IntNullableFilter<"sensor_history"> | number | null
+    truck_vin?: StringNullableFilter<"sensor_history"> | string | null
+    truck_name?: StringNullableFilter<"sensor_history"> | string | null
+    truck_plate?: StringNullableFilter<"sensor_history"> | string | null
+    truck_model?: StringNullableFilter<"sensor_history"> | string | null
+    truck_year?: IntNullableFilter<"sensor_history"> | number | null
+    truck_type?: StringNullableFilter<"sensor_history"> | string | null
+    truck_status?: StringNullableFilter<"sensor_history"> | string | null
+    driver_id?: IntNullableFilter<"sensor_history"> | number | null
+    driver_name?: StringNullableFilter<"sensor_history"> | string | null
+    driver_phone?: StringNullableFilter<"sensor_history"> | string | null
+    driver_license?: StringNullableFilter<"sensor_history"> | string | null
+    vendor_id?: IntNullableFilter<"sensor_history"> | number | null
+    vendor_name?: StringNullableFilter<"sensor_history"> | string | null
+    vendor_contact?: StringNullableFilter<"sensor_history"> | string | null
     recorded_at?: DateTimeFilter<"sensor_history"> | Date | string
     created_at?: DateTimeFilter<"sensor_history"> | Date | string
   }
@@ -18266,6 +19565,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    location?: locationCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
   }
@@ -18288,6 +19588,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    location?: locationUncheckedCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
@@ -18417,6 +19718,54 @@ export namespace Prisma {
     create: XOR<deviceCreateWithoutLocationInput, deviceUncheckedCreateWithoutLocationInput>
   }
 
+  export type truckCreateWithoutLocationInput = {
+    vin?: string | null
+    name: string
+    model?: string | null
+    year?: number | null
+    created_at?: Date | string
+    created_by?: number | null
+    updated_by?: number | null
+    deleted_at?: Date | string | null
+    image?: string | null
+    plate?: string | null
+    status?: string
+    type?: string | null
+    updated_at?: Date | string
+    alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
+    device?: deviceCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
+    drivers?: driversCreateNestedOneWithoutTruckInput
+    vendors?: vendorsCreateNestedOneWithoutTruckInput
+  }
+
+  export type truckUncheckedCreateWithoutLocationInput = {
+    id?: number
+    vin?: string | null
+    name: string
+    model?: string | null
+    year?: number | null
+    vendor_id?: number | null
+    created_at?: Date | string
+    created_by?: number | null
+    updated_by?: number | null
+    deleted_at?: Date | string | null
+    driver_id?: number | null
+    image?: string | null
+    plate?: string | null
+    status?: string
+    type?: string | null
+    updated_at?: Date | string
+    alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
+    device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
+  }
+
+  export type truckCreateOrConnectWithoutLocationInput = {
+    where: truckWhereUniqueInput
+    create: XOR<truckCreateWithoutLocationInput, truckUncheckedCreateWithoutLocationInput>
+  }
+
   export type sensor_historyCreateWithoutLocationInput = {
     tireNo: number
     sensorNo?: number | null
@@ -18424,24 +19773,68 @@ export namespace Prisma {
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
-    sensor: sensorCreateNestedOneWithoutSensor_historyInput
-    device: deviceCreateNestedOneWithoutSensor_historyInput
-    truck: truckCreateNestedOneWithoutSensor_historyInput
+    sensor?: sensorCreateNestedOneWithoutSensor_historyInput
+    device?: deviceCreateNestedOneWithoutSensor_historyInput
+    truck?: truckCreateNestedOneWithoutSensor_historyInput
   }
 
   export type sensor_historyUncheckedCreateWithoutLocationInput = {
     id?: number
-    sensor_id: number
-    device_id: number
-    truck_id: number
+    sensor_id?: number | null
+    device_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -18504,6 +19897,60 @@ export namespace Prisma {
     sensor_history?: sensor_historyUncheckedUpdateManyWithoutDeviceNestedInput
   }
 
+  export type truckUpsertWithoutLocationInput = {
+    update: XOR<truckUpdateWithoutLocationInput, truckUncheckedUpdateWithoutLocationInput>
+    create: XOR<truckCreateWithoutLocationInput, truckUncheckedCreateWithoutLocationInput>
+    where?: truckWhereInput
+  }
+
+  export type truckUpdateToOneWithWhereWithoutLocationInput = {
+    where?: truckWhereInput
+    data: XOR<truckUpdateWithoutLocationInput, truckUncheckedUpdateWithoutLocationInput>
+  }
+
+  export type truckUpdateWithoutLocationInput = {
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableIntFieldUpdateOperationsInput | number | null
+    updated_by?: NullableIntFieldUpdateOperationsInput | number | null
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    plate?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
+    device?: deviceUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
+    drivers?: driversUpdateOneWithoutTruckNestedInput
+    vendors?: vendorsUpdateOneWithoutTruckNestedInput
+  }
+
+  export type truckUncheckedUpdateWithoutLocationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    vin?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    year?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_by?: NullableIntFieldUpdateOperationsInput | number | null
+    updated_by?: NullableIntFieldUpdateOperationsInput | number | null
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    plate?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    type?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
+    device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
+  }
+
   export type sensor_historyUpsertWithWhereUniqueWithoutLocationInput = {
     where: sensor_historyWhereUniqueInput
     update: XOR<sensor_historyUpdateWithoutLocationInput, sensor_historyUncheckedUpdateWithoutLocationInput>
@@ -18524,6 +19971,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
     alert: alertCreateNestedOneWithoutAlert_eventsInput
@@ -18539,6 +19997,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -18560,24 +20029,68 @@ export namespace Prisma {
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
     location: locationCreateNestedOneWithoutSensor_historyInput
-    device: deviceCreateNestedOneWithoutSensor_historyInput
-    truck: truckCreateNestedOneWithoutSensor_historyInput
+    device?: deviceCreateNestedOneWithoutSensor_historyInput
+    truck?: truckCreateNestedOneWithoutSensor_historyInput
   }
 
   export type sensor_historyUncheckedCreateWithoutSensorInput = {
     id?: number
     location_id: number
-    device_id: number
-    truck_id: number
+    device_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -18724,11 +20237,13 @@ export namespace Prisma {
     created_at?: Date | string
     recorded_at?: Date | string
     device: deviceCreateNestedOneWithoutLocationInput
+    truck?: truckCreateNestedOneWithoutLocationInput
   }
 
   export type locationUncheckedCreateWithoutSensor_historyInput = {
     id?: number
     device_id: number
+    truck_id?: number | null
     lat: number
     long: number
     speed?: number | null
@@ -18844,6 +20359,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    location?: locationCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
     vendors?: vendorsCreateNestedOneWithoutTruckInput
   }
@@ -18867,6 +20383,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    location?: locationUncheckedCreateNestedManyWithoutTruckInput
   }
 
   export type truckCreateOrConnectWithoutSensor_historyInput = {
@@ -18895,11 +20412,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: deviceUpdateOneRequiredWithoutLocationNestedInput
+    truck?: truckUpdateOneWithoutLocationNestedInput
   }
 
   export type locationUncheckedUpdateWithoutSensor_historyInput = {
     id?: IntFieldUpdateOperationsInput | number
     device_id?: IntFieldUpdateOperationsInput | number
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
     speed?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -19033,6 +20552,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    location?: locationUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
   }
@@ -19056,12 +20576,24 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    location?: locationUncheckedUpdateManyWithoutTruckNestedInput
   }
 
   export type alert_eventsCreateWithoutTruckInput = {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
     alert: alertCreateNestedOneWithoutAlert_eventsInput
@@ -19077,6 +20609,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -19138,6 +20681,43 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type locationCreateWithoutTruckInput = {
+    lat: number
+    long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
+    created_at?: Date | string
+    recorded_at?: Date | string
+    device: deviceCreateNestedOneWithoutLocationInput
+    sensor_history?: sensor_historyCreateNestedManyWithoutLocationInput
+  }
+
+  export type locationUncheckedCreateWithoutTruckInput = {
+    id?: number
+    device_id: number
+    lat: number
+    long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
+    created_at?: Date | string
+    recorded_at?: Date | string
+    sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutLocationInput
+  }
+
+  export type locationCreateOrConnectWithoutTruckInput = {
+    where: locationWhereUniqueInput
+    create: XOR<locationCreateWithoutTruckInput, locationUncheckedCreateWithoutTruckInput>
+  }
+
+  export type locationCreateManyTruckInputEnvelope = {
+    data: locationCreateManyTruckInput | locationCreateManyTruckInput[]
+    skipDuplicates?: boolean
+  }
+
   export type sensor_historyCreateWithoutTruckInput = {
     tireNo: number
     sensorNo?: number | null
@@ -19145,24 +20725,68 @@ export namespace Prisma {
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
     location: locationCreateNestedOneWithoutSensor_historyInput
-    sensor: sensorCreateNestedOneWithoutSensor_historyInput
-    device: deviceCreateNestedOneWithoutSensor_historyInput
+    sensor?: sensorCreateNestedOneWithoutSensor_historyInput
+    device?: deviceCreateNestedOneWithoutSensor_historyInput
   }
 
   export type sensor_historyUncheckedCreateWithoutTruckInput = {
     id?: number
     location_id: number
-    sensor_id: number
-    device_id: number
+    sensor_id?: number | null
+    device_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -19290,6 +20914,22 @@ export namespace Prisma {
     lock?: IntFilter<"device"> | number
     status?: StringFilter<"device"> | string
     updated_at?: DateTimeFilter<"device"> | Date | string
+  }
+
+  export type locationUpsertWithWhereUniqueWithoutTruckInput = {
+    where: locationWhereUniqueInput
+    update: XOR<locationUpdateWithoutTruckInput, locationUncheckedUpdateWithoutTruckInput>
+    create: XOR<locationCreateWithoutTruckInput, locationUncheckedCreateWithoutTruckInput>
+  }
+
+  export type locationUpdateWithWhereUniqueWithoutTruckInput = {
+    where: locationWhereUniqueInput
+    data: XOR<locationUpdateWithoutTruckInput, locationUncheckedUpdateWithoutTruckInput>
+  }
+
+  export type locationUpdateManyWithWhereWithoutTruckInput = {
+    where: locationScalarWhereInput
+    data: XOR<locationUpdateManyMutationInput, locationUncheckedUpdateManyWithoutTruckInput>
   }
 
   export type sensor_historyUpsertWithWhereUniqueWithoutTruckInput = {
@@ -19439,6 +21079,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsCreateNestedManyWithoutTruckInput
     device?: deviceCreateNestedManyWithoutTruckInput
+    location?: locationCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyCreateNestedManyWithoutTruckInput
     drivers?: driversCreateNestedOneWithoutTruckInput
   }
@@ -19461,6 +21102,7 @@ export namespace Prisma {
     updated_at?: Date | string
     alert_events?: alert_eventsUncheckedCreateNestedManyWithoutTruckInput
     device?: deviceUncheckedCreateNestedManyWithoutTruckInput
+    location?: locationUncheckedCreateNestedManyWithoutTruckInput
     sensor_history?: sensor_historyUncheckedCreateNestedManyWithoutTruckInput
   }
 
@@ -19532,6 +21174,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -19540,6 +21193,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     device?: deviceUpdateOneWithoutAlert_eventsNestedInput
@@ -19555,6 +21219,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -19567,6 +21242,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -19579,12 +21265,24 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
 
   export type locationCreateManyDeviceInput = {
     id?: number
+    truck_id?: number | null
     lat: number
     long: number
     speed?: number | null
@@ -19615,14 +21313,36 @@ export namespace Prisma {
   export type sensor_historyCreateManyDeviceInput = {
     id?: number
     location_id: number
-    sensor_id: number
-    truck_id: number
+    sensor_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -19631,6 +21351,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert?: alertUpdateOneRequiredWithoutAlert_eventsNestedInput
@@ -19646,6 +21377,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -19658,6 +21400,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -19671,11 +21424,13 @@ export namespace Prisma {
     accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    truck?: truckUpdateOneWithoutLocationNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutLocationNestedInput
   }
 
   export type locationUncheckedUpdateWithoutDeviceInput = {
     id?: IntFieldUpdateOperationsInput | number
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
     speed?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -19689,6 +21444,7 @@ export namespace Prisma {
 
   export type locationUncheckedUpdateManyWithoutDeviceInput = {
     id?: IntFieldUpdateOperationsInput | number
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     lat?: FloatFieldUpdateOperationsInput | number
     long?: FloatFieldUpdateOperationsInput | number
     speed?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -19760,24 +21516,68 @@ export namespace Prisma {
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
-    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
-    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneWithoutSensor_historyNestedInput
   }
 
   export type sensor_historyUncheckedUpdateWithoutDeviceInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19785,14 +21585,36 @@ export namespace Prisma {
   export type sensor_historyUncheckedUpdateManyWithoutDeviceInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19831,6 +21653,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    location?: locationUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     vendors?: vendorsUpdateOneWithoutTruckNestedInput
   }
@@ -19853,6 +21676,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    location?: locationUncheckedUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 
@@ -19876,15 +21700,37 @@ export namespace Prisma {
 
   export type sensor_historyCreateManyLocationInput = {
     id?: number
-    sensor_id: number
-    device_id: number
-    truck_id: number
+    sensor_id?: number | null
+    device_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -19896,39 +21742,105 @@ export namespace Prisma {
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
-    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
-    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneWithoutSensor_historyNestedInput
   }
 
   export type sensor_historyUncheckedUpdateWithoutLocationInput = {
     id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type sensor_historyUncheckedUpdateManyWithoutLocationInput = {
     id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19941,6 +21853,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -19948,14 +21871,36 @@ export namespace Prisma {
   export type sensor_historyCreateManySensorInput = {
     id?: number
     location_id: number
-    device_id: number
-    truck_id: number
+    device_id?: number | null
+    truck_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -19964,6 +21909,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert?: alertUpdateOneRequiredWithoutAlert_eventsNestedInput
@@ -19979,6 +21935,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -19991,6 +21958,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20002,24 +21980,68 @@ export namespace Prisma {
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
-    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
-    truck?: truckUpdateOneRequiredWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneWithoutSensor_historyNestedInput
+    truck?: truckUpdateOneWithoutSensor_historyNestedInput
   }
 
   export type sensor_historyUncheckedUpdateWithoutSensorInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20027,14 +22049,36 @@ export namespace Prisma {
   export type sensor_historyUncheckedUpdateManyWithoutSensorInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
-    truck_id?: IntFieldUpdateOperationsInput | number
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20047,6 +22091,17 @@ export namespace Prisma {
     value?: number | null
     message?: string | null
     status?: string
+    alert_code?: string | null
+    alert_name?: string | null
+    alert_severity?: string | null
+    truck_plate?: string | null
+    truck_name?: string | null
+    truck_vin?: string | null
+    device_sn?: string | null
+    sensor_sn?: string | null
+    sensor_tire_no?: number | null
+    driver_name?: string | null
+    vendor_name?: string | null
     created_at?: Date | string
     resolved_at?: Date | string | null
   }
@@ -20066,17 +22121,52 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
+  export type locationCreateManyTruckInput = {
+    id?: number
+    device_id: number
+    lat: number
+    long: number
+    speed?: number | null
+    heading?: number | null
+    altitude?: number | null
+    accuracy?: number | null
+    created_at?: Date | string
+    recorded_at?: Date | string
+  }
+
   export type sensor_historyCreateManyTruckInput = {
     id?: number
     location_id: number
-    sensor_id: number
-    device_id: number
+    sensor_id?: number | null
+    device_id?: number | null
     tireNo: number
     sensorNo?: number | null
     tempValue: number
     tirepValue: number
     exType?: string
     bat?: number | null
+    sensor_sn?: string | null
+    sensor_status?: string | null
+    device_sn?: string | null
+    device_sim_number?: string | null
+    device_status?: string | null
+    device_bat1?: number | null
+    device_bat2?: number | null
+    device_bat3?: number | null
+    truck_vin?: string | null
+    truck_name?: string | null
+    truck_plate?: string | null
+    truck_model?: string | null
+    truck_year?: number | null
+    truck_type?: string | null
+    truck_status?: string | null
+    driver_id?: number | null
+    driver_name?: string | null
+    driver_phone?: string | null
+    driver_license?: string | null
+    vendor_id?: number | null
+    vendor_name?: string | null
+    vendor_contact?: string | null
     recorded_at: Date | string
     created_at?: Date | string
   }
@@ -20085,6 +22175,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alert?: alertUpdateOneRequiredWithoutAlert_eventsNestedInput
@@ -20100,6 +22201,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20112,6 +22224,17 @@ export namespace Prisma {
     value?: NullableFloatFieldUpdateOperationsInput | number | null
     message?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
+    alert_code?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_name?: NullableStringFieldUpdateOperationsInput | string | null
+    alert_severity?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_tire_no?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     resolved_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -20168,6 +22291,46 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type locationUpdateWithoutTruckInput = {
+    lat?: FloatFieldUpdateOperationsInput | number
+    long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    device?: deviceUpdateOneRequiredWithoutLocationNestedInput
+    sensor_history?: sensor_historyUpdateManyWithoutLocationNestedInput
+  }
+
+  export type locationUncheckedUpdateWithoutTruckInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    lat?: FloatFieldUpdateOperationsInput | number
+    long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    sensor_history?: sensor_historyUncheckedUpdateManyWithoutLocationNestedInput
+  }
+
+  export type locationUncheckedUpdateManyWithoutTruckInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    device_id?: IntFieldUpdateOperationsInput | number
+    lat?: FloatFieldUpdateOperationsInput | number
+    long?: FloatFieldUpdateOperationsInput | number
+    speed?: NullableFloatFieldUpdateOperationsInput | number | null
+    heading?: NullableFloatFieldUpdateOperationsInput | number | null
+    altitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type sensor_historyUpdateWithoutTruckInput = {
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20175,24 +22338,68 @@ export namespace Prisma {
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     location?: locationUpdateOneRequiredWithoutSensor_historyNestedInput
-    sensor?: sensorUpdateOneRequiredWithoutSensor_historyNestedInput
-    device?: deviceUpdateOneRequiredWithoutSensor_historyNestedInput
+    sensor?: sensorUpdateOneWithoutSensor_historyNestedInput
+    device?: deviceUpdateOneWithoutSensor_historyNestedInput
   }
 
   export type sensor_historyUncheckedUpdateWithoutTruckInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20200,14 +22407,36 @@ export namespace Prisma {
   export type sensor_historyUncheckedUpdateManyWithoutTruckInput = {
     id?: IntFieldUpdateOperationsInput | number
     location_id?: IntFieldUpdateOperationsInput | number
-    sensor_id?: IntFieldUpdateOperationsInput | number
-    device_id?: IntFieldUpdateOperationsInput | number
+    sensor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    device_id?: NullableIntFieldUpdateOperationsInput | number | null
     tireNo?: IntFieldUpdateOperationsInput | number
     sensorNo?: NullableIntFieldUpdateOperationsInput | number | null
     tempValue?: FloatFieldUpdateOperationsInput | number
     tirepValue?: FloatFieldUpdateOperationsInput | number
     exType?: StringFieldUpdateOperationsInput | string
     bat?: NullableIntFieldUpdateOperationsInput | number | null
+    sensor_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    sensor_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sn?: NullableStringFieldUpdateOperationsInput | string | null
+    device_sim_number?: NullableStringFieldUpdateOperationsInput | string | null
+    device_status?: NullableStringFieldUpdateOperationsInput | string | null
+    device_bat1?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat2?: NullableIntFieldUpdateOperationsInput | number | null
+    device_bat3?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_vin?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_name?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_plate?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_model?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_year?: NullableIntFieldUpdateOperationsInput | number | null
+    truck_type?: NullableStringFieldUpdateOperationsInput | string | null
+    truck_status?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_id?: NullableIntFieldUpdateOperationsInput | number | null
+    driver_name?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_phone?: NullableStringFieldUpdateOperationsInput | string | null
+    driver_license?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_id?: NullableIntFieldUpdateOperationsInput | number | null
+    vendor_name?: NullableStringFieldUpdateOperationsInput | string | null
+    vendor_contact?: NullableStringFieldUpdateOperationsInput | string | null
     recorded_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20303,6 +22532,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUpdateManyWithoutTruckNestedInput
     device?: deviceUpdateManyWithoutTruckNestedInput
+    location?: locationUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUpdateManyWithoutTruckNestedInput
     drivers?: driversUpdateOneWithoutTruckNestedInput
   }
@@ -20325,6 +22555,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     alert_events?: alert_eventsUncheckedUpdateManyWithoutTruckNestedInput
     device?: deviceUncheckedUpdateManyWithoutTruckNestedInput
+    location?: locationUncheckedUpdateManyWithoutTruckNestedInput
     sensor_history?: sensor_historyUncheckedUpdateManyWithoutTruckNestedInput
   }
 

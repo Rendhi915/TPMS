@@ -2,77 +2,116 @@ const { prisma } = require('../config/prisma');
 
 /**
  * Get location history with sensor snapshots for a truck
- * @param {number} truckId - Truck ID
- * @param {object} options - Query options (startDate, endDate, limit)
+ * 
+ * IMPORTANT: Menggunakan snapshot data dari sensor_history
+ * Sehingga data history tetap dapat ditampilkan meskipun master data sudah dihapus
+ * 
+ * @param {number} truckId - Truck ID (optional, bisa null jika truck sudah dihapus)
+ * @param {object} options - Query options (startDate, endDate, limit, truckPlate)
  * @returns {Promise<Array>} Location timeline with sensor data
  */
 const getHistoryWithSensors = async (truckId, options = {}) => {
-  const { startDate, endDate, limit = 100 } = options;
+  const { startDate, endDate, limit = 100, truckPlate } = options;
 
   try {
-    // Get truck's device
-    const device = await prisma.device.findFirst({
-      where: {
-        truck_id: truckId,
-        status: 'active',
-        deleted_at: null,
-      },
-    });
-
-    if (!device) {
-      throw new Error(`No active device found for truck ${truckId}`);
+    // Build where clause - support both truck_id and truck_plate (snapshot)
+    const where = {};
+    
+    // Query by truck_id (works for both active and deleted trucks via snapshot)
+    if (truckId) {
+      where.truck_id = truckId;
     }
-
-    // Build where clause
-    const where = {
-      device_id: device.id,
-    };
+    
+    // If truckPlate provided, search by snapshot plate (alternative identifier)
+    if (truckPlate) {
+      where.truck_plate = truckPlate;
+    }
 
     if (startDate || endDate) {
       where.recorded_at = {};
       if (startDate) where.recorded_at.gte = new Date(startDate);
       if (endDate) where.recorded_at.lte = new Date(endDate);
     }
+    
+    console.log('🔍 Query sensor_history with:', { truckId, truckPlate, startDate, endDate, limit });
 
-    // Get locations with sensor history
-    const locations = await prisma.location.findMany({
+    // Query sensor_history directly (tidak via join ke truck)
+    // Karena kita ingin tetap dapat data meskipun truck sudah dihapus
+    const sensorHistories = await prisma.sensor_history.findMany({
       where,
       orderBy: { recorded_at: 'desc' },
       take: limit,
       include: {
-        sensor_history: {
-          orderBy: { tireNo: 'asc' },
+        location: {
           select: {
-            tireNo: true,
-            sensorNo: true,
-            tempValue: true,
-            tirepValue: true,
-            exType: true,
-            bat: true,
-            recorded_at: true,
-          },
-        },
-      },
+            id: true,
+            lat: true,
+            long: true,
+            speed: true,
+            heading: true,
+            recorded_at: true
+          }
+        }
+      }
     });
+    
+    console.log(`✅ Found ${sensorHistories.length} sensor history records for truck ${truckId}`);
+    
+    if (sensorHistories.length === 0) {
+      console.log(`ℹ️ No sensor history found for truck ${truckId} in date range`);
+      return [];
+    }
 
-    // Transform to frontend-friendly format
-    const timeline = locations.map((loc) => ({
-      timestamp: loc.recorded_at,
-      location: {
-        lat: loc.lat,
-        lng: loc.long,
-      },
-      tires: loc.sensor_history.map((sh) => ({
+    // Group by location_id untuk mengelompokkan sensor data
+    const locationMap = new Map();
+    
+    sensorHistories.forEach(sh => {
+      const locId = sh.location_id;
+      if (!locationMap.has(locId)) {
+        locationMap.set(locId, {
+          location_id: locId,
+          timestamp: sh.recorded_at,
+          location: sh.location ? {
+            lat: sh.location.lat,
+            lng: sh.location.long,
+            speed: sh.location.speed,
+            heading: sh.location.heading
+          } : null,
+          // Gunakan snapshot data untuk truck info (tidak dari relasi)
+          truck_info: {
+            truck_id: sh.truck_id,
+            truck_name: sh.truck_name,
+            truck_plate: sh.truck_plate,
+            truck_vin: sh.truck_vin,
+            truck_model: sh.truck_model,
+            truck_year: sh.truck_year,
+            driver_name: sh.driver_name,
+            vendor_name: sh.vendor_name
+          },
+          tires: []
+        });
+      }
+      
+      // Add tire data
+      locationMap.get(locId).tires.push({
         tireNo: sh.tireNo,
         position: getTirePosition(sh.tireNo),
         temperature: sh.tempValue,
         pressure: sh.tirepValue,
         status: sh.exType,
         battery: sh.bat,
-        timestamp: sh.recorded_at,
-      })),
+        sensor_sn: sh.sensor_sn,
+        timestamp: sh.recorded_at
+      });
+    });
+
+    // Convert map to array and sort tires by tireNo
+    const timeline = Array.from(locationMap.values()).map(item => ({
+      ...item,
+      tires: item.tires.sort((a, b) => a.tireNo - b.tireNo)
     }));
 
+    console.log(`✅ Processed ${timeline.length} location points with tire data`);
     return timeline;
   } catch (error) {
     console.error('Error fetching sensor history:', error);
@@ -106,19 +145,7 @@ const getHistoryStats = async (truckId, options = {}) => {
   const { startDate, endDate } = options;
 
   try {
-    const device = await prisma.device.findFirst({
-      where: {
-        truck_id: truckId,
-        status: 'active',
-        deleted_at: null,
-      },
-    });
-
-    if (!device) {
-      throw new Error(`No active device found for truck ${truckId}`);
-    }
-
-    const where = { device_id: device.id };
+    const where = { truck_id: truckId };
     if (startDate || endDate) {
       where.recorded_at = {};
       if (startDate) where.recorded_at.gte = new Date(startDate);

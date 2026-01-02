@@ -397,8 +397,8 @@ const validatePagination = [
   query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
   query('limit')
     .optional()
-    .isInt({ min: 1, max: 200 })
-    .withMessage('Limit must be between 1 and 200'),
+    .isInt({ min: 1, max: 1000 }) // 🔥 Increased limit for history tracking with deleted trucks
+    .withMessage('Limit must be between 1 and 1000'),
   handleValidationErrors,
 ];
 
