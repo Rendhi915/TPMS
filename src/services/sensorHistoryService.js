@@ -17,9 +17,16 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
     // Build where clause - support both truck_id and truck_plate (snapshot)
     const where = {};
     
+    // IMPORTANT: Always require truck_id OR truck_plate filter to prevent returning all data
+    // This ensures we only get data for the specific truck requested
+    if (!truckId && !truckPlate) {
+      console.error('❌ ERROR: truck_id or truck_plate must be provided');
+      throw new Error('truck_id or truck_plate is required for history query');
+    }
+    
     // Query by truck_id (works for both active and deleted trucks via snapshot)
     if (truckId) {
-      where.truck_id = truckId;
+      where.truck_id = parseInt(truckId); // Ensure it's an integer
     }
     
     // If truckPlate provided, search by snapshot plate (alternative identifier)
@@ -33,7 +40,7 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
       if (endDate) where.recorded_at.lte = new Date(endDate);
     }
     
-    console.log('🔍 Query sensor_history with:', { truckId, truckPlate, startDate, endDate, limit });
+    console.log('🔍 Query sensor_history with:', { truckId, truckPlate, startDate, endDate, limit, whereClause: JSON.stringify(where) });
 
     // Query sensor_history directly (tidak via join ke truck)
     // Karena kita ingin tetap dapat data meskipun truck sudah dihapus
@@ -145,12 +152,20 @@ const getHistoryStats = async (truckId, options = {}) => {
   const { startDate, endDate } = options;
 
   try {
-    const where = { truck_id: truckId };
+    // IMPORTANT: Always require truck_id to prevent returning all data
+    if (!truckId) {
+      console.error('❌ ERROR: truck_id must be provided for stats query');
+      throw new Error('truck_id is required for stats query');
+    }
+    
+    const where = { truck_id: parseInt(truckId) }; // Ensure it's an integer
     if (startDate || endDate) {
       where.recorded_at = {};
       if (startDate) where.recorded_at.gte = new Date(startDate);
       if (endDate) where.recorded_at.lte = new Date(endDate);
     }
+    
+    console.log('🔍 Query sensor_history stats with:', { truckId, startDate, endDate, whereClause: JSON.stringify(where) });
 
     const stats = await prisma.sensor_history.groupBy({
       by: ['tireNo'],
