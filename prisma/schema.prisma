@@ -30,24 +30,43 @@ model alert {
 model alert_events {
   id          Int       @id @default(autoincrement())
   alert_id    Int
-  device_id   Int?
-  sensor_id   Int?
-  truck_id    Int?
+  device_id   Int?      // Optional to handle deleted devices
+  sensor_id   Int?      // Optional to handle deleted sensors
+  truck_id    Int?      // Optional to handle deleted trucks
   value       Float?    @db.Real
   message     String?
   status      String    @default("active") @db.VarChar(20)
+  
+  // Snapshot data at the time of alert - stored for history
+  alert_code        String?  @db.VarChar(50)  // Alert code snapshot
+  alert_name        String?  @db.VarChar(255) // Alert name snapshot
+  alert_severity    String?  @db.VarChar(20)  // Alert severity snapshot
+  
+  truck_plate       String?  @db.VarChar(50)  // Truck plate snapshot
+  truck_name        String?  @db.VarChar(255) // Truck name snapshot
+  truck_vin         String?  @db.VarChar(50)  // Truck VIN snapshot
+  
+  device_sn         String?  @db.VarChar(50)  // Device serial number snapshot
+  sensor_sn         String?  @db.VarChar(50)  // Sensor serial number snapshot
+  sensor_tire_no    Int?                      // Sensor tire position snapshot
+  
+  driver_name       String?  @db.VarChar(255) // Driver name snapshot (if applicable)
+  vendor_name       String?  @db.VarChar(255) // Vendor name snapshot (if applicable)
+  
   created_at  DateTime  @default(now()) @db.Timestamptz(6)
   resolved_at DateTime? @db.Timestamptz(6)
   alert       alert     @relation(fields: [alert_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  device      device?   @relation(fields: [device_id], references: [id], onUpdate: NoAction)
-  sensor      sensor?   @relation(fields: [sensor_id], references: [id], onUpdate: NoAction)
-  truck       truck?    @relation(fields: [truck_id], references: [id], onUpdate: NoAction)
+  device      device?   @relation(fields: [device_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  sensor      sensor?   @relation(fields: [sensor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  truck       truck?    @relation(fields: [truck_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([alert_id], map: "idx_alert_events_alert_id")
   @@index([device_id], map: "idx_alert_events_device_id")
   @@index([sensor_id], map: "idx_alert_events_sensor_id")
   @@index([status], map: "idx_alert_events_status")
   @@index([truck_id], map: "idx_alert_events_truck_id")
+  @@index([truck_plate], map: "idx_alert_events_truck_plate")
+  @@index([created_at], map: "idx_alert_events_created_at")
 }
 
 model device {
@@ -98,6 +117,7 @@ model drivers {
 model location {
   id             Int              @id @default(autoincrement())
   device_id      Int
+  truck_id       Int?             // Track which truck this location belongs to (snapshot at time of recording)
   lat            Float
   long           Float
   speed          Float?           @default(0) @db.Real // Speed in km/h from GPS
@@ -107,9 +127,11 @@ model location {
   created_at     DateTime         @default(now()) @db.Timestamptz(6)
   recorded_at    DateTime         @default(now()) @db.Timestamptz(6)
   device         device           @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  truck          truck?           @relation(fields: [truck_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
   sensor_history sensor_history[]
 
   @@index([device_id], map: "idx_location_device_id")
+  @@index([truck_id], map: "idx_location_truck_id")
   @@index([recorded_at], map: "idx_location_recorded_at")
   @@index([speed], map: "idx_location_speed")
 }
@@ -147,22 +169,57 @@ model sensor {
 model sensor_history {
   id          Int      @id @default(autoincrement())
   location_id Int
-  sensor_id   Int
-  device_id   Int
-  truck_id    Int
-  tireNo      Int // Tire position 1-10
-  sensorNo    Int? // Sensor number 1-10
-  tempValue   Float   @db.Real // Temperature snapshot in Celsius
-  tirepValue  Float   @db.Real // Tire pressure snapshot in PSI
-  exType      String  @default("normal") @db.VarChar(50) // Status snapshot: normal, warning, critical
-  bat         Int?    @db.SmallInt // Battery level snapshot (0-100)
+  sensor_id   Int?     // Made optional to handle deleted sensors
+  device_id   Int?     // Made optional to handle deleted devices
+  truck_id    Int?     // Made optional to handle deleted trucks
+  
+  // Sensor snapshot data
+  tireNo      Int      // Tire position 1-10
+  sensorNo    Int?     // Sensor number 1-10
+  tempValue   Float    @db.Real // Temperature snapshot in Celsius
+  tirepValue  Float    @db.Real // Tire pressure snapshot in PSI
+  exType      String   @default("normal") @db.VarChar(50) // Status snapshot: normal, warning, critical
+  bat         Int?     @db.SmallInt // Battery level snapshot (0-100)
+  
+  // Sensor snapshot - stored data at recording time
+  sensor_sn         String?  @db.VarChar(50)  // Sensor serial number snapshot
+  sensor_status     String?  @db.VarChar(20)  // Sensor status snapshot
+  
+  // Device snapshot - stored data at recording time
+  device_sn         String?  @db.VarChar(50)  // Device serial number snapshot
+  device_sim_number String?  @db.VarChar(50)  // Device SIM number snapshot
+  device_status     String?  @db.VarChar(50)  // Device status snapshot
+  device_bat1       Int?     @db.SmallInt     // Device battery 1 snapshot
+  device_bat2       Int?     @db.SmallInt     // Device battery 2 snapshot
+  device_bat3       Int?     @db.SmallInt     // Device battery 3 snapshot
+  
+  // Truck snapshot - stored data at recording time
+  truck_vin         String?  @db.VarChar(50)  // Truck VIN snapshot
+  truck_name        String?  @db.VarChar(255) // Truck name snapshot
+  truck_plate       String?  @db.VarChar(50)  // Truck plate snapshot
+  truck_model       String?  @db.VarChar(255) // Truck model snapshot
+  truck_year        Int?                      // Truck year snapshot
+  truck_type        String?  @db.VarChar(100) // Truck type snapshot
+  truck_status      String?  @db.VarChar(50)  // Truck status snapshot
+  
+  // Driver snapshot - stored data at recording time
+  driver_id            Int?                   // Driver ID snapshot
+  driver_name          String? @db.VarChar(255) // Driver name snapshot
+  driver_phone         String? @db.VarChar(50)  // Driver phone snapshot
+  driver_license       String? @db.VarChar(50)  // Driver license snapshot
+  
+  // Vendor snapshot - stored data at recording time
+  vendor_id            Int?                   // Vendor ID snapshot
+  vendor_name          String? @db.VarChar(255) // Vendor name snapshot
+  vendor_contact       String? @db.VarChar(255) // Vendor contact snapshot
+  
   recorded_at DateTime @db.Timestamptz(6) // Same timestamp as location
   created_at  DateTime @default(now()) @db.Timestamptz(6)
 
-  location location @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  sensor   sensor   @relation(fields: [sensor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  device   device   @relation(fields: [device_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  truck    truck    @relation(fields: [truck_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  location location  @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sensor   sensor?   @relation(fields: [sensor_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  device   device?   @relation(fields: [device_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  truck    truck?    @relation(fields: [truck_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([location_id], map: "idx_sensor_history_location_id")
   @@index([sensor_id], map: "idx_sensor_history_sensor_id")
@@ -170,6 +227,8 @@ model sensor_history {
   @@index([truck_id], map: "idx_sensor_history_truck_id")
   @@index([recorded_at], map: "idx_sensor_history_recorded_at")
   @@index([tireNo], map: "idx_sensor_history_tireNo")
+  @@index([truck_plate], map: "idx_sensor_history_truck_plate")
+  @@index([truck_vin], map: "idx_sensor_history_truck_vin")
 }
 
 /// This table is managed by PostGIS extension
@@ -203,6 +262,7 @@ model truck {
   updated_at     DateTime         @default(now()) @db.Timestamptz(6)
   alert_events   alert_events[]
   device         device[]
+  location       location[]       // Track all locations recorded by this truck
   sensor_history sensor_history[]
   drivers        drivers?         @relation(fields: [driver_id], references: [id], onUpdate: NoAction)
   vendors        vendors?         @relation(fields: [vendor_id], references: [id], onUpdate: NoAction)

@@ -25,17 +25,6 @@ const getLiveTracking = async (req, res) => {
             bat1: true,
             bat2: true,
             bat3: true,
-            location: {
-              orderBy: { created_at: 'desc' },
-              take: 1,
-              select: {
-                id: true,
-                lat: true,
-                long: true,
-                recorded_at: true,
-                created_at: true,
-              },
-            },
             sensor: {
               where: { deleted_at: null },
               select: {
@@ -63,10 +52,31 @@ const getLiveTracking = async (req, res) => {
       orderBy: { id: 'asc' },
     });
 
+    // 🔥 CRITICAL FIX: Fetch locations separately with truck_id filter to prevent mixing
+    // Get latest location for each truck (filtered by truck_id)
+    const truckIds = trucks.map(t => t.id);
+    
+    // Build query dynamically - PostgreSQL DISTINCT ON gets first row per group
+    const latestLocations = truckIds.length > 0 
+      ? await prisma.$queryRawUnsafe(`
+          SELECT DISTINCT ON (truck_id) 
+            id, device_id, truck_id, lat, long, recorded_at, created_at
+          FROM location
+          WHERE truck_id IN (${truckIds.join(',')})
+          ORDER BY truck_id, created_at DESC
+        `)
+      : [];
+    
+    // Create lookup map for locations by truck_id
+    const locationMap = {};
+    latestLocations.forEach(loc => {
+      locationMap[loc.truck_id] = loc;
+    });
+
     // Format response for frontend
     const liveData = trucks.map((truck) => {
       const device = truck.device[0]; // Get first device
-      const location = device?.location[0]; // Get latest location
+      const location = locationMap[truck.id]; // Get latest location for THIS truck only
 
       return {
         truck_id: truck.id,
@@ -185,6 +195,9 @@ const getTruckTracking = async (req, res) => {
             sn: true,
             status: true,
             location: {
+              where: {
+                truck_id: truckId, // 🔥 CRITICAL FIX: Only get locations for THIS truck
+              },
               orderBy: { created_at: 'desc' },
               ...(limit && { take: limit }), // Only apply limit if provided
               select: {

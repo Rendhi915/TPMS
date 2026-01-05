@@ -88,6 +88,179 @@ let lastAlertTime = 0; // Timestamp last alert generated (untuk Truck 1)
 const lastAlertTimePerTruck = new Map(); // truck_id -> timestamp
 
 /**
+ * Generate history backfill untuk truck baru
+ * Generate data dari jam kerja mulai hari ini sampai sekarang dengan rute realistic
+ */
+async function generateTodayHistoryBackfill(state, truck, device, sensors) {
+  const { fetchSnapshotRelatedData, createSensorHistorySnapshot } = require('../src/utils/snapshotHelper');
+  
+  try {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    // Tentukan jam mulai kerja (shift siang atau malam)
+    const currentHour = now.getHours();
+    let startHour = CONFIG.WORKING_HOURS.DAY_START; // Default shift siang (8 AM)
+    
+    // Jika sekarang shift malam
+    if (currentHour >= CONFIG.WORKING_HOURS.NIGHT_START || currentHour < CONFIG.WORKING_HOURS.NIGHT_END) {
+      startHour = CONFIG.WORKING_HOURS.NIGHT_START; // Shift malam mulai 20:00
+    }
+    
+    const startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), startHour, 0, 0);
+    
+    // Jika start time di masa depan (belum jam kerja), skip backfill
+    if (startTime > now) {
+      console.log(`   ℹ️  Working hours haven't started yet. No backfill needed.`);
+      return;
+    }
+    
+    // Calculate berapa banyak points yang perlu di-generate
+    const durationSeconds = Math.floor((now - startTime) / 1000);
+    const numPoints = Math.floor(durationSeconds / 3); // Setiap 3 detik
+    
+    if (numPoints <= 0 || numPoints > 10000) {
+      console.log(`   ℹ️  Points calculation out of range: ${numPoints}. Skipping.`);
+      return;
+    }
+    
+    console.log(`   📊 Backfilling ~${numPoints} history points from ${startTime.toLocaleTimeString()}...`);
+    
+    // Fetch snapshot data once
+    const relatedData = await fetchSnapshotRelatedData(prisma, device.id);
+    
+    // Generate realistic route dengan GPS movement
+    // Mulai dari posisi awal truck
+    let currentLat = state.currentLat;
+    let currentLng = state.currentLng;
+    let currentHeading = state.heading || 0;
+    const speed = state.speed || 20; // km/h
+    
+    let savedCount = 0;
+    let routeIndex = 0; // Track posisi di route cycle
+    
+    // Batch insert untuk performa lebih baik
+    const batchSize = 50;
+    const totalBatches = Math.ceil(numPoints / batchSize);
+    
+    for (let batchNum = 0; batchNum < totalBatches; batchNum++) {
+      const locationBatch = [];
+      const startIdx = batchNum * batchSize;
+      const endIdx = Math.min(startIdx + batchSize, numPoints);
+      
+      for (let i = startIdx; i < endIdx; i++) {
+        const pointTime = new Date(startTime.getTime() + (i * 3 * 1000));
+        
+        // Generate next position menggunakan movement logic yang sama dengan live simulator
+        const targetPoint = state.route[routeIndex % state.route.length];
+        
+        // Calculate distance to target
+        const distanceToTarget = calculateDistance(currentLat, currentLng, targetPoint.lat, targetPoint.lng);
+        
+        // Jika sudah dekat dengan target, pindah ke waypoint berikutnya
+        if (distanceToTarget < 0.05) { // < 50 meter
+          routeIndex++;
+          const nextTarget = state.route[routeIndex % state.route.length];
+          
+          // Move towards next target
+          const newPos = calculateNewPosition(currentLat, currentLng, nextTarget.lat, nextTarget.lng, speed);
+          currentLat = newPos.lat;
+          currentLng = newPos.lng;
+          currentHeading = newPos.heading || currentHeading;
+        } else {
+          // Continue moving towards current target
+          const newPos = calculateNewPosition(currentLat, currentLng, targetPoint.lat, targetPoint.lng, speed);
+          currentLat = newPos.lat;
+          currentLng = newPos.lng;
+          currentHeading = newPos.heading || currentHeading;
+        }
+        
+        // Tambah sedikit variasi untuk realism (random walk)
+        if (Math.random() < state.turnProbability) {
+          const turnAngle = (Math.random() - 0.5) * state.maxTurnAngle;
+          currentHeading += turnAngle;
+          
+          // Normalize heading
+          if (currentHeading < 0) currentHeading += 360;
+          if (currentHeading >= 360) currentHeading -= 360;
+          
+          // Move sedikit ke arah heading baru
+          const turnDistance = 0.0001; // ~10 meter
+          const radHeading = currentHeading * Math.PI / 180;
+          currentLat += turnDistance * Math.cos(radHeading);
+          currentLng += turnDistance * Math.sin(radHeading);
+        }
+        
+        locationBatch.push({
+          device_id: device.id,
+          truck_id: truck.id, // ⭐ CRITICAL: Track which truck this location belongs to
+          lat: currentLat,
+          long: currentLng,
+          speed: speed,
+          recorded_at: pointTime,
+          created_at: pointTime
+        });
+      }
+      
+      // Insert batch
+      if (locationBatch.length > 0) {
+        const createdLocations = await prisma.$transaction(async (tx) => {
+          const locs = [];
+          for (const locData of locationBatch) {
+            const loc = await tx.location.create({ data: locData });
+            
+            // Create sensor_history for this location
+            for (const sensor of sensors) {
+              const temp = 65 + Math.random() * 20;
+              const pressure = 95 + Math.random() * 20;
+              const exType = temp > 85 ? 'warning' : pressure < 95 ? 'warning' : 'normal';
+              
+              const snapshot = createSensorHistorySnapshot(
+                { ...sensor, sn: sensor.sn, status: sensor.status },
+                relatedData?.device,
+                relatedData?.truck,
+                relatedData?.driver,
+                relatedData?.vendor
+              );
+              
+              await tx.sensor_history.create({
+                data: {
+                  location_id: loc.id,
+                  sensor_id: sensor.id,
+                  device_id: device.id,
+                  truck_id: truck.id,
+                  tireNo: sensor.tireNo,
+                  sensorNo: sensor.sensorNo,
+                  tempValue: temp,
+                  tirepValue: pressure,
+                  exType: exType,
+                  bat: sensor.bat || 80 + Math.random() * 20,
+                  recorded_at: loc.recorded_at,
+                  ...snapshot
+                }
+              });
+            }
+            
+            locs.push(loc);
+          }
+          return locs;
+        });
+        
+        savedCount += createdLocations.length;
+        if ((batchNum + 1) % 4 === 0 || batchNum === totalBatches - 1) {
+          console.log(`      Progress: ${savedCount}/${numPoints} points (${Math.round(savedCount/numPoints*100)}%)...`);
+        }
+      }
+    }
+    
+    console.log(`   ✅ Backfill complete: ${savedCount} location points with sensor data saved`);
+  } catch (error) {
+    console.error(`   ❌ Backfill failed: ${error.message}`);
+    console.error(error.stack);
+  }
+}
+
+/**
  * Cek apakah waktunya generate alert untuk Truck 1 (setiap 30 menit)
  */
 function shouldGenerateAlertForTruck1() {
@@ -179,9 +352,19 @@ function calculateNewPosition(currentLat, currentLng, targetLat, targetLng, spee
   // Hitung jarak total ke target
   const totalDistance = calculateDistance(currentLat, currentLng, targetLat, targetLng);
   
+  // Calculate heading/bearing to target
+  const dLng = (targetLng - currentLng) * Math.PI / 180;
+  const lat1Rad = currentLat * Math.PI / 180;
+  const lat2Rad = targetLat * Math.PI / 180;
+  const y = Math.sin(dLng) * Math.cos(lat2Rad);
+  const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+            Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLng);
+  let heading = Math.atan2(y, x) * 180 / Math.PI;
+  if (heading < 0) heading += 360;
+  
   // Jika sudah dekat dengan target, ganti target
   if (totalDistance < 0.01) { // < 10 meter
-    return { lat: targetLat, lng: targetLng, reachedTarget: true };
+    return { lat: targetLat, lng: targetLng, heading: heading, reachedTarget: true };
   }
   
   // Hitung ratio perpindahan
@@ -191,7 +374,7 @@ function calculateNewPosition(currentLat, currentLng, targetLat, targetLng, spee
   const newLat = currentLat + (targetLat - currentLat) * ratio;
   const newLng = currentLng + (targetLng - currentLng) * ratio;
   
-  return { lat: newLat, lng: newLng, reachedTarget: false };
+  return { lat: newLat, lng: newLng, heading: heading, reachedTarget: false };
 }
 
 /**
@@ -274,6 +457,7 @@ async function initializeTruckState(truck, device, sensors, truckIndex) {
   // Get last known location from database
   let startLat = null;
   let startLng = null;
+  let useLastLocation = false;
   
   try {
     const lastLocation = await prisma.location.findFirst({
@@ -285,27 +469,31 @@ async function initializeTruckState(truck, device, sensors, truckIndex) {
     if (lastLocation) {
       startLat = lastLocation.lat;
       startLng = lastLocation.long;
+      useLastLocation = true;
       console.log(`   📍 Found last location for ${truck.plate}: (${startLat}, ${startLng})`);
     } else {
-      console.log(`   ℹ️  No previous location for ${truck.plate}, will use random start`);
+      console.log(`   ℹ️  No previous location for ${truck.plate}, will use random start (offset by truck index)`);
+      // Don't set startLat/startLng - let generator choose random, but we'll influence it
     }
   } catch (error) {
     console.warn(`   ⚠️  Could not fetch last location: ${error.message}`);
   }
   
   // Create GPS route generator for this truck
+  // Each truck gets different settings to ensure different routes
   const generator = new GPSRouteGenerator(MINING_AREA_GEOJSON, {
     routePattern: routePattern,
     avgSpeed: speed,
-    minSpeed: speed - 10, // Wider speed variation for large area
+    minSpeed: speed - 10,
     maxSpeed: speed + 10,
-    pointInterval: 3, // 3 seconds
-    totalDuration: 8 * 3600, // 8 hours
-    turnProbability: 0.08 + (truckIndex * 0.02), // Different turn probability per truck (lower for larger area)
-    maxTurnAngle: 30 + (truckIndex * 10), // Different max turn angle
-    boundaryMargin: 0.0001, // Appropriate margin for large area
-    startLat: startLat, // Use last known location
-    startLng: startLng
+    pointInterval: 3,
+    totalDuration: 8 * 3600,
+    // Make each truck more unique by varying turn behavior significantly
+    turnProbability: 0.05 + (truckIndex * 0.03), // 5%, 8%, 11%, etc
+    maxTurnAngle: 25 + (truckIndex * 15), // 25°, 40°, 55°, etc
+    boundaryMargin: 0.0001,
+    startLat: useLastLocation ? startLat : null,
+    startLng: useLastLocation ? startLng : null
   });
   
   // Generate route for today (8 hours)
@@ -366,10 +554,12 @@ async function generateTruckData(state, truckIndex, shouldGenerateAlert) {
   // Move to next point in route
   state.routeIndex++;
   
-  // Save location
+  // Save location with truck_id tracking
+  // This allows proper filtering when device is moved between trucks
   const location = await prisma.location.create({
     data: {
       device_id: state.deviceId,
+      truck_id: state.truckId, // ⭐ CRITICAL: Track which truck this location belongs to
       lat: currentLat,
       long: currentLng,
       recorded_at: now,
@@ -664,7 +854,29 @@ async function runSimulator() {
     });
     
     if (trucks.length === 0) {
-      console.log('⚠️  No active trucks found');
+      console.log('');
+      console.log('⚠️  ============================================================');
+      console.log('⚠️  NO ACTIVE TRUCKS FOUND IN DATABASE');
+      console.log('⚠️  ============================================================');
+      console.log('');
+      console.log('📝 The simulator requires trucks with devices and sensors to exist.');
+      console.log('');
+      console.log('💡 SOLUTION OPTIONS:');
+      console.log('');
+      console.log('   Option 1: Import Test Data (Recommended)');
+      console.log('   -----------------------------------------');
+      console.log('   1. Run: node scripts/add-test-data.js');
+      console.log('   2. Or import via Bulk Import UI');
+      console.log('');
+      console.log('   Option 2: Create Manually via API/UI');
+      console.log('   -------------------------------------');
+      console.log('   1. Create vendors');
+      console.log('   2. Create trucks');
+      console.log('   3. Create devices for each truck');
+      console.log('   4. Create sensors for each device');
+      console.log('');
+      console.log('⚠️  NOTE: If you just ran clear-all-data.js, you need to re-add trucks.');
+      console.log('');
       return;
     }
     
@@ -686,6 +898,30 @@ async function runSimulator() {
         const state = await initializeTruckState(truck, device, sensors, initTruckIndex);
         truckStates.set(truck.id, state);
         console.log(`🚛 Initialized truck ${truck.plate} with ${sensors.length} sensors (pattern: ${state.routePattern})`);
+        
+        // 🆕 AUTO-GENERATE HISTORY: Jika truck baru atau belum ada history HARI INI
+        // Generate history untuk hari ini dari jam kerja mulai sampai sekarang
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Check if we need to generate history for today
+        const historyToday = await prisma.location.count({
+          where: {
+            device_id: device.id,
+            truck_id: truck.id, // ⭐ Filter by both device AND truck
+            created_at: {
+              gte: today
+            }
+          }
+        });
+        
+        if (historyToday === 0) {
+          console.log(`📝 NEW TRUCK/DEVICE: ${truck.plate} (device ${device.id}) has no history today.`);
+          console.log(`📝 Generating fresh route history for ${truck.plate}...`);
+          await generateTodayHistoryBackfill(state, truck, device, sensors);
+        } else {
+          console.log(`✓ Truck ${truck.plate} already has ${historyToday} location records today`);
+        }
       } else {
         // Update sensor list jika ada perubahan
         const state = truckStates.get(truck.id);
