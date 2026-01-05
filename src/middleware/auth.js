@@ -9,7 +9,7 @@ const authMiddleware = (req, res, next) => {
     // Get token from header first
     const authHeader = req.headers.authorization;
     const hasToken = authHeader && authHeader.startsWith('Bearer ');
-    
+
     // ==========================================
     // TESTING MODE BYPASS (only if no token provided)
     // ==========================================
@@ -25,7 +25,7 @@ const authMiddleware = (req, res, next) => {
       };
       return next();
     }
-    
+
     // Force disable TESTING_MODE in production
     if (TESTING_MODE && process.env.NODE_ENV === 'production') {
       console.error('🚨 SECURITY ALERT: TESTING_MODE is enabled in PRODUCTION! Disabling...');

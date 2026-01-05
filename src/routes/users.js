@@ -40,12 +40,7 @@ router.patch('/me/password', authMiddleware, userController.changeMyPassword);
  * @desc    Upload user avatar
  * @access  Private (All authenticated users)
  */
-router.post(
-  '/me/avatar',
-  authMiddleware,
-  upload.single('avatar'),
-  userController.uploadAvatar
-);
+router.post('/me/avatar', authMiddleware, upload.single('avatar'), userController.uploadAvatar);
 
 /**
  * @route   DELETE /api/users/me/avatar
@@ -115,6 +110,12 @@ router.patch('/:id/status', authMiddleware, requireAdmin(), userController.updat
  *          Superadmin can delete anyone
  *          Admin can only delete operator and viewer
  */
-router.delete('/:id', authMiddleware, requireAdmin(), canModifyUser(false), userController.deleteUser);
+router.delete(
+  '/:id',
+  authMiddleware,
+  requireAdmin(),
+  canModifyUser(false),
+  userController.deleteUser
+);
 
 module.exports = router;

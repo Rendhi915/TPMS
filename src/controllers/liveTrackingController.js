@@ -54,22 +54,23 @@ const getLiveTracking = async (req, res) => {
 
     // 🔥 CRITICAL FIX: Fetch locations separately with truck_id filter to prevent mixing
     // Get latest location for each truck (filtered by truck_id)
-    const truckIds = trucks.map(t => t.id);
-    
+    const truckIds = trucks.map((t) => t.id);
+
     // Build query dynamically - PostgreSQL DISTINCT ON gets first row per group
-    const latestLocations = truckIds.length > 0 
-      ? await prisma.$queryRawUnsafe(`
+    const latestLocations =
+      truckIds.length > 0
+        ? await prisma.$queryRawUnsafe(`
           SELECT DISTINCT ON (truck_id) 
             id, device_id, truck_id, lat, long, recorded_at, created_at
           FROM location
           WHERE truck_id IN (${truckIds.join(',')})
           ORDER BY truck_id, created_at DESC
         `)
-      : [];
-    
+        : [];
+
     // Create lookup map for locations by truck_id
     const locationMap = {};
-    latestLocations.forEach(loc => {
+    latestLocations.forEach((loc) => {
       locationMap[loc.truck_id] = loc;
     });
 

@@ -10,16 +10,16 @@
  */
 const sanitizeString = (input) => {
   if (typeof input !== 'string') return input;
-  
+
   // Remove HTML tags
   let sanitized = input.replace(/<[^>]*>/g, '');
-  
+
   // Remove script tags content
   sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-  
+
   // Trim whitespace
   sanitized = sanitized.trim();
-  
+
   return sanitized;
 };
 
@@ -30,13 +30,13 @@ const sanitizeString = (input) => {
  */
 const sanitizeEmail = (email) => {
   if (typeof email !== 'string') return email;
-  
+
   // Convert to lowercase and trim
   let sanitized = email.toLowerCase().trim();
-  
+
   // Remove any non-email characters (keep @ . - _ alphanumeric)
   sanitized = sanitized.replace(/[^a-z0-9@._-]/g, '');
-  
+
   return sanitized;
 };
 
@@ -47,10 +47,10 @@ const sanitizeEmail = (email) => {
  */
 const sanitizePhone = (phone) => {
   if (typeof phone !== 'string') return phone;
-  
+
   // Keep only numbers, +, -, and spaces
   let sanitized = phone.replace(/[^0-9+\s-]/g, '');
-  
+
   return sanitized.trim();
 };
 
@@ -62,16 +62,16 @@ const sanitizePhone = (phone) => {
  */
 const sanitizeObject = (obj, skipFields = ['password']) => {
   if (typeof obj !== 'object' || obj === null) return obj;
-  
+
   const sanitized = {};
-  
+
   for (const [key, value] of Object.entries(obj)) {
     // Skip password and other sensitive fields
     if (skipFields.includes(key)) {
       sanitized[key] = value;
       continue;
     }
-    
+
     // Sanitize based on type
     if (typeof value === 'string') {
       if (key === 'email') {
@@ -87,7 +87,7 @@ const sanitizeObject = (obj, skipFields = ['password']) => {
       sanitized[key] = value;
     }
   }
-  
+
   return sanitized;
 };
 

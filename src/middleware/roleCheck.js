@@ -74,7 +74,7 @@ const requireAdmin = () => {
  * - Superadmin can modify anyone
  * - Admin can modify operator and viewer
  * - Users can only modify themselves (for profile updates)
- * 
+ *
  * @param {boolean} allowSelf - Allow users to modify their own data
  * @returns {Function} Express middleware
  */

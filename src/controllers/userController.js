@@ -425,7 +425,7 @@ const getAllUsers = async (req, res) => {
     ]);
 
     // Add firstName/lastName to each user
-    const usersWithNames = users.map(user => {
+    const usersWithNames = users.map((user) => {
       const nameParts = user.name.split(' ');
       return {
         ...user,
@@ -517,7 +517,8 @@ const getUserById = async (req, res) => {
  */
 const createUser = async (req, res) => {
   try {
-    const { firstName, lastName, name, email, password, role, phone, department, bio, status } = req.body;
+    const { firstName, lastName, name, email, password, role, phone, department, bio, status } =
+      req.body;
 
     // Validate required fields
     if (!email || !password || !role) {
@@ -835,7 +836,7 @@ module.exports = {
   uploadAvatar,
   deleteAvatar,
   toggleTwoFactor,
-  
+
   // User management (Admin)
   getAllUsers,
   getUserById,

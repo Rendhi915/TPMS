@@ -9,62 +9,69 @@ const prisma = new PrismaClient();
 
 // Template rute (sama seperti di simulator)
 const ROUTE_TEMPLATES = {
-  0: { // Minggu - Rute A
+  0: {
+    // Minggu - Rute A
     start: { lat: -3.3198, lng: 114.5935 },
     waypoints: [
-      { lat: -3.3500, lng: 114.6200 },
-      { lat: -3.3800, lng: 114.6500 }
+      { lat: -3.35, lng: 114.62 },
+      { lat: -3.38, lng: 114.65 },
     ],
-    end: { lat: -3.4200, lng: 114.6800 }
+    end: { lat: -3.42, lng: 114.68 },
   },
-  1: { // Senin - Rute B
+  1: {
+    // Senin - Rute B
     start: { lat: -3.4521, lng: 114.7123 },
     waypoints: [
-      { lat: -3.4300, lng: 114.7300 },
-      { lat: -3.4100, lng: 114.7500 }
+      { lat: -3.43, lng: 114.73 },
+      { lat: -3.41, lng: 114.75 },
     ],
-    end: { lat: -3.3900, lng: 114.7700 }
+    end: { lat: -3.39, lng: 114.77 },
   },
-  2: { // Selasa - Rute C
-    start: { lat: -3.3000, lng: 114.8000 },
+  2: {
+    // Selasa - Rute C
+    start: { lat: -3.3, lng: 114.8 },
     waypoints: [
-      { lat: -3.3200, lng: 114.8200 },
-      { lat: -3.3400, lng: 114.8400 }
+      { lat: -3.32, lng: 114.82 },
+      { lat: -3.34, lng: 114.84 },
     ],
-    end: { lat: -3.3600, lng: 114.8600 }
+    end: { lat: -3.36, lng: 114.86 },
   },
-  3: { // Rabu - Rute D
-    start: { lat: -3.5200, lng: 114.5000 },
+  3: {
+    // Rabu - Rute D
+    start: { lat: -3.52, lng: 114.5 },
     waypoints: [
-      { lat: -3.5000, lng: 114.5200 },
-      { lat: -3.4800, lng: 114.5400 }
+      { lat: -3.5, lng: 114.52 },
+      { lat: -3.48, lng: 114.54 },
     ],
-    end: { lat: -3.4600, lng: 114.5600 }
+    end: { lat: -3.46, lng: 114.56 },
   },
-  4: { // Kamis - Rute E
-    start: { lat: -3.3800, lng: 114.6500 },
+  4: {
+    // Kamis - Rute E
+    start: { lat: -3.38, lng: 114.65 },
     waypoints: [
-      { lat: -3.3700, lng: 114.6700 },
-      { lat: -3.3600, lng: 114.6900 }
+      { lat: -3.37, lng: 114.67 },
+      { lat: -3.36, lng: 114.69 },
     ],
-    end: { lat: -3.3500, lng: 114.7100 }
+    end: { lat: -3.35, lng: 114.71 },
   },
-  5: { // Jumat - Rute A
+  5: {
+    // Jumat - Rute A
     start: { lat: -3.3198, lng: 114.5935 },
     waypoints: [
-      { lat: -3.3500, lng: 114.6200 },
-      { lat: -3.3800, lng: 114.6500 }
+      { lat: -3.35, lng: 114.62 },
+      { lat: -3.38, lng: 114.65 },
     ],
-    end: { lat: -3.4200, lng: 114.6800 }
+    end: { lat: -3.42, lng: 114.68 },
   },
-  6: { // Sabtu - Rute B
+  6: {
+    // Sabtu - Rute B
     start: { lat: -3.4521, lng: 114.7123 },
     waypoints: [
-      { lat: -3.4300, lng: 114.7300 },
-      { lat: -3.4100, lng: 114.7500 }
+      { lat: -3.43, lng: 114.73 },
+      { lat: -3.41, lng: 114.75 },
     ],
-    end: { lat: -3.3900, lng: 114.7700 }
-  }
+    end: { lat: -3.39, lng: 114.77 },
+  },
 };
 
 const CONFIG = {
@@ -73,10 +80,10 @@ const CONFIG = {
     DAY_START: 8,
     DAY_END: 16,
     NIGHT_START: 20,
-    NIGHT_END: 4
+    NIGHT_END: 4,
   },
   SPEEDS: [15, 20, 25], // km/jam
-  SAVE_INTERVAL_MINUTES: 3 // Save setiap 3 menit
+  SAVE_INTERVAL_MINUTES: 3, // Save setiap 3 menit
 };
 
 /**
@@ -85,7 +92,7 @@ const CONFIG = {
 function interpolatePosition(start, end, progress) {
   return {
     lat: start.lat + (end.lat - start.lat) * progress,
-    lng: start.lng + (end.lng - start.lng) * progress
+    lng: start.lng + (end.lng - start.lng) * progress,
   };
 }
 
@@ -96,34 +103,30 @@ function generateRoutePoints(route, speed, startTime, endTime) {
   const points = [];
   const durationMinutes = (endTime - startTime) / (1000 * 60);
   const numPoints = Math.floor(durationMinutes / CONFIG.SAVE_INTERVAL_MINUTES);
-  
+
   // Flatten route: start → waypoints → end
-  const allPoints = [
-    route.start,
-    ...route.waypoints,
-    route.end
-  ];
-  
+  const allPoints = [route.start, ...route.waypoints, route.end];
+
   for (let i = 0; i < numPoints; i++) {
     const progress = i / numPoints;
     const segmentIndex = Math.floor(progress * (allPoints.length - 1));
-    const segmentProgress = (progress * (allPoints.length - 1)) - segmentIndex;
-    
+    const segmentProgress = progress * (allPoints.length - 1) - segmentIndex;
+
     const segmentStart = allPoints[segmentIndex];
     const segmentEnd = allPoints[Math.min(segmentIndex + 1, allPoints.length - 1)];
-    
+
     const position = interpolatePosition(segmentStart, segmentEnd, segmentProgress);
-    
-    const timestamp = new Date(startTime.getTime() + (i * CONFIG.SAVE_INTERVAL_MINUTES * 60 * 1000));
-    
+
+    const timestamp = new Date(startTime.getTime() + i * CONFIG.SAVE_INTERVAL_MINUTES * 60 * 1000);
+
     points.push({
       lat: position.lat,
       lng: position.lng,
       speed: speed,
-      timestamp: timestamp
+      timestamp: timestamp,
     });
   }
-  
+
   return points;
 }
 
@@ -132,21 +135,21 @@ function generateRoutePoints(route, speed, startTime, endTime) {
  */
 function generateSensorData(sensorCount, baseTemp = 40, basePressure = 95) {
   const sensors = [];
-  
+
   for (let i = 1; i <= sensorCount; i++) {
     const temp = baseTemp + (Math.random() - 0.5) * 10;
     const pressure = basePressure + (Math.random() - 0.5) * 10;
-    
+
     sensors.push({
       tireNo: i,
       sensorNo: i,
       tempValue: Math.max(30, Math.min(100, temp)),
       tirepValue: Math.max(75, Math.min(120, pressure)),
       exType: temp > 80 ? 'warning' : 'normal',
-      bat: 80 + Math.floor(Math.random() * 10)
+      bat: 80 + Math.floor(Math.random() * 10),
     });
   }
-  
+
   return sensors;
 }
 
@@ -156,44 +159,46 @@ function generateSensorData(sensorCount, baseTemp = 40, basePressure = 95) {
 async function generateDayData(date, trucks) {
   const dayOfWeek = date.getDay();
   const dateStr = date.toISOString().split('T')[0];
-  
-  console.log(`\n📅 Generating data for ${dateStr} (${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dayOfWeek]})`);
-  
+
+  console.log(
+    `\n📅 Generating data for ${dateStr} (${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dayOfWeek]})`
+  );
+
   const route = ROUTE_TEMPLATES[dayOfWeek];
   let totalLocations = 0;
   let totalSensorHistory = 0;
-  
+
   for (const truck of trucks) {
     if (truck.device.length === 0 || truck.device[0].sensor.length === 0) {
       console.log(`   ⚠️  Skipping ${truck.plate} (no device or sensors)`);
       continue;
     }
-    
+
     const device = truck.device[0];
     const sensors = device.sensor;
     const speed = CONFIG.SPEEDS[Math.floor(Math.random() * CONFIG.SPEEDS.length)];
-    
+
     // Generate untuk shift siang (08:00 - 16:00)
     const dayShiftStart = new Date(date);
     dayShiftStart.setHours(CONFIG.WORKING_HOURS.DAY_START, 0, 0, 0);
     const dayShiftEnd = new Date(date);
     dayShiftEnd.setHours(CONFIG.WORKING_HOURS.DAY_END, 0, 0, 0);
-    
+
     const dayPoints = generateRoutePoints(route, speed, dayShiftStart, dayShiftEnd);
-    
+
     // Generate untuk shift malam (20:00 - 04:00)
     const nightShiftStart = new Date(date);
     nightShiftStart.setHours(CONFIG.WORKING_HOURS.NIGHT_START, 0, 0, 0);
     const nightShiftEnd = new Date(date);
     nightShiftEnd.setDate(nightShiftEnd.getDate() + 1); // Besok
     nightShiftEnd.setHours(CONFIG.WORKING_HOURS.NIGHT_END, 0, 0, 0);
-    
+
     const nightPoints = generateRoutePoints(route, speed, nightShiftStart, nightShiftEnd);
-    
+
     const allPoints = [...dayPoints, ...nightPoints];
-    
+
     console.log(`   🚛 ${truck.plate}: ${allPoints.length} points, ${sensors.length} sensors`);
-    
+
     // Save locations dan sensor_history
     for (const point of allPoints) {
       // Create location
@@ -203,12 +208,12 @@ async function generateDayData(date, trucks) {
           lat: point.lat,
           long: point.lng,
           recorded_at: point.timestamp,
-          created_at: point.timestamp
-        }
+          created_at: point.timestamp,
+        },
       });
-      
+
       totalLocations++;
-      
+
       // Create sensor_history
       const sensorData = generateSensorData(sensors.length);
       const sensorHistoryData = sensorData.map((s, idx) => ({
@@ -222,19 +227,21 @@ async function generateDayData(date, trucks) {
         tirepValue: s.tirepValue,
         exType: s.exType,
         bat: s.bat,
-        recorded_at: point.timestamp
+        recorded_at: point.timestamp,
       }));
-      
+
       await prisma.sensor_history.createMany({
-        data: sensorHistoryData
+        data: sensorHistoryData,
       });
-      
+
       totalSensorHistory += sensorHistoryData.length;
     }
   }
-  
-  console.log(`   ✅ Saved ${totalLocations} locations, ${totalSensorHistory} sensor history records`);
-  
+
+  console.log(
+    `   ✅ Saved ${totalLocations} locations, ${totalSensorHistory} sensor history records`
+  );
+
   return { totalLocations, totalSensorHistory };
 }
 
@@ -248,12 +255,12 @@ async function generateHistoryBackfill() {
     console.log(`📊 Days to generate: ${CONFIG.DAYS_TO_GENERATE}`);
     console.log(`⏱️  Data interval: ${CONFIG.SAVE_INTERVAL_MINUTES} minutes`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-    
+
     // Load trucks
     const trucks = await prisma.truck.findMany({
       where: {
         deleted_at: null,
-        status: 'active'
+        status: 'active',
       },
       include: {
         device: {
@@ -261,34 +268,34 @@ async function generateHistoryBackfill() {
           include: {
             sensor: {
               where: { deleted_at: null },
-              orderBy: { tireNo: 'asc' }
-            }
-          }
-        }
-      }
+              orderBy: { tireNo: 'asc' },
+            },
+          },
+        },
+      },
     });
-    
+
     console.log(`📋 Found ${trucks.length} active trucks\n`);
-    
+
     let grandTotalLocations = 0;
     let grandTotalSensorHistory = 0;
-    
+
     // Generate untuk setiap hari (14 hari ke belakang)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     for (let i = CONFIG.DAYS_TO_GENERATE - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      
+
       const { totalLocations, totalSensorHistory } = await generateDayData(date, trucks);
       grandTotalLocations += totalLocations;
       grandTotalSensorHistory += totalSensorHistory;
-      
+
       // Small delay untuk tidak overload database
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    
+
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('✅ BACKFILL COMPLETED SUCCESSFULLY!\n');
     console.log('Summary:');
@@ -297,7 +304,6 @@ async function generateHistoryBackfill() {
     console.log(`   - Total Sensor History: ${grandTotalSensorHistory}`);
     console.log(`   - Trucks: ${trucks.length}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-    
   } catch (error) {
     console.error('❌ Error generating backfill:', error);
     throw error;

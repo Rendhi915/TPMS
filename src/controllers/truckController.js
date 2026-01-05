@@ -306,7 +306,9 @@ const getTruckLocationHistory = async (req, res) => {
     }
 
     // Sort by timestamp
-    locationHistory.sort((a, b) => new Date(b.created_at || b.recorded_at) - new Date(a.created_at || a.recorded_at));
+    locationHistory.sort(
+      (a, b) => new Date(b.created_at || b.recorded_at) - new Date(a.created_at || a.recorded_at)
+    );
 
     // Format as GeoJSON LineString for tracking
     const coordinates = locationHistory
@@ -1026,10 +1028,10 @@ const deleteTruck = async (req, res) => {
 
     /**
      * SOFT DELETE - History Safe
-     * 
+     *
      * Dengan schema baru yang menggunakan snapshot data di sensor_history,
      * kita bisa langsung soft delete truck tanpa kehilangan history data.
-     * 
+     *
      * History data tetap aman karena:
      * 1. sensor_history.truck_id menggunakan onDelete: SetNull (bukan Cascade)
      * 2. Semua informasi truck disimpan di snapshot fields (truck_name, truck_plate, dll)
@@ -1054,8 +1056,8 @@ const deleteTruck = async (req, res) => {
         truck_id: id,
         truck_name: truck.name,
         truck_plate: truck.plate,
-        note: 'All tracking history for this truck remains accessible via history endpoints'
-      }
+        note: 'All tracking history for this truck remains accessible via history endpoints',
+      },
     });
   } catch (error) {
     console.error('Error deleting truck:', error);
