@@ -2,10 +2,10 @@ const { prisma } = require('../config/prisma');
 
 /**
  * Get location history with sensor snapshots for a truck
- * 
+ *
  * IMPORTANT: Menggunakan snapshot data dari sensor_history
  * Sehingga data history tetap dapat ditampilkan meskipun master data sudah dihapus
- * 
+ *
  * @param {number} truckId - Truck ID (optional, bisa null jika truck sudah dihapus)
  * @param {object} options - Query options (startDate, endDate, limit, truckPlate)
  * @returns {Promise<Array>} Location timeline with sensor data
@@ -16,19 +16,19 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
   try {
     // Build where clause - support both truck_id and truck_plate (snapshot)
     const where = {};
-    
+
     // IMPORTANT: Always require truck_id OR truck_plate filter to prevent returning all data
     // This ensures we only get data for the specific truck requested
     if (!truckId && !truckPlate) {
       console.error('❌ ERROR: truck_id or truck_plate must be provided');
       throw new Error('truck_id or truck_plate is required for history query');
     }
-    
+
     // Query by truck_id (works for both active and deleted trucks via snapshot)
     if (truckId) {
       where.truck_id = parseInt(truckId); // Ensure it's an integer
     }
-    
+
     // If truckPlate provided, search by snapshot plate (alternative identifier)
     if (truckPlate) {
       where.truck_plate = truckPlate;
@@ -39,8 +39,15 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
       if (startDate) where.recorded_at.gte = new Date(startDate);
       if (endDate) where.recorded_at.lte = new Date(endDate);
     }
-    
-    console.log('🔍 Query sensor_history with:', { truckId, truckPlate, startDate, endDate, limit, whereClause: JSON.stringify(where) });
+
+    console.log('🔍 Query sensor_history with:', {
+      truckId,
+      truckPlate,
+      startDate,
+      endDate,
+      limit,
+      whereClause: JSON.stringify(where),
+    });
 
     // Query sensor_history directly (tidak via join ke truck)
     // Karena kita ingin tetap dapat data meskipun truck sudah dihapus
@@ -56,14 +63,14 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
             long: true,
             speed: true,
             heading: true,
-            recorded_at: true
-          }
-        }
-      }
+            recorded_at: true,
+          },
+        },
+      },
     });
-    
+
     console.log(`✅ Found ${sensorHistories.length} sensor history records for truck ${truckId}`);
-    
+
     if (sensorHistories.length === 0) {
       console.log(`ℹ️ No sensor history found for truck ${truckId} in date range`);
       return [];
@@ -71,19 +78,21 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
 
     // Group by location_id untuk mengelompokkan sensor data
     const locationMap = new Map();
-    
-    sensorHistories.forEach(sh => {
+
+    sensorHistories.forEach((sh) => {
       const locId = sh.location_id;
       if (!locationMap.has(locId)) {
         locationMap.set(locId, {
           location_id: locId,
           timestamp: sh.recorded_at,
-          location: sh.location ? {
-            lat: sh.location.lat,
-            lng: sh.location.long,
-            speed: sh.location.speed,
-            heading: sh.location.heading
-          } : null,
+          location: sh.location
+            ? {
+                lat: sh.location.lat,
+                lng: sh.location.long,
+                speed: sh.location.speed,
+                heading: sh.location.heading,
+              }
+            : null,
           // Gunakan snapshot data untuk truck info (tidak dari relasi)
           truck_info: {
             truck_id: sh.truck_id,
@@ -93,12 +102,12 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
             truck_model: sh.truck_model,
             truck_year: sh.truck_year,
             driver_name: sh.driver_name,
-            vendor_name: sh.vendor_name
+            vendor_name: sh.vendor_name,
           },
-          tires: []
+          tires: [],
         });
       }
-      
+
       // Add tire data
       locationMap.get(locId).tires.push({
         tireNo: sh.tireNo,
@@ -108,14 +117,14 @@ const getHistoryWithSensors = async (truckId, options = {}) => {
         status: sh.exType,
         battery: sh.bat,
         sensor_sn: sh.sensor_sn,
-        timestamp: sh.recorded_at
+        timestamp: sh.recorded_at,
       });
     });
 
     // Convert map to array and sort tires by tireNo
-    const timeline = Array.from(locationMap.values()).map(item => ({
+    const timeline = Array.from(locationMap.values()).map((item) => ({
       ...item,
-      tires: item.tires.sort((a, b) => a.tireNo - b.tireNo)
+      tires: item.tires.sort((a, b) => a.tireNo - b.tireNo),
     }));
 
     console.log(`✅ Processed ${timeline.length} location points with tire data`);
@@ -157,15 +166,20 @@ const getHistoryStats = async (truckId, options = {}) => {
       console.error('❌ ERROR: truck_id must be provided for stats query');
       throw new Error('truck_id is required for stats query');
     }
-    
+
     const where = { truck_id: parseInt(truckId) }; // Ensure it's an integer
     if (startDate || endDate) {
       where.recorded_at = {};
       if (startDate) where.recorded_at.gte = new Date(startDate);
       if (endDate) where.recorded_at.lte = new Date(endDate);
     }
-    
-    console.log('🔍 Query sensor_history stats with:', { truckId, startDate, endDate, whereClause: JSON.stringify(where) });
+
+    console.log('🔍 Query sensor_history stats with:', {
+      truckId,
+      startDate,
+      endDate,
+      whereClause: JSON.stringify(where),
+    });
 
     const stats = await prisma.sensor_history.groupBy({
       by: ['tireNo'],

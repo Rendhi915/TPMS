@@ -68,7 +68,7 @@ class SimplePrismaService {
     const { page = 1, limit = 50, search, plate, vendor, vendorId, includeDeleted } = filters;
 
     const offset = (page - 1) * limit;
-    
+
     // 🔥 CRITICAL FIX: Allow including deleted trucks for history tracking
     // Default behavior: only non-deleted trucks
     // With includeDeleted=true: get all trucks (including deleted)
@@ -346,8 +346,8 @@ class SimplePrismaService {
                 take: 1,
               },
               sensor: {
-                where: { 
-                  status: 'active'
+                where: {
+                  status: 'active',
                   // REMOVED: tempValue/tirepValue not null filter
                   // Allow sensors without data - will show as 0 in frontend
                 },
@@ -396,37 +396,43 @@ class SimplePrismaService {
           .map((truck) => {
             const latestLocation = truck.device[0].location[0];
             const sensors = truck.device[0].sensor || [];
-            
+
             // Debug logging for tire data
             if (sensors.length === 0) {
-              console.warn(`⚠️  No sensors found for truck ${truck.plate} (device: ${truck.device[0]?.id})`);
+              console.warn(
+                `⚠️  No sensors found for truck ${truck.plate} (device: ${truck.device[0]?.id})`
+              );
             }
-            
+
             // ALWAYS include tire data - even if sensors are empty, return empty array
-            const tireData = sensors.map(sensor => ({
+            const tireData = sensors.map((sensor) => ({
               tireNo: sensor.tireNo || 0,
               sensorNo: sensor.sensorNo || 'N/A',
-              temperature: sensor.tempValue !== null && sensor.tempValue !== undefined ? sensor.tempValue : 0,
-              pressure: sensor.tirepValue !== null && sensor.tirepValue !== undefined ? sensor.tirepValue : 0,
+              temperature:
+                sensor.tempValue !== null && sensor.tempValue !== undefined ? sensor.tempValue : 0,
+              pressure:
+                sensor.tirepValue !== null && sensor.tirepValue !== undefined
+                  ? sensor.tirepValue
+                  : 0,
               status: sensor.exType || 'unknown',
               lastUpdate: sensor.updated_at || new Date(),
             }));
-            
+
             // Format active alerts
-            const alerts = (truck.alert_events || []).map(alert => ({
+            const alerts = (truck.alert_events || []).map((alert) => ({
               id: alert.id,
               message: alert.message,
               value: alert.value,
               createdAt: alert.created_at,
             }));
-            
+
             // Log tire data for debugging
             if (tireData.length > 0) {
               console.log(`✅ ${truck.plate}: ${tireData.length} tires with data`);
             } else {
               console.error(`❌ ${truck.plate}: NO TIRE DATA!`);
             }
-            
+
             return {
               type: 'Feature',
               properties: {

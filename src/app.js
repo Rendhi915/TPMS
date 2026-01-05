@@ -27,18 +27,26 @@ app.use(
     origin: function (origin, callback) {
       // Log semua request origin untuk debugging
       console.log('[CORS] Request from origin:', origin);
-      
+
       // Allow requests with no origin (like mobile apps, curl, Postman)
       if (!origin) return callback(null, true);
 
       // Allow ngrok domains (*.ngrok-free.app, *.ngrok.io, *.ngrok.app)
-      if (origin && (origin.includes('.ngrok-free.app') || origin.includes('.ngrok.io') || origin.includes('.ngrok.app'))) {
+      if (
+        origin &&
+        (origin.includes('.ngrok-free.app') ||
+          origin.includes('.ngrok.io') ||
+          origin.includes('.ngrok.app'))
+      ) {
         console.log('[CORS] ✅ Ngrok origin allowed:', origin);
         return callback(null, true);
       }
 
       // Allow any localhost/127.0.0.1 with any port in development
-      if (origin && (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+      if (
+        origin &&
+        (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))
+      ) {
         console.log('[CORS] ✅ Localhost origin allowed:', origin);
         return callback(null, true);
       }
@@ -80,14 +88,17 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma, Expires');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, Cache-Control, Pragma, Expires'
+    );
   }
-  
+
   // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
   }
-  
+
   next();
 });
 
@@ -96,14 +107,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files for uploaded images with CORS headers
-app.use('/uploads', (req, res, next) => {
-  // Add CORS headers for images to prevent ERR_BLOCKED_BY_RESPONSE
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
-  next();
-}, express.static(path.join(__dirname, '../uploads')));
+app.use(
+  '/uploads',
+  (req, res, next) => {
+    // Add CORS headers for images to prevent ERR_BLOCKED_BY_RESPONSE
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
+  express.static(path.join(__dirname, '../uploads'))
+);
 
 // Request logging middleware
 app.use(requestLogger);
@@ -112,7 +127,7 @@ app.use(requestLogger);
 app.get('/health', async (req, res) => {
   try {
     const { prisma } = require('./config/prisma');
-    
+
     // Check database connection
     let dbStatus = 'unknown';
     let dbLatency = 0;
@@ -139,7 +154,10 @@ app.get('/health', async (req, res) => {
         memory: {
           used_mb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
           total_mb: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-          status: process.memoryUsage().heapUsed / process.memoryUsage().heapTotal < 0.9 ? 'healthy' : 'warning',
+          status:
+            process.memoryUsage().heapUsed / process.memoryUsage().heapTotal < 0.9
+              ? 'healthy'
+              : 'warning',
         },
       },
     };

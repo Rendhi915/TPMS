@@ -1,5 +1,5 @@
 const { prisma } = require('../config/prisma');
-const { broadcastNewAlert, broadcastAlertResolved } = require('../services/websocketService');
+const { broadcastAlertResolved } = require('../services/websocketService');
 
 // ==========================================
 // GET ALL ALERTS

@@ -11,7 +11,7 @@ const CONFIG = {
   INTERVAL_MINUTES: 5,
   NUM_TRUCKS: 5,
   SENSORS_PER_TRUCK: 10, // 10 ban per truck
-  
+
   // Mining Area GeoJSON - PT BORNEO INDOBARA Main Mining Area
   MINING_AREA_POLYGON: [
     [115.604399949931505, -3.545400075547209],
@@ -89,13 +89,13 @@ const CONFIG = {
 
   // Range nilai sensor
   SENSOR_RANGES: {
-    TIRE_PRESSURE_MIN: 85,  // PSI
+    TIRE_PRESSURE_MIN: 85, // PSI
     TIRE_PRESSURE_MAX: 110,
-    TIRE_TEMP_MIN: 40,      // Celsius
+    TIRE_TEMP_MIN: 40, // Celsius
     TIRE_TEMP_MAX: 80,
     HUB_TEMP_MIN: 45,
     HUB_TEMP_MAX: 85,
-    BATTERY_MIN: 60,        // Percentage
+    BATTERY_MIN: 60, // Percentage
     BATTERY_MAX: 100,
   },
 
@@ -118,19 +118,19 @@ const truckLastAlertTime = {};
 function shouldTruckGenerateAlert(truckId, truckPlate) {
   const now = Date.now();
   const lastAlert = truckLastAlertTime[truckId];
-  
+
   // Determine alert interval based on truck
   const isTruck1 = truckPlate === 'B 9001 SIM';
-  const alertInterval = isTruck1 
-    ? CONFIG.TRUCK_1_ALERT_INTERVAL 
+  const alertInterval = isTruck1
+    ? CONFIG.TRUCK_1_ALERT_INTERVAL
     : CONFIG.OTHER_TRUCKS_ALERT_INTERVAL;
   const intervalMs = alertInterval * 60 * 1000; // Convert to milliseconds
-  
+
   // If never alerted before, or interval has passed
-  if (!lastAlert || (now - lastAlert >= intervalMs)) {
+  if (!lastAlert || now - lastAlert >= intervalMs) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -403,8 +403,7 @@ function isPointInPolygon(point, polygon) {
     const [xi, yi] = polygon[i];
     const [xj, yj] = polygon[j];
 
-    const intersect =
-      yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+    const intersect = yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
 
     if (intersect) inside = !inside;
   }
@@ -607,7 +606,7 @@ async function checkAndCreateAlert(sensor, device, truck, value, valueType) {
           });
 
           console.log(`      🚨 ALERT CREATED: ${alertCode} - ${message}`);
-          
+
           // Return alert event untuk broadcast
           return alertEvent;
         }
@@ -689,12 +688,14 @@ async function generateLiveTrackingData() {
 
       console.log(`🚛 Truck: ${truck.plate} (${truck.name})`);
       console.log(`   Device SN: ${device.sn}`);
-      
+
       // Check if this truck should generate alert now
       const shouldGenerateAlertForTruck = shouldTruckGenerateAlert(truck.id, truck.plate);
       const isTruck1 = truck.plate === 'B 9001 SIM';
-      const alertInterval = isTruck1 ? CONFIG.TRUCK_1_ALERT_INTERVAL : CONFIG.OTHER_TRUCKS_ALERT_INTERVAL;
-      
+      const alertInterval = isTruck1
+        ? CONFIG.TRUCK_1_ALERT_INTERVAL
+        : CONFIG.OTHER_TRUCKS_ALERT_INTERVAL;
+
       if (shouldGenerateAlertForTruck) {
         console.log(`   ⏰ Alert Window: ACTIVE (Next alert in ${alertInterval} minutes)`);
       } else {
@@ -712,15 +713,27 @@ async function generateLiveTrackingData() {
         data: {
           lat: gpsCoord.lat,
           lng: gpsCoord.lng,
-          bat1: randomInRange(CONFIG.SENSOR_RANGES.BATTERY_MIN, CONFIG.SENSOR_RANGES.BATTERY_MAX, 0),
-          bat2: randomInRange(CONFIG.SENSOR_RANGES.BATTERY_MIN, CONFIG.SENSOR_RANGES.BATTERY_MAX, 0),
-          bat3: randomInRange(CONFIG.SENSOR_RANGES.BATTERY_MIN, CONFIG.SENSOR_RANGES.BATTERY_MAX, 0),
+          bat1: randomInRange(
+            CONFIG.SENSOR_RANGES.BATTERY_MIN,
+            CONFIG.SENSOR_RANGES.BATTERY_MAX,
+            0
+          ),
+          bat2: randomInRange(
+            CONFIG.SENSOR_RANGES.BATTERY_MIN,
+            CONFIG.SENSOR_RANGES.BATTERY_MAX,
+            0
+          ),
+          bat3: randomInRange(
+            CONFIG.SENSOR_RANGES.BATTERY_MIN,
+            CONFIG.SENSOR_RANGES.BATTERY_MAX,
+            0
+          ),
           lock: 0,
         },
       };
 
       console.log(`   📍 GPS: ${gpsCoord.lat.toFixed(6)}, ${gpsCoord.lng.toFixed(6)}`);
-      
+
       // Save location to database
       let savedLocation = null;
       try {
@@ -736,7 +749,7 @@ async function generateLiveTrackingData() {
       } catch (error) {
         console.error(`   ❌ Error saving location: ${error.message}`);
       }
-      
+
       const deviceResult = await sendIoTData('/iot/data', devicePayload);
       if (deviceResult?.success) {
         console.log(`   ✅ Device data sent to API`);
@@ -744,7 +757,7 @@ async function generateLiveTrackingData() {
 
       // 2. Generate & Send SENSOR DATA for each tire
       console.log(`   🔧 Generating data for ${sensors.length} sensors:`);
-      
+
       // Collect sensor history data to save in bulk
       const sensorHistoryBatch = [];
 
@@ -752,7 +765,8 @@ async function generateLiveTrackingData() {
         // Tentukan apakah sensor ini akan generate anomali
         // Hanya generate anomali jika sudah waktunya untuk truck ini
         const shouldGenerateAnomaly = shouldGenerateAlertForTruck && Math.random() < 0.3; // 30% chance untuk sensor yang dipilih
-        const isCriticalAnomaly = shouldGenerateAnomaly && Math.random() < CONFIG.CRITICAL_ANOMALY_CHANCE;
+        const isCriticalAnomaly =
+          shouldGenerateAnomaly && Math.random() < CONFIG.CRITICAL_ANOMALY_CHANCE;
 
         // Generate tire pressure & temperature data
         let tirePressure, tireTemp, hubTemp;
@@ -760,22 +774,28 @@ async function generateLiveTrackingData() {
         if (shouldGenerateAnomaly) {
           // Generate anomali untuk pressure atau temperature (random)
           const anomalyType = Math.random();
-          
+
           if (anomalyType < 0.5) {
             // Anomali pada pressure
             tirePressure = generateAnomalyValue(90, 102, isCriticalAnomaly);
-            tireTemp = randomInRange(CONFIG.SENSOR_RANGES.TIRE_TEMP_MIN, CONFIG.SENSOR_RANGES.TIRE_TEMP_MAX);
+            tireTemp = randomInRange(
+              CONFIG.SENSOR_RANGES.TIRE_TEMP_MIN,
+              CONFIG.SENSOR_RANGES.TIRE_TEMP_MAX
+            );
           } else {
             // Anomali pada temperature
             tirePressure = randomInRange(90, 102);
             tireTemp = generateAnomalyValue(40, 70, isCriticalAnomaly);
           }
-          
+
           // Hub temp juga bisa anomali
           if (Math.random() < 0.3) {
             hubTemp = generateAnomalyValue(45, 70, isCriticalAnomaly);
           } else {
-            hubTemp = randomInRange(CONFIG.SENSOR_RANGES.HUB_TEMP_MIN, CONFIG.SENSOR_RANGES.HUB_TEMP_MAX);
+            hubTemp = randomInRange(
+              CONFIG.SENSOR_RANGES.HUB_TEMP_MIN,
+              CONFIG.SENSOR_RANGES.HUB_TEMP_MAX
+            );
           }
         } else {
           // Normal values
@@ -784,7 +804,11 @@ async function generateLiveTrackingData() {
           hubTemp = randomInRange(CONFIG.SENSOR_RANGES.HUB_TEMP_MIN, 65);
         }
 
-        const battery = randomInRange(CONFIG.SENSOR_RANGES.BATTERY_MIN, CONFIG.SENSOR_RANGES.BATTERY_MAX, 0);
+        const battery = randomInRange(
+          CONFIG.SENSOR_RANGES.BATTERY_MIN,
+          CONFIG.SENSOR_RANGES.BATTERY_MAX,
+          0
+        );
         const exType = determineExceptionType(tirePressure, tireTemp);
 
         // Update sensor data in database
@@ -799,7 +823,7 @@ async function generateLiveTrackingData() {
               updated_at: new Date(),
             },
           });
-          
+
           // Add to sensor history batch if we have a location
           if (savedLocation) {
             sensorHistoryBatch.push({
@@ -813,7 +837,7 @@ async function generateLiveTrackingData() {
               tirepValue: tirePressure,
               exType: exType,
               bat: battery,
-              recorded_at: savedLocation.recorded_at
+              recorded_at: savedLocation.recorded_at,
             });
           }
         } catch (error) {
@@ -834,7 +858,7 @@ async function generateLiveTrackingData() {
           },
         };
 
-        const tpdataResult = await sendIoTData('/iot/data', tpdataPayload);
+        await sendIoTData('/iot/data', tpdataPayload);
         const statusIcon = shouldGenerateAnomaly ? '⚠️' : '✅';
         console.log(
           `      ${statusIcon} Tire ${sensor.tireNo}: Pressure=${tirePressure.toFixed(1)} PSI, Temp=${tireTemp.toFixed(1)}°C [${exType}]`
@@ -842,9 +866,15 @@ async function generateLiveTrackingData() {
 
         // Check and create alerts for tire pressure & temperature
         if (shouldGenerateAnomaly) {
-          const pressureAlert = await checkAndCreateAlert(sensor, device, truck, tirePressure, 'pressure');
+          const pressureAlert = await checkAndCreateAlert(
+            sensor,
+            device,
+            truck,
+            tirePressure,
+            'pressure'
+          );
           const tempAlert = await checkAndCreateAlert(sensor, device, truck, tireTemp, 'tire_temp');
-          
+
           // Mark truck as alerted if any alert was created
           if (pressureAlert || tempAlert) {
             markTruckAlerted(truck.id);
@@ -867,14 +897,16 @@ async function generateLiveTrackingData() {
 
           const hubdataResult = await sendIoTData('/iot/data', hubdataPayload);
           if (hubdataResult?.success) {
-            const hubStatusIcon = (hubTemp > 70) ? '⚠️' : '✅';
-            console.log(`      ${hubStatusIcon} Hub ${sensor.tireNo}: Temp=${hubTemp.toFixed(1)}°C`);
+            const hubStatusIcon = hubTemp > 70 ? '⚠️' : '✅';
+            console.log(
+              `      ${hubStatusIcon} Hub ${sensor.tireNo}: Temp=${hubTemp.toFixed(1)}°C`
+            );
           }
 
           // Check and create alerts for hub temperature
           if (hubTemp > 70) {
             const hubAlert = await checkAndCreateAlert(sensor, device, truck, hubTemp, 'hub_temp');
-            
+
             // Mark truck as alerted if hub alert was created
             if (hubAlert) {
               markTruckAlerted(truck.id);
@@ -882,14 +914,16 @@ async function generateLiveTrackingData() {
           }
         }
       }
-      
+
       // 3. Save sensor history batch to database
       if (sensorHistoryBatch.length > 0 && savedLocation) {
         try {
           await prisma.sensor_history.createMany({
-            data: sensorHistoryBatch
+            data: sensorHistoryBatch,
           });
-          console.log(`   ✅ Saved ${sensorHistoryBatch.length} sensor history records for location ${savedLocation.id}`);
+          console.log(
+            `   ✅ Saved ${sensorHistoryBatch.length} sensor history records for location ${savedLocation.id}`
+          );
         } catch (error) {
           console.error(`   ❌ Error saving sensor history: ${error.message}`);
         }
@@ -933,10 +967,15 @@ async function runSimulator() {
     console.log(`⏰ Scheduled to run every ${CONFIG.INTERVAL_MINUTES} minutes`);
     console.log('   Press Ctrl+C to stop the simulator\n');
 
-    setInterval(async () => {
-      console.log(`\n⏰ [${new Date().toLocaleTimeString()}] Running scheduled data generation...`);
-      await generateLiveTrackingData();
-    }, CONFIG.INTERVAL_MINUTES * 60 * 1000);
+    setInterval(
+      async () => {
+        console.log(
+          `\n⏰ [${new Date().toLocaleTimeString()}] Running scheduled data generation...`
+        );
+        await generateLiveTrackingData();
+      },
+      CONFIG.INTERVAL_MINUTES * 60 * 1000
+    );
   } catch (error) {
     console.error('❌ Fatal error:', error);
     process.exit(1);

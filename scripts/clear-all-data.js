@@ -1,9 +1,9 @@
 /**
  * Clear Master Data Only - Trucks, Devices, Sensors
- * 
+ *
  * ✅ KEEPS HISTORY DATA (location, sensor_history, alert_events)
  * History data tetap aman karena menggunakan snapshot fields
- * 
+ *
  * Use this for fresh start simulation without losing historical tracking data
  */
 
@@ -17,7 +17,7 @@ async function clearMasterData() {
     // Delete master data in correct order (respect foreign key constraints)
     // History data (location, sensor_history, alert_events) TIDAK DIHAPUS
     // karena sudah ada snapshot fields dan foreign key SetNull
-    
+
     // 1. Delete sensors (depends on device)
     const sensors = await prisma.sensor.deleteMany({});
     console.log(`✅ Deleted ${sensors.count} sensor records (master data)`);
@@ -47,7 +47,6 @@ async function clearMasterData() {
     console.log(`   ✅ Preserved - Locations: ${locationCount}`);
     console.log(`   ✅ Preserved - Alert Events: ${alertCount}`);
     console.log('\n💡 History data tetap tersimpan dan dapat dilihat di History Tracking!');
-    
   } catch (error) {
     console.error('❌ Error clearing master data:', error);
     throw error;

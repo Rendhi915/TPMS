@@ -33,7 +33,6 @@ async function deleteAllAlerts() {
     } else {
       console.log(`\n⚠️  Warning: ${countAfter} alerts still remain in database.`);
     }
-
   } catch (error) {
     console.error('❌ Error deleting alerts:', error);
     throw error;

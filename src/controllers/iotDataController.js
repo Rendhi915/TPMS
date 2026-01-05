@@ -1,6 +1,9 @@
 const { prisma } = require('../config/prisma');
 const { broadcastSensorUpdate, broadcastDeviceUpdate } = require('../services/websocketService');
-const { createSensorHistorySnapshot, fetchSnapshotRelatedData } = require('../utils/snapshotHelper');
+const {
+  createSensorHistorySnapshot,
+  fetchSnapshotRelatedData,
+} = require('../utils/snapshotHelper');
 
 // ==========================================
 // IOT DATA CONTROLLER - UNIFIED ENDPOINT
@@ -144,13 +147,13 @@ const handleTPData = async (sn, data, res) => {
       const latestLocation = await prisma.location.findFirst({
         where: { device_id: sensor.device_id },
         orderBy: { recorded_at: 'desc' },
-        select: { id: true, recorded_at: true }
+        select: { id: true, recorded_at: true },
       });
 
       if (latestLocation) {
         // Fetch related data for snapshot
         const relatedData = await fetchSnapshotRelatedData(prisma, sensor.device_id);
-        
+
         // Create snapshot
         const snapshot = createSensorHistorySnapshot(
           sensor,
@@ -159,7 +162,7 @@ const handleTPData = async (sn, data, res) => {
           relatedData?.driver,
           relatedData?.vendor
         );
-        
+
         await prisma.sensor_history.create({
           data: {
             location_id: latestLocation.id,
@@ -174,8 +177,8 @@ const handleTPData = async (sn, data, res) => {
             bat: updated.bat,
             recorded_at: latestLocation.recorded_at,
             // Add snapshot data
-            ...snapshot
-          }
+            ...snapshot,
+          },
         });
         console.log(`✅ [SENSOR_HISTORY] Saved for sensor ${sn} at location ${latestLocation.id}`);
       }
@@ -268,13 +271,13 @@ const handleHubData = async (sn, data, res) => {
       const latestLocation = await prisma.location.findFirst({
         where: { device_id: sensor.device_id },
         orderBy: { recorded_at: 'desc' },
-        select: { id: true, recorded_at: true }
+        select: { id: true, recorded_at: true },
       });
 
       if (latestLocation) {
         // Fetch related data for snapshot
         const relatedData = await fetchSnapshotRelatedData(prisma, sensor.device_id);
-        
+
         // Create snapshot
         const snapshot = createSensorHistorySnapshot(
           sensor,
@@ -283,7 +286,7 @@ const handleHubData = async (sn, data, res) => {
           relatedData?.driver,
           relatedData?.vendor
         );
-        
+
         await prisma.sensor_history.create({
           data: {
             location_id: latestLocation.id,
@@ -298,10 +301,12 @@ const handleHubData = async (sn, data, res) => {
             bat: updated.bat,
             recorded_at: latestLocation.recorded_at,
             // Add snapshot data
-            ...snapshot
-          }
+            ...snapshot,
+          },
         });
-        console.log(`✅ [SENSOR_HISTORY] Saved hub data for sensor ${sn} at location ${latestLocation.id}`);
+        console.log(
+          `✅ [SENSOR_HISTORY] Saved hub data for sensor ${sn} at location ${latestLocation.id}`
+        );
       }
     } catch (historyError) {
       console.error(`⚠️ [SENSOR_HISTORY] Failed to save hub data: ${historyError.message}`);
@@ -397,12 +402,12 @@ const handleDeviceData = async (sn, data, res) => {
 
         // 2. Fetch related data for snapshot (driver, vendor info)
         const relatedData = await fetchSnapshotRelatedData(tx, device.id);
-        
+
         // 3. Get all current sensor data for this device
         const sensors = await tx.sensor.findMany({
           where: {
             device_id: device.id,
-            deleted_at: null
+            deleted_at: null,
           },
           select: {
             id: true,
@@ -413,13 +418,13 @@ const handleDeviceData = async (sn, data, res) => {
             tempValue: true,
             tirepValue: true,
             exType: true,
-            bat: true
-          }
+            bat: true,
+          },
         });
 
         // 4. Save sensor history snapshots for all sensors with complete snapshot data
         if (sensors.length > 0) {
-          const sensorHistoryData = sensors.map(sensor => {
+          const sensorHistoryData = sensors.map((sensor) => {
             // Create snapshot for each sensor
             const snapshot = createSensorHistorySnapshot(
               sensor,
@@ -428,7 +433,7 @@ const handleDeviceData = async (sn, data, res) => {
               relatedData?.driver,
               relatedData?.vendor
             );
-            
+
             return {
               location_id: location.id,
               sensor_id: sensor.id,
@@ -442,15 +447,17 @@ const handleDeviceData = async (sn, data, res) => {
               bat: sensor.bat,
               recorded_at: location.recorded_at,
               // Add complete snapshot data
-              ...snapshot
+              ...snapshot,
             };
           });
 
           await tx.sensor_history.createMany({
-            data: sensorHistoryData
+            data: sensorHistoryData,
           });
 
-          console.log(`✅ [SENSOR_HISTORY] Saved ${sensors.length} sensor snapshots with full details for location ${location.id}`);
+          console.log(
+            `✅ [SENSOR_HISTORY] Saved ${sensors.length} sensor snapshots with full details for location ${location.id}`
+          );
         }
 
         return location;

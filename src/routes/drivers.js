@@ -33,7 +33,7 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
     };
     if (status) where.status = status;
     if (vendorId) where.vendor_id = parseInt(vendorId);
-    
+
     // Search filter - search by name, phone, license_number
     if (search) {
       where.OR = [
@@ -42,7 +42,7 @@ router.get('/', authMiddleware, validatePagination, async (req, res) => {
         { license_number: { contains: search, mode: 'insensitive' } },
       ];
     }
-    
+
     // Exact name match (for duplicate checking)
     if (name && !search) {
       where.name = { equals: name, mode: 'insensitive' };
